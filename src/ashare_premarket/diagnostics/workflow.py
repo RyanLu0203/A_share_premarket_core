@@ -58,10 +58,11 @@ def run_workflow_diagnostics(root: Path) -> bool:
             "stage_or_goal": cap.stage_or_goal,
             "status": "PASS",
             "owner_module": cap.owner_module,
-            "recommended_action": "Keep active" if cap.capability_class == "CLASS_A_REQUIRED_ACTIVE" else "Document only",
+            "recommended_action": _recommended_action(cap.stage_or_goal, cap.capability_class),
         }
         for capability_id, cap in capability_lookup.items()
     ]
+    goal06c_status = _goal06c_status(root)
     write_csv(root / "outputs/diagnostics/run_detail_manifest.csv", command_rows, DIAGNOSTIC_FIELDS)
     write_csv(root / "outputs/diagnostics/command_failure_catalog.csv", failure_rows, DIAGNOSTIC_FIELDS)
     write_csv(root / "outputs/diagnostics/capability_health_matrix.csv", health_rows)
@@ -74,10 +75,13 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "Status: `PASS_WITH_WARNINGS`",
                 "",
                 "The clean active workflow through GOAL-06B is deterministic and local.",
+                f"GOAL-06C review-only validation status: `{goal06c_status}`.",
                 "Known warnings are source-coverage gaps inherited as context, plus `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.",
+                "GOAL-06C warnings are limited to small clean-bootstrap review fixture size when present.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
+                "- `python scripts/run_goal06c_expanded_validation.py`",
                 "",
             ]
         ),
@@ -107,9 +111,31 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "2. Run `python scripts/run_goal06b_regression_suite.py`.",
                 "3. Run `python scripts/run_e2e_trunk_verification_through_goal06b.py` and `python scripts/run_e2e_trunk_validation_through_goal06b.py`.",
                 "4. Review `outputs/diagnostics/run_detail_manifest.csv` for the command, owning capability, status, and recommended action.",
-                "5. Do not start GOAL-06C unless `outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md` explicitly unlocks it.",
+                "5. For GOAL-06C work, run `python scripts/run_goal06c_expanded_validation.py` and review `outputs/audits/stage6c_readiness_report.md`.",
+                "6. GOAL-06D may proceed only as future review-only model comparison/calibration if the Stage 6C readiness report unlocks it.",
+                "7. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
                 "",
             ]
         ),
     )
     return not failure_rows
+
+
+def _recommended_action(stage_or_goal: str, capability_class: str) -> str:
+    if stage_or_goal == "GOAL-06C":
+        return "Keep review-only; monitor small-panel warnings"
+    return "Keep active" if capability_class == "CLASS_A_REQUIRED_ACTIVE" else "Document only"
+
+
+def _goal06c_status(root: Path) -> str:
+    report = root / "outputs/audits/stage6c_readiness_report.md"
+    if not report.exists():
+        return "not yet promoted"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-06C Expanded Validation Readiness: BLOCKED" in text:
+        return "blocked"
+    if "GOAL-06C Expanded Validation Readiness: PASS_WITH_WARNINGS" in text:
+        return "implemented with warnings"
+    if "GOAL-06C Expanded Validation Readiness: PASS" in text:
+        return "review-only implemented"
+    return "not yet promoted"

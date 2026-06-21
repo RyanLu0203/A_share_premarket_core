@@ -1,6 +1,6 @@
 {
-  "goal06c_expanded_validation": "future_only",
-  "goal06d_model_comparison": "locked_future",
+  "goal06c_expanded_validation": "implemented_review_only",
+  "goal06d_model_comparison": "future_review_only",
   "goal07a_risk_overlay_design": "locked_future",
   "goal07b_risk_overlay_calculation": "locked_future",
   "position_band_recommendation": false,

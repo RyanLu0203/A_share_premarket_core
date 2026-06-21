@@ -17,11 +17,27 @@ flowchart TD
     M --> N["Safety Gate / Adapter Audit"]
 ```
 
-This is the only implemented active workflow. It uses solid arrows only and
-does not include GOAL-06C or any downstream future block as active. No active
-node imports legacy demo paths, old runtime-evidence modules, obsolete step
-runners, DQN/RL, dashboard, paper trading, recommendation, risk overlay,
+This is the only implemented active scoring workflow. It uses solid arrows only
+and does not include GOAL-06C or any downstream future block as active scoring.
+GOAL-06C is implemented separately as review-only validation evidence. No
+active node imports legacy demo paths, old runtime-evidence modules, obsolete
+step runners, DQN/RL, dashboard, paper trading, recommendation, risk overlay,
 broker/live trading, production DB writes, or production model promotion code.
+
+## GOAL-06C Review-Only Validation Extension
+
+```mermaid
+flowchart TD
+    A["GOAL-06B Supervised Baseline Training Gate"] -. "review-only validation extension" .-> B["Expanded Validation Panel<br/>(implemented_review_only)"]
+    B -. "deterministic offline ranks" .-> C["Ranking Baselines<br/>(implemented_review_only)"]
+    C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
+    D -. "future review-only" .-> E["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+```
+
+The extension writes review-only evidence under `outputs/stage6c/` and
+`outputs/audits/`. It does not emit recommendations, position bands, portfolio
+weights, risk overlays, dashboard outputs, trading instructions, production
+writes, production model promotion, or DQN/RL artifacts.
 
 ## Module Dependency Structure
 
@@ -43,6 +59,7 @@ flowchart TD
     Datasets --> Scoring["scoring"]
     Scoring --> Training["training"]
     Training --> Validation["validation"]
+    Validation -. "review-only extension" .-> Stage6C["stage6c validation"]
     Validation --> Diagnostics["diagnostics"]
     Ops["ops / safety gates"] --> Validation
     Diagnostics -. "reads workflow results only" .-> Outputs["outputs"]

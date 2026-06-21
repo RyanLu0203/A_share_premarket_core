@@ -1,0 +1,64 @@
+{
+  "input_artifacts": [
+    "outputs/stage6c/STAGE6C_expanded_validation_dataset.csv",
+    "outputs/stage6a/STAGE6A_baseline_score_snapshot.csv"
+  ],
+  "output_artifacts": {
+    "ranking_baseline_scores": "outputs/stage6c/STAGE6C_ranking_baseline_scores.csv",
+    "ranking_metrics": "outputs/stage6c/STAGE6C_ranking_metrics.csv",
+    "ranking_stability_diagnostics": "outputs/stage6c/STAGE6C_ranking_stability_diagnostics.csv",
+    "feature_usage_manifest": "outputs/stage6c/STAGE6C_ranking_feature_usage_manifest.csv"
+  },
+  "approved_symbols_policy": "approved_only_no_blocked_symbols",
+  "target_label": "alpha_return_1d",
+  "ranking_baselines": [
+    {
+      "baseline_id": "score_based_alpha_ranking",
+      "method": "rank_stage6a_baseline_score",
+      "input_columns": ["baseline_score"]
+    },
+    {
+      "baseline_id": "signal_quality_ranking",
+      "method": "rank_source_quality_signal_contract",
+      "input_columns": ["source_health_score", "source_count", "event_count_pit"]
+    },
+    {
+      "baseline_id": "naive_equal_weight_ranking",
+      "method": "constant_rank_score_symbol_tiebreak",
+      "input_columns": []
+    }
+  ],
+  "metrics": [
+    "rank_ic",
+    "spearman_rank_corr",
+    "top_bottom_spread",
+    "top_bucket_mean_target",
+    "bottom_bucket_mean_target",
+    "coverage",
+    "n_dates",
+    "n_symbols"
+  ],
+  "walk_forward_policy": {
+    "min_train_dates": 2,
+    "validation_window_dates": 1,
+    "preserve_chronological_order": true,
+    "random_splits_allowed": false
+  },
+  "minimum_panel_size_warning_threshold": {
+    "rows": 20,
+    "dates": 5,
+    "symbols": 2
+  },
+  "locked_downstream_policy": {
+    "recommendation": false,
+    "position_band": false,
+    "portfolio_weights": false,
+    "risk_overlay_calculation": false,
+    "dashboard": false,
+    "paper_trading": false,
+    "broker_live_trading": false,
+    "production_db_writes": false,
+    "production_model_promotion": false,
+    "dqn_rl": false
+  }
+}

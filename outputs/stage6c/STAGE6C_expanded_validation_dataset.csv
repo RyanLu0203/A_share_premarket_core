@@ -1,0 +1,9 @@
+trade_date,symbol,approved_symbol_flag,usable_for_validation,review_only,source_panel_type,market_trend_5d,sector_momentum_5d,stock_gap_signal,event_count_pit,review_only_nlp_contract_score,source_health_score,source_count,stock_return_1d,benchmark_return_1d,alpha_return_1d,label_positive,target_label_name,target_label,split_role,chronological_date_index,walk_forward_fold_id,data_quality_flags,leakage_flags
+2026-06-16,002475.SZ,true,true,true,clean_bootstrap_review_fixture,0.12,0.07,0.04,1,0.1,0.5,2,0.018,0.006,0.012,true,alpha_return_1d,0.012,train_candidate,1,prefold_train_only,PASS,PASS
+2026-06-16,600036.SH,true,true,true,clean_bootstrap_review_fixture,0.12,0.03,0.01,2,0.05,0.75,3,0.005,0.006,-0.001,false,alpha_return_1d,-0.001,train_candidate,1,prefold_train_only,PASS,PASS
+2026-06-17,002475.SZ,true,true,true,clean_bootstrap_review_fixture,0.08,0.06,0.09,2,0.16,0.5,2,-0.004,0.001,-0.005,false,alpha_return_1d,-0.005,train_candidate,2,prefold_train_only,PASS,PASS
+2026-06-17,600036.SH,true,true,true,clean_bootstrap_review_fixture,0.08,0.05,0.02,1,0.07,0.75,3,0.007,0.001,0.006,true,alpha_return_1d,0.006,train_candidate,2,prefold_train_only,PASS,PASS
+2026-06-18,002475.SZ,true,true,true,clean_bootstrap_review_fixture,-0.03,0.02,-0.02,1,0.08,0.5,2,0.011,0.002,0.009,true,alpha_return_1d,0.009,validation_candidate,3,wf_01,PASS,PASS
+2026-06-18,600036.SH,true,true,true,clean_bootstrap_review_fixture,-0.03,-0.01,0.0,2,0.06,0.75,3,-0.002,0.002,-0.004,false,alpha_return_1d,-0.004,validation_candidate,3,wf_01,PASS,PASS
+2026-06-19,002475.SZ,true,true,true,clean_bootstrap_review_fixture,0.05,0.04,0.03,2,0.12,0.5,2,0.006,0.003,0.003,true,alpha_return_1d,0.003,validation_candidate,4,wf_02,PASS,PASS
+2026-06-19,600036.SH,true,true,true,clean_bootstrap_review_fixture,0.05,0.02,0.04,1,0.09,0.75,3,0.009,0.003,0.006,true,alpha_return_1d,0.006,validation_candidate,4,wf_02,PASS,PASS

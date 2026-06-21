@@ -1,7 +1,8 @@
-# E2E Validation Through GOAL-06B
+# E2E Validation Through GOAL-06B Plus GOAL-06C Review-Only Extension
 
 Supported runtime: Python `>=3.9`. Python `3.9.21` was verified during the
-fresh-clone audit for the clean GOAL-06B workflow.
+fresh-clone audit for the clean GOAL-06B workflow. GOAL-06C uses the same
+runtime boundary for review-only expanded validation.
 
 The active validation command is:
 
@@ -23,6 +24,7 @@ It validates:
 - Stage 6A repair panel
 - baseline scoring skeleton with labels excluded
 - GOAL-06B supervised training gate
+- GOAL-06C review-only expanded validation and ranking baseline gate
 - review-only and pilot-only flags
 - locked downstream capabilities remain false
 - diagnostics reports are generated
@@ -48,6 +50,12 @@ Workflow status governance is checked by:
 
 ```bash
 python scripts/audit_workflow_status.py
+```
+
+GOAL-06C review-only validation is checked by:
+
+```bash
+python scripts/run_goal06c_expanded_validation.py
 ```
 
 Runtime timing policy:

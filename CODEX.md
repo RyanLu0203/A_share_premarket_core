@@ -3,15 +3,21 @@
 ## Mission
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
-GOAL-06B. Preserve reproducibility and source governance before adding any
-future model or risk work.
+GOAL-06B, plus the GOAL-06C review-only expanded validation extension. Preserve
+reproducibility and source governance before adding any future model or risk
+work.
 
 ## Current Reliable Facts
 
 - This target repository is the active source of truth.
 - The source repository is historical legacy/evidence reference only.
-- The active workflow stops at GOAL-06B supervised baseline training gate.
+- The active scoring workflow stops at GOAL-06B supervised baseline training
+  gate.
 - GOAL-06B is review-only and pilot-only.
+- GOAL-06C is implemented_review_only for expanded validation, ranking
+  baselines, metrics, walk-forward diagnostics, and stability diagnostics.
+- GOAL-06D is future_review_only; no model comparison/calibration is
+  implemented yet.
 - Production model promotion is false.
 - Recommendation, risk overlay, dashboard, paper trading, broker/live trading,
   production DB writes, and DQN/RL are locked.
@@ -34,6 +40,10 @@ future model or risk work.
 ```bash
 python -m compileall src scripts tests
 python -m pytest tests -q
+python scripts/run_goal06c_expanded_validation.py
+python scripts/audit_stage6c_expanded_validation.py
+python scripts/audit_stage6c_ranking_baselines.py
+python scripts/run_stage6c_walk_forward_validation.py
 python scripts/audit_workflow_status.py
 python scripts/run_goal06b_regression_suite.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -70,4 +80,5 @@ gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not start GOAL-06C unless the readiness report explicitly unlocks it.
+- Do not start GOAL-06D unless the Stage 6C readiness report explicitly
+  unlocks it as future review-only work.

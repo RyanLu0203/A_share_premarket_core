@@ -24,3 +24,6 @@ program_validation_profile,Program validation profile,GOAL-06B,PASS,ashare_prema
 safety_gate,Safety gate,GOAL-06B,PASS,ashare_premarket.ops,Keep active
 adapter_audit,Adapter audit,GOAL-06B,PASS,ashare_premarket.ops,Keep active
 workflow_diagnostics,Workflow diagnostics,GOAL-06B,PASS,ashare_premarket.diagnostics,Keep active
+goal06c_expanded_validation,GOAL-06C expanded validation panel,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings
+goal06c_ranking_baselines,GOAL-06C ranking baselines,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings
+goal06c_walk_forward_diagnostics,GOAL-06C walk-forward diagnostics,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings

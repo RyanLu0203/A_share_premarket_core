@@ -41,9 +41,12 @@ Implemented active through GOAL-06B:
 - Safety Gate
 - Adapter Audit
 
-Future review-only:
+Implemented review-only:
 
 - GOAL-06C Expanded Validation and Ranking Baseline
+
+Future review-only:
+
 - GOAL-06D Model Comparison and Calibration
 
 Future design-only:
@@ -102,3 +105,19 @@ This writes:
 - `outputs/audits/workflow_status_audit.md`
 - `outputs/audits/workflow_status_table.csv`
 - `outputs/audits/workflow_diagram_update_report.md`
+
+## GOAL-06C Status
+
+GOAL-06C is `implemented_review_only`. It creates:
+
+- `outputs/stage6c/STAGE6C_expanded_validation_dataset.csv`
+- `outputs/stage6c/STAGE6C_ranking_baseline_scores.csv`
+- `outputs/stage6c/STAGE6C_ranking_metrics.csv`
+- `outputs/stage6c/STAGE6C_walk_forward_diagnostics.csv`
+- `outputs/stage6c/STAGE6C_ranking_stability_diagnostics.csv`
+
+GOAL-06C does not generate recommendations, position bands, portfolio weights,
+risk overlays, dashboard outputs, paper/live trading, production DB writes,
+production model promotion, or DQN/RL artifacts.
+
+GOAL-06D remains `future_review_only`.

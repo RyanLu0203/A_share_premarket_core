@@ -17,8 +17,11 @@ This file is long-term project memory for Codex and other coding agents.
 
 - Approved symbols: `002475.SZ`, `600036.SH`.
 - Blocked/pending: `000625.SZ`, `000858.SZ`, `601138.SH`, `601208.SH`.
-- Active boundary: project start through GOAL-06B.
+- Active scoring boundary: project start through GOAL-06B.
 - GOAL-06B supervised baseline training is review-only and pilot-only.
+- GOAL-06C expanded validation and ranking baseline is implemented_review_only.
+- GOAL-06D is future_review_only only; no model comparison/calibration is
+  implemented yet.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
@@ -53,6 +56,10 @@ Minimum normal validation:
 ```bash
 python -m compileall src scripts tests
 python -m pytest tests -q
+python scripts/run_goal06c_expanded_validation.py
+python scripts/audit_stage6c_expanded_validation.py
+python scripts/audit_stage6c_ranking_baselines.py
+python scripts/run_stage6c_walk_forward_validation.py
 python scripts/run_safety_gate.py
 python scripts/run_adapter_audit.py
 ```

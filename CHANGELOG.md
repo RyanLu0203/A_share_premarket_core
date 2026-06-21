@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-21 - GOAL-06C
+
+- Added review-only expanded validation panel, ranking baselines, ranking
+  metrics, walk-forward diagnostics, and stability diagnostics.
+- Added GOAL-06C public wrappers, configs, audits, readiness report, and tests.
+- Promoted `goal06c_expanded_validation_ranking` to
+  `implemented_review_only` in `configs/project/workflow_status.csv`.
+- Kept GOAL-06D as future review-only and all recommendation, risk, dashboard,
+  paper/live trading, production, and DQN/RL boundaries locked.
+
 ## 2026-06-21 - GOAL-DOCS-01
 
 - Added canonical workflow status contract at

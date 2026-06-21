@@ -4,14 +4,14 @@ Last updated: 2026-06-21
 
 ## Current Stage
 
-Status: `PASS` for GOAL-HYGIENE-01 warning resolution pending final commit and
-remote HEAD verification. Clean bootstrap readiness remains
-`PASS_WITH_WARNINGS` because the Class D source-evidence gap is intentionally
-documented.
+Status: `PASS_WITH_WARNINGS` for GOAL-06C expanded validation and ranking
+baseline gate. Warnings are limited to small clean-bootstrap review fixture
+size; leakage and downstream boundary audits pass.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
-system through GOAL-06B.
+system through GOAL-06B, with GOAL-06C implemented as a review-only validation
+extension.
 
 Chinese identity: A 股盘前 Alpha 诊断 + 风险约束建仓决策支持系统。
 
@@ -37,6 +37,7 @@ Implemented and protected:
 - Stage 6A repair panel
 - GOAL-06A baseline scoring skeleton
 - GOAL-06B review-only supervised baseline training gate
+- GOAL-06C review-only expanded validation and ranking baseline gate
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -58,10 +59,16 @@ Blocked symbols must never reach active connector or generated workflow outputs.
 
 ## Lock Status
 
+Implemented review-only:
+
+- GOAL-06C expanded validation and ranking baseline
+
+Future review-only:
+
+- GOAL-06D model comparison and calibration
+
 Still locked:
 
-- GOAL-06C implementation
-- GOAL-06D
 - GOAL-07A / GOAL-07B
 - recommendation or position-band output
 - risk overlay calculation
@@ -72,9 +79,8 @@ Still locked:
 - production model promotion
 - DQN/RL
 
-GOAL-06C may begin only as a future review-only expanded validation task if
-`outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md` explicitly
-unlocks it.
+GOAL-06D may begin only as a future review-only model comparison/calibration
+task if `outputs/audits/stage6c_readiness_report.md` explicitly unlocks it.
 
 ## Current Evidence Chain
 
@@ -86,6 +92,7 @@ The protected regenerated outputs live under:
 - `outputs/datasets/`
 - `outputs/stage6a/`
 - `outputs/stage6b/`
+- `outputs/stage6c/`
 - `outputs/models/goal06b/`
 - `outputs/diagnostics/`
 
@@ -115,8 +122,8 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move from dotted/future to
-solid/implemented. GOAL-06C remains the next allowed goal and only as
-future review-only expanded validation.
+implemented. GOAL-06C is now `implemented_review_only`; GOAL-06D remains the
+next allowed goal and only as future review-only model comparison/calibration.
 
 ## Known Warnings
 
@@ -126,6 +133,8 @@ future review-only expanded validation.
 - The historical GOAL-05/GOAL-06 docs named in the migration objective were not
   present at expected source paths during inspection; this is documented as
   `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.
+- GOAL-06C uses the small clean-bootstrap review fixture: 8 rows, 4 trading
+  dates, and 2 approved symbols.
 
 These warnings do not affect Class A active workflow reproducibility through
-GOAL-06B and do not unlock downstream modules.
+GOAL-06C review-only validation and do not unlock downstream modules.

@@ -11,6 +11,12 @@ python scripts/run_baseline_scoring_skeleton.py,scripts/run_baseline_scoring_ske
 python scripts/audit_baseline_scoring_skeleton.py,scripts/audit_baseline_scoring_skeleton.py,true,clean_wrapper,false,PASS
 python scripts/run_supervised_baseline_training.py,scripts/run_supervised_baseline_training.py,true,clean_wrapper,false,PASS
 python scripts/audit_supervised_baseline_training.py,scripts/audit_supervised_baseline_training.py,true,clean_wrapper,false,PASS
+python scripts/build_stage6c_expanded_validation_dataset.py,scripts/build_stage6c_expanded_validation_dataset.py,true,clean_wrapper,false,PASS
+python scripts/audit_stage6c_expanded_validation.py,scripts/audit_stage6c_expanded_validation.py,true,clean_wrapper,false,PASS
+python scripts/run_stage6c_ranking_baselines.py,scripts/run_stage6c_ranking_baselines.py,true,clean_wrapper,false,PASS
+python scripts/audit_stage6c_ranking_baselines.py,scripts/audit_stage6c_ranking_baselines.py,true,clean_wrapper,false,PASS
+python scripts/run_stage6c_walk_forward_validation.py,scripts/run_stage6c_walk_forward_validation.py,true,clean_wrapper,false,PASS
+python scripts/run_goal06c_expanded_validation.py,scripts/run_goal06c_expanded_validation.py,true,clean_wrapper,false,PASS
 python scripts/run_current_trunk_validation.py,scripts/run_current_trunk_validation.py,true,clean_wrapper,false,PASS
 python scripts/run_program_validation_profile.py,scripts/run_program_validation_profile.py,true,clean_wrapper,false,PASS
 python scripts/run_safety_gate.py,scripts/run_safety_gate.py,true,clean_wrapper,false,PASS

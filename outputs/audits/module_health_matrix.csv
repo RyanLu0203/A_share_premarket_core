@@ -24,3 +24,6 @@ program_validation_profile,GOAL-06B,ashare_premarket.validation,PASS,CLASS_A_REQ
 safety_gate,GOAL-06B,ashare_premarket.ops,PASS,CLASS_A_REQUIRED_ACTIVE,true
 adapter_audit,GOAL-06B,ashare_premarket.ops,PASS,CLASS_A_REQUIRED_ACTIVE,true
 workflow_diagnostics,GOAL-06B,ashare_premarket.diagnostics,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06c_expanded_validation,GOAL-06C,ashare_premarket.validation.stage6c,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06c_ranking_baselines,GOAL-06C,ashare_premarket.validation.stage6c,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06c_walk_forward_diagnostics,GOAL-06C,ashare_premarket.validation.stage6c,PASS,CLASS_A_REQUIRED_ACTIVE,true

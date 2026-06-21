@@ -19,6 +19,7 @@ from ashare_premarket.ops.safety import run_safety_gate
 from ashare_premarket.scoring.baseline import audit_baseline_scoring_skeleton, run_baseline_scoring_skeleton, run_stage6a_blocker_repair
 from ashare_premarket.training.supervised_baseline import audit_supervised_baseline_training, run_supervised_baseline_training
 from ashare_premarket.universe.governance import validate_symbol_governance
+from ashare_premarket.validation.stage6c import run_goal06c_expanded_validation
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
 
@@ -118,6 +119,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("broker_live_trading_false", read_json(root / "outputs/models/goal06b/baseline_training_summary.json")["broker_live_trading_unlocked"] is False),
         ("dqn_rl_false", read_json(root / "outputs/models/goal06b/baseline_training_summary.json")["dqn_rl_unlocked"] is False),
         ("diagnostics_reports_generated", run_workflow_diagnostics(root)),
+        ("goal06c_expanded_validation_review_only", run_goal06c_expanded_validation(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
         ("adapter_audit_passes", run_adapter_audit(root)),
@@ -176,6 +178,7 @@ def run_program_validation_profile(root: Path) -> bool:
     commands = [
         ("python -m compileall src scripts tests", [sys.executable, "-m", "compileall", "src", "scripts", "tests"]),
         ("python -m pytest tests -q", [sys.executable, "-m", "pytest", "tests", "-q"]),
+        ("python scripts/run_goal06c_expanded_validation.py", [sys.executable, "scripts/run_goal06c_expanded_validation.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),

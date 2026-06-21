@@ -79,10 +79,22 @@ def run_workflow_status_audit(root: Path) -> bool:
         failures.append("full roadmap does not label DQN/RL as deleted_from_active_mainline")
 
     by_id = {row["workflow_id"]: row for row in rows}
-    if by_id.get("goal06c_expanded_validation_ranking", {}).get("status") != "future_review_only":
-        failures.append("next allowed GOAL-06C block is not future_review_only")
-    if "next_allowed_goal_review_only" not in by_id.get("goal06c_expanded_validation_ranking", {}).get("allowed_next_action", ""):
+    goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
+    goal06c_status = goal06c.get("status")
+    if goal06c_status not in {"future_review_only", "implemented_review_only"}:
+        failures.append("GOAL-06C block must be future_review_only or implemented_review_only")
+    if goal06c_status == "implemented_review_only":
+        readiness = _read(root / "outputs/audits/stage6c_readiness_report.md")
+        if "GOAL-06C Expanded Validation Readiness: PASS" not in readiness:
+            failures.append("GOAL-06C is implemented_review_only without a PASS/PASS_WITH_WARNINGS readiness report")
+        if "implemented_review_only" not in full_roadmap:
+            failures.append("full roadmap does not label GOAL-06C as implemented_review_only")
+    elif "next_allowed_goal_review_only" not in goal06c.get("allowed_next_action", ""):
         failures.append("next allowed goal is not clearly GOAL-06C review-only expanded validation")
+    if by_id.get("goal06d_model_comparison_calibration", {}).get("status") != "future_review_only":
+        failures.append("GOAL-06D must remain future_review_only")
+    if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
+        failures.append("GOAL-07A must remain future_design_only")
 
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
@@ -111,7 +123,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"Failures: `{len(failures)}`",
                 f"Warnings: `{len(warnings)}`",
                 "",
-                "Next allowed goal: `GOAL-06C Expanded Validation and Ranking Baseline` as `future_review_only`.",
+                f"GOAL-06C status: `{goal06c_status or 'missing'}`.",
+                "Next allowed goal after GOAL-06C promotion: `GOAL-06D Model Comparison and Calibration` as `future_review_only`.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -174,6 +187,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "solid"
         can_promote = False
         blocker = "already implemented active"
+    elif status == "implemented_review_only":
+        edge_type = "dotted_review_only"
+        can_promote = False
+        blocker = "already implemented review-only"
     elif status == "deleted_from_active_mainline":
         edge_type = "dotted_side_note"
         can_promote = False

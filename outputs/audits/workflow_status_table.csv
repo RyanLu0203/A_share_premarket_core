@@ -14,7 +14,7 @@ goal06b_supervised_baseline_gate,GOAL-06B Supervised Baseline Training Gate,impl
 validation_verification_diagnostics,Validation / Verification / Diagnostics,implemented_active,solid,false,already implemented active,GOAL-06B
 safety_gate,Safety Gate,implemented_active,solid,false,already implemented active,GOAL-06B
 adapter_audit,Adapter Audit,implemented_active,solid,false,already implemented active,GOAL-06B
-goal06c_expanded_validation_ranking,GOAL-06C Expanded Validation and Ranking Baseline,future_review_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-06C review-only expanded validation
+goal06c_expanded_validation_ranking,GOAL-06C Expanded Validation and Ranking Baseline,implemented_review_only,dotted_review_only,false,already implemented review-only,GOAL-06C review-only expanded validation
 goal06d_model_comparison_calibration,GOAL-06D Model Comparison and Calibration,future_review_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-06D
 goal07a_risk_overlay_design,GOAL-07A Risk Overlay Design,future_design_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-07A
 goal07b_risk_overlay_calculation,GOAL-07B Risk Overlay Calculation Prototype,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-07B

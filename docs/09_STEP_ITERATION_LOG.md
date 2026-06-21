@@ -1,5 +1,44 @@
 # 09 Step Iteration Log
 
+## 2026-06-21 - GOAL-06C Expanded Validation And Ranking Baseline Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added GOAL-06C expanded validation panel built from existing clean
+  GOAL-06B-compatible artifacts.
+- Added deterministic review-only ranking baselines:
+  `score_based_alpha_ranking`, `signal_quality_ranking`, and
+  `naive_equal_weight_ranking`.
+- Added ranking metrics, walk-forward diagnostics, and stability diagnostics.
+- Added GOAL-06C audits and readiness report.
+- Promoted `goal06c_expanded_validation_ranking` to
+  `implemented_review_only` in `configs/project/workflow_status.csv`.
+
+Evidence:
+
+- `outputs/stage6c/STAGE6C_expanded_validation_dataset.csv`
+- `outputs/stage6c/STAGE6C_ranking_baseline_scores.csv`
+- `outputs/stage6c/STAGE6C_ranking_metrics.csv`
+- `outputs/stage6c/STAGE6C_walk_forward_diagnostics.csv`
+- `outputs/stage6c/STAGE6C_ranking_stability_diagnostics.csv`
+- `outputs/audits/stage6c_readiness_report.md`
+
+Warnings:
+
+- The validation panel is intentionally small: 8 rows, 4 trading dates, and 2
+  approved symbols from the clean bootstrap review fixture.
+- The naive ranking baseline uses a deterministic symbol tie-break and is
+  explicitly marked as a review-only baseline.
+
+Safety:
+
+- No recommendation, position-band, portfolio-weight, risk overlay, dashboard,
+  paper/live trading, production write, production model promotion, or DQN/RL
+  capability was activated.
+- GOAL-06D is unlocked only as future review-only model comparison/calibration.
+
 ## 2026-06-21 - GOAL-DOCS-01 Canonical Workflow Diagram And Status Governance
 
 Status: `PASS`.

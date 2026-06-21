@@ -1,0 +1,62 @@
+{
+  "input_artifacts": [
+    "outputs/datasets/model_ready_candidate_dataset.csv",
+    "outputs/stage6a/STAGE6A_baseline_score_snapshot.csv"
+  ],
+  "output_artifacts": {
+    "expanded_validation_dataset": "outputs/stage6c/STAGE6C_expanded_validation_dataset.csv",
+    "walk_forward_diagnostics": "outputs/stage6c/STAGE6C_walk_forward_diagnostics.csv",
+    "ranking_stability_diagnostics": "outputs/stage6c/STAGE6C_ranking_stability_diagnostics.csv",
+    "feature_usage_manifest": "outputs/stage6c/STAGE6C_ranking_feature_usage_manifest.csv"
+  },
+  "approved_symbols_policy": "approved_only_no_blocked_symbols",
+  "target_label": "alpha_return_1d",
+  "feature_columns": [
+    "market_trend_5d",
+    "sector_momentum_5d",
+    "stock_gap_signal",
+    "event_count_pit",
+    "review_only_nlp_contract_score",
+    "source_health_score",
+    "source_count"
+  ],
+  "label_columns": [
+    "stock_return_1d",
+    "benchmark_return_1d",
+    "alpha_return_1d",
+    "label_positive"
+  ],
+  "metrics": [
+    "rank_ic",
+    "spearman_rank_corr",
+    "top_bottom_spread",
+    "top_bucket_mean_target",
+    "bottom_bucket_mean_target",
+    "coverage",
+    "n_dates",
+    "n_symbols"
+  ],
+  "walk_forward_policy": {
+    "min_train_dates": 2,
+    "validation_window_dates": 1,
+    "preserve_chronological_order": true,
+    "random_splits_allowed": false
+  },
+  "minimum_panel_size_warning_threshold": {
+    "rows": 20,
+    "dates": 5,
+    "symbols": 2
+  },
+  "locked_downstream_policy": {
+    "recommendation": false,
+    "position_band": false,
+    "portfolio_weights": false,
+    "risk_overlay_calculation": false,
+    "dashboard": false,
+    "paper_trading": false,
+    "broker_live_trading": false,
+    "production_db_writes": false,
+    "production_model_promotion": false,
+    "dqn_rl": false
+  }
+}

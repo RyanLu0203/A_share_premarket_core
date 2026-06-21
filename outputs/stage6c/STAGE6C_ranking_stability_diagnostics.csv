@@ -1,0 +1,16 @@
+baseline_id,metric_name,mean_value,std_value,min_value,max_value,n_periods,stability_warning
+naive_equal_weight_ranking,bottom_bucket_mean_target,0.00175,0.00438,-0.004,0.006,4,LIMITED_PERIODS;CONSTANT_BASELINE_TIE_BROKEN_BY_SYMBOL
+naive_equal_weight_ranking,rank_ic,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS;CONSTANT_BASELINE_TIE_BROKEN_BY_SYMBOL
+naive_equal_weight_ranking,spearman_rank_corr,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS;CONSTANT_BASELINE_TIE_BROKEN_BY_SYMBOL
+naive_equal_weight_ranking,top_bottom_spread,0.003,0.010392,-0.011,0.013,4,LIMITED_PERIODS;CONSTANT_BASELINE_TIE_BROKEN_BY_SYMBOL
+naive_equal_weight_ranking,top_bucket_mean_target,0.00475,0.006495,-0.005,0.012,4,LIMITED_PERIODS;CONSTANT_BASELINE_TIE_BROKEN_BY_SYMBOL
+score_based_alpha_ranking,bottom_bucket_mean_target,0.00475,0.006495,-0.005,0.012,4,LIMITED_PERIODS
+score_based_alpha_ranking,rank_ic,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS
+score_based_alpha_ranking,spearman_rank_corr,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS
+score_based_alpha_ranking,top_bottom_spread,-0.003,0.010392,-0.013,0.011,4,LIMITED_PERIODS
+score_based_alpha_ranking,top_bucket_mean_target,0.00175,0.00438,-0.004,0.006,4,LIMITED_PERIODS
+signal_quality_ranking,bottom_bucket_mean_target,0.00475,0.006495,-0.005,0.012,4,LIMITED_PERIODS
+signal_quality_ranking,rank_ic,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS
+signal_quality_ranking,spearman_rank_corr,0.0,1.0,-1.0,1.0,4,LIMITED_PERIODS
+signal_quality_ranking,top_bottom_spread,-0.003,0.010392,-0.013,0.011,4,LIMITED_PERIODS
+signal_quality_ranking,top_bucket_mean_target,0.00175,0.00438,-0.004,0.006,4,LIMITED_PERIODS

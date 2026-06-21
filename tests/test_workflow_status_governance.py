@@ -18,15 +18,16 @@ def test_workflow_status_contract_exists_and_has_required_statuses() -> None:
     rows = _workflow_rows()
     statuses = {row["status"] for row in rows}
     assert "implemented_active" in statuses
+    assert "implemented_review_only" in statuses
     assert "future_review_only" in statuses
     assert "future_design_only" in statuses
     assert "locked_future" in statuses
     assert "deleted_from_active_mainline" in statuses
 
 
-def test_goal06c_and_downstream_are_not_implemented_active() -> None:
+def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> None:
     rows = {row["workflow_id"]: row for row in _workflow_rows()}
-    assert rows["goal06c_expanded_validation_ranking"]["status"] == "future_review_only"
+    assert rows["goal06c_expanded_validation_ranking"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "future_review_only"
     assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
     assert rows["goal07b_risk_overlay_calculation"]["status"] == "locked_future"
