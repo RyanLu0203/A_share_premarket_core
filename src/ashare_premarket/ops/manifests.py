@@ -132,6 +132,11 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/scoring/baseline.py", "ashare_premarket.scoring.baseline", "baseline_scoring_skeleton", "GOAL-06A", True, "scripts/run_baseline_scoring_skeleton.py"),
             ("src/ashare_premarket/training/supervised_baseline.py", "ashare_premarket.training.supervised_baseline", "supervised_baseline_training_gate", "GOAL-06B", True, "scripts/run_supervised_baseline_training.py"),
             ("src/ashare_premarket/validation/stage6c.py", "ashare_premarket.validation.stage6c", "goal06c_expanded_validation", "GOAL-06C", True, "scripts/run_goal06c_expanded_validation.py"),
+            ("src/ashare_premarket/storage/policy.py", "ashare_premarket.storage.policy", "goal06c5_storage_policy", "GOAL-06C.5", True, "scripts/audit_storage_policy.py"),
+            ("src/ashare_premarket/data/coverage.py", "ashare_premarket.data.coverage", "goal06c5_source_coverage", "GOAL-06C.5", True, "scripts/audit_data_source_coverage.py"),
+            ("src/ashare_premarket/features/panel_expansion.py", "ashare_premarket.features.panel_expansion", "goal06c5_engineering_pit_panel", "GOAL-06C.5", True, "scripts/build_engineering_pit_signal_panel.py"),
+            ("src/ashare_premarket/labels/panel_expansion.py", "ashare_premarket.labels.panel_expansion", "goal06c5_engineering_label_panel", "GOAL-06C.5", True, "scripts/build_engineering_label_panel.py"),
+            ("src/ashare_premarket/validation/engineering_panel.py", "ashare_premarket.validation.engineering_panel", "goal06c5_engineering_stage6c_panel", "GOAL-06C.5", True, "scripts/rebuild_stage6c_from_engineering_panel.py"),
             ("src/ashare_premarket/validation/gates.py", "ashare_premarket.validation.gates", "current_trunk_validation", "GOAL-06B", True, "scripts/run_e2e_trunk_validation_through_goal06b.py"),
             ("src/ashare_premarket/diagnostics/workflow.py", "ashare_premarket.diagnostics.workflow", "workflow_diagnostics", "GOAL-06B", True, "scripts/run_workflow_diagnostics.py"),
             ("src/ashare_premarket/ops/safety.py", "ashare_premarket.ops.safety", "safety_gate", "GOAL-06B", True, "scripts/run_safety_gate.py"),
@@ -231,6 +236,7 @@ def write_static_audit_docs(root: Path) -> None:
                 "# Active Workflow Map Through GOAL-06B And GOAL-06C Review-Only Validation",
                 "",
                 "Project Operating System -> Universe Governance -> Source Health -> PIT Signal Store -> Label Builder -> Feature-Label Merge -> Leakage Audit -> Stage 6A Repair -> Baseline Scoring -> GOAL-06B Review-Only Supervised Training -> Verification / Validation / Diagnostics -> GOAL-06C Review-Only Expanded Validation.",
+                "GOAL-06C.5 adds storage, data bundle, source coverage, and engineering panel readiness gates; GOAL-06D remains blocked until engineering_pilot coverage exists.",
                 "",
                 "Locked downstream modules are not imported by active source code.",
                 "",
@@ -271,6 +277,12 @@ def _configs_for(capability_id: str) -> str:
         "baseline_scoring_skeleton": "configs/scoring/baseline_scoring_contract.json",
         "supervised_baseline_training_gate": "configs/training/supervised_baseline_gate.json",
         "program_validation_profile": "configs/validation/validation_profile.yaml",
+        "goal06c5_storage_policy": "configs/storage/storage_policy.yaml;configs/storage/data_paths.example.yaml",
+        "goal06c5_data_bundle_manifest": "configs/storage/data_bundle_schema.yaml;configs/storage/table_schema_registry.yaml",
+        "goal06c5_source_coverage": "configs/providers/source_coverage_config.yaml;configs/universe/universe_expansion_config.yaml;configs/project/trading_calendar_expansion_config.yaml",
+        "goal06c5_engineering_pit_panel": "configs/features/engineering_pit_panel_config.yaml",
+        "goal06c5_engineering_label_panel": "configs/labels/engineering_label_panel_config.yaml",
+        "goal06c5_engineering_stage6c_panel": "configs/validation/panel_size_tiers.yaml",
     }
     return mapping.get(capability_id, "")
 
@@ -286,6 +298,18 @@ def _audit_for(capability_id: str) -> str:
         return "outputs/audits/baseline_scoring_skeleton_audit.md"
     if capability_id == "supervised_baseline_training_gate":
         return "outputs/audits/supervised_baseline_training_audit.md"
+    if capability_id == "goal06c5_storage_policy":
+        return "outputs/audits/storage_policy_audit.md"
+    if capability_id == "goal06c5_data_bundle_manifest":
+        return "outputs/audits/data_bundle_manifest_audit.md"
+    if capability_id == "goal06c5_source_coverage":
+        return "outputs/audits/data_source_coverage_audit.md;outputs/audits/source_gap_analysis.md"
+    if capability_id == "goal06c5_engineering_pit_panel":
+        return "outputs/audits/engineering_pit_signal_panel_audit.md"
+    if capability_id == "goal06c5_engineering_label_panel":
+        return "outputs/audits/engineering_label_panel_audit.md"
+    if capability_id == "goal06c5_engineering_stage6c_panel":
+        return "outputs/audits/stage6c_engineering_panel_audit.md;outputs/audits/engineering_panel_readiness_report.md;outputs/audits/active_path_replacement_audit.md"
     return ""
 
 

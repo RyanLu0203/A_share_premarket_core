@@ -21,13 +21,14 @@ flowchart TD
     I --> J["GOAL-06B Review-Only Supervised Training"]
     J --> K["Verification / Validation / Diagnostics"]
     K -. "implemented review-only" .-> L["GOAL-06C Expanded Validation + Ranking"]
-    L -. "future review-only" .-> M["GOAL-06D Model Comparison / Calibration"]
+    L -. "implemented review-only data gate" .-> N["GOAL-06C.5 Storage + Coverage + Engineering Panel"]
+    N -. "blocked until engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration"]
 ```
 
 Locked future modules are documented in the roadmap and are not imported by the
 active trunk.
 
 The canonical status contract is `configs/project/workflow_status.csv`.
-Implemented active blocks use solid arrows. GOAL-06C is implemented as a
-review-only dotted extension. Future, design-only, locked, and
+Implemented active blocks use solid arrows. GOAL-06C and GOAL-06C.5 are
+implemented as review-only dotted extensions. Future, design-only, locked, and
 deleted-from-active-mainline blocks use dotted arrows or side-note references.

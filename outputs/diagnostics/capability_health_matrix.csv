@@ -27,3 +27,9 @@ workflow_diagnostics,Workflow diagnostics,GOAL-06B,PASS,ashare_premarket.diagnos
 goal06c_expanded_validation,GOAL-06C expanded validation panel,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings
 goal06c_ranking_baselines,GOAL-06C ranking baselines,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings
 goal06c_walk_forward_diagnostics,GOAL-06C walk-forward diagnostics,GOAL-06C,PASS,ashare_premarket.validation.stage6c,Keep review-only; monitor small-panel warnings
+goal06c5_storage_policy,GOAL-06C.5 local research storage policy,GOAL-06C.5,PASS,ashare_premarket.storage.policy,Keep active
+goal06c5_data_bundle_manifest,GOAL-06C.5 data bundle manifest,GOAL-06C.5,PASS,ashare_premarket.storage.policy,Keep active
+goal06c5_source_coverage,"GOAL-06C.5 source, universe, and calendar coverage",GOAL-06C.5,PASS,ashare_premarket.data.coverage,Keep active
+goal06c5_engineering_pit_panel,GOAL-06C.5 engineering PIT signal panel sample,GOAL-06C.5,PASS,ashare_premarket.features.panel_expansion,Keep active
+goal06c5_engineering_label_panel,GOAL-06C.5 engineering label panel sample,GOAL-06C.5,PASS,ashare_premarket.labels.panel_expansion,Keep active
+goal06c5_engineering_stage6c_panel,GOAL-06C.5 Stage 6C engineering panel gate,GOAL-06C.5,PASS,ashare_premarket.validation.engineering_panel,Keep active

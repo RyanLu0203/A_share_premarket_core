@@ -10,6 +10,13 @@ venv/
 *.sqlite
 *.sqlite3
 *.db
+*.duckdb
+*.parquet
+*.feather
+*.arrow
+*.pkl
+*.joblib
+*.zip
 *.log
 *.raw
 *.payload
@@ -24,3 +31,9 @@ outputs/diagnostics/local_runtime_*.json
 outputs/diagnostics/local_run_*.md
 data/cached_evidence/**
 !data/cached_evidence/.gitkeep
+data/lake/**
+data/raw/**
+data/bundles/**
+data/metadata/**
+data/exports/**
+local_data/**

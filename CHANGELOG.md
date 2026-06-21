@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-21 - GOAL-06C.5
+
+- Added local research storage policy, data bundle manifest contracts, provider
+  ingestion contracts, and heavy-artifact hygiene coverage.
+- Added source, universe, trading calendar, and provider coverage audits.
+- Added engineering PIT signal, label, and Stage 6C panel samples with readiness
+  reports and replacement-path audit.
+- Classified the current panel as `contract_demo`, not `engineering_pilot`, and
+  kept GOAL-06D blocked.
+- Added GOAL-06C.5 public wrappers, tests, docs, and workflow status governance.
+
 ## 2026-06-21 - GOAL-06C
 
 - Added review-only expanded validation panel, ranking baselines, ranking

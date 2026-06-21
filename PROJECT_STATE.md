@@ -6,7 +6,9 @@ Last updated: 2026-06-21
 
 Status: `PASS_WITH_WARNINGS` for GOAL-06C expanded validation and ranking
 baseline gate. Warnings are limited to small clean-bootstrap review fixture
-size; leakage and downstream boundary audits pass.
+size; leakage and downstream boundary audits pass. GOAL-06C.5 is implemented as
+a review-only engineering data foundation gate, but the panel remains
+`contract_demo` and does not unlock GOAL-06D.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -38,6 +40,7 @@ Implemented and protected:
 - GOAL-06A baseline scoring skeleton
 - GOAL-06B review-only supervised baseline training gate
 - GOAL-06C review-only expanded validation and ranking baseline gate
+- GOAL-06C.5 storage, data bundle, source coverage, and engineering panel gate
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -62,10 +65,12 @@ Blocked symbols must never reach active connector or generated workflow outputs.
 Implemented review-only:
 
 - GOAL-06C expanded validation and ranking baseline
+- GOAL-06C.5 engineering data coverage, storage, and panel expansion gate
 
 Future review-only:
 
-- GOAL-06D model comparison and calibration
+- GOAL-06D model comparison and calibration, blocked until GOAL-06C.5 reaches
+  `engineering_pilot`
 
 Still locked:
 
@@ -80,7 +85,8 @@ Still locked:
 - DQN/RL
 
 GOAL-06D may begin only as a future review-only model comparison/calibration
-task if `outputs/audits/stage6c_readiness_report.md` explicitly unlocks it.
+task if `outputs/audits/engineering_panel_readiness_report.md` explicitly
+allows it. The current readiness report keeps GOAL-06D blocked.
 
 ## Current Evidence Chain
 
@@ -122,8 +128,8 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move from dotted/future to
-implemented. GOAL-06C is now `implemented_review_only`; GOAL-06D remains the
-next allowed goal and only as future review-only model comparison/calibration.
+implemented. GOAL-06C and GOAL-06C.5 are now `implemented_review_only`; GOAL-06D
+remains future review-only and blocked until `engineering_pilot`.
 
 ## Known Warnings
 
@@ -135,6 +141,8 @@ next allowed goal and only as future review-only model comparison/calibration.
   `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.
 - GOAL-06C uses the small clean-bootstrap review fixture: 8 rows, 4 trading
   dates, and 2 approved symbols.
+- GOAL-06C.5 proves that the current panel is still `contract_demo`; expansion
+  requires at least 50 approved symbols, 120 trading dates, and 6000 rows.
 
 These warnings do not affect Class A active workflow reproducibility through
 GOAL-06C review-only validation and do not unlock downstream modules.

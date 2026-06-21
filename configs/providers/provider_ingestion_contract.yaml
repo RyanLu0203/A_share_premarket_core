@@ -1,0 +1,20 @@
+{
+  "contract_id": "goal06c5_provider_ingestion_contract",
+  "network_ingestion_enabled_by_default": false,
+  "ingestion_mode": "contract_defined_not_implemented",
+  "allowed_categories": [
+    "ohlcv_daily",
+    "benchmark_daily",
+    "announcement_metadata",
+    "market_metadata",
+    "sector_metadata"
+  ],
+  "required_controls": [
+    "explicit_network_flag",
+    "local_data_root_outside_repo",
+    "raw_payloads_local_only",
+    "checksums_for_local_bundles",
+    "no_full_announcement_body_text_in_github",
+    "no_production_database_writes"
+  ]
+}

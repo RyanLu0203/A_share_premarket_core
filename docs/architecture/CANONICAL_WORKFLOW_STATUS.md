@@ -44,10 +44,12 @@ Implemented active through GOAL-06B:
 Implemented review-only:
 
 - GOAL-06C Expanded Validation and Ranking Baseline
+- GOAL-06C.5 Engineering Data Coverage + Storage + Panel Expansion
 
 Future review-only:
 
-- GOAL-06D Model Comparison and Calibration
+- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.5
+  engineering panel reaches `engineering_pilot`
 
 Future design-only:
 
@@ -120,4 +122,12 @@ GOAL-06C does not generate recommendations, position bands, portfolio weights,
 risk overlays, dashboard outputs, paper/live trading, production DB writes,
 production model promotion, or DQN/RL artifacts.
 
-GOAL-06D remains `future_review_only`.
+## GOAL-06C.5 Status
+
+GOAL-06C.5 is `implemented_review_only`. It creates storage policy, data bundle,
+source coverage, provider contract, engineering PIT panel, engineering label
+panel, and Stage 6C engineering panel audit evidence.
+
+The current panel is `contract_demo`, not `engineering_pilot`. GOAL-06D remains
+`future_review_only` and blocked until the engineering panel readiness report
+allows it.

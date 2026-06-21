@@ -1,0 +1,12 @@
+{
+  "registry_id": "goal06c5_table_schema_registry",
+  "tables": {
+    "ohlcv_daily": ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount", "source_id", "quality_flags"],
+    "benchmark_daily": ["trade_date", "benchmark_id", "close", "return_1d", "source_id", "quality_flags"],
+    "announcements_metadata": ["publish_date", "symbol", "announcement_id", "title_hash", "source_id", "pit_available_ts", "quality_flags"],
+    "source_coverage": ["source_id", "symbol", "trade_date", "field_name", "available", "pit_ready", "missing_reason"],
+    "pit_signal_panel": ["as_of_date", "target_trading_date", "decision_cutoff_ts", "symbol", "source_bundle_id", "pit_ready"],
+    "label_panel": ["trade_date", "symbol", "fwd_1d_return", "fwd_3d_return", "fwd_5d_return", "label_ready"],
+    "stage6c_engineering_panel": ["trade_date", "symbol", "panel_tier", "source_bundle_id", "usable_for_validation"]
+  }
+}

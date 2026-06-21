@@ -1,0 +1,30 @@
+{
+  "contract_demo": {
+    "min_symbols": 2,
+    "min_trading_dates": 4,
+    "min_rows": 8,
+    "goal06d_allowed": false,
+    "allowed_use": "workflow_contract_test_only"
+  },
+  "engineering_pilot": {
+    "min_symbols": 50,
+    "min_trading_dates": 120,
+    "min_rows": 6000,
+    "goal06d_allowed": true,
+    "allowed_use": "review_only_model_comparison"
+  },
+  "research_ready": {
+    "min_symbols": 100,
+    "min_trading_dates": 250,
+    "min_rows": 25000,
+    "goal06d_allowed": true,
+    "allowed_use": "research_grade_review_only_model_comparison"
+  },
+  "strong_panel": {
+    "min_symbols": 300,
+    "min_trading_dates": 250,
+    "min_rows": 75000,
+    "goal06d_allowed": true,
+    "allowed_use": "future_risk_and_backtest_readiness_after_separate_gates"
+  }
+}

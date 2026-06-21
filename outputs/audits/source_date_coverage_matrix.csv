@@ -1,0 +1,17 @@
+source_id,trade_date,approved_symbols_covered,approved_symbol_count,pit_ready_rows,availability_scope
+cninfo_announcements,2026-06-16,1,2,1,contract_fixture_by_source_symbol
+cninfo_announcements,2026-06-17,1,2,1,contract_fixture_by_source_symbol
+cninfo_announcements,2026-06-18,1,2,1,contract_fixture_by_source_symbol
+cninfo_announcements,2026-06-19,1,2,1,contract_fixture_by_source_symbol
+eastmoney_announcements,2026-06-16,2,2,2,contract_fixture_by_source_symbol
+eastmoney_announcements,2026-06-17,2,2,2,contract_fixture_by_source_symbol
+eastmoney_announcements,2026-06-18,2,2,2,contract_fixture_by_source_symbol
+eastmoney_announcements,2026-06-19,2,2,2,contract_fixture_by_source_symbol
+sina_metadata,2026-06-16,2,2,2,contract_fixture_by_source_symbol
+sina_metadata,2026-06-17,2,2,2,contract_fixture_by_source_symbol
+sina_metadata,2026-06-18,2,2,2,contract_fixture_by_source_symbol
+sina_metadata,2026-06-19,2,2,2,contract_fixture_by_source_symbol
+tencent_metadata,2026-06-16,0,2,0,contract_fixture_by_source_symbol
+tencent_metadata,2026-06-17,0,2,0,contract_fixture_by_source_symbol
+tencent_metadata,2026-06-18,0,2,0,contract_fixture_by_source_symbol
+tencent_metadata,2026-06-19,0,2,0,contract_fixture_by_source_symbol

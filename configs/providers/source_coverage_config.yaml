@@ -1,0 +1,16 @@
+{
+  "config_id": "goal06c5_source_coverage_config",
+  "engineering_pilot_targets": {
+    "symbols": 50,
+    "trading_dates": 120,
+    "rows": 6000
+  },
+  "research_ready_targets": {
+    "symbols": 100,
+    "trading_dates": 250,
+    "rows": 25000
+  },
+  "coverage_dimensions": ["source", "symbol", "date", "field", "pit_ready", "label_ready"],
+  "blocked_symbol_policy": "blocked symbols must have zero active output rows",
+  "network_required": false
+}

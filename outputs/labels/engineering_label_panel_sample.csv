@@ -1,0 +1,9 @@
+trade_date,symbol,fwd_1d_return,fwd_3d_return,fwd_5d_return,benchmark_fwd_1d_return,benchmark_fwd_3d_return,benchmark_fwd_5d_return,excess_fwd_1d_return,excess_fwd_3d_return,excess_fwd_5d_return,label_ready,source_bundle_id,label_contract_version,label_quality_flags
+2026-06-16,002475.SZ,0.018,,,0.006,,,0.012,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-16,600036.SH,0.005,,,0.006,,,-0.001,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-17,002475.SZ,-0.004,,,0.001,,,-0.005,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-17,600036.SH,0.007,,,0.001,,,0.006,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-18,002475.SZ,0.011,,,0.002,,,0.009,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-18,600036.SH,-0.002,,,0.002,,,-0.004,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-19,002475.SZ,0.006,,,0.003,,,0.003,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE
+2026-06-19,600036.SH,0.009,,,0.003,,,0.006,,,true,contract_demo_current_clean_bootstrap,goal06c5.label_panel.v1,MISSING_3D_LABEL;MISSING_5D_LABEL;CLEAN_BOOTSTRAP_FIXTURE

@@ -1,0 +1,16 @@
+{
+  "config_id": "goal06c5_engineering_pit_panel_config",
+  "input_artifacts": ["outputs/features/daily_premarket_signal_snapshot.csv"],
+  "sample_output": "outputs/features/engineering_pit_signal_panel_sample.csv",
+  "logical_grain": ["target_trading_date", "symbol"],
+  "panel_source_type_allowed": ["real_source_backed", "clean_bootstrap_fixture", "proposed_missing_source", "not_available"],
+  "github_policy": "sample_only",
+  "feature_columns": [
+    "market_trend_5d",
+    "sector_momentum_5d",
+    "stock_gap_signal",
+    "event_count_pit",
+    "source_health_score",
+    "source_count"
+  ]
+}

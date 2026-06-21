@@ -1,0 +1,3 @@
+symbol,approval_status,pit_ready_sources,total_sources,source_health_score,pit_ready_rows,label_ready_rows,coverage_status
+002475.SZ,approved,2,4,0.5,4,4,contract_fixture_available
+600036.SH,approved,3,4,0.75,4,4,contract_fixture_available

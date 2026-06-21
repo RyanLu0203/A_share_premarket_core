@@ -1,5 +1,26 @@
 # 09 Step Iteration Log
 
+## 2026-06-21 - GOAL-06C.5 Engineering Data Coverage Storage And Panel Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added storage policy, data bundle manifest, provider ingestion contract, and
+  heavy-artifact hygiene governance.
+- Added source, universe, trading-calendar, provider, PIT-panel, label-panel,
+  and Stage 6C engineering panel audits.
+- Added engineering panel readiness and active-path replacement audits.
+- Classified the current panel as `contract_demo`, not `engineering_pilot`.
+
+Safety:
+
+- GOAL-06D remains blocked until the engineering panel reaches at least 50
+  approved symbols, 120 trading dates, and 6000 rows.
+- No recommendation, position-band, portfolio-weight, risk overlay, dashboard,
+  paper/live trading, production write, production model promotion, or DQN/RL
+  capability was activated.
+
 ## 2026-06-21 - GOAL-06C Expanded Validation And Ranking Baseline Gate
 
 Status: `PASS_WITH_WARNINGS`.
@@ -37,7 +58,8 @@ Safety:
 - No recommendation, position-band, portfolio-weight, risk overlay, dashboard,
   paper/live trading, production write, production model promotion, or DQN/RL
   capability was activated.
-- GOAL-06D is unlocked only as future review-only model comparison/calibration.
+- GOAL-06D was previously future review-only; GOAL-06C.5 now keeps it blocked
+  until `engineering_pilot`.
 
 ## 2026-06-21 - GOAL-DOCS-01 Canonical Workflow Diagram And Status Governance
 

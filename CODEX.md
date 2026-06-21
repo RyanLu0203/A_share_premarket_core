@@ -3,9 +3,9 @@
 ## Mission
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
-GOAL-06B, plus the GOAL-06C review-only expanded validation extension. Preserve
-reproducibility and source governance before adding any future model or risk
-work.
+GOAL-06B, plus the GOAL-06C review-only expanded validation extension and the
+GOAL-06C.5 engineering data foundation gate. Preserve reproducibility and source
+governance before adding any future model or risk work.
 
 ## Current Reliable Facts
 
@@ -16,6 +16,10 @@ work.
 - GOAL-06B is review-only and pilot-only.
 - GOAL-06C is implemented_review_only for expanded validation, ranking
   baselines, metrics, walk-forward diagnostics, and stability diagnostics.
+- GOAL-06C.5 is implemented_review_only for storage policy, data bundle,
+  source coverage, and engineering panel readiness.
+- The current engineering panel tier is `contract_demo`; GOAL-06D remains
+  blocked until at least `engineering_pilot`.
 - GOAL-06D is future_review_only; no model comparison/calibration is
   implemented yet.
 - Production model promotion is false.
@@ -41,6 +45,11 @@ work.
 python -m compileall src scripts tests
 python -m pytest tests -q
 python scripts/run_goal06c_expanded_validation.py
+python scripts/audit_storage_policy.py
+python scripts/build_data_bundle_manifest.py
+python scripts/audit_data_bundle_manifest.py
+python scripts/audit_data_source_coverage.py
+python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
 python scripts/audit_stage6c_ranking_baselines.py
 python scripts/run_stage6c_walk_forward_validation.py
@@ -80,5 +89,5 @@ gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not start GOAL-06D unless the Stage 6C readiness report explicitly
-  unlocks it as future review-only work.
+- Do not start GOAL-06D unless the engineering panel readiness report explicitly
+  allows it after `engineering_pilot` coverage is reached.

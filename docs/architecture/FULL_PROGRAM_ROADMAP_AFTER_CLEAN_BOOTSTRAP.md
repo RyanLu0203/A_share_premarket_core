@@ -12,7 +12,8 @@ flowchart TD
     E --> F["Stage 6A Repair + Baseline Scoring<br/>(implemented_active)"]
     F --> G["GOAL-06B Supervised Baseline Gate<br/>(implemented_active / review_only)"]
     G -. "implemented review-only" .-> H["GOAL-06C Expanded Validation + Ranking Baseline<br/>(implemented_review_only)"]
-    H -. "future review-only" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    H -. "implemented review-only data gate" .-> X["GOAL-06C.5 Storage + Coverage + Engineering Panel<br/>(implemented_review_only; contract_demo)"]
+    X -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
     I -. "future design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
@@ -29,8 +30,8 @@ flowchart TD
     G -. "optional only" .-> V["DQN/RL Optional Research Benchmark<br/>(deleted_from_active_mainline)"]
 ```
 
-The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C is an
-implemented review-only validation extension and not a recommendation,
-positioning, risk, trading, dashboard, production, or DQN/RL workflow. Anything
-beyond GOAL-06C must earn a separate promotion gate and update
+The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C and
+GOAL-06C.5 are implemented review-only extensions and not recommendation,
+positioning, risk, trading, dashboard, production, or DQN/RL workflows. Anything
+beyond GOAL-06C.5 must earn a separate promotion gate and update
 `configs/project/workflow_status.csv`.

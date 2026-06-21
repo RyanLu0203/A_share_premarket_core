@@ -17,6 +17,15 @@ python scripts/run_stage6c_ranking_baselines.py,scripts/run_stage6c_ranking_base
 python scripts/audit_stage6c_ranking_baselines.py,scripts/audit_stage6c_ranking_baselines.py,true,clean_wrapper,false,PASS
 python scripts/run_stage6c_walk_forward_validation.py,scripts/run_stage6c_walk_forward_validation.py,true,clean_wrapper,false,PASS
 python scripts/run_goal06c_expanded_validation.py,scripts/run_goal06c_expanded_validation.py,true,clean_wrapper,false,PASS
+python scripts/audit_storage_policy.py,scripts/audit_storage_policy.py,true,clean_wrapper,false,PASS
+python scripts/build_data_bundle_manifest.py,scripts/build_data_bundle_manifest.py,true,clean_wrapper,false,PASS
+python scripts/audit_data_bundle_manifest.py,scripts/audit_data_bundle_manifest.py,true,clean_wrapper,false,PASS
+python scripts/audit_data_source_coverage.py,scripts/audit_data_source_coverage.py,true,clean_wrapper,false,PASS
+python scripts/build_engineering_pit_signal_panel.py,scripts/build_engineering_pit_signal_panel.py,true,clean_wrapper,false,PASS
+python scripts/audit_engineering_pit_signal_panel.py,scripts/audit_engineering_pit_signal_panel.py,true,clean_wrapper,false,PASS
+python scripts/build_engineering_label_panel.py,scripts/build_engineering_label_panel.py,true,clean_wrapper,false,PASS
+python scripts/audit_engineering_label_panel.py,scripts/audit_engineering_label_panel.py,true,clean_wrapper,false,PASS
+python scripts/rebuild_stage6c_from_engineering_panel.py,scripts/rebuild_stage6c_from_engineering_panel.py,true,clean_wrapper,false,PASS
 python scripts/run_current_trunk_validation.py,scripts/run_current_trunk_validation.py,true,clean_wrapper,false,PASS
 python scripts/run_program_validation_profile.py,scripts/run_program_validation_profile.py,true,clean_wrapper,false,PASS
 python scripts/run_safety_gate.py,scripts/run_safety_gate.py,true,clean_wrapper,false,PASS

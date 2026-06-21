@@ -1,0 +1,5 @@
+source_id,source_category,approved_symbols_covered,approved_symbol_count,pit_ready_contract_rows,missing_reason_count,source_status
+cninfo_announcements,announcement_metadata,1,2,1,1,contract_fixture_available
+eastmoney_announcements,announcement_metadata,2,2,2,0,contract_fixture_available
+sina_metadata,market_metadata,2,2,2,0,contract_fixture_available
+tencent_metadata,market_metadata,0,2,0,2,not_available_in_fixture

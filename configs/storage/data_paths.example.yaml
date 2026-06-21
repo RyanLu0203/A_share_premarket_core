@@ -1,0 +1,12 @@
+{
+  "data_root_env_var": "ASHARE_PREMARKET_DATA_ROOT",
+  "default_data_root": "~/data/ashare_premarket/",
+  "raw_root": "${ASHARE_PREMARKET_DATA_ROOT}/raw",
+  "bundle_root": "${ASHARE_PREMARKET_DATA_ROOT}/bundles",
+  "lake_root": "${ASHARE_PREMARKET_DATA_ROOT}/lake",
+  "metadata_root": "${ASHARE_PREMARKET_DATA_ROOT}/metadata",
+  "export_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports",
+  "github_export_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports/github_artifacts",
+  "audit_sample_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports/audit_samples",
+  "notes": "This file is an example contract. Runtime scripts may use ASHARE_PREMARKET_DATA_ROOT or the documented default, but local data is never committed."
+}

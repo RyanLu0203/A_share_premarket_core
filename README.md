@@ -6,7 +6,8 @@ risk-aware position-building decision support system.
 This is not an automatic trading bot and does not provide investment advice. It
 is a deterministic, review-only research workflow for PIT-safe data contracts,
 label construction, feature-label merging, leakage checks, baseline scoring, the
-GOAL-06B supervised baseline training gate, and GOAL-06C expanded validation.
+GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, and
+the GOAL-06C.5 engineering data foundation gate.
 
 ## Repository Roles
 
@@ -27,6 +28,11 @@ python -m compileall src scripts tests
 python -m pytest tests -q
 python scripts/run_goal06b_regression_suite.py
 python scripts/run_goal06c_expanded_validation.py
+python scripts/audit_storage_policy.py
+python scripts/build_data_bundle_manifest.py
+python scripts/audit_data_bundle_manifest.py
+python scripts/audit_data_source_coverage.py
+python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
 python scripts/run_e2e_trunk_validation_through_goal06b.py
 python scripts/run_safety_gate.py
@@ -63,11 +69,14 @@ flowchart TD
     A["GOAL-06B Supervised Baseline Training Gate"] -. "review-only extension" .-> B["GOAL-06C Expanded Validation Panel<br/>(implemented_review_only)"]
     B -. "review-only ranking" .-> C["Deterministic Ranking Baselines<br/>(implemented_review_only)"]
     C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
-    D -. "future review-only" .-> E["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    D -. "engineering data gate" .-> E["GOAL-06C.5 Storage + Coverage + Panel Gate<br/>(implemented_review_only)"]
+    E -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
 signals, position bands, portfolio weights, or production model outputs.
+GOAL-06C.5 currently classifies the panel as `contract_demo`: 8 rows, 4 trading
+dates, and 2 approved symbols.
 
 ## Required Public Commands
 
@@ -92,6 +101,15 @@ review-only validation wrappers:
 - `python scripts/audit_stage6c_ranking_baselines.py`
 - `python scripts/run_stage6c_walk_forward_validation.py`
 - `python scripts/run_goal06c_expanded_validation.py`
+- `python scripts/audit_storage_policy.py`
+- `python scripts/build_data_bundle_manifest.py`
+- `python scripts/audit_data_bundle_manifest.py`
+- `python scripts/audit_data_source_coverage.py`
+- `python scripts/build_engineering_pit_signal_panel.py`
+- `python scripts/audit_engineering_pit_signal_panel.py`
+- `python scripts/build_engineering_label_panel.py`
+- `python scripts/audit_engineering_label_panel.py`
+- `python scripts/rebuild_stage6c_from_engineering_panel.py`
 - `python scripts/run_current_trunk_validation.py`
 - `python scripts/run_program_validation_profile.py`
 - `python scripts/run_safety_gate.py`
@@ -114,7 +132,8 @@ details are preserved in ignored local diagnostics under `outputs/local/runtime/
 Recommendation, risk overlay calculation, dashboard, paper trading,
 broker/live trading, production DB writes, production model promotion, and
 DQN/RL remain locked. GOAL-06D is future review-only work and may proceed only
-under the constraints stated in `outputs/audits/stage6c_readiness_report.md`.
+after `outputs/audits/engineering_panel_readiness_report.md` allows it. The
+current contract-demo panel keeps GOAL-06D blocked.
 
 ## Workflow Promotion Rule
 

@@ -1,0 +1,9 @@
+source_id,symbol,source_category,available,pit_ready,missing_reason
+cninfo_announcements,002475.SZ,announcement_metadata,false,false,no usable rows in source evidence branch
+cninfo_announcements,600036.SH,announcement_metadata,true,true,
+eastmoney_announcements,002475.SZ,announcement_metadata,true,true,
+eastmoney_announcements,600036.SH,announcement_metadata,true,true,
+sina_metadata,002475.SZ,market_metadata,true,true,
+sina_metadata,600036.SH,market_metadata,true,true,
+tencent_metadata,002475.SZ,market_metadata,false,false,no usable rows under bounded variants
+tencent_metadata,600036.SH,market_metadata,false,false,no usable rows under bounded variants

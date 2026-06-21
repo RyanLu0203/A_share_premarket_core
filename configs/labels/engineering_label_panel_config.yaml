@@ -1,0 +1,10 @@
+{
+  "config_id": "goal06c5_engineering_label_panel_config",
+  "input_artifacts": ["outputs/labels/daily_label_snapshot.csv"],
+  "sample_output": "outputs/labels/engineering_label_panel_sample.csv",
+  "logical_grain": ["trade_date", "symbol"],
+  "github_policy": "sample_only",
+  "label_horizons": ["1d", "3d", "5d"],
+  "available_clean_bootstrap_horizons": ["1d"],
+  "missing_label_policy": "mark_missing_do_not_fabricate"
+}

@@ -1,0 +1,45 @@
+{
+  "as_of_date": "2026-06-19",
+  "blocked_symbol_rows": 0,
+  "bundle_id": "contract_demo_current_clean_bootstrap",
+  "bundle_tier": "contract_demo",
+  "calendar_rows_in_config": 8,
+  "calendar_version": "goal06c5.calendar.contract_demo.v1",
+  "clean_rows": 8,
+  "created_at": "2026-06-21T00:00:00Z",
+  "data_root": "/Users/luxinyu/data/ashare_premarket",
+  "field_coverage_summary": "contract_demo_fields_available_for_1d_stage6c;3d_5d_labels_missing",
+  "health_status": "PASS_WITH_WARNINGS",
+  "label_ready_rows": 8,
+  "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/contract_demo_current_clean_bootstrap",
+  "missing_rate": 0.0,
+  "notes": "Committed manifest is a deterministic summary. Heavy data and local bundle contents are not committed.",
+  "pit_ready_rows": 8,
+  "provider_versions": "provider_registry.goal06c5.v1",
+  "quality_flags": [
+    "CONTRACT_DEMO_ONLY",
+    "NOT_ENGINEERING_PILOT",
+    "LOCAL_DATA_ROOT_NOT_MATERIALIZED"
+  ],
+  "raw_rows": 8,
+  "source_commit_sha": "stable_committed_summary",
+  "source_coverage_summary": {
+    "pit_ready_contract_rows": 5,
+    "source_ids": [
+      "cninfo_announcements",
+      "eastmoney_announcements",
+      "sina_metadata",
+      "tencent_metadata"
+    ],
+    "sources": 4,
+    "total_contract_rows": 8
+  },
+  "stage6c_rows": 8,
+  "symbols_failed": 0,
+  "symbols_requested": 2,
+  "symbols_succeeded": 2,
+  "trading_dates_requested": 4,
+  "trading_dates_succeeded": 4,
+  "universe_version": "goal06c5.universe.v1",
+  "workflow_status_version": "goal06c5.workflow_status.v1"
+}

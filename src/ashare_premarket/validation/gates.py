@@ -9,16 +9,21 @@ from pathlib import Path
 from ashare_premarket.core.constants import PUBLIC_COMMANDS, REQUIRED_OUTPUTS, REGRESSION_COMMANDS
 from ashare_premarket.core.io import read_json, write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
+from ashare_premarket.data.coverage import audit_data_source_coverage
 from ashare_premarket.datasets.feature_label_merge import audit_feature_label_leakage, build_model_ready_candidate_dataset
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
+from ashare_premarket.features.panel_expansion import audit_engineering_pit_signal_panel, build_engineering_pit_signal_panel
 from ashare_premarket.features.pit_signal_store import audit_pit_signal_snapshot, build_pit_signal_snapshot
+from ashare_premarket.labels.panel_expansion import audit_engineering_label_panel, build_engineering_label_panel
 from ashare_premarket.labels.label_builder import audit_label_snapshot, build_label_snapshot
 from ashare_premarket.ops.adapter_audit import run_adapter_audit
 from ashare_premarket.ops.manifests import bootstrap_audit_manifests
 from ashare_premarket.ops.safety import run_safety_gate
 from ashare_premarket.scoring.baseline import audit_baseline_scoring_skeleton, run_baseline_scoring_skeleton, run_stage6a_blocker_repair
+from ashare_premarket.storage.policy import audit_data_bundle_manifest, audit_storage_policy, build_data_bundle_manifest
 from ashare_premarket.training.supervised_baseline import audit_supervised_baseline_training, run_supervised_baseline_training
 from ashare_premarket.universe.governance import validate_symbol_governance
+from ashare_premarket.validation.engineering_panel import rebuild_stage6c_from_engineering_panel
 from ashare_premarket.validation.stage6c import run_goal06c_expanded_validation
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -120,6 +125,13 @@ def run_e2e_validation(root: Path) -> bool:
         ("dqn_rl_false", read_json(root / "outputs/models/goal06b/baseline_training_summary.json")["dqn_rl_unlocked"] is False),
         ("diagnostics_reports_generated", run_workflow_diagnostics(root)),
         ("goal06c_expanded_validation_review_only", run_goal06c_expanded_validation(root)),
+        ("goal06c5_storage_policy_audit", audit_storage_policy(root)),
+        ("goal06c5_data_bundle_manifest", bool(build_data_bundle_manifest(root)) and audit_data_bundle_manifest(root)),
+        ("goal06c5_source_coverage_audit", audit_data_source_coverage(root)),
+        ("goal06c5_engineering_pit_panel", bool(build_engineering_pit_signal_panel(root)) and audit_engineering_pit_signal_panel(root)),
+        ("goal06c5_engineering_label_panel", bool(build_engineering_label_panel(root)) and audit_engineering_label_panel(root)),
+        ("goal06c5_engineering_stage6c_panel", rebuild_stage6c_from_engineering_panel(root)),
+        ("goal06d_blocked_until_engineering_pilot", "GOAL-06D allowed to proceed: false" in _read(root / "outputs/audits/engineering_panel_readiness_report.md")),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
         ("adapter_audit_passes", run_adapter_audit(root)),
@@ -179,6 +191,11 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python -m compileall src scripts tests", [sys.executable, "-m", "compileall", "src", "scripts", "tests"]),
         ("python -m pytest tests -q", [sys.executable, "-m", "pytest", "tests", "-q"]),
         ("python scripts/run_goal06c_expanded_validation.py", [sys.executable, "scripts/run_goal06c_expanded_validation.py"]),
+        ("python scripts/audit_storage_policy.py", [sys.executable, "scripts/audit_storage_policy.py"]),
+        ("python scripts/build_data_bundle_manifest.py", [sys.executable, "scripts/build_data_bundle_manifest.py"]),
+        ("python scripts/audit_data_bundle_manifest.py", [sys.executable, "scripts/audit_data_bundle_manifest.py"]),
+        ("python scripts/audit_data_source_coverage.py", [sys.executable, "scripts/audit_data_source_coverage.py"]),
+        ("python scripts/rebuild_stage6c_from_engineering_panel.py", [sys.executable, "scripts/rebuild_stage6c_from_engineering_panel.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -247,6 +264,10 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
 
 def _paths_exist(root: Path, paths: list[str]) -> bool:
     return all((root / path).exists() for path in paths)
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8") if path.exists() else ""
 
 
 def _can_import(module: str) -> bool:

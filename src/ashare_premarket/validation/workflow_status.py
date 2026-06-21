@@ -80,7 +80,9 @@ def run_workflow_status_audit(root: Path) -> bool:
 
     by_id = {row["workflow_id"]: row for row in rows}
     goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
+    goal06c5 = by_id.get("goal06c5_engineering_data_coverage_storage_panel_expansion", {})
     goal06c_status = goal06c.get("status")
+    goal06c5_status = goal06c5.get("status")
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
         failures.append("GOAL-06C block must be future_review_only or implemented_review_only")
     if goal06c_status == "implemented_review_only":
@@ -91,8 +93,20 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("full roadmap does not label GOAL-06C as implemented_review_only")
     elif "next_allowed_goal_review_only" not in goal06c.get("allowed_next_action", ""):
         failures.append("next allowed goal is not clearly GOAL-06C review-only expanded validation")
+    if goal06c5_status != "implemented_review_only":
+        failures.append("GOAL-06C.5 must be implemented_review_only")
+    else:
+        readiness = _read(root / "outputs/audits/engineering_panel_readiness_report.md")
+        if "Engineering Panel Readiness: PASS_WITH_WARNINGS" not in readiness and "Engineering Panel Readiness: PASS" not in readiness:
+            failures.append("GOAL-06C.5 is implemented_review_only without a PASS/PASS_WITH_WARNINGS engineering panel readiness report")
+        if "GOAL-06D allowed to proceed: false" not in readiness:
+            failures.append("GOAL-06C.5 must keep GOAL-06D blocked until engineering_pilot")
+        if "GOAL-06C.5" not in full_roadmap:
+            failures.append("full roadmap does not include GOAL-06C.5")
     if by_id.get("goal06d_model_comparison_calibration", {}).get("status") != "future_review_only":
         failures.append("GOAL-06D must remain future_review_only")
+    if "engineering_pilot" not in by_id.get("goal06d_model_comparison_calibration", {}).get("allowed_next_action", ""):
+        failures.append("GOAL-06D must wait for GOAL-06C.5 engineering_pilot readiness")
     if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
         failures.append("GOAL-07A must remain future_design_only")
 
@@ -124,7 +138,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"Warnings: `{len(warnings)}`",
                 "",
                 f"GOAL-06C status: `{goal06c_status or 'missing'}`.",
-                "Next allowed goal after GOAL-06C promotion: `GOAL-06D Model Comparison and Calibration` as `future_review_only`.",
+                f"GOAL-06C.5 status: `{goal06c5_status or 'missing'}`.",
+                "Next allowed goal after GOAL-06C.5: `GOAL-06D Model Comparison and Calibration` only after engineering_pilot readiness; currently blocked.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -199,7 +214,12 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "dotted"
         can_promote = False
         blocker = "requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates"
-    next_goal = "GOAL-06C review-only expanded validation" if row["workflow_id"] == "goal06c_expanded_validation_ranking" else row["stage_or_goal"]
+    if row["workflow_id"] == "goal06c_expanded_validation_ranking":
+        next_goal = "GOAL-06C.5 engineering data foundation"
+    elif row["workflow_id"] == "goal06c5_engineering_data_coverage_storage_panel_expansion":
+        next_goal = "GOAL-06D blocked until engineering_pilot"
+    else:
+        next_goal = row["stage_or_goal"]
     return {
         "workflow_id": row["workflow_id"],
         "display_name": row["display_name"],

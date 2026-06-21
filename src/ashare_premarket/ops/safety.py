@@ -7,7 +7,23 @@ from ashare_premarket.core.constants import BLOCKED_SYMBOLS, LOCKED_KEYWORDS
 from ashare_premarket.core.io import write_text
 from ashare_premarket.universe.governance import validate_symbol_governance
 
-DANGEROUS_SUFFIXES = {".db", ".sqlite", ".sqlite3", ".ipynb", ".log", ".raw", ".payload"}
+DANGEROUS_SUFFIXES = {
+    ".arrow",
+    ".db",
+    ".duckdb",
+    ".feather",
+    ".html",
+    ".ipynb",
+    ".joblib",
+    ".log",
+    ".parquet",
+    ".payload",
+    ".pkl",
+    ".raw",
+    ".sqlite",
+    ".sqlite3",
+    ".zip",
+}
 
 
 def run_safety_gate(root: Path) -> bool:

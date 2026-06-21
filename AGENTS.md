@@ -20,6 +20,10 @@ This file is long-term project memory for Codex and other coding agents.
 - Active scoring boundary: project start through GOAL-06B.
 - GOAL-06B supervised baseline training is review-only and pilot-only.
 - GOAL-06C expanded validation and ranking baseline is implemented_review_only.
+- GOAL-06C.5 storage, data bundle, source coverage, and engineering panel
+  readiness is implemented_review_only.
+- The current engineering panel tier is `contract_demo`; GOAL-06D remains
+  blocked until `engineering_pilot`.
 - GOAL-06D is future_review_only only; no model comparison/calibration is
   implemented yet.
 - Feature-label merge and leakage audit are active.
@@ -57,6 +61,10 @@ Minimum normal validation:
 python -m compileall src scripts tests
 python -m pytest tests -q
 python scripts/run_goal06c_expanded_validation.py
+python scripts/audit_storage_policy.py
+python scripts/audit_data_bundle_manifest.py
+python scripts/audit_data_source_coverage.py
+python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
 python scripts/audit_stage6c_ranking_baselines.py
 python scripts/run_stage6c_walk_forward_validation.py

@@ -27,6 +27,13 @@ Status: `PASS_WITH_WARNINGS`
 - `dqn_rl_false`: PASS
 - `diagnostics_reports_generated`: PASS
 - `goal06c_expanded_validation_review_only`: PASS
+- `goal06c5_storage_policy_audit`: PASS
+- `goal06c5_data_bundle_manifest`: PASS
+- `goal06c5_source_coverage_audit`: PASS
+- `goal06c5_engineering_pit_panel`: PASS
+- `goal06c5_engineering_label_panel`: PASS
+- `goal06c5_engineering_stage6c_panel`: PASS
+- `goal06d_blocked_until_engineering_pilot`: PASS
 - `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS
 - `adapter_audit_passes`: PASS

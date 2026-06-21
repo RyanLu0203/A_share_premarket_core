@@ -1,0 +1,10 @@
+{
+  "config_id": "goal06c5_trading_calendar_expansion",
+  "target_engineering_pilot_trading_dates": 120,
+  "preferred_raw_calendar_coverage_dates": 180,
+  "current_calendar_status": "contract_demo_fixture",
+  "calendar_generation_policy": "trading_day_only_no_calendar_day_shortcuts",
+  "proposed_calendar_policy": "deterministic_weekday_calendar_until_exchange_holiday_source_available",
+  "holiday_policy": "mark_weekends_and_known_holidays_when_represented",
+  "pit_policy": "features must never use rows after decision cutoff"
+}

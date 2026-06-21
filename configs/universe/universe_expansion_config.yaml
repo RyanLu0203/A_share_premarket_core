@@ -1,0 +1,15 @@
+{
+  "config_id": "goal06c5_universe_expansion_config",
+  "approved_universe_policy": "approved_symbols_only_for_active_outputs",
+  "candidate_universe_policy": "proposed_until_source_coverage_passes",
+  "minimum_engineering_pilot_symbols": 50,
+  "blocked_symbols_policy": "blocked_or_pending_symbols_must_not_enter_active_outputs",
+  "approval_requirements": [
+    "source_coverage_verified",
+    "not_blocked",
+    "not_st",
+    "not_recently_suspended",
+    "liquidity_proxy_available",
+    "sector_metadata_available"
+  ]
+}

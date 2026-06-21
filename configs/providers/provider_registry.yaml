@@ -1,0 +1,12 @@
+{
+  "registry_id": "goal06c5_provider_registry",
+  "providers": [
+    {"provider_id": "akshare_ohlcv_daily", "category": "ohlcv_daily", "status": "contract_defined_not_implemented", "network_default": "disabled"},
+    {"provider_id": "akshare_benchmark_daily", "category": "benchmark_daily", "status": "contract_defined_not_implemented", "network_default": "disabled"},
+    {"provider_id": "eastmoney_announcements", "category": "announcement_metadata", "status": "contract_fixture_available", "network_default": "disabled"},
+    {"provider_id": "cninfo_announcements", "category": "announcement_metadata", "status": "partial_contract_fixture_available", "network_default": "disabled"},
+    {"provider_id": "sina_metadata", "category": "market_metadata", "status": "contract_fixture_available", "network_default": "disabled"},
+    {"provider_id": "tencent_metadata", "category": "market_metadata", "status": "contract_defined_not_implemented", "network_default": "disabled"},
+    {"provider_id": "sector_metadata_contract", "category": "sector_metadata", "status": "contract_fixture_available", "network_default": "disabled"}
+  ]
+}
