@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ashare-premarket-core"
 version = "0.1.0"
 description = "Clean review-only A-share premarket workflow through GOAL-06B"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = []
 
 [tool.pytest.ini_options]

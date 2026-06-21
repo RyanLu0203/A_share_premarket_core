@@ -1,5 +1,39 @@
 # 09 Step Iteration Log
 
+## 2026-06-21 - GOAL-HYGIENE-01 Clean Bootstrap Warning Resolution
+
+Status: `PASS`.
+
+What changed:
+
+- Split volatile runtime timing out of committed regression and validation
+  reports.
+- Added ignored local runtime diagnostics under `outputs/local/runtime/`.
+- Added `docs/validation/RUNTIME_ARTIFACT_POLICY.md`.
+- Set supported Python policy to `>=3.9` after fresh-clone audit passed under
+  Python `3.9.21`.
+- Kept the missing historical GOAL-05/GOAL-06 source-doc gap documented as
+  `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.
+
+Evidence:
+
+- `outputs/audits/hygiene_warning_resolution_report.md`
+- `outputs/audits/runtime_artifact_determinism_report.md`
+- `outputs/audits/python_version_policy_report.md`
+- second-run determinism check showed no tracked diff changes from rerunning
+  regression/profile commands.
+
+Safety:
+
+- No GOAL-06C implementation was added.
+- Recommendation, risk overlay, dashboard, paper/live trading, production DB
+  writes, production model promotion, and DQN/RL remain locked.
+
+Next review question:
+
+Should GOAL-06C begin as a review-only expanded validation task, or should the
+Class D historical-source provenance gap be researched first?
+
 ## 2026-06-21 - GOAL-MIGRATION-01 Clean Bootstrap Through GOAL-06B
 
 Status: `PASS_WITH_WARNINGS` pending final remote HEAD verification.

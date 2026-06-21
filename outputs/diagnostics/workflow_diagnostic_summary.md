@@ -3,7 +3,7 @@
 Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
-Known warnings are source-coverage gaps inherited as context, plus Class D missing historical GOAL-05/06 source docs.
+Known warnings are source-coverage gaps inherited as context, plus `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`

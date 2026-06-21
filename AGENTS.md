@@ -22,6 +22,9 @@ This file is long-term project memory for Codex and other coding agents.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
+- Python `>=3.9` is supported for the clean GOAL-06B workflow.
+- Committed validation summaries must be deterministic; volatile runtime timing
+  belongs in ignored local diagnostics under `outputs/local/runtime/`.
 
 ## Required Agent Reading Order
 
@@ -70,4 +73,5 @@ python scripts/run_workflow_diagnostics.py
 - Stage explicit files only.
 - Keep generated runtime evidence out of commits unless it is a deliberately
   sanitized, tiny, review-facing fixture or required GOAL-06B audit output.
+- Do not commit local-only runtime timing files.
 - Report branch, commit hash, validation, excluded files, and review items.

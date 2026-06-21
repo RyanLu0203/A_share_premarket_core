@@ -1,5 +1,5 @@
 command,status,runtime_seconds,stderr_tail
-/opt/module/anacond3/bin/python -m compileall src scripts tests,PASS,0.031,
-/opt/module/anacond3/bin/python -m pytest tests -q,PASS,0.230,
-/opt/module/anacond3/bin/python scripts/run_safety_gate.py,PASS,0.039,
-/opt/module/anacond3/bin/python scripts/run_adapter_audit.py,PASS,0.020,
+python -m compileall src scripts tests,PASS,local_only,
+python -m pytest tests -q,PASS,local_only,
+python scripts/run_safety_gate.py,PASS,local_only,
+python scripts/run_adapter_audit.py,PASS,local_only,

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-21 - GOAL-HYGIENE-01
+
+- Split volatile runtime timings out of committed validation reports and into
+  ignored local diagnostics under `outputs/local/runtime/`.
+- Made stable regression and program validation reports deterministic across
+  normal reruns.
+- Added runtime artifact policy documentation.
+- Clarified Python `>=3.9` support after fresh-clone verification passed under
+  Python `3.9.21`.
+- Kept the missing historical GOAL-05/GOAL-06 source-doc gap documented as
+  `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.
+
 ## 2026-06-21
 
 - Bootstrapped the clean private target repository for active workflow through

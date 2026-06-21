@@ -19,6 +19,9 @@ legacy implementation tree.
 
 ## Quickstart
 
+Supported runtime: Python `>=3.9`. The clean GOAL-06B workflow was verified
+under Python `3.9.21` during fresh-clone audit.
+
 ```bash
 python -m compileall src scripts tests
 python -m pytest tests -q
@@ -75,6 +78,9 @@ The active evidence chain is regenerated locally and committed only as concise,
 sanitized CSV/Markdown/JSON artifacts. Raw provider payloads, raw HTML, full news
 text, DBs, notebooks, caches, private logs, dashboards, and model artifacts for
 production promotion are forbidden.
+
+Stable committed reports do not store volatile wall-clock timings. Runtime
+details are preserved in ignored local diagnostics under `outputs/local/runtime/`.
 
 ## Lock Boundary
 

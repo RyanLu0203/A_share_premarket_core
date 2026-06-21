@@ -74,7 +74,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "Status: `PASS_WITH_WARNINGS`",
                 "",
                 "The clean active workflow through GOAL-06B is deterministic and local.",
-                "Known warnings are source-coverage gaps inherited as context, plus Class D missing historical GOAL-05/06 source docs.",
+                "Known warnings are source-coverage gaps inherited as context, plus `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -90,7 +90,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "",
                 "- CNINFO did not cover `002475.SZ` in the inspected source evidence branch.",
                 "- Tencent returned no usable rows under bounded variants in the inspected source evidence branch.",
-                "- Historical GOAL-05/GOAL-06 docs named by the migration objective were absent at expected source paths and are tracked as Class D.",
+                "- Historical GOAL-05/GOAL-06 docs named by the migration objective were absent at expected source paths and remain classified as `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.",
+                "- The Class D source-evidence gap is documented only; it is not active code and does not block Class A GOAL-06B reproducibility.",
                 "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.",
                 "",
             ]

@@ -13,6 +13,7 @@
 - GOAL-06A baseline scoring skeleton.
 - GOAL-06B review-only supervised baseline training gate.
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
+- GOAL-HYGIENE-01 deterministic runtime artifact policy.
 
 ## Next Allowed Work
 
@@ -21,6 +22,9 @@ GOAL-06C may begin only if
 unlocks it. The first GOAL-06C work must remain review-only expanded validation
 and must not implement recommendation, risk overlay, dashboard, paper/live
 trading, production DB writes, production model promotion, or DQN/RL.
+
+Before GOAL-06C starts, keep committed reports deterministic and treat
+`runtime_seconds` as local-only diagnostics.
 
 ## Locked Future
 

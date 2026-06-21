@@ -130,26 +130,40 @@ def run_e2e_validation(root: Path) -> bool:
 
 def run_goal06b_regression_suite(root: Path) -> bool:
     rows = []
+    runtime_rows = []
     for command in REGRESSION_COMMANDS:
         start = time.perf_counter()
         result = subprocess.run(command.split(), cwd=root, text=True, capture_output=True)
         runtime = time.perf_counter() - start
         status = "PASS" if result.returncode == 0 else "FAIL"
+        stderr_tail = result.stderr.strip()[-500:]
         rows.append(
             {
                 "command": command,
                 "status": status,
-                "runtime_seconds": f"{runtime:.3f}",
+                "runtime_seconds": "local_only",
                 "key_outputs_verified": "see required output manifest",
                 "warnings": "",
-                "blocking_errors": result.stderr.strip()[-500:] if result.returncode else "",
+                "blocking_errors": stderr_tail if result.returncode else "",
                 "diagnostic_reference": "outputs/diagnostics/workflow_diagnostic_summary.md",
             }
         )
+        runtime_rows.append(
+            {
+                "command": command,
+                "status": status,
+                "runtime_seconds": f"{runtime:.3f}",
+                "stdout_tail": result.stdout.strip()[-500:],
+                "stderr_tail": stderr_tail,
+            }
+        )
     write_csv(root / "outputs/audits/goal06b_regression_suite_report.csv", rows)
+    _write_local_runtime_csv(root, "goal06b_regression_suite_runtime.csv", runtime_rows)
     status = "PASS" if all(row["status"] == "PASS" for row in rows) else "BLOCKED"
     body = ["# GOAL-06B Regression Suite Report", "", f"Status: `{status}`", ""]
-    body.extend(f"- `{row['command']}`: `{row['status']}` in `{row['runtime_seconds']}` seconds" for row in rows)
+    body.append("Runtime timing is stored in local-only diagnostics and is not part of the committed stable report.")
+    body.append("")
+    body.extend(f"- `{row['command']}`: `{row['status']}`; runtime `{row['runtime_seconds']}`" for row in rows)
     body.append("")
     write_text(root / "outputs/audits/goal06b_regression_suite_report.md", "\n".join(body))
     return status == "PASS"
@@ -157,31 +171,49 @@ def run_goal06b_regression_suite(root: Path) -> bool:
 
 def run_program_validation_profile(root: Path) -> bool:
     commands = [
-        [sys.executable, "-m", "compileall", "src", "scripts", "tests"],
-        [sys.executable, "-m", "pytest", "tests", "-q"],
-        [sys.executable, "scripts/run_safety_gate.py"],
-        [sys.executable, "scripts/run_adapter_audit.py"],
+        ("python -m compileall src scripts tests", [sys.executable, "-m", "compileall", "src", "scripts", "tests"]),
+        ("python -m pytest tests -q", [sys.executable, "-m", "pytest", "tests", "-q"]),
+        ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
+        ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
     ]
     rows = []
-    for command in commands:
+    runtime_rows = []
+    for stable_command, command in commands:
         start = time.perf_counter()
         result = subprocess.run(command, cwd=root, text=True, capture_output=True)
         runtime = time.perf_counter() - start
+        stderr_tail = result.stderr.strip()[-500:]
         rows.append(
             {
-                "command": " ".join(command),
+                "command": stable_command,
+                "status": "PASS" if result.returncode == 0 else "FAIL",
+                "runtime_seconds": "local_only",
+                "stderr_tail": stderr_tail if result.returncode else "",
+            }
+        )
+        runtime_rows.append(
+            {
+                "command": stable_command,
+                "executable": command[0],
                 "status": "PASS" if result.returncode == 0 else "FAIL",
                 "runtime_seconds": f"{runtime:.3f}",
-                "stderr_tail": result.stderr.strip()[-500:],
+                "stdout_tail": result.stdout.strip()[-500:],
+                "stderr_tail": stderr_tail,
             }
         )
     write_csv(root / "outputs/audits/program_validation_profile_results.csv", rows)
+    _write_local_runtime_csv(root, "program_validation_profile_runtime.csv", runtime_rows)
     status = "PASS" if all(row["status"] == "PASS" for row in rows) else "BLOCKED"
     write_text(
         root / "outputs/audits/program_validation_profile_report.md",
         "\n".join(["# Program Validation Profile Report", "", f"Status: `{status}`", ""]),
     )
     return status == "PASS"
+
+
+def _write_local_runtime_csv(root: Path, filename: str, rows: list[dict[str, object]]) -> None:
+    """Write volatile timing details to an ignored local-only diagnostics path."""
+    write_csv(root / "outputs/local/runtime" / filename, rows)
 
 
 def write_readiness_report(root: Path, validation_status: str) -> None:
@@ -195,7 +227,9 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
                 "",
                 f"GOAL-06C Expanded Validation unlocked in target repo: {unlock}",
                 "",
-                "Warnings are limited to documented Class D source-evidence gaps and source coverage limitations.",
+                "Warnings are limited to documented source coverage limitations and the `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` source-evidence gap for missing historical GOAL-05/GOAL-06 docs.",
+                "The Class D gap is manifest/documentation only and does not block Class A active workflow through GOAL-06B.",
+                "Committed validation reports use deterministic stable summaries; volatile runtime timing is stored in local-only ignored diagnostics.",
                 "Recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, and DQN/RL remain locked.",
                 "",
                 f"GOAL-06B Clean Repo Bootstrap Readiness: {readiness}",

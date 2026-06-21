@@ -15,6 +15,10 @@ future model or risk work.
 - Production model promotion is false.
 - Recommendation, risk overlay, dashboard, paper trading, broker/live trading,
   production DB writes, and DQN/RL are locked.
+- Python `>=3.9` is supported for the clean GOAL-06B workflow; Python `3.9.21`
+  passed fresh-clone verification.
+- Stable committed reports intentionally use `runtime_seconds=local_only`;
+  volatile timing details belong in ignored files under `outputs/local/runtime/`.
 
 ## Reading Order
 
@@ -42,6 +46,7 @@ python scripts/run_adapter_audit.py
 - Do not import legacy implementation code.
 - Do not run legacy-only tests as active validation.
 - Do not add absolute user-specific paths.
+- Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
 - Do not start GOAL-06C unless the readiness report explicitly unlocks it.

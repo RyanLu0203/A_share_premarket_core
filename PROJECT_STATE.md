@@ -4,7 +4,10 @@ Last updated: 2026-06-21
 
 ## Current Stage
 
-Status: `PASS_WITH_WARNINGS` pending final remote HEAD verification.
+Status: `PASS` for GOAL-HYGIENE-01 warning resolution pending final commit and
+remote HEAD verification. Clean bootstrap readiness remains
+`PASS_WITH_WARNINGS` because the Class D source-evidence gap is intentionally
+documented.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -90,6 +93,18 @@ Key GitHub locations after push:
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md`
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/classified_capability_catalog_through_goal06b.csv`
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/diagnostics/workflow_diagnostic_summary.md`
+
+## Runtime Artifact Policy
+
+Committed audit summaries are stable and deterministic. Volatile command timing
+is written to local-only ignored files under `outputs/local/runtime/`, so normal
+validation runs do not dirty tracked reports only because `runtime_seconds`
+changed.
+
+## Python Support
+
+Python `>=3.9` is supported for the clean GOAL-06B workflow. The fresh-clone
+audit verified the workflow under Python `3.9.21`.
 
 ## Known Warnings
 

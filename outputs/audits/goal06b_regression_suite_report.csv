@@ -1,14 +1,14 @@
 command,status,runtime_seconds,key_outputs_verified,warnings,blocking_errors,diagnostic_reference
-python scripts/audit_existing_modules.py,PASS,0.025,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/build_pit_signal_snapshot.py,PASS,0.020,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/audit_pit_signal_snapshot.py,PASS,0.019,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/build_label_snapshot.py,PASS,0.020,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/audit_label_snapshot.py,PASS,0.030,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/build_model_ready_candidate_dataset.py,PASS,0.022,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/audit_feature_label_leakage.py,PASS,0.020,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/run_stage6a_blocker_repair.py --no-network,PASS,0.024,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/run_baseline_scoring_skeleton.py,PASS,0.020,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/audit_baseline_scoring_skeleton.py,PASS,0.019,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/run_supervised_baseline_training.py,PASS,0.021,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/audit_supervised_baseline_training.py,PASS,0.021,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
-python scripts/run_workflow_diagnostics.py,PASS,0.026,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_existing_modules.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/build_pit_signal_snapshot.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_pit_signal_snapshot.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/build_label_snapshot.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_label_snapshot.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/build_model_ready_candidate_dataset.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_feature_label_leakage.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/run_stage6a_blocker_repair.py --no-network,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/run_baseline_scoring_skeleton.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_baseline_scoring_skeleton.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/run_supervised_baseline_training.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/audit_supervised_baseline_training.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md
+python scripts/run_workflow_diagnostics.py,PASS,local_only,see required output manifest,,,outputs/diagnostics/workflow_diagnostic_summary.md

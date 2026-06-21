@@ -1,5 +1,8 @@
 # E2E Validation Through GOAL-06B
 
+Supported runtime: Python `>=3.9`. Python `3.9.21` was verified during the
+fresh-clone audit for the clean GOAL-06B workflow.
+
 The active validation command is:
 
 ```bash
@@ -39,3 +42,10 @@ python scripts/run_goal06b_regression_suite.py
 The final readiness evidence is:
 
 `outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md`
+
+Runtime timing policy:
+
+- committed validation and regression summaries are stable;
+- `runtime_seconds` in committed reports uses `local_only`;
+- volatile timing details are written to ignored local diagnostics under
+  `outputs/local/runtime/`.

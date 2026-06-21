@@ -18,5 +18,9 @@ venv/
 outputs/**/*.zip
 outputs/**/raw*
 outputs/**/cache*
+outputs/local/
+outputs/diagnostics/local_runtime_*.csv
+outputs/diagnostics/local_runtime_*.json
+outputs/diagnostics/local_run_*.md
 data/cached_evidence/**
 !data/cached_evidence/.gitkeep
