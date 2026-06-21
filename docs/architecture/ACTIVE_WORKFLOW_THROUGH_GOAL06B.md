@@ -4,30 +4,24 @@
 flowchart TD
     A["Project Operating System"] --> B["Universe / Symbol Governance"]
     B --> C["Data / Provider / Source Health"]
-    C --> D["Market Context Contract"]
-    C --> E["Sector Context Contract"]
-    C --> F["Stock OHLCV Contract"]
-    C --> G["Event Metadata Contract"]
-    C --> H["NLP Contract Gate"]
-    D --> I["PIT Signal Store"]
-    E --> I
-    F --> I
-    G --> I
-    H --> I
-    I --> J["Label Builder"]
-    J --> K["Benchmark Contract"]
-    K --> L["Feature-Label Merge"]
-    L --> M["Leakage Audit"]
-    M --> N["Stage 6A Repair Panel"]
-    N --> O["Baseline Scoring Skeleton"]
-    O --> P["Supervised Baseline Training Gate"]
-    P --> Q["Validation / Verification / Diagnostics"]
+    C --> D["Market / Sector / Stock / Event / NLP Contract Layers"]
+    D --> E["PIT Signal Store"]
+    E --> F["Label Builder"]
+    F --> G["Benchmark Contract"]
+    G --> H["Feature-Label Merge"]
+    H --> I["Leakage Audit"]
+    I --> J["Stage 6A Repair Panel"]
+    J --> K["GOAL-06A Baseline Scoring Skeleton"]
+    K --> L["GOAL-06B Supervised Baseline Training Gate"]
+    L --> M["Validation / Verification / Diagnostics"]
+    M --> N["Safety Gate / Adapter Audit"]
 ```
 
-No active node imports legacy demo paths, old runtime-evidence modules,
-obsolete step runners, DQN/RL, dashboard, paper trading, recommendation, risk
-overlay, broker/live trading, production DB writes, or production model
-promotion code.
+This is the only implemented active workflow. It uses solid arrows only and
+does not include GOAL-06C or any downstream future block as active. No active
+node imports legacy demo paths, old runtime-evidence modules, obsolete step
+runners, DQN/RL, dashboard, paper trading, recommendation, risk overlay,
+broker/live trading, production DB writes, or production model promotion code.
 
 ## Module Dependency Structure
 

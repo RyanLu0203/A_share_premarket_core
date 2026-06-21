@@ -1,0 +1,32 @@
+workflow_id,display_name,status,diagram_edge_type,can_promote_now,promotion_blocker,next_required_goal
+project_operating_system,Project Operating System,implemented_active,solid,false,already implemented active,Project Start
+universe_symbol_governance,Universe / Symbol Governance,implemented_active,solid,false,already implemented active,Project Start
+data_provider_source_health,Data / Provider / Source Health,implemented_active,solid,false,already implemented active,GOAL-04.5
+context_contract_layers,Market / Sector / Stock / Event / NLP Contract Layers,implemented_active,solid,false,already implemented active,GOAL-04.5
+pit_signal_store,PIT Signal Store,implemented_active,solid,false,already implemented active,GOAL-05A
+label_builder,Label Builder,implemented_active,solid,false,already implemented active,GOAL-05B
+benchmark_contract,Benchmark Contract,implemented_active,solid,false,already implemented active,GOAL-05B
+feature_label_merge,Feature-Label Merge,implemented_active,solid,false,already implemented active,GOAL-05C
+leakage_audit,Leakage Audit,implemented_active,solid,false,already implemented active,GOAL-05C
+stage6a_repair_panel,Stage 6A Repair Panel,implemented_active,solid,false,already implemented active,GOAL-06A
+goal06a_baseline_scoring,GOAL-06A Baseline Scoring Skeleton,implemented_active,solid,false,already implemented active,GOAL-06A
+goal06b_supervised_baseline_gate,GOAL-06B Supervised Baseline Training Gate,implemented_active,solid,false,already implemented active,GOAL-06B
+validation_verification_diagnostics,Validation / Verification / Diagnostics,implemented_active,solid,false,already implemented active,GOAL-06B
+safety_gate,Safety Gate,implemented_active,solid,false,already implemented active,GOAL-06B
+adapter_audit,Adapter Audit,implemented_active,solid,false,already implemented active,GOAL-06B
+goal06c_expanded_validation_ranking,GOAL-06C Expanded Validation and Ranking Baseline,future_review_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-06C review-only expanded validation
+goal06d_model_comparison_calibration,GOAL-06D Model Comparison and Calibration,future_review_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-06D
+goal07a_risk_overlay_design,GOAL-07A Risk Overlay Design,future_design_only,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-07A
+goal07b_risk_overlay_calculation,GOAL-07B Risk Overlay Calculation Prototype,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",GOAL-07B
+position_band_recommendation,Position-band Recommendation,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+signal_backtest,Signal Backtest,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+portfolio_backtest,Portfolio Backtest,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+cost_slippage_sensitivity,Cost / Slippage Sensitivity,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+paper_trading_journal,Paper Trading Journal,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+failure_attribution,Failure Attribution,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+dashboard_daily_report,Dashboard / Daily Report,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+production_hardening,Production Hardening,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+broker_live_trading,Broker / Live Trading,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+production_db_writes,Production DB Writes,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+production_model_promotion,Production Model Promotion,locked_future,dotted,false,"requires readiness report PASS/PASS_WITH_WARNINGS plus validation, verification, workflow_status, docs, and PROJECT_STATE updates",Future
+dqn_rl_mainline,DQN/RL mainline path,deleted_from_active_mainline,dotted_side_note,false,deleted from active mainline; explicit optional research goal required,Deleted

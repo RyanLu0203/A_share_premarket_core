@@ -45,10 +45,15 @@ flowchart TD
     G --> H["Feature-Label Merge"]
     H --> I["Leakage Audit"]
     I --> J["Stage 6A Repair Panel"]
-    J --> K["Baseline Scoring Skeleton"]
-    K --> L["Supervised Baseline Training Gate"]
+    J --> K["GOAL-06A Baseline Scoring Skeleton"]
+    K --> L["GOAL-06B Supervised Baseline Training Gate"]
     L --> M["Validation / Verification / Diagnostics"]
+    M --> N["Safety Gate / Adapter Audit"]
 ```
+
+This active diagram uses solid arrows only and stops at GOAL-06B. GOAL-06C and
+later remain future, design-only, locked, or deleted-from-active-mainline blocks
+in the canonical workflow status contract.
 
 ## Required Public Commands
 
@@ -71,6 +76,7 @@ The target repo preserves the active GOAL-06B command surface:
 - `python scripts/run_safety_gate.py`
 - `python scripts/run_adapter_audit.py`
 - `python scripts/run_workflow_diagnostics.py`
+- `python scripts/audit_workflow_status.py`
 
 ## Protected Outputs
 
@@ -88,3 +94,23 @@ Recommendation, risk overlay calculation, dashboard, paper trading,
 broker/live trading, production DB writes, production model promotion, and
 DQN/RL remain locked. GOAL-06C is future work only unless the clean bootstrap
 readiness report explicitly unlocks it.
+
+## Workflow Promotion Rule
+
+A future workflow block can only be promoted from dotted/future to
+solid/implemented if:
+
+1. The corresponding goal has a readiness report.
+2. The readiness report is `PASS` or acceptable `PASS_WITH_WARNINGS`.
+3. Validation and verification commands pass.
+4. `configs/project/workflow_status.csv` is updated.
+5. README and architecture diagrams are updated.
+6. `PROJECT_STATE.md` is updated.
+7. Locked downstream modules remain locked unless explicitly unlocked by that
+   goal.
+
+Do not silently change the workflow diagram to make future stages look
+implemented. Do not add new downstream blocks without updating
+`workflow_status.csv`. Do not remove locks from risk, recommendation,
+dashboard, paper/live trading, production, or DQN/RL unless a later explicit
+gate allows it.

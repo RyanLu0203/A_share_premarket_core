@@ -4,6 +4,7 @@ This document summarizes the clean active workflow after the private bootstrap.
 
 See also:
 
+- `docs/architecture/CANONICAL_WORKFLOW_STATUS.md`
 - `docs/architecture/ACTIVE_WORKFLOW_THROUGH_GOAL06B.md`
 - `docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md`
 
@@ -24,3 +25,7 @@ flowchart TD
 
 Locked future modules are documented in the roadmap and are not imported by the
 active trunk.
+
+The canonical status contract is `configs/project/workflow_status.csv`.
+Implemented active blocks use solid arrows; future, design-only, locked, and
+deleted-from-active-mainline blocks use dotted arrows or side-note references.

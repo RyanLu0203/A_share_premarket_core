@@ -38,6 +38,7 @@ Implemented and protected:
 - GOAL-06A baseline scoring skeleton
 - GOAL-06B review-only supervised baseline training gate
 - verification, validation, regression, safety, adapter, and diagnostics gates
+- canonical workflow status governance and workflow status audit
 
 ## Universe
 
@@ -105,6 +106,17 @@ changed.
 
 Python `>=3.9` is supported for the clean GOAL-06B workflow. The fresh-clone
 audit verified the workflow under Python `3.9.21`.
+
+## Workflow Status Governance
+
+Canonical status contract:
+
+- `configs/project/workflow_status.csv`
+
+Future goals must update that file, README diagrams, architecture diagrams, and
+`PROJECT_STATE.md` before any workflow block can move from dotted/future to
+solid/implemented. GOAL-06C remains the next allowed goal and only as
+future review-only expanded validation.
 
 ## Known Warnings
 

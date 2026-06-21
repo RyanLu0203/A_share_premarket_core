@@ -16,6 +16,7 @@ python scripts/run_program_validation_profile.py,scripts/run_program_validation_
 python scripts/run_safety_gate.py,scripts/run_safety_gate.py,true,clean_wrapper,false,PASS
 python scripts/run_adapter_audit.py,scripts/run_adapter_audit.py,true,clean_wrapper,false,PASS
 python scripts/run_workflow_diagnostics.py,scripts/run_workflow_diagnostics.py,true,clean_wrapper,false,PASS
+python scripts/audit_workflow_status.py,scripts/audit_workflow_status.py,true,clean_wrapper,false,PASS
 python scripts/run_e2e_trunk_verification_through_goal06b.py,scripts/run_e2e_trunk_verification_through_goal06b.py,true,clean_wrapper,false,PASS
 python scripts/run_e2e_trunk_validation_through_goal06b.py,scripts/run_e2e_trunk_validation_through_goal06b.py,true,clean_wrapper,false,PASS
 python scripts/run_goal06b_regression_suite.py,scripts/run_goal06b_regression_suite.py,true,clean_wrapper,false,PASS

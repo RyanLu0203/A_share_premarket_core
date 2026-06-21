@@ -26,5 +26,6 @@ Status: `PASS_WITH_WARNINGS`
 - `broker_live_trading_false`: PASS
 - `dqn_rl_false`: PASS
 - `diagnostics_reports_generated`: PASS
+- `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS
 - `adapter_audit_passes`: PASS

@@ -34,12 +34,33 @@ future model or risk work.
 ```bash
 python -m compileall src scripts tests
 python -m pytest tests -q
+python scripts/audit_workflow_status.py
 python scripts/run_goal06b_regression_suite.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
 python scripts/run_e2e_trunk_validation_through_goal06b.py
 python scripts/run_safety_gate.py
 python scripts/run_adapter_audit.py
 ```
+
+## Workflow Promotion Rule
+
+A future workflow block can only be promoted from dotted/future to
+solid/implemented if:
+
+1. The corresponding goal has a readiness report.
+2. The readiness report is `PASS` or acceptable `PASS_WITH_WARNINGS`.
+3. Validation and verification commands pass.
+4. `configs/project/workflow_status.csv` is updated.
+5. README and architecture diagrams are updated.
+6. `PROJECT_STATE.md` is updated.
+7. Locked downstream modules remain locked unless explicitly unlocked by that
+   goal.
+
+Do not silently change the workflow diagram to make future stages look
+implemented. Do not add new downstream blocks without updating
+`workflow_status.csv`. Do not remove locks from risk, recommendation,
+dashboard, paper/live trading, production, or DQN/RL unless a later explicit
+gate allows it.
 
 ## Do Not Drift
 

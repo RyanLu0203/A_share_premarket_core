@@ -16,4 +16,5 @@ Status: `PASS`
 - `validation_does_not_run_legacy_only_tests`: PASS
 - `no_absolute_user_paths_required`: PASS
 - `diagnostics_outputs_exist`: PASS
+- `workflow_status_governance_exists`: PASS
 - `no_large_legacy_implementation_directory`: PASS

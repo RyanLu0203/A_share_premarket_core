@@ -1,5 +1,40 @@
 # 09 Step Iteration Log
 
+## 2026-06-21 - GOAL-DOCS-01 Canonical Workflow Diagram And Status Governance
+
+Status: `PASS`.
+
+What changed:
+
+- Added canonical workflow status contract at
+  `configs/project/workflow_status.csv`.
+- Added `docs/architecture/CANONICAL_WORKFLOW_STATUS.md`.
+- Updated active workflow and full roadmap diagrams with solid implemented
+  arrows and dotted future/locked/deleted references.
+- Added workflow promotion rule to README, CODEX, AGENTS, and architecture
+  docs.
+- Added `scripts/audit_workflow_status.py` and wired the audit into current
+  trunk validation and program validation profile.
+
+Evidence:
+
+- `outputs/audits/workflow_status_audit.md`
+- `outputs/audits/workflow_status_table.csv`
+- `outputs/audits/workflow_diagram_update_report.md`
+
+Safety:
+
+- GOAL-06C remains future review-only.
+- GOAL-06D and GOAL-07A remain future review/design-only.
+- Recommendation, risk overlay calculation, dashboard, paper/live trading,
+  production writes, model promotion, and DQN/RL remain locked or deleted from
+  active mainline.
+
+Next review question:
+
+Should the next goal start GOAL-06C review-only expanded validation, or should
+it first refine the workflow-status audit for stricter diagram generation?
+
 ## 2026-06-21 - GOAL-HYGIENE-01 Clean Bootstrap Warning Resolution
 
 Status: `PASS`.

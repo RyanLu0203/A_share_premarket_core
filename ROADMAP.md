@@ -14,6 +14,7 @@
 - GOAL-06B review-only supervised baseline training gate.
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
+- GOAL-DOCS-01 canonical workflow status governance.
 
 ## Next Allowed Work
 
@@ -25,6 +26,8 @@ trading, production DB writes, production model promotion, or DQN/RL.
 
 Before GOAL-06C starts, keep committed reports deterministic and treat
 `runtime_seconds` as local-only diagnostics.
+Future goals must also update `configs/project/workflow_status.csv` and the
+workflow diagrams before any future block is promoted.
 
 ## Locked Future
 

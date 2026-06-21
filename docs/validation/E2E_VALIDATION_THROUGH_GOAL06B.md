@@ -26,6 +26,7 @@ It validates:
 - review-only and pilot-only flags
 - locked downstream capabilities remain false
 - diagnostics reports are generated
+- workflow status governance passes
 
 Verification is separate:
 
@@ -42,6 +43,12 @@ python scripts/run_goal06b_regression_suite.py
 The final readiness evidence is:
 
 `outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md`
+
+Workflow status governance is checked by:
+
+```bash
+python scripts/audit_workflow_status.py
+```
 
 Runtime timing policy:
 

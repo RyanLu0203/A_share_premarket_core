@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-21 - GOAL-DOCS-01
+
+- Added canonical workflow status contract at
+  `configs/project/workflow_status.csv`.
+- Added workflow status audit wrapper and generated governance audit outputs.
+- Updated README and architecture diagrams so implemented blocks use solid
+  arrows and future/locked/deleted blocks use dotted references.
+- Added the Workflow Promotion Rule to README, CODEX, AGENTS, and canonical
+  architecture docs.
+- Kept GOAL-06C as future review-only and all downstream locked modules locked.
+
 ## 2026-06-21 - GOAL-HYGIENE-01
 
 - Split volatile runtime timings out of committed validation reports and into
