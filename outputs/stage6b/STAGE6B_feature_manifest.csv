@@ -1,0 +1,8 @@
+feature_name,coefficient,label_column
+market_trend_5d,0.15,false
+sector_momentum_5d,0.15,false
+stock_gap_signal,0.2,false
+event_count_pit,0.05,false
+review_only_nlp_contract_score,0.15,false
+source_health_score,0.2,false
+source_count,0.1,false

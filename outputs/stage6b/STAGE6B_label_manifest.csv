@@ -1,0 +1,3 @@
+label_name,label_type
+label_positive,binary_review_only
+alpha_return_1d,continuous_review_only

@@ -1,0 +1,10 @@
+{
+  "project_id": "ashare_premarket_core",
+  "identity": "A-share pre-market alpha diagnosis and risk-aware position-building decision support system",
+  "active_boundary": "project_start_through_goal06b",
+  "source_repository": "RyanLu0203/A_share_market_analysis_and_prediction",
+  "target_repository": "RyanLu0203/A_share_premarket_core",
+  "review_only": true,
+  "automatic_trading_bot": false,
+  "production_db_writes": false
+}

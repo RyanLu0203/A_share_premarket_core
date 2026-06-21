@@ -1,0 +1,15 @@
+{
+  "goal06c_expanded_validation": "future_only",
+  "goal06d_model_comparison": "locked_future",
+  "goal07a_risk_overlay_design": "locked_future",
+  "goal07b_risk_overlay_calculation": "locked_future",
+  "position_band_recommendation": false,
+  "signal_backtest": false,
+  "portfolio_backtest": false,
+  "dashboard": false,
+  "paper_trading": false,
+  "broker_live_trading": false,
+  "production_db_writes": false,
+  "production_model_promotion": false,
+  "dqn_rl": false
+}

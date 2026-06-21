@@ -1,0 +1,8 @@
+{
+  "contract_id": "goal06b_supervised_baseline_training_gate",
+  "review_only": true,
+  "pilot_only": true,
+  "production_model_promotion": false,
+  "recommendation_unlocked": false,
+  "risk_overlay_unlocked": false
+}

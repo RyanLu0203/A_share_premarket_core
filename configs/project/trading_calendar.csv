@@ -1,0 +1,9 @@
+date,is_trading_day,session_note
+2026-06-15,true,regular
+2026-06-16,true,regular
+2026-06-17,true,regular
+2026-06-18,true,regular
+2026-06-19,true,regular
+2026-06-20,false,weekend
+2026-06-21,false,weekend
+2026-06-22,true,regular

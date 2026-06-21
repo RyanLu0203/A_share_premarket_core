@@ -1,0 +1,6 @@
+{
+  "contract_id": "goal05c_feature_label_merge",
+  "join_keys": ["symbol", "target_trading_date"],
+  "forbids_label_leakage_into_features": true,
+  "requires_excluded_column_manifest": true
+}

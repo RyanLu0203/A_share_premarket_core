@@ -1,0 +1,6 @@
+{
+  "contract_id": "goal05b_label_contract",
+  "label_horizon": "next_trading_day_return",
+  "uses_trading_days": true,
+  "review_only": true
+}

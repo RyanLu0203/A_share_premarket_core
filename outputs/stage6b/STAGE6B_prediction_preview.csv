@@ -1,0 +1,9 @@
+target_trading_date,symbol,review_only_probability,label_positive,recommendation_generated
+2026-06-16,002475.SZ,0.599048,true,false
+2026-06-16,600036.SH,0.641527,false,false
+2026-06-17,002475.SZ,0.613726,false,false
+2026-06-17,600036.SH,0.630416,true,false
+2026-06-18,002475.SZ,0.588193,true,false
+2026-06-18,600036.SH,0.634831,false,false
+2026-06-19,002475.SZ,0.607663,true,false
+2026-06-19,600036.SH,0.629949,true,false

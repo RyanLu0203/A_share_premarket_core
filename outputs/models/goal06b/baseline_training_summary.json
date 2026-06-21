@@ -1,0 +1,14 @@
+{
+  "broker_live_trading_unlocked": false,
+  "dashboard_unlocked": false,
+  "dqn_rl_unlocked": false,
+  "paper_trading_unlocked": false,
+  "pilot_only": true,
+  "positive_label_count": 5,
+  "production_model_promotion": false,
+  "recommendation_unlocked": false,
+  "review_only": true,
+  "risk_overlay_unlocked": false,
+  "row_count": 8,
+  "status": "PASS"
+}

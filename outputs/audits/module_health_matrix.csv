@@ -1,0 +1,26 @@
+capability_id,stage_or_goal,owner_module,import_status,capability_class,active
+project_operating_system,Project Start,ashare_premarket.core,PASS,CLASS_A_REQUIRED_ACTIVE,true
+universe_symbol_governance,Project Start,ashare_premarket.universe,PASS,CLASS_A_REQUIRED_ACTIVE,true
+trading_calendar,Project Start,ashare_premarket.data,PASS,CLASS_A_REQUIRED_ACTIVE,true
+module_health_gate,GOAL-04.5,ashare_premarket.validation,PASS,CLASS_A_REQUIRED_ACTIVE,true
+data_source_health,GOAL-04.5,ashare_premarket.data,PASS,CLASS_A_REQUIRED_ACTIVE,true
+market_context_contract,GOAL-04.5,ashare_premarket.market,PASS,CLASS_A_REQUIRED_ACTIVE,true
+sector_context_contract,GOAL-04.5,ashare_premarket.sector,PASS,CLASS_A_REQUIRED_ACTIVE,true
+stock_ohlcv_contract,GOAL-04.5,ashare_premarket.data,PASS,CLASS_A_REQUIRED_ACTIVE,true
+event_metadata_contract,GOAL-04.5,ashare_premarket.events,PASS,CLASS_A_REQUIRED_ACTIVE,true
+nlp_contract_gate,GOAL-04.5,ashare_premarket.nlp,PASS,CLASS_A_REQUIRED_ACTIVE,true
+pit_signal_store,GOAL-05A,ashare_premarket.features,PASS,CLASS_A_REQUIRED_ACTIVE,true
+source_availability_gate,GOAL-05A,ashare_premarket.features,PASS,CLASS_A_REQUIRED_ACTIVE,true
+signal_quality,GOAL-05A,ashare_premarket.features,PASS,CLASS_A_REQUIRED_ACTIVE,true
+label_contract,GOAL-05B,ashare_premarket.labels,PASS,CLASS_A_REQUIRED_ACTIVE,true
+benchmark_contract,GOAL-05B,ashare_premarket.labels,PASS,CLASS_A_REQUIRED_ACTIVE,true
+feature_label_merge,GOAL-05C,ashare_premarket.datasets,PASS,CLASS_A_REQUIRED_ACTIVE,true
+leakage_audit,GOAL-05C,ashare_premarket.datasets,PASS,CLASS_A_REQUIRED_ACTIVE,true
+stage6a_repair_panel,GOAL-06A,ashare_premarket.scoring,PASS,CLASS_A_REQUIRED_ACTIVE,true
+baseline_scoring_skeleton,GOAL-06A,ashare_premarket.scoring,PASS,CLASS_A_REQUIRED_ACTIVE,true
+supervised_baseline_training_gate,GOAL-06B,ashare_premarket.training,PASS,CLASS_A_REQUIRED_ACTIVE,true
+current_trunk_validation,GOAL-06B,ashare_premarket.validation,PASS,CLASS_A_REQUIRED_ACTIVE,true
+program_validation_profile,GOAL-06B,ashare_premarket.validation,PASS,CLASS_A_REQUIRED_ACTIVE,true
+safety_gate,GOAL-06B,ashare_premarket.ops,PASS,CLASS_A_REQUIRED_ACTIVE,true
+adapter_audit,GOAL-06B,ashare_premarket.ops,PASS,CLASS_A_REQUIRED_ACTIVE,true
+workflow_diagnostics,GOAL-06B,ashare_premarket.diagnostics,PASS,CLASS_A_REQUIRED_ACTIVE,true

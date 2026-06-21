@@ -1,0 +1,1 @@
+command,stage_or_goal,capability_id,status,runtime_seconds,input_artifacts,output_artifacts,error_message_if_any,warning_message_if_any,blocking_or_non_blocking,recommended_action,owner_module,verification_link,validation_link

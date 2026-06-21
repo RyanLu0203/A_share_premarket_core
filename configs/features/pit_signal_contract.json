@@ -1,0 +1,8 @@
+{
+  "contract_id": "goal05a_pit_signal_store",
+  "decision_time": "premarket",
+  "approved_symbols_only": true,
+  "requires_source_origin": true,
+  "requires_decision_cutoff": true,
+  "forbids_label_columns": true
+}

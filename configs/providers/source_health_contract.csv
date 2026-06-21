@@ -1,0 +1,9 @@
+source_id,symbol,authority_class,last_success_available,pit_ready,warning
+sina_metadata,002475.SZ,market_metadata,true,true,
+sina_metadata,600036.SH,market_metadata,true,true,
+eastmoney_announcements,002475.SZ,announcement_metadata,true,true,
+eastmoney_announcements,600036.SH,announcement_metadata,true,true,
+cninfo_announcements,002475.SZ,announcement_metadata,false,false,no usable rows in source evidence branch
+cninfo_announcements,600036.SH,announcement_metadata,true,true,
+tencent_metadata,002475.SZ,market_metadata,false,false,no usable rows under bounded variants
+tencent_metadata,600036.SH,market_metadata,false,false,no usable rows under bounded variants

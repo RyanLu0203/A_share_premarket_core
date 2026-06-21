@@ -1,0 +1,26 @@
+capability_id,capability_name,stage_or_goal,status,owner_module,recommended_action
+project_operating_system,Project operating system,Project Start,PASS,ashare_premarket.core,Keep active
+universe_symbol_governance,Universe and symbol governance,Project Start,PASS,ashare_premarket.universe,Keep active
+trading_calendar,Trading calendar,Project Start,PASS,ashare_premarket.data,Keep active
+module_health_gate,Module health gate,GOAL-04.5,PASS,ashare_premarket.validation,Keep active
+data_source_health,Data source health,GOAL-04.5,PASS,ashare_premarket.data,Keep active
+market_context_contract,Market context contract,GOAL-04.5,PASS,ashare_premarket.market,Keep active
+sector_context_contract,Sector context contract,GOAL-04.5,PASS,ashare_premarket.sector,Keep active
+stock_ohlcv_contract,Stock OHLCV contract,GOAL-04.5,PASS,ashare_premarket.data,Keep active
+event_metadata_contract,Event metadata contract,GOAL-04.5,PASS,ashare_premarket.events,Keep active
+nlp_contract_gate,NLP contract gate,GOAL-04.5,PASS,ashare_premarket.nlp,Keep active
+pit_signal_store,PIT signal store,GOAL-05A,PASS,ashare_premarket.features,Keep active
+source_availability_gate,Source availability gate,GOAL-05A,PASS,ashare_premarket.features,Keep active
+signal_quality,Signal quality,GOAL-05A,PASS,ashare_premarket.features,Keep active
+label_contract,Label contract and builder,GOAL-05B,PASS,ashare_premarket.labels,Keep active
+benchmark_contract,Benchmark contract,GOAL-05B,PASS,ashare_premarket.labels,Keep active
+feature_label_merge,Feature-label merge,GOAL-05C,PASS,ashare_premarket.datasets,Keep active
+leakage_audit,Leakage audit,GOAL-05C,PASS,ashare_premarket.datasets,Keep active
+stage6a_repair_panel,Stage 6A repair panel,GOAL-06A,PASS,ashare_premarket.scoring,Keep active
+baseline_scoring_skeleton,Baseline scoring skeleton,GOAL-06A,PASS,ashare_premarket.scoring,Keep active
+supervised_baseline_training_gate,Supervised baseline training gate,GOAL-06B,PASS,ashare_premarket.training,Keep active
+current_trunk_validation,Current trunk validation,GOAL-06B,PASS,ashare_premarket.validation,Keep active
+program_validation_profile,Program validation profile,GOAL-06B,PASS,ashare_premarket.validation,Keep active
+safety_gate,Safety gate,GOAL-06B,PASS,ashare_premarket.ops,Keep active
+adapter_audit,Adapter audit,GOAL-06B,PASS,ashare_premarket.ops,Keep active
+workflow_diagnostics,Workflow diagnostics,GOAL-06B,PASS,ashare_premarket.diagnostics,Keep active

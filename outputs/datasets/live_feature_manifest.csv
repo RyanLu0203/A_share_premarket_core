@@ -1,0 +1,8 @@
+column_name,role,allowed_for_scoring,pit_safe,source_capability
+market_trend_5d,live_feature,true,true,pit_signal_store
+sector_momentum_5d,live_feature,true,true,pit_signal_store
+stock_gap_signal,live_feature,true,true,pit_signal_store
+event_count_pit,live_feature,true,true,pit_signal_store
+review_only_nlp_contract_score,live_feature,true,true,pit_signal_store
+source_health_score,live_feature,true,true,pit_signal_store
+source_count,live_feature,true,true,pit_signal_store

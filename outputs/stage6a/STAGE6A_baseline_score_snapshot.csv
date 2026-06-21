@@ -1,0 +1,9 @@
+target_trading_date,symbol,baseline_score,score_contract_version,review_only,recommendation_generated
+2026-06-16,002475.SZ,0.4015,goal06a.v1,true,false
+2026-06-16,600036.SH,0.582,goal06a.v1,true,false
+2026-06-17,002475.SZ,0.463,goal06a.v1,true,false
+2026-06-17,600036.SH,0.534,goal06a.v1,true,false
+2026-06-18,002475.SZ,0.3565,goal06a.v1,true,false
+2026-06-18,600036.SH,0.553,goal06a.v1,true,false
+2026-06-19,002475.SZ,0.4375,goal06a.v1,true,false
+2026-06-19,600036.SH,0.532,goal06a.v1,true,false

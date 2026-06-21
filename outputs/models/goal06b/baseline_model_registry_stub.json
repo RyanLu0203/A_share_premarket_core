@@ -1,0 +1,7 @@
+{
+  "artifact_kind": "registry_stub_only",
+  "model_family": "deterministic_linear_review_stub",
+  "model_id": "goal06b_review_only_supervised_baseline_stub",
+  "promotion_allowed": false,
+  "registered_for_production": false
+}

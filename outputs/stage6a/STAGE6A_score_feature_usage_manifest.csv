@@ -1,0 +1,8 @@
+feature_name,weight,source_manifest,label_column
+market_trend_5d,0.15,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+sector_momentum_5d,0.15,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+stock_gap_signal,0.2,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+event_count_pit,0.05,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+review_only_nlp_contract_score,0.15,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+source_health_score,0.2,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false
+source_count,0.1,outputs/stage6a/STAGE6A_live_feature_manifest.csv,false

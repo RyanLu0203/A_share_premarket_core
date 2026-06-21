@@ -1,0 +1,5 @@
+column_name,role,allowed_for_scoring,pit_safe,source_capability
+stock_return_1d,label,false,false,label_contract
+benchmark_return_1d,label,false,false,label_contract
+alpha_return_1d,label,false,false,label_contract
+label_positive,label,false,false,label_contract

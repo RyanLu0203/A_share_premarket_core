@@ -1,0 +1,6 @@
+{
+  "contract_id": "goal06a_baseline_scoring_skeleton",
+  "review_only": true,
+  "uses_label_columns": false,
+  "emits_recommendations": false
+}
