@@ -15,7 +15,8 @@ flowchart TD
     H -. "implemented review-only data gate" .-> X["GOAL-06C.5 Storage + Coverage + Engineering Panel<br/>(implemented_review_only; contract_demo)"]
     X -. "source-backed ingestion gate" .-> Y["GOAL-06C.6 Source-Backed Engineering Pilot Bundle<br/>(implemented_review_only; network-disabled by default)"]
     Y -. "scoped failure taxonomy" .-> Z["GOAL-06C.6A Network Isolation + Failure Taxonomy<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    Z -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    Z -. "provider ladder gate" .-> AA["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; browser-assisted optional)"]
+    AA -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
     I -. "future design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
@@ -33,11 +34,14 @@ flowchart TD
 ```
 
 The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C and
-GOAL-06C.5, GOAL-06C.6, and GOAL-06C.6A are implemented review-only extensions
+GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, and GOAL-06C.7 are implemented review-only extensions
 and not recommendation, positioning, risk, trading, dashboard, production, or
 DQN/RL workflows. GOAL-06C.6 uses compliant provider ingestion only when
 explicitly network-enabled. GOAL-06C.6A classifies network failures by type
 rather than using a generic network bucket. The default provider path remains
 direct AKShare/local-import. The explicit CloakBrowser reference probe is
 separate, opt-in, tag-only, sanitized, and does not promote any downstream
-workflow block.
+workflow block. GOAL-06C.7 adds a provider ladder where
+`browser_assisted_optional` is disabled by default, requires explicit CLI plus
+env opt-in, and counts only schema-valid finance rows. GOAL-06D remains blocked
+until the GOAL-06C.7 readiness report proves `engineering_pilot`.

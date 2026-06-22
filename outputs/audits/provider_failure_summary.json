@@ -102,12 +102,7 @@
   "run_id": "goal06c6_local_runtime",
   "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
   "silent_proxy_fallback_used": false,
-  "source_bundle_health_status": "BLOCKED",
+  "source_bundle_health_status": "PASS_WITH_WARNINGS",
   "system_proxy_inheritance_allowed": false,
-  "target_functions_inspected": {
-    "index_zh_a_hist": "(symbol: str = '000859', period: str = 'daily', start_date: str = '19700101', end_date: str = '22220101') -> pandas.core.frame.DataFrame",
-    "stock_info_a_code_name": "() -> pandas.core.frame.DataFrame",
-    "stock_zh_a_hist": "(symbol: str = '000001', period: str = 'daily', start_date: str = '19700101', end_date: str = '20500101', adjust: str = '', timeout: float = None) -> pandas.core.frame.DataFrame",
-    "stock_zh_a_spot_em": "() -> pandas.core.frame.DataFrame"
-  }
+  "target_functions_inspected": {}
 }

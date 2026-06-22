@@ -1,31 +1,46 @@
 {
-  "akshare_available": true,
-  "akshare_function_signatures": {
-    "index_zh_a_hist": "(symbol: str = '000859', period: str = 'daily', start_date: str = '19700101', end_date: str = '22220101') -> pandas.core.frame.DataFrame",
-    "stock_info_a_code_name": "() -> pandas.core.frame.DataFrame",
-    "stock_zh_a_hist": "(symbol: str = '000001', period: str = 'daily', start_date: str = '19700101', end_date: str = '20500101', adjust: str = '', timeout: float = None) -> pandas.core.frame.DataFrame",
-    "stock_zh_a_spot_em": "() -> pandas.core.frame.DataFrame"
-  },
-  "blocked_symbol_rows": 0,
-  "bundle_id": "goal06c6_akshare_engineering_pilot_current",
-  "bundle_tier": "source_backed_partial",
-  "clean_rows": 0,
-  "failure_classes": [
-    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"
-  ],
-  "health_status": "BLOCKED",
+  "approved_symbols": 0,
+  "benchmark_rows": 0,
+  "browser_dependency_status": "AVAILABLE",
+  "bundle_id": "goal06c7_provider_ladder_engineering_pilot_current",
+  "bundle_tier": "below_contract_demo",
+  "candidate_symbols": 100,
+  "data_root": "/Users/luxinyu/data/ashare_premarket",
+  "engineering_pilot_met": false,
+  "goal06d_allowed_to_proceed": false,
+  "goal06d_mode": "blocked",
+  "goal_id": "GOAL-06C.7",
+  "health_status": "PASS_WITH_WARNINGS",
+  "heavy_data_committed": false,
   "label_ready_rows": 0,
-  "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c6_akshare_engineering_pilot_current",
-  "network_status": "network_enabled",
-  "notes": "Source-backed local bundle summary; full data is local-only.",
+  "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current",
+  "local_import_status": {
+    "available_roles": [],
+    "missing_roles": [
+      "benchmark_daily",
+      "ohlcv_daily",
+      "trading_calendar",
+      "universe"
+    ]
+  },
+  "panel_tier": "below_contract_demo",
   "pit_ready_rows": 0,
-  "provider_attempts": 3,
-  "raw_rows": 0,
-  "source_coverage_ready_symbols": 0,
-  "stage6c_rows": 0,
-  "symbols_failed": 50,
-  "symbols_requested": 50,
-  "symbols_succeeded": 0,
-  "trading_dates_requested": 120,
-  "trading_dates_succeeded": 0
+  "provider_attempt_count": 303,
+  "provider_ladder_order": [
+    "akshare_direct",
+    "browser_assisted_optional",
+    "local_import",
+    "future_vendor_data_placeholder"
+  ],
+  "raw_history_trading_dates": 0,
+  "raw_html_stored": false,
+  "raw_payload_stored": false,
+  "remaining_gap": {
+    "stage6c_rows": 6000,
+    "symbols": 50,
+    "validation_trading_dates": 120
+  },
+  "stage6c_engineering_rows": 0,
+  "stock_ohlcv_rows": 0,
+  "validation_trading_dates": 0
 }

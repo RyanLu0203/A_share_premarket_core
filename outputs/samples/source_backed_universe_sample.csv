@@ -1,1 +1,1 @@
-symbol,name,exchange,liquidity_proxy,source_coverage_status,approval_status,notes,coverage_status
+symbol,name,exchange,liquidity_proxy,source_coverage_status,approval_status,notes,coverage_status,provider_id,provider_mode,source_bundle_id

@@ -1,0 +1,25 @@
+{
+  "access_restriction_detected": false,
+  "browser_assisted_enabled": true,
+  "browser_assisted_project_default": false,
+  "browser_dependency_status": "AVAILABLE",
+  "captcha_or_challenge_detected": false,
+  "cookies_stored": false,
+  "domain_access_only_count": 0,
+  "domain_access_solved_count": 0,
+  "event_count": 101,
+  "explicit_opt_in_used": true,
+  "failure_class_counts": {
+    "BROWSER_NET_EMPTY_RESPONSE": 101
+  },
+  "goal06d_allowed_to_proceed": false,
+  "provider_mode_rows_in_panel": 0,
+  "raw_html_stored": false,
+  "raw_payload_stored": false,
+  "remaining_unsolved_count": 101,
+  "session_data_stored": false,
+  "structured_ingestion_solved_count": 0,
+  "temporary_cache_cleaned": true,
+  "temporary_cache_used": true,
+  "temporary_venv_used": true
+}

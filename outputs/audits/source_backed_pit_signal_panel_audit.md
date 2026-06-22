@@ -1,9 +1,6 @@
 # Source-Backed PIT Signal Panel Audit
 
-Status: `BLOCKED`
+Status: `PASS_WITH_WARNINGS`
 Rows reviewed: `0`
 PIT-ready rows: `0`
-Features use prior trading close data only and exclude labels.
-
-## Failures
-- label columns in PIT panel: ['symbol']
+PIT features use T-1 or earlier source rows and exclude labels.

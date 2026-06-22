@@ -20,6 +20,61 @@
       "layer": "anti_bot_access",
       "owner": "provider access restriction"
     },
+    "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED": {
+      "action": "do not bypass challenge/login/captcha; use fallback provider or local import",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED": {
+      "action": "browser was attempted but did not return schema-valid rows",
+      "layer": "browser_runtime",
+      "owner": "optional browser-assisted provider"
+    },
+    "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY": {
+      "action": "domain access alone is not ingestion success; parser/schema-valid rows are still required",
+      "layer": "browser_runtime",
+      "owner": "optional browser-assisted provider"
+    },
+    "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY": {
+      "action": "do not use browser-assisted provider outside explicit finance-domain opt-in policy",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "BROWSER_ASSISTED_PARSER_FAILURE": {
+      "action": "fix browser-assisted parser; do not store raw browser payloads in GitHub",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "BROWSER_ASSISTED_SCHEMA_MISMATCH": {
+      "action": "update schema normalization or mark this provider attempt unsolved",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED": {
+      "action": "structured schema-valid finance rows were obtained by explicit browser-assisted provider",
+      "layer": "unknown",
+      "owner": "optional browser-assisted provider"
+    },
+    "BROWSER_NAVIGATION_FAILED": {
+      "action": "retry within rate limits or use a compliant provider fallback",
+      "layer": "browser_runtime",
+      "owner": "optional browser runtime"
+    },
+    "BROWSER_NET_EMPTY_RESPONSE": {
+      "action": "classify separately from generic network failures; retry later or use local import",
+      "layer": "network_transport",
+      "owner": "external finance website network"
+    },
+    "BROWSER_RUNTIME_DEPENDENCY_MISSING": {
+      "action": "install CloakBrowser/Playwright only in an explicit temporary runtime if browser-assisted ingestion is intended",
+      "layer": "dependency",
+      "owner": "local optional dependency"
+    },
+    "BROWSER_RUNTIME_LAUNCH_FAILED": {
+      "action": "fix the temporary browser runtime or use direct/local provider fallback",
+      "layer": "browser_runtime",
+      "owner": "optional browser runtime"
+    },
     "BUG_IN_PROVIDER_WRAPPER": {
       "action": "fix parser, normalization, or write path",
       "layer": "parser_implementation",
@@ -428,6 +483,17 @@
     "HTML_RETURNED_INSTEAD_OF_DATA",
     "JS_CHALLENGE_DETECTED",
     "LOGIN_OR_CONSENT_WALL_DETECTED",
+    "BROWSER_RUNTIME_DEPENDENCY_MISSING",
+    "BROWSER_RUNTIME_LAUNCH_FAILED",
+    "BROWSER_NAVIGATION_FAILED",
+    "BROWSER_NET_EMPTY_RESPONSE",
+    "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY",
+    "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED",
+    "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED",
+    "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY",
+    "BROWSER_ASSISTED_SCHEMA_MISMATCH",
+    "BROWSER_ASSISTED_PARSER_FAILURE",
+    "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED",
     "CONTRACT_SCHEMA_MISMATCH",
     "REQUIRED_COLUMN_MISSING",
     "COLUMN_TYPE_MISMATCH",
@@ -480,6 +546,7 @@
     "network_transport",
     "http_access",
     "anti_bot_access",
+    "browser_runtime",
     "provider_contract",
     "parser_implementation",
     "data_quality",

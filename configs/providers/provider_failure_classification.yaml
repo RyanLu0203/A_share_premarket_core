@@ -8,6 +8,7 @@
     "network_transport",
     "http_access",
     "anti_bot_access",
+    "browser_runtime",
     "provider_contract",
     "parser_implementation",
     "data_quality",
@@ -61,6 +62,19 @@
       "HTML_RETURNED_INSTEAD_OF_DATA",
       "JS_CHALLENGE_DETECTED",
       "LOGIN_OR_CONSENT_WALL_DETECTED"
+    ],
+    "browser_runtime": [
+      "BROWSER_RUNTIME_DEPENDENCY_MISSING",
+      "BROWSER_RUNTIME_LAUNCH_FAILED",
+      "BROWSER_NAVIGATION_FAILED",
+      "BROWSER_NET_EMPTY_RESPONSE",
+      "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY",
+      "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED",
+      "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED",
+      "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY",
+      "BROWSER_ASSISTED_SCHEMA_MISMATCH",
+      "BROWSER_ASSISTED_PARSER_FAILURE",
+      "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED"
     ],
     "provider_contract": [
       "CONTRACT_SCHEMA_MISMATCH",
@@ -125,6 +139,9 @@
     "silent_proxy_fallback_allowed": false,
     "global_config_mutation_allowed": false,
     "bypass_tooling_allowed": false,
+    "browser_assisted_provider_default": false,
+    "browser_assisted_provider_opt_in": "ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 plus --enable-browser-assisted",
+    "browser_assisted_structured_success_rule": "Only schema-valid rows count as solved. Domain access alone is classified as BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY.",
     "allowed_finance_domains": [
       "www.bse.cn",
       "www.akshare.xyz",
@@ -184,6 +201,18 @@
     "BOT_CHALLENGE_DETECTED": {
       "owner": "provider access restriction",
       "action": "do not bypass; disable provider or use compliant source"
+    },
+    "BROWSER_NET_EMPTY_RESPONSE": {
+      "owner": "external finance website network",
+      "action": "classify separately; retry later or use local import"
+    },
+    "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY": {
+      "owner": "optional browser-assisted provider",
+      "action": "do not count domain access as ingestion success"
+    },
+    "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED": {
+      "owner": "optional browser-assisted provider",
+      "action": "schema-valid rows were obtained through explicit opt-in"
     },
     "CONTRACT_SCHEMA_MISMATCH": {
       "owner": "provider contract",

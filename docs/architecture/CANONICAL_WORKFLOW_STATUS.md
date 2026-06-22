@@ -47,12 +47,13 @@ Implemented review-only:
 - GOAL-06C.5 Engineering Data Coverage + Storage + Panel Expansion
 - GOAL-06C.6 Source-Backed Engineering Pilot Bundle
 - GOAL-06C.6A Scoped Finance Network Isolation and Failure Taxonomy
+- GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
 
 Future review-only:
 
-- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.6
-  source-backed engineering panel reaches `engineering_pilot` and GOAL-06C.6A
-  failure taxonomy evidence remains non-blocking
+- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.7
+  provider-ladder source-backed engineering panel reaches `engineering_pilot`
+  and workflow cleanliness evidence remains non-blocking
 
 Future design-only:
 
@@ -145,8 +146,7 @@ Network ingestion is disabled by default. It must be explicitly enabled with
 classified and reported on the default AKShare path. The explicit CloakBrowser
 reference probe is separate, opt-in, tag-only, sanitized, and does not unlock
 downstream workflow blocks.
-GOAL-06D remains
-`future_review_only` and blocked until GOAL-06C.6 reaches
+GOAL-06D remains `future_review_only` and blocked until GOAL-06C.7 reaches
 `engineering_pilot`.
 
 ## GOAL-06C.6A Status
@@ -165,3 +165,30 @@ The current explicit AKShare run remains externally blocked after scoped
 proxy-env cleanup and is classified as
 `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`. GOAL-06D
 remains blocked.
+
+## GOAL-06C.7 Status
+
+GOAL-06C.7 is `implemented_review_only`. It adds a provider ladder with:
+
+- `akshare_direct`
+- `browser_assisted_optional`
+- `local_import`
+- `future_vendor_data_placeholder`
+
+The browser-assisted provider is disabled by default and requires both
+`ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and `--enable-browser-assisted`.
+It is dynamic-import-only, finance-domain-scoped, sanitized, and does not store
+raw HTML, payload bodies, screenshots, cookies, browser profiles, or cache in
+GitHub.
+
+Browser outcomes are classified precisely:
+
+- `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED`: schema-valid rows were
+  produced and may count toward the source-backed panel.
+- `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY`: the domain was reachable but ingestion
+  was not solved.
+- `BROWSER_NET_EMPTY_RESPONSE`: the finance endpoint/browser path returned an
+  empty response.
+
+GOAL-06D remains `future_review_only` and blocked unless
+`outputs/audits/goal06c7_readiness_report.md` proves `engineering_pilot`.

@@ -14,6 +14,7 @@ FAILURE_LAYERS = [
     "network_transport",
     "http_access",
     "anti_bot_access",
+    "browser_runtime",
     "provider_contract",
     "parser_implementation",
     "data_quality",
@@ -71,6 +72,20 @@ ANTI_BOT_FAILURES = [
     "HTML_RETURNED_INSTEAD_OF_DATA",
     "JS_CHALLENGE_DETECTED",
     "LOGIN_OR_CONSENT_WALL_DETECTED",
+]
+
+BROWSER_ASSISTED_FAILURES = [
+    "BROWSER_RUNTIME_DEPENDENCY_MISSING",
+    "BROWSER_RUNTIME_LAUNCH_FAILED",
+    "BROWSER_NAVIGATION_FAILED",
+    "BROWSER_NET_EMPTY_RESPONSE",
+    "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY",
+    "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED",
+    "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED",
+    "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY",
+    "BROWSER_ASSISTED_SCHEMA_MISMATCH",
+    "BROWSER_ASSISTED_PARSER_FAILURE",
+    "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED",
 ]
 
 PROVIDER_CONTRACT_FAILURES = [
@@ -139,6 +154,7 @@ FAILURE_CLASSES = [
     *NETWORK_TRANSPORT_FAILURES,
     *HTTP_ACCESS_FAILURES,
     *ANTI_BOT_FAILURES,
+    *BROWSER_ASSISTED_FAILURES,
     *PROVIDER_CONTRACT_FAILURES,
     *PARSER_IMPLEMENTATION_FAILURES,
     *DATA_QUALITY_FAILURES,
@@ -154,6 +170,19 @@ FAILURE_CLASS_TO_LAYER: dict[str, str] = {
     **{failure_class: "network_transport" for failure_class in NETWORK_TRANSPORT_FAILURES},
     **{failure_class: "http_access" for failure_class in HTTP_ACCESS_FAILURES},
     **{failure_class: "anti_bot_access" for failure_class in ANTI_BOT_FAILURES},
+    **{
+        "BROWSER_RUNTIME_DEPENDENCY_MISSING": "dependency",
+        "BROWSER_RUNTIME_LAUNCH_FAILED": "browser_runtime",
+        "BROWSER_NAVIGATION_FAILED": "browser_runtime",
+        "BROWSER_NET_EMPTY_RESPONSE": "network_transport",
+        "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY": "browser_runtime",
+        "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED": "unknown",
+        "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED": "browser_runtime",
+        "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY": "policy",
+        "BROWSER_ASSISTED_SCHEMA_MISMATCH": "provider_contract",
+        "BROWSER_ASSISTED_PARSER_FAILURE": "parser_implementation",
+        "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED": "anti_bot_access",
+    },
     **{failure_class: "provider_contract" for failure_class in PROVIDER_CONTRACT_FAILURES},
     **{failure_class: "parser_implementation" for failure_class in PARSER_IMPLEMENTATION_FAILURES},
     **{failure_class: "data_quality" for failure_class in DATA_QUALITY_FAILURES},
@@ -203,6 +232,12 @@ DEFAULT_DECISIONS_BY_LAYER: dict[str, FailureDecision] = {
         fallback_allowed=True,
         requires_user_action=True,
         requires_provider_replacement=True,
+    ),
+    "browser_runtime": FailureDecision(
+        "optional browser-assisted provider",
+        "treat browser access as explicit opt-in only; count only schema-valid finance rows",
+        fallback_allowed=True,
+        requires_user_action=True,
     ),
     "provider_contract": FailureDecision(
         "provider contract",
@@ -316,6 +351,73 @@ FAILURE_DECISION_OVERRIDES: dict[str, FailureDecision] = {
     "CAPTCHA_OR_VERIFY_PAGE": FailureDecision(
         "provider access restriction",
         "do not solve captcha; use compliant source or manual local import",
+        fallback_allowed=True,
+        requires_user_action=True,
+        requires_provider_replacement=True,
+    ),
+    "BROWSER_RUNTIME_DEPENDENCY_MISSING": FailureDecision(
+        "local optional dependency",
+        "install CloakBrowser/Playwright only in an explicit temporary runtime if browser-assisted ingestion is intended",
+        fallback_allowed=True,
+        requires_user_action=True,
+    ),
+    "BROWSER_RUNTIME_LAUNCH_FAILED": FailureDecision(
+        "optional browser runtime",
+        "fix the temporary browser runtime or use direct/local provider fallback",
+        retry_allowed=True,
+        fallback_allowed=True,
+        requires_user_action=True,
+    ),
+    "BROWSER_NAVIGATION_FAILED": FailureDecision(
+        "optional browser runtime",
+        "retry within rate limits or use a compliant provider fallback",
+        retry_allowed=True,
+        fallback_allowed=True,
+        requires_user_action=True,
+    ),
+    "BROWSER_NET_EMPTY_RESPONSE": FailureDecision(
+        "external finance website network",
+        "classify separately from generic network failures; retry later or use local import",
+        retry_allowed=True,
+        fallback_allowed=True,
+        requires_network_fix=True,
+    ),
+    "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY": FailureDecision(
+        "optional browser-assisted provider",
+        "domain access alone is not ingestion success; parser/schema-valid rows are still required",
+        fallback_allowed=True,
+        requires_code_fix=True,
+    ),
+    "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED": FailureDecision(
+        "optional browser-assisted provider",
+        "structured schema-valid finance rows were obtained by explicit browser-assisted provider",
+    ),
+    "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED": FailureDecision(
+        "optional browser-assisted provider",
+        "browser was attempted but did not return schema-valid rows",
+        fallback_allowed=True,
+        requires_user_action=True,
+    ),
+    "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY": FailureDecision(
+        "project policy",
+        "do not use browser-assisted provider outside explicit finance-domain opt-in policy",
+        requires_code_fix=True,
+    ),
+    "BROWSER_ASSISTED_SCHEMA_MISMATCH": FailureDecision(
+        "provider contract",
+        "update schema normalization or mark this provider attempt unsolved",
+        fallback_allowed=True,
+        requires_schema_update=True,
+        requires_code_fix=True,
+    ),
+    "BROWSER_ASSISTED_PARSER_FAILURE": FailureDecision(
+        "project code",
+        "fix browser-assisted parser; do not store raw browser payloads in GitHub",
+        requires_code_fix=True,
+    ),
+    "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED": FailureDecision(
+        "provider access restriction",
+        "do not bypass challenge/login/captcha; use fallback provider or local import",
         fallback_allowed=True,
         requires_user_action=True,
         requires_provider_replacement=True,
@@ -520,6 +622,17 @@ def audit_provider_failure_classification(root: Path) -> bool:
         "BOT_CHALLENGE_DETECTED",
         "CAPTCHA_OR_VERIFY_PAGE",
         "HTML_RETURNED_INSTEAD_OF_DATA",
+        "BROWSER_RUNTIME_DEPENDENCY_MISSING",
+        "BROWSER_RUNTIME_LAUNCH_FAILED",
+        "BROWSER_NAVIGATION_FAILED",
+        "BROWSER_NET_EMPTY_RESPONSE",
+        "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY",
+        "BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED",
+        "BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED",
+        "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY",
+        "BROWSER_ASSISTED_SCHEMA_MISMATCH",
+        "BROWSER_ASSISTED_PARSER_FAILURE",
+        "BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED",
         "TARGET_FUNCTION_MISSING",
         "TARGET_FUNCTION_SIGNATURE_UNSUPPORTED",
         "REQUIRED_COLUMN_MISSING",
@@ -538,6 +651,8 @@ def audit_provider_failure_classification(root: Path) -> bool:
         "timeout": classify_provider_failure(exc=TimeoutError("request timed out")).failure_class,
         "dns": classify_provider_failure(exc=OSError("NameResolutionError: getaddrinfo failed")).failure_class,
         "ssl": classify_provider_failure(exc=OSError("SSLError certificate verify failed")).failure_class,
+        "browser-empty": classify_provider_failure(exc=RuntimeError("ERR_EMPTY_RESPONSE from browser navigation")).failure_class,
+        "browser-dep": classification_for_class("BROWSER_RUNTIME_DEPENDENCY_MISSING").failure_class,
         "403": classify_provider_failure(status_code=403).failure_class,
         "429": classify_provider_failure(status_code=429).failure_class,
         "captcha": classify_provider_failure(response_text="<html>captcha verify</html>").failure_class,
@@ -547,6 +662,8 @@ def audit_provider_failure_classification(root: Path) -> bool:
         "timeout": {"EXTERNAL_NETWORK_TIMEOUT"},
         "dns": {"DNS_RESOLUTION_FAILURE"},
         "ssl": {"TLS_SSL_FAILURE"},
+        "browser-empty": {"BROWSER_NET_EMPTY_RESPONSE"},
+        "browser-dep": {"BROWSER_RUNTIME_DEPENDENCY_MISSING"},
         "403": {"HTTP_403_FORBIDDEN"},
         "429": {"HTTP_429_RATE_LIMITED"},
         "captcha": {"CAPTCHA_OR_VERIFY_PAGE"},
@@ -602,9 +719,9 @@ def audit_provider_failure_classification(root: Path) -> bool:
                 f"Goal: `{GOAL_ID}`",
                 f"Failure classes: `{len(FAILURE_CLASSES)}`",
                 f"Failure layers: `{len(FAILURE_LAYERS)}`",
-                "ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.",
+                "ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, browser-assisted optional runtime, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.",
                 "No raw HTML challenge pages are stored in GitHub.",
-                "Default provider classification uses no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
+                "Default provider classification uses no browser automation; explicit browser-assisted ingestion is opt-in and counted only when schema-valid rows are produced.",
                 "",
                 "## Layer Coverage",
                 *[f"- `{layer}`: `{count}`" for layer, count in layer_counts.items()],
@@ -665,6 +782,8 @@ def _classify_network(combined: str, context: dict[str, object]) -> FailureClass
         if "vpn" in combined or "tun" in combined or "route" in combined:
             return _classification("EXTERNAL_SYSTEM_PROXY_OR_VPN_ROUTE_FAILURE", "external system proxy or VPN route failure")
         return _classification("EXTERNAL_PROXY_ENVIRONMENT_FAILURE", "external proxy environment failure")
+    if "err_empty_response" in combined or "remote end closed connection" in combined:
+        return _classification("BROWSER_NET_EMPTY_RESPONSE", "browser or finance endpoint returned an empty response")
     if "timed out" in combined or "timeout" in combined or "read timed out" in combined:
         return _classification("EXTERNAL_NETWORK_TIMEOUT", "provider request timed out")
     if "getaddrinfo" in combined or "nameresolutionerror" in combined or "temporary failure in name resolution" in combined:

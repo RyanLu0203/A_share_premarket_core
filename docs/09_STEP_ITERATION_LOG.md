@@ -1,5 +1,37 @@
 # 09 Step Iteration Log
 
+## 2026-06-22 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
+
+Status: `PASS_WITH_WARNINGS` unless an explicit provider-ladder run reaches
+`engineering_pilot`.
+
+What changed:
+
+- Added a deterministic provider ladder:
+  `akshare_direct`, `browser_assisted_optional`, `local_import`, and
+  `future_vendor_data_placeholder`.
+- Added explicit browser-assisted finance ingestion policy, wrappers, events,
+  audit reports, and workflow cleanliness audit.
+- Added source-backed local bundle generation under the local data root and
+  bounded GitHub samples/audits only.
+- Added precise browser-assisted labels:
+  `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED`,
+  `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY`, and
+  `BROWSER_NET_EMPTY_RESPONSE`.
+
+Safety:
+
+- Browser-assisted ingestion is disabled by default and requires both
+  `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
+  `--enable-browser-assisted`.
+- Domain access alone is not ingestion success; only schema-valid finance rows
+  count.
+- Raw HTML, payload bodies, screenshots, cookies, browser profiles, and browser
+  cache are not committed.
+- GOAL-06D remains blocked until GOAL-06C.7 proves `engineering_pilot`; all
+  recommendation, risk, dashboard, paper/live trading, production, and DQN/RL
+  paths remain locked.
+
 ## 2026-06-22 - GOAL-06C.6A CloakBrowser Reference Probe And Solved-Problem Tags
 
 Status: `PASS_WITH_WARNINGS`.

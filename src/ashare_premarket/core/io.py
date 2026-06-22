@@ -19,7 +19,7 @@ def write_csv(path: Path, rows: Iterable[dict[str, object]], fieldnames: list[st
         fieldnames = list(materialized[0].keys()) if materialized else []
     ensure_parent(path)
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(materialized)
 

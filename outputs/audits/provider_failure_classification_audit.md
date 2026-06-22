@@ -2,25 +2,26 @@
 
 Status: `PASS`
 Goal: `GOAL-06C.6A`
-Failure classes: `78`
-Failure layers: `12`
-ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.
+Failure classes: `89`
+Failure layers: `13`
+ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, browser-assisted optional runtime, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.
 No raw HTML challenge pages are stored in GitHub.
-Default provider classification uses no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics.
+Default provider classification uses no browser automation; explicit browser-assisted ingestion is opt-in and counted only when schema-valid rows are produced.
 
 ## Layer Coverage
-- `policy`: `8`
-- `dependency`: `6`
-- `network_transport`: `9`
+- `policy`: `9`
+- `dependency`: `7`
+- `network_transport`: `10`
 - `http_access`: `7`
-- `anti_bot_access`: `5`
-- `provider_contract`: `7`
-- `parser_implementation`: `5`
+- `anti_bot_access`: `6`
+- `browser_runtime`: `4`
+- `provider_contract`: `8`
+- `parser_implementation`: `6`
 - `data_quality`: `10`
 - `pit_calendar_label`: `7`
 - `storage_bundle`: `7`
 - `workflow_governance`: `5`
-- `unknown`: `2`
+- `unknown`: `3`
 
 ## Decision Matrix
 - `PROVIDER_OK` -> owner: provider; action: no failure observed
@@ -59,6 +60,17 @@ Default provider classification uses no browser automation; explicit CloakBrowse
 - `HTML_RETURNED_INSTEAD_OF_DATA` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
 - `JS_CHALLENGE_DETECTED` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
 - `LOGIN_OR_CONSENT_WALL_DETECTED` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
+- `BROWSER_RUNTIME_DEPENDENCY_MISSING` -> owner: local optional dependency; action: install CloakBrowser/Playwright only in an explicit temporary runtime if browser-assisted ingestion is intended
+- `BROWSER_RUNTIME_LAUNCH_FAILED` -> owner: optional browser runtime; action: fix the temporary browser runtime or use direct/local provider fallback
+- `BROWSER_NAVIGATION_FAILED` -> owner: optional browser runtime; action: retry within rate limits or use a compliant provider fallback
+- `BROWSER_NET_EMPTY_RESPONSE` -> owner: external finance website network; action: classify separately from generic network failures; retry later or use local import
+- `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY` -> owner: optional browser-assisted provider; action: domain access alone is not ingestion success; parser/schema-valid rows are still required
+- `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED` -> owner: optional browser-assisted provider; action: structured schema-valid finance rows were obtained by explicit browser-assisted provider
+- `BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED` -> owner: optional browser-assisted provider; action: browser was attempted but did not return schema-valid rows
+- `BROWSER_ASSISTED_FORBIDDEN_BY_POLICY` -> owner: project policy; action: do not use browser-assisted provider outside explicit finance-domain opt-in policy
+- `BROWSER_ASSISTED_SCHEMA_MISMATCH` -> owner: provider contract; action: update schema normalization or mark this provider attempt unsolved
+- `BROWSER_ASSISTED_PARSER_FAILURE` -> owner: project code; action: fix browser-assisted parser; do not store raw browser payloads in GitHub
+- `BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED` -> owner: provider access restriction; action: do not bypass challenge/login/captcha; use fallback provider or local import
 - `CONTRACT_SCHEMA_MISMATCH` -> owner: provider contract; action: update schema normalization and tests
 - `REQUIRED_COLUMN_MISSING` -> owner: provider contract; action: update schema normalization or provider contract
 - `COLUMN_TYPE_MISMATCH` -> owner: provider contract; action: update type normalization and tests

@@ -13,7 +13,7 @@ def test_goal06c6_workflow_row_blocks_goal06d_until_engineering_pilot() -> None:
     assert rows["goal06c6_source_backed_engineering_pilot_bundle"]["status"] == "implemented_review_only"
     assert rows["goal06c6_source_backed_engineering_pilot_bundle"]["allowed_next_action"] == "block_goal06d_until_engineering_pilot"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "future_review_only"
-    assert "goal06c6" in rows["goal06d_model_comparison_calibration"]["allowed_next_action"]
+    assert "goal06c7" in rows["goal06d_model_comparison_calibration"]["allowed_next_action"]
 
 
 def test_no_cloakbrowser_or_bypass_dependency_is_added() -> None:

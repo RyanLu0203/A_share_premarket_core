@@ -3,9 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from ashare_premarket.core.constants import REGRESSION_COMMANDS
-from ashare_premarket.core.io import write_csv, write_text
+from ashare_premarket.core.io import read_json, write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
 from ashare_premarket.providers.akshare_provider import akshare_available
+from ashare_premarket.providers.browser_provider_switches import browser_provider_project_default
 from ashare_premarket.providers.provider_registry import network_enabled
 
 
@@ -67,6 +68,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal06c_status = _goal06c_status(root)
     goal06c5_status = _goal06c5_status(root)
     goal06c6_status = _goal06c6_status(root)
+    goal06c7_status = _goal06c7_status(root)
+    provider_ladder = _provider_ladder_status(root)
     source_bundle_status = _source_bundle_status(root)
     write_csv(root / "outputs/diagnostics/run_detail_manifest.csv", command_rows, DIAGNOSTIC_FIELDS)
     write_csv(root / "outputs/diagnostics/command_failure_catalog.csv", failure_rows, DIAGNOSTIC_FIELDS)
@@ -83,17 +86,28 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-06C review-only validation status: `{goal06c_status}`.",
                 f"GOAL-06C.5 engineering data foundation status: `{goal06c5_status}`.",
                 f"GOAL-06C.6 source-backed ingestion status: `{goal06c6_status}`.",
+                f"GOAL-06C.7 provider ladder status: `{goal06c7_status}`.",
+                f"Provider ladder panel tier: `{provider_ladder.get('panel_tier', 'unknown')}`.",
+                f"Provider ladder approved symbols: `{provider_ladder.get('approved_symbols', 0)}`.",
+                f"Provider ladder validation trading dates: `{provider_ladder.get('validation_trading_dates', 0)}`.",
+                f"Provider ladder Stage 6C engineering rows: `{provider_ladder.get('stage6c_engineering_rows', 0)}`.",
+                f"Browser-assisted provider project default: `{str(browser_provider_project_default(root)).lower()}`.",
+                f"GOAL-06D allowed by provider ladder: `{str(provider_ladder.get('goal06d_allowed_to_proceed', False)).lower()}`.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
                 "Known warnings are source-coverage gaps, the contract-demo Stage 6C panel size, and `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.",
-                "GOAL-06C.5/GOAL-06C.6 warnings are limited to documented source limitations, no-network/provider availability, and the panel not yet reaching `engineering_pilot`.",
+                "GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 warnings are limited to documented source limitations, no-network/provider availability, browser-assisted optional runtime availability, and the panel not yet reaching `engineering_pilot`.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
                 "- `python scripts/run_goal06c_expanded_validation.py`",
                 "- `python scripts/audit_storage_policy.py`",
                 "- `python scripts/audit_provider_failure_classification.py`",
+                "- `python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py --allow-network`",
+                "- `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py --allow-network --enable-browser-assisted`",
+                "- `python scripts/audit_browser_assisted_provider.py`",
+                "- `python scripts/audit_workflow_cleanliness.py`",
                 "- `python scripts/audit_data_source_coverage.py`",
                 "- `python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py --allow-network`",
                 "- `python scripts/rebuild_stage6c_from_engineering_panel.py`",
@@ -113,6 +127,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- The Class D source-evidence gap is documented only; it is not active code and does not block Class A GOAL-06B reproducibility.",
                 "- GOAL-06C.5 classifies the current 8-row Stage 6C panel as `contract_demo`; GOAL-06D remains blocked until `engineering_pilot` coverage exists.",
                 "- GOAL-06C.6 provider ingestion is disabled by default and records classified failures on the default AKShare path; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
+                "- GOAL-06C.7 provider ladder is disabled from network by default; browser-assisted ingestion requires explicit CLI plus env opt-in and counts only schema-valid finance rows.",
                 "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.",
                 "",
             ]
@@ -131,8 +146,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "5. For GOAL-06C work, run `python scripts/run_goal06c_expanded_validation.py` and review `outputs/audits/stage6c_readiness_report.md`.",
                 "6. For GOAL-06C.5 work, run `python scripts/rebuild_stage6c_from_engineering_panel.py` and review `outputs/audits/engineering_panel_readiness_report.md`.",
                 "7. For GOAL-06C.6 source-backed ingestion, run `python scripts/audit_provider_failure_classification.py` first; provider ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.",
-                "8. GOAL-06D may proceed only after the source-backed engineering panel reaches `engineering_pilot` or higher.",
-                "9. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
+                "8. For GOAL-06C.7 provider-ladder expansion, run `python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py`; browser-assisted mode additionally requires `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.",
+                "9. GOAL-06D may proceed only after the source-backed engineering panel reaches `engineering_pilot` or higher and workflow cleanliness passes.",
+                "10. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
                 "",
             ]
         ),
@@ -186,6 +202,30 @@ def _goal06c6_status(root: Path) -> str:
     if "GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness: PASS" in text:
         return "source-backed engineering_pilot ready"
     return "unknown"
+
+
+def _goal06c7_status(root: Path) -> str:
+    report = root / "outputs/audits/goal06c7_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-06C.7 Engineering Data Base Expansion Readiness: BLOCKED" in text:
+        return "blocked"
+    if "GOAL-06C.7 Engineering Data Base Expansion Readiness: PASS_WITH_WARNINGS" in text:
+        return "implemented with warnings; GOAL-06D blocked unless engineering_pilot reached"
+    if "GOAL-06C.7 Engineering Data Base Expansion Readiness: PASS" in text:
+        return "provider-ladder engineering_pilot ready"
+    return "unknown"
+
+
+def _provider_ladder_status(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/source_backed_bundle_manifest_summary.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
 
 
 def _source_bundle_status(root: Path) -> str:

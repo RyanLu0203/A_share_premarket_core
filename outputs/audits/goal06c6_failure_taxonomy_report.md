@@ -1,8 +1,8 @@
 # GOAL-06C.6 Failure Taxonomy Report
 
 Status: `PASS_WITH_WARNINGS`
-Supported failure classes: `78`
-Supported failure layers: `12`
+Supported failure classes: `89`
+Supported failure layers: `13`
 Observed primary failure classes: `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`
 
 ## Raw Failure Mapping
@@ -47,6 +47,17 @@ Observed primary failure classes: `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER
 - `HTML_RETURNED_INSTEAD_OF_DATA` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
 - `JS_CHALLENGE_DETECTED` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
 - `LOGIN_OR_CONSENT_WALL_DETECTED` -> owner: provider access restriction; action: do not bypass challenge pages; disable provider or use a compliant source
+- `BROWSER_RUNTIME_DEPENDENCY_MISSING` -> owner: local optional dependency; action: install CloakBrowser/Playwright only in an explicit temporary runtime if browser-assisted ingestion is intended
+- `BROWSER_RUNTIME_LAUNCH_FAILED` -> owner: optional browser runtime; action: fix the temporary browser runtime or use direct/local provider fallback
+- `BROWSER_NAVIGATION_FAILED` -> owner: optional browser runtime; action: retry within rate limits or use a compliant provider fallback
+- `BROWSER_NET_EMPTY_RESPONSE` -> owner: external finance website network; action: classify separately from generic network failures; retry later or use local import
+- `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY` -> owner: optional browser-assisted provider; action: domain access alone is not ingestion success; parser/schema-valid rows are still required
+- `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED` -> owner: optional browser-assisted provider; action: structured schema-valid finance rows were obtained by explicit browser-assisted provider
+- `BROWSER_ASSISTED_ATTEMPTED_NOT_SOLVED` -> owner: optional browser-assisted provider; action: browser was attempted but did not return schema-valid rows
+- `BROWSER_ASSISTED_FORBIDDEN_BY_POLICY` -> owner: project policy; action: do not use browser-assisted provider outside explicit finance-domain opt-in policy
+- `BROWSER_ASSISTED_SCHEMA_MISMATCH` -> owner: provider contract; action: update schema normalization or mark this provider attempt unsolved
+- `BROWSER_ASSISTED_PARSER_FAILURE` -> owner: project code; action: fix browser-assisted parser; do not store raw browser payloads in GitHub
+- `BROWSER_ASSISTED_ACCESS_RESTRICTION_DETECTED` -> owner: provider access restriction; action: do not bypass challenge/login/captcha; use fallback provider or local import
 - `CONTRACT_SCHEMA_MISMATCH` -> owner: provider contract; action: update schema normalization and tests
 - `REQUIRED_COLUMN_MISSING` -> owner: provider contract; action: update schema normalization or provider contract
 - `COLUMN_TYPE_MISMATCH` -> owner: provider contract; action: update type normalization and tests

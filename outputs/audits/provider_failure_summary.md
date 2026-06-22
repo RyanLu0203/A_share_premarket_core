@@ -1,7 +1,7 @@
 # Provider Failure Summary
 
 GOAL-06C.6A Network Isolation and Failure Taxonomy Readiness: PASS_WITH_WARNINGS
-Source bundle health status: `BLOCKED`
+Source bundle health status: `PASS_WITH_WARNINGS`
 AKShare import status: `available`
 AKShare version: `1.18.64`
 Explicit ingestion attempted: `true`

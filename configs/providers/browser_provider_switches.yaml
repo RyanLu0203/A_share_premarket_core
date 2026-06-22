@@ -1,0 +1,20 @@
+{
+  "config_id": "goal06c7_browser_provider_switches",
+  "browser_assisted_provider": {
+    "project_default": "disabled",
+    "goal06c7_runtime_allowed": "enabled_only_with_explicit_opt_in",
+    "env_var": "ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER",
+    "cli_flag": "--enable-browser-assisted"
+  },
+  "future_dashboard_switch": {
+    "browser_assisted_provider": {
+      "status": "config_only_not_dashboard_implemented",
+      "allowed_values": [
+        "disabled",
+        "enabled_for_ingestion_only"
+      ],
+      "default": "disabled",
+      "note": "Dashboard is not implemented in GOAL-06C.7."
+    }
+  }
+}

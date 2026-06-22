@@ -1,2 +1,2 @@
 panel_id,current_symbols,current_trading_dates,current_rows,panel_tier,engineering_pilot_required_symbols,engineering_pilot_required_trading_dates,engineering_pilot_required_rows,engineering_pilot_met,goal06d_allowed,goal06d_mode
-goal06c6_source_backed_engineering_panel,0,0,0,below_contract_demo,50,120,6000,false,false,blocked
+goal06c7_provider_ladder_engineering_panel,0,0,0,below_contract_demo,50,120,6000,false,false,blocked

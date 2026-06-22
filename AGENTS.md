@@ -27,8 +27,12 @@ This file is long-term project memory for Codex and other coding agents.
 - GOAL-06C.6A scoped finance network isolation and provider failure taxonomy is
   implemented_review_only. Network failures must be classified by specific
   failure type, not as a generic network bucket when the subtype is knowable.
+- GOAL-06C.7 provider-ladder engineering data base expansion is
+  implemented_review_only. Browser-assisted ingestion is optional,
+  finance-domain-only, disabled by default, and requires
+  `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until source-backed `engineering_pilot`.
+  blocked until GOAL-06C.7 reaches source-backed `engineering_pilot`.
 - GOAL-06D is future_review_only only; no model comparison/calibration is
   implemented yet.
 - Feature-label merge and leakage audit are active.
@@ -74,6 +78,9 @@ python scripts/audit_storage_policy.py
 python scripts/audit_data_bundle_manifest.py
 python scripts/audit_data_source_coverage.py
 python scripts/audit_provider_failure_classification.py
+python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
+python scripts/audit_browser_assisted_provider.py
+python scripts/audit_workflow_cleanliness.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py

@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-22 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
+
+- Added a deterministic provider ladder:
+  `akshare_direct`, `browser_assisted_optional`, `local_import`, and
+  `future_vendor_data_placeholder`.
+- Added explicit browser-assisted provider policy, switches, audit events, and
+  wrappers. Browser-assisted ingestion is disabled by default, dynamic-import
+  only, finance-domain scoped, and requires both env and CLI opt-in.
+- Classified browser-assisted outcomes separately, including
+  `BROWSER_NET_EMPTY_RESPONSE`, `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY`, and
+  `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED`; domain access alone is not
+  ingestion success.
+- Added source-backed local bundle outputs under the local data root, bounded
+  GitHub samples, GOAL-06C.7 readiness, browser provider audit, and workflow
+  cleanliness audit.
+- Kept GOAL-06D and all downstream recommendation, risk, dashboard,
+  paper/live trading, production, and DQN/RL modules locked unless the
+  provider-ladder bundle reaches `engineering_pilot`.
+
 ## 2026-06-22 - GOAL-06C.6A CloakBrowser Reference Probe
 
 - Added an explicit, opt-in CloakBrowser reference probe that tags current

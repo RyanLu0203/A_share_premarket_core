@@ -18,6 +18,19 @@
     "min_seconds_between_symbol_calls": 0.2
   },
   "benchmark_symbols": ["000300"],
+  "goal06c7_provider_mode_overrides": {
+    "provider_ladder_config": "configs/providers/provider_priority_ladder.yaml",
+    "akshare_direct": "enabled_by_network_opt_in",
+    "browser_assisted_optional": "disabled_by_default_requires_env_and_cli",
+    "local_import": "fallback_only",
+    "future_vendor_data_placeholder": "not_implemented"
+  },
+  "goal06c7_schema_validation_policy": {
+    "count_only_schema_valid_rows": true,
+    "domain_access_only_is_not_success": true,
+    "pit_cutoff": "features use T-1 or earlier rows",
+    "labels": "forward labels stay offline-only"
+  },
   "adjustment_policy": "qfq",
   "local_storage_format_priority": ["parquet", "csv"],
   "fallback_storage_format": "csv",

@@ -1,0 +1,42 @@
+{
+  "config_id": "goal06c7_browser_assisted_provider",
+  "project_default": false,
+  "explicit_opt_in_env": "ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER",
+  "explicit_opt_in_cli": "--enable-browser-assisted",
+  "scope": "finance_live_ingestion_only",
+  "allowed_finance_domains": [
+    "push2his.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "80.push2.eastmoney.com",
+    "push2.eastmoney.com",
+    "www.bse.cn"
+  ],
+  "runtime": {
+    "default_dependency": false,
+    "dynamic_import_only": true,
+    "temporary_venv_allowed": true,
+    "temporary_cache_outside_repo": true,
+    "temporary_cache_cleaned_by_default": true
+  },
+  "success_policy": {
+    "requires_structured_rows": true,
+    "requires_schema_valid": true,
+    "requires_rows_returned_gt_zero": true,
+    "domain_access_only_class": "BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY",
+    "empty_response_class": "BROWSER_NET_EMPTY_RESPONSE"
+  },
+  "forbidden_behavior": [
+    "captcha_solving",
+    "login_automation",
+    "credential_use",
+    "challenge_bypass",
+    "proxy_rotation_for_evasion",
+    "raw_html_commit",
+    "raw_payload_commit",
+    "screenshot_commit",
+    "browser_cache_commit",
+    "browser_profile_commit",
+    "cookie_commit",
+    "session_storage_commit"
+  ]
+}

@@ -6,4 +6,5 @@
 - The Class D source-evidence gap is documented only; it is not active code and does not block Class A GOAL-06B reproducibility.
 - GOAL-06C.5 classifies the current 8-row Stage 6C panel as `contract_demo`; GOAL-06D remains blocked until `engineering_pilot` coverage exists.
 - GOAL-06C.6 provider ingestion is disabled by default and records classified failures on the default AKShare path; explicit CloakBrowser reference probes are separate tag-only diagnostics.
+- GOAL-06C.7 provider ladder is disabled from network by default; browser-assisted ingestion requires explicit CLI plus env opt-in and counts only schema-valid finance rows.
 - These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.

@@ -1,1 +1,1 @@
-trade_date,benchmark_symbol,open,high,low,close,volume,amount,source_id,quality_flags
+trade_date,benchmark_symbol,open,high,low,close,volume,amount,provider_id,provider_mode,source_bundle_id,ingest_ts,schema_version,data_quality_flags

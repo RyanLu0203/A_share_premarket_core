@@ -1,0 +1,45 @@
+{
+  "config_id": "goal06c7_provider_priority_ladder",
+  "provider_ladder_order": [
+    "akshare_direct",
+    "browser_assisted_optional",
+    "local_import",
+    "future_vendor_data_placeholder"
+  ],
+  "provider_modes": {
+    "akshare_direct": {
+      "default": true,
+      "role": "primary direct finance data provider"
+    },
+    "browser_assisted_optional": {
+      "project_default": false,
+      "goal06c7_runtime_enabled": true,
+      "explicit_opt_in_required": true,
+      "role": "optional browser-assisted finance provider adapter",
+      "scope": "finance_live_ingestion_only"
+    },
+    "local_import": {
+      "project_default": false,
+      "role": "source-backed local CSV fallback"
+    },
+    "future_vendor_data_placeholder": {
+      "project_default": false,
+      "implemented_now": false,
+      "role": "reserved future licensed/vendor data source"
+    }
+  },
+  "candidate_universe_seed": [
+    "000001.SZ", "000002.SZ", "000063.SZ", "000100.SZ", "000157.SZ", "000166.SZ", "000333.SZ", "000338.SZ", "000425.SZ", "000538.SZ",
+    "000568.SZ", "000596.SZ", "000651.SZ", "000725.SZ", "000776.SZ", "000786.SZ", "000895.SZ", "000938.SZ", "000963.SZ", "001979.SZ",
+    "002001.SZ", "002007.SZ", "002027.SZ", "002049.SZ", "002050.SZ", "002129.SZ", "002142.SZ", "002179.SZ", "002230.SZ", "002236.SZ",
+    "002241.SZ", "002271.SZ", "002304.SZ", "002311.SZ", "002352.SZ", "002371.SZ", "002415.SZ", "002459.SZ", "002460.SZ", "002466.SZ",
+    "002475.SZ", "002493.SZ", "002594.SZ", "002601.SZ", "002714.SZ", "002736.SZ", "002812.SZ", "002821.SZ", "002841.SZ", "002916.SZ",
+    "002920.SZ", "300014.SZ", "300015.SZ", "300033.SZ", "300059.SZ", "300122.SZ", "300124.SZ", "300142.SZ", "300274.SZ", "300316.SZ",
+    "300347.SZ", "300408.SZ", "300413.SZ", "300450.SZ", "300498.SZ", "300502.SZ", "300628.SZ", "300750.SZ", "300760.SZ", "300782.SZ",
+    "600000.SH", "600009.SH", "600010.SH", "600011.SH", "600015.SH", "600016.SH", "600018.SH", "600019.SH", "600023.SH", "600028.SH",
+    "600029.SH", "600030.SH", "600031.SH", "600036.SH", "600048.SH", "600050.SH", "600061.SH", "600085.SH", "600089.SH", "600104.SH",
+    "600111.SH", "600115.SH", "600150.SH", "600176.SH", "600196.SH", "600276.SH", "600309.SH", "600346.SH", "600406.SH", "600436.SH",
+    "600438.SH", "600519.SH", "600570.SH", "600585.SH", "600588.SH", "600690.SH", "600703.SH", "600745.SH", "600760.SH", "600795.SH",
+    "600809.SH", "600837.SH", "600887.SH", "600893.SH", "600900.SH", "601006.SH", "601012.SH", "601088.SH", "601111.SH", "601166.SH"
+  ]
+}

@@ -83,10 +83,12 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal06c5 = by_id.get("goal06c5_engineering_data_coverage_storage_panel_expansion", {})
     goal06c6 = by_id.get("goal06c6_source_backed_engineering_pilot_bundle", {})
     goal06c6a = by_id.get("goal06c6a_scoped_finance_network_failure_taxonomy", {})
+    goal06c7 = by_id.get("goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion", {})
     goal06c_status = goal06c.get("status")
     goal06c5_status = goal06c5.get("status")
     goal06c6_status = goal06c6.get("status")
     goal06c6a_status = goal06c6a.get("status")
+    goal06c7_status = goal06c7.get("status")
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
         failures.append("GOAL-06C block must be future_review_only or implemented_review_only")
     if goal06c_status == "implemented_review_only":
@@ -131,10 +133,24 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("GOAL-06C.6A taxonomy report must not use generic NETWORK_ERROR")
         if "GOAL-06C.6A" not in full_roadmap:
             failures.append("full roadmap does not include GOAL-06C.6A")
+    if goal06c7_status != "implemented_review_only":
+        failures.append("GOAL-06C.7 must be implemented_review_only")
+    else:
+        readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
+        browser_audit = _read(root / "outputs/audits/browser_assisted_provider_audit.md")
+        cleanliness = _read(root / "outputs/audits/workflow_cleanliness_audit.md")
+        if "GOAL-06C.7 Engineering Data Base Expansion Readiness:" not in readiness:
+            failures.append("GOAL-06C.7 is implemented_review_only without a readiness report")
+        if "Browser assisted project default: `false`" not in browser_audit:
+            failures.append("GOAL-06C.7 browser audit must prove browser-assisted provider is disabled by default")
+        if "Workflow Cleanliness Audit:" not in cleanliness:
+            failures.append("GOAL-06C.7 workflow cleanliness audit is missing")
+        if "GOAL-06C.7" not in full_roadmap:
+            failures.append("full roadmap does not include GOAL-06C.7")
     if by_id.get("goal06d_model_comparison_calibration", {}).get("status") != "future_review_only":
         failures.append("GOAL-06D must remain future_review_only")
     if "engineering_pilot" not in by_id.get("goal06d_model_comparison_calibration", {}).get("allowed_next_action", ""):
-        failures.append("GOAL-06D must wait for GOAL-06C.6 engineering_pilot readiness")
+        failures.append("GOAL-06D must wait for GOAL-06C.7 engineering_pilot readiness")
     if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
         failures.append("GOAL-07A must remain future_design_only")
 
@@ -169,7 +185,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06C.5 status: `{goal06c5_status or 'missing'}`.",
                 f"GOAL-06C.6 status: `{goal06c6_status or 'missing'}`.",
                 f"GOAL-06C.6A status: `{goal06c6a_status or 'missing'}`.",
-                "Next allowed goal after GOAL-06C.6A: `GOAL-06D Model Comparison and Calibration` only after source-backed engineering_pilot readiness; currently blocked unless the readiness report says otherwise.",
+                f"GOAL-06C.7 status: `{goal06c7_status or 'missing'}`.",
+                "Next allowed goal after GOAL-06C.7: `GOAL-06D Model Comparison and Calibration` only after provider-ladder source-backed engineering_pilot readiness; currently blocked unless the readiness report says otherwise.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -251,7 +268,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == "goal06c6_source_backed_engineering_pilot_bundle":
         next_goal = "GOAL-06C.6A scoped failure taxonomy then GOAL-06D blocked until engineering_pilot"
     elif row["workflow_id"] == "goal06c6a_scoped_finance_network_failure_taxonomy":
-        next_goal = "GOAL-06D blocked until source-backed engineering_pilot"
+        next_goal = "GOAL-06C.7 provider ladder engineering data base expansion"
+    elif row["workflow_id"] == "goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion":
+        next_goal = "GOAL-06D blocked until provider-ladder engineering_pilot"
     else:
         next_goal = row["stage_or_goal"]
     return {

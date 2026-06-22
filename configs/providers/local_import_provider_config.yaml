@@ -1,0 +1,14 @@
+{
+  "config_id": "goal06c7_local_import_provider",
+  "project_default": false,
+  "role": "source-backed local CSV fallback",
+  "data_root_env_var": "ASHARE_PREMARKET_DATA_ROOT",
+  "file_contract": {
+    "universe": "local_import/universe.csv",
+    "trading_calendar": "local_import/trading_calendar.csv",
+    "ohlcv_daily": "local_import/ohlcv_daily.csv",
+    "benchmark_daily": "local_import/benchmark_daily.csv"
+  },
+  "schema_validation_required": true,
+  "raw_payloads_forbidden": true
+}

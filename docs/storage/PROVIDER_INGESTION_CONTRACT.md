@@ -4,6 +4,8 @@ GOAL-06C.5 defines provider ingestion contracts without enabling production or
 network ingestion by default. GOAL-06C.6 adds a compliant AKShare ingestion gate
 that remains disabled unless explicitly opted in. GOAL-06C.6A adds scoped
 finance-only network isolation evidence and a provider failure taxonomy.
+GOAL-06C.7 adds a deterministic provider ladder for source-backed engineering
+data base expansion.
 
 ## Categories
 
@@ -57,6 +59,22 @@ current access issue as solved only when domain-access or structured-ingestion
 evidence is observed. It must not store raw HTML, screenshots, cookies, payload
 bodies, or browser cache, and it does not unlock GOAL-06D or downstream modules.
 
+GOAL-06C.7 provider ladder order:
+
+1. `akshare_direct`
+2. `browser_assisted_optional`
+3. `local_import`
+4. `future_vendor_data_placeholder`
+
+`browser_assisted_optional` is not a default dependency and is not a bypass
+tool. It requires `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` plus
+`--enable-browser-assisted`, uses dynamic import only, is limited to configured
+finance domains, and writes only sanitized metadata. Schema-valid rows may be
+tagged as `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED`. Domain access without
+schema-valid rows is `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY` and does not count
+toward panel readiness. Empty browser/finance endpoint responses are classified
+as `BROWSER_NET_EMPTY_RESPONSE`, not as a generic network failure.
+
 ## Audit
 
 Run:
@@ -65,6 +83,9 @@ Run:
 python scripts/audit_data_source_coverage.py
 python scripts/audit_provider_failure_classification.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
+python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
+python scripts/audit_browser_assisted_provider.py
+python scripts/audit_workflow_cleanliness.py
 ```
 
 The audit writes the provider ingestion contract report, source coverage
@@ -81,3 +102,6 @@ GOAL-06C.6A writes:
 - `outputs/audits/cloakbrowser_reference_problem_tags.csv`
 - `outputs/audits/cloakbrowser_reference_probe_results.csv`
 - `outputs/audits/cloakbrowser_reference_ingestion_report.md`
+- `outputs/audits/browser_assisted_provider_events.csv`
+- `outputs/audits/browser_assisted_provider_audit.md`
+- `outputs/audits/goal06c7_readiness_report.md`

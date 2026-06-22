@@ -4,7 +4,7 @@
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
 GOAL-06B, plus the GOAL-06C review-only expanded validation extension and the
-GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A engineering data foundation gates. Preserve
+GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A/GOAL-06C.7 engineering data foundation gates. Preserve
 reproducibility and source governance before adding any future model or risk
 work.
 
@@ -24,12 +24,19 @@ work.
   source-backed Stage 6C engineering panel audits.
 - GOAL-06C.6A is implemented_review_only for finance-only network isolation,
   provider failure events, and specific failure taxonomy reports.
+- GOAL-06C.7 is implemented_review_only for provider-ladder engineering data
+  base expansion. The ladder is direct finance provider, optional
+  browser-assisted provider, local import, and future vendor placeholder.
+- Browser-assisted ingestion is disabled by default, requires
+  `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` plus `--enable-browser-assisted`,
+  uses dynamic import only, and counts only schema-valid finance rows.
 - Network failures must be classified by precise type, such as ProxyError,
   timeout, DNS, TLS, connection reset/refused, HTTP access, or anti-bot
   challenge, not as a broad generic network failure when a specific class is
   knowable.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until a source-backed panel reaches at least `engineering_pilot`.
+  blocked until a GOAL-06C.7 source-backed panel reaches at least
+  `engineering_pilot`.
 - Network ingestion is disabled by default and requires
   `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
@@ -66,6 +73,9 @@ python scripts/build_data_bundle_manifest.py
 python scripts/audit_data_bundle_manifest.py
 python scripts/audit_data_source_coverage.py
 python scripts/audit_provider_failure_classification.py
+python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
+python scripts/audit_browser_assisted_provider.py
+python scripts/audit_workflow_cleanliness.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -108,4 +118,4 @@ gate allows it.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
 - Do not start GOAL-06D unless the engineering panel readiness report explicitly
-  allows it after source-backed `engineering_pilot` coverage is reached.
+  allows it after GOAL-06C.7 source-backed `engineering_pilot` coverage is reached.

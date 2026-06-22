@@ -1,0 +1,16 @@
+{
+  "config_id": "goal06c7_finance_network_config",
+  "network_default": "disabled",
+  "network_opt_in_env": "ASHARE_ALLOW_NETWORK_INGESTION",
+  "network_opt_in_cli": "--allow-network",
+  "allowed_finance_domains": [
+    "push2his.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "80.push2.eastmoney.com",
+    "push2.eastmoney.com",
+    "www.bse.cn",
+    "www.akshare.xyz"
+  ],
+  "proxy_policy": "do_not_mutate_global_proxy_settings",
+  "raw_browser_artifact_policy": "forbidden_in_git"
+}

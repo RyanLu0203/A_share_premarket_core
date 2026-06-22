@@ -7,6 +7,15 @@
   "network_ingestion_default": "disabled",
   "network_ingestion_opt_in": "ASHARE_ALLOW_NETWORK_INGESTION=1 or --allow-network",
   "provider_bypass_policy": "browser-reference probes require explicit opt-in and may write only sanitized metadata; captcha solving, credential harvesting, proxy rotation, raw HTML storage, and payload body commits remain forbidden",
+  "browser_assisted_ingestion_policy": {
+    "project_default": false,
+    "explicit_opt_in": "ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 plus --enable-browser-assisted",
+    "temporary_venv_allowed": true,
+    "temporary_cache_outside_repo": true,
+    "temporary_cache_cleaned_by_default": true,
+    "raw_browser_artifacts_forbidden_in_git": true,
+    "domain_access_only_not_counted_as_ingestion": true
+  },
   "allowed_github_artifacts": [
     "code",
     "configs",
@@ -57,5 +66,6 @@
     "exports/github_artifacts",
     "exports/audit_samples",
     "bundles/engineering_pilot/goal06c6_akshare_engineering_pilot_current"
+    ,"bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current"
   ]
 }

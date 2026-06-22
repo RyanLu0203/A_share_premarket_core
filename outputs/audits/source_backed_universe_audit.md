@@ -2,6 +2,6 @@
 
 Status: `PASS_WITH_WARNINGS`
 Selected symbols: `0`
-Candidate symbols: `0`
-Notes: `source_backed_coverage_checked`
-Blocked symbols are excluded before approval.
+Candidate symbols: `100`
+Remaining symbol gap: `50`
+Blocked symbols are excluded.
