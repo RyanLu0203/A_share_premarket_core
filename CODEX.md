@@ -32,9 +32,10 @@ work.
   blocked until a source-backed panel reaches at least `engineering_pilot`.
 - Network ingestion is disabled by default and requires
   `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.
-- The current GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
-  AKShare/local-import paths only. Future browser-ingestion work would require a
-  separate explicit goal, compliance review, and workflow-status update.
+- The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
+  AKShare/local-import paths. The explicit CloakBrowser reference probe is
+  separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
+  downstream module by itself.
 - GOAL-06D is future_review_only; no model comparison/calibration is
   implemented yet.
 - Production model promotion is false.

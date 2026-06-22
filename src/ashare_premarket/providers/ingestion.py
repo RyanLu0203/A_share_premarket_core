@@ -753,7 +753,7 @@ def _write_goal06c6_readiness(root: Path, manifest: dict[str, object], panel_ok:
                 "No fake data was used.",
                 "No silent fallback to proxy was used.",
                 "No global proxy/system/shell/git/npm/pip config was modified.",
-                "No cloakbrowser, stealth browser, captcha solving, proxy rotation, or bypass automation is used.",
+                "Default GOAL-06C.6 AKShare provider ingestion used no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics and do not unlock downstream work.",
                 "",
             ]
         ),

@@ -1,0 +1,38 @@
+{
+  "allow_network": true,
+  "browser_dependency_status": "AVAILABLE",
+  "default_akshare_provider_path_changed": false,
+  "domain_access_solved_count": 2,
+  "goal06d_allowed_to_proceed": false,
+  "goal_id": "GOAL-06C.6A-CloakBrowser-Reference-Probe",
+  "ingestion_solved_count": 1,
+  "interpretation": "At least one provider access problem produced structured-data evidence through the CloakBrowser reference path; only those rows are tagged as ingestion solved.",
+  "missing_dependencies": [],
+  "output_files": [
+    "outputs/audits/cloakbrowser_reference_problem_tags.csv",
+    "outputs/audits/cloakbrowser_reference_probe_results.csv",
+    "outputs/audits/cloakbrowser_reference_ingestion_report.md",
+    "outputs/audits/cloakbrowser_reference_ingestion_report.json"
+  ],
+  "probe_attempt_count": 3,
+  "probe_result_count": 3,
+  "problem_count": 3,
+  "raw_html_stored": false,
+  "raw_payload_stored": false,
+  "reference_commit": "29679a73bfc64dfb6f97094615741a0ee8022a55",
+  "reference_pattern": "optional_drop_in_browser_runtime_probe",
+  "reference_repo": "CloakHQ/CloakBrowser",
+  "reference_url": "https://github.com/CloakHQ/CloakBrowser",
+  "remaining_failure_counts": {
+    "BROWSER_NET_EMPTY_RESPONSE": 1,
+    "HTML_RETURNED_INSTEAD_OF_DATA": 1
+  },
+  "remaining_unsolved_count": 2,
+  "status": "PASS_WITH_WARNINGS",
+  "tag_counts": {
+    "CLOAKBROWSER_REFERENCE_ATTEMPTED_NOT_SOLVED_EMPTY_RESPONSE": 1,
+    "SOLVED_BY_CLOAKBROWSER_REFERENCE_DOMAIN_ACCESS_ONLY": 1,
+    "SOLVED_BY_CLOAKBROWSER_REFERENCE_INGESTION": 1
+  },
+  "use_browser": true
+}

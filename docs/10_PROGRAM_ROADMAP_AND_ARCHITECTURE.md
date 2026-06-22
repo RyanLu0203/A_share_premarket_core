@@ -35,6 +35,7 @@ Implemented active blocks use solid arrows. GOAL-06C and GOAL-06C.5 are
 implemented as review-only dotted extensions; GOAL-06C.6 is also
 implemented_review_only and network-disabled by default. GOAL-06C.6A is
 implemented_review_only and classifies provider/network failures by specific
-failure type. Future, design-only,
+failure type, with a separate opt-in CloakBrowser reference probe for sanitized
+tag-only access diagnostics. Future, design-only,
 locked, and deleted-from-active-mainline blocks use dotted arrows or side-note
 references.

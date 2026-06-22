@@ -1,0 +1,19 @@
+{
+  "config_id": "goal06c6a_cloakbrowser_reference_probe",
+  "reference_repo": "CloakHQ/CloakBrowser",
+  "reference_url": "https://github.com/CloakHQ/CloakBrowser",
+  "reference_commit_inspected": "29679a73bfc64dfb6f97094615741a0ee8022a55",
+  "enabled_by_default": false,
+  "network_opt_in_flag": "--allow-network",
+  "browser_opt_in_flag": "--use-browser",
+  "dependency_policy": "optional only; do not add as a default project dependency",
+  "artifact_policy": "store only metadata, tags, status codes, and sanitized notes; never store raw HTML, screenshots, cookies, or payload bodies",
+  "tag_contract": {
+    "domain_access_only": "SOLVED_BY_CLOAKBROWSER_REFERENCE_DOMAIN_ACCESS_ONLY",
+    "ingestion": "SOLVED_BY_CLOAKBROWSER_REFERENCE_INGESTION",
+    "dependency_missing": "CLOAKBROWSER_REFERENCE_NOT_ATTEMPTED_DEPENDENCY_MISSING",
+    "policy_disabled": "CLOAKBROWSER_REFERENCE_NOT_ATTEMPTED_POLICY_DISABLED",
+    "attempted_not_solved": "CLOAKBROWSER_REFERENCE_ATTEMPTED_NOT_SOLVED_*"
+  },
+  "downstream_unlock_policy": "never unlock GOAL-06D, recommendation, risk, dashboard, paper/live trading, production writes, production model promotion, or DQN/RL from this probe alone"
+}

@@ -6,7 +6,7 @@
   "data_root_must_be_outside_repo": true,
   "network_ingestion_default": "disabled",
   "network_ingestion_opt_in": "ASHARE_ALLOW_NETWORK_INGESTION=1 or --allow-network",
-  "provider_bypass_policy": "no cloakbrowser, stealth browser automation, captcha solving, or proxy rotation",
+  "provider_bypass_policy": "browser-reference probes require explicit opt-in and may write only sanitized metadata; captcha solving, credential harvesting, proxy rotation, raw HTML storage, and payload body commits remain forbidden",
   "allowed_github_artifacts": [
     "code",
     "configs",

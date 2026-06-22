@@ -37,7 +37,7 @@ GOAL-06C.5, GOAL-06C.6, and GOAL-06C.6A are implemented review-only extensions
 and not recommendation, positioning, risk, trading, dashboard, production, or
 DQN/RL workflows. GOAL-06C.6 uses compliant provider ingestion only when
 explicitly network-enabled. GOAL-06C.6A classifies network failures by type
-rather than using a generic network bucket. These provider ingestion gates do
-not use browser-based bypass tooling. Future browser-ingestion work would need a
-separate promotion gate and update
-`configs/project/workflow_status.csv`.
+rather than using a generic network bucket. The default provider path remains
+direct AKShare/local-import. The explicit CloakBrowser reference probe is
+separate, opt-in, tag-only, sanitized, and does not promote any downstream
+workflow block.

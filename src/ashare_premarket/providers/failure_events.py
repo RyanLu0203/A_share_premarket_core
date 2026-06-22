@@ -266,7 +266,7 @@ def _write_summary_md(root: Path, summary: dict[str, object]) -> None:
                 "No fake data was used.",
                 "No silent fallback to proxy was used.",
                 "No global proxy/system/shell/git/npm/pip config was modified.",
-                "No cloakbrowser, stealth browser, captcha solving, or proxy-rotation bypass was used.",
+                "Default GOAL-06C.6/GOAL-06C.6A provider evidence used no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
                 "No heavy local data was committed.",
                 "",
                 "## Layer Distribution",
@@ -309,7 +309,7 @@ def _write_network_md(root: Path, summary: dict[str, object]) -> None:
                 "",
                 "No silent fallback to proxy was used.",
                 "No global proxy/system/shell/git/npm/pip config was modified.",
-                "No cloakbrowser, stealth browser, captcha solving, or proxy-rotation bypass was used.",
+                "Default GOAL-06C.6/GOAL-06C.6A provider evidence used no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
                 "",
             ]
         ),

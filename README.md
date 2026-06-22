@@ -83,13 +83,17 @@ GOAL-06C.5 currently classifies the panel as `contract_demo`: 8 rows, 4 trading
 dates, and 2 approved symbols.
 GOAL-06C.6 adds compliant AKShare/source-backed ingestion infrastructure.
 Network ingestion is disabled by default and requires `ASHARE_ALLOW_NETWORK_INGESTION=1`
-or `--allow-network`. It classifies provider failures and does not use
-browser-based bypass tooling for this provider ingestion gate.
+or `--allow-network`. It classifies provider failures on the default AKShare
+path.
 GOAL-06C.6A adds finance-only network isolation evidence and a provider failure
 taxonomy that separates ProxyError, timeout, DNS, TLS, connection reset/refused,
 HTTP access, anti-bot/challenge, schema, parser, data-quality, PIT/label,
 storage, and workflow-governance failures. Network failures must not be
 collapsed into a generic class when a specific class can be determined.
+It also includes an explicit CloakBrowser reference probe that is optional,
+tag-only, sanitized, and separate from the default provider path. That probe may
+label a current access problem as solved only when it produces matching
+domain-access or structured-ingestion evidence.
 
 ## Required Public Commands
 
@@ -139,6 +143,7 @@ review-only validation wrappers:
 - `python scripts/run_adapter_audit.py`
 - `python scripts/run_workflow_diagnostics.py`
 - `python scripts/audit_workflow_status.py`
+- `python scripts/run_cloakbrowser_reference_probe.py`
 
 ## Protected Outputs
 
@@ -157,6 +162,10 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/provider_failure_summary.json`
 - `outputs/audits/goal06c6_network_isolation_report.md`
 - `outputs/audits/goal06c6_failure_taxonomy_report.md`
+- `outputs/audits/cloakbrowser_reference_problem_tags.csv`
+- `outputs/audits/cloakbrowser_reference_probe_results.csv`
+- `outputs/audits/cloakbrowser_reference_ingestion_report.md`
+- `outputs/audits/cloakbrowser_reference_ingestion_report.json`
 
 ## Lock Boundary
 

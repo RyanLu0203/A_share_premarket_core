@@ -6,7 +6,7 @@ Failure classes: `78`
 Failure layers: `12`
 ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.
 No raw HTML challenge pages are stored in GitHub.
-No cloakbrowser, stealth browser, captcha solving, or proxy-rotation bypass is used.
+Default provider classification uses no browser automation; explicit CloakBrowser reference probes are separate tag-only diagnostics.
 
 ## Layer Coverage
 - `policy`: `8`

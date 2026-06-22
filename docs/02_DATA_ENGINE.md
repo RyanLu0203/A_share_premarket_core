@@ -35,8 +35,11 @@ and notebooks stay outside GitHub.
   validation dates, and 8 rows. Engineering pilot requires at least 50 symbols,
   120 trading dates, and 6000 rows.
 - GOAL-06C.6 either builds a source-backed local bundle or records classified
-  provider/no-network failures. The current GOAL-06C.6/GOAL-06C.6A provider
-  ingestion gate does not use browser-based bypass tooling.
+  provider/no-network failures. The default GOAL-06C.6/GOAL-06C.6A provider
+  path remains direct AKShare/local-import. The explicit CloakBrowser reference
+  probe is opt-in, tag-only, sanitized, and separates ingestion-solved,
+  domain-access-only, dependency, HTTP/access, anti-bot, and browser/network
+  failures.
 
 ## Safety Rules
 

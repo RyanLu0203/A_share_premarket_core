@@ -54,6 +54,9 @@ Implemented and protected:
   source-backed engineering pilot bundle gate
 - GOAL-06C.6A finance-only network isolation evidence, provider failure event
   log, failure summary, and owner/action taxonomy reports
+- GOAL-06C.6A explicit CloakBrowser reference probe evidence for tagging which
+  current provider-access failures are solved, partially solved, or not solved
+  by that reference path
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -169,10 +172,10 @@ source-backed `engineering_pilot`.
   environment restoration. The current AKShare failure is a specific external
   network/proxy failure, not a project parser/schema failure and not a generic
   `NETWORK_ERROR`.
-- Browser-based ingestion or bypass tooling is not used by the current
-  GOAL-06C.6/GOAL-06C.6A provider ingestion gate. Future browser-ingestion work
-  would require a separate explicit goal, compliance review, and
-  workflow-status update.
+- The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
+  AKShare/local-import paths. The explicit CloakBrowser reference probe is
+  separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
+  downstream module by itself.
 
 These warnings do not affect Class A active workflow reproducibility through
 GOAL-06C review-only validation and do not unlock downstream modules.

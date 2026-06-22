@@ -50,10 +50,12 @@ network and access mappings include:
 - Schema, parser, data quality, PIT/label, storage, and workflow-governance
   failures: their corresponding non-network layers
 
-The current GOAL-06C.6/GOAL-06C.6A provider ingestion gate does not use
-browser-based bypass tooling, raw HTML storage, or provider bypass logic. Future
-browser-ingestion work would require a separate explicit goal, compliance
-review, and workflow-status update.
+The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate remains direct
+AKShare/local-import. The explicit CloakBrowser reference probe is opt-in,
+tag-only, sanitized, and separate from the default provider path. It can tag a
+current access issue as solved only when domain-access or structured-ingestion
+evidence is observed. It must not store raw HTML, screenshots, cookies, payload
+bodies, or browser cache, and it does not unlock GOAL-06D or downstream modules.
 
 ## Audit
 
@@ -76,3 +78,6 @@ GOAL-06C.6A writes:
 - `outputs/audits/provider_failure_summary.md`
 - `outputs/audits/goal06c6_network_isolation_report.md`
 - `outputs/audits/goal06c6_failure_taxonomy_report.md`
+- `outputs/audits/cloakbrowser_reference_problem_tags.csv`
+- `outputs/audits/cloakbrowser_reference_probe_results.csv`
+- `outputs/audits/cloakbrowser_reference_ingestion_report.md`

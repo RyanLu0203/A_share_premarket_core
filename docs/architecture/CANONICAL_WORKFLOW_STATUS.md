@@ -142,8 +142,9 @@ engineering panel audits.
 
 Network ingestion is disabled by default. It must be explicitly enabled with
 `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`; provider failures are
-classified and reported. The current provider ingestion gate does not use
-browser-based bypass tooling.
+classified and reported on the default AKShare path. The explicit CloakBrowser
+reference probe is separate, opt-in, tag-only, sanitized, and does not unlock
+downstream workflow blocks.
 GOAL-06D remains
 `future_review_only` and blocked until GOAL-06C.6 reaches
 `engineering_pilot`.

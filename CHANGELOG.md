@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-22 - GOAL-06C.6A CloakBrowser Reference Probe
+
+- Added an explicit, opt-in CloakBrowser reference probe that tags current
+  provider access failures as ingestion-solved, domain-access-only, or
+  attempted-not-solved with specific remaining failure classes.
+- Ran the probe from a temporary venv and external cache; no default dependency,
+  raw HTML, screenshots, cookies, payload bodies, or browser cache were added to
+  the repository.
+- Tagged `index_zh_a_hist` as
+  `SOLVED_BY_CLOAKBROWSER_REFERENCE_INGESTION`,
+  `stock_info_a_code_name` as
+  `SOLVED_BY_CLOAKBROWSER_REFERENCE_DOMAIN_ACCESS_ONLY`, and
+  `stock_zh_a_spot_em` as
+  `CLOAKBROWSER_REFERENCE_ATTEMPTED_NOT_SOLVED_EMPTY_RESPONSE`.
+- Kept the default AKShare provider path unchanged and kept GOAL-06D and all
+  downstream modules locked.
+
 ## 2026-06-22 - GOAL-06C.6A
 
 - Added scoped finance-only network isolation evidence with temporary provider
@@ -27,9 +44,9 @@
   and downstream locks.
 - Kept network ingestion disabled by default and kept GOAL-06D blocked unless a
   source-backed panel reaches `engineering_pilot`.
-- Did not add cloakbrowser, stealth browser automation, captcha solving, proxy
-  rotation, recommendation, risk, dashboard, paper/live trading, production, or
-  DQN/RL capability.
+- Did not add browser automation as a default dependency or provider path, and
+  did not add captcha solving, proxy rotation, recommendation, risk, dashboard,
+  paper/live trading, production, or DQN/RL capability.
 
 ## 2026-06-21 - GOAL-06C.5
 

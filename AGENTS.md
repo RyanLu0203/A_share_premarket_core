@@ -34,9 +34,10 @@ This file is long-term project memory for Codex and other coding agents.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
-- The current GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
-  AKShare/local-import paths only. Future browser-ingestion work would require a
-  separate explicit goal, compliance review, and workflow-status update.
+- The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
+  AKShare/local-import paths. The explicit CloakBrowser reference probe is
+  separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
+  downstream module by itself.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow.
 - Committed validation summaries must be deterministic; volatile runtime timing
   belongs in ignored local diagnostics under `outputs/local/runtime/`.

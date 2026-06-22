@@ -1,5 +1,38 @@
 # 09 Step Iteration Log
 
+## 2026-06-22 - GOAL-06C.6A CloakBrowser Reference Probe And Solved-Problem Tags
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added an explicit CloakBrowser reference probe wrapper:
+  `scripts/run_cloakbrowser_reference_probe.py`.
+- Added sanitized tag outputs for provider-access failures:
+  `outputs/audits/cloakbrowser_reference_problem_tags.csv`,
+  `outputs/audits/cloakbrowser_reference_probe_results.csv`, and
+  `outputs/audits/cloakbrowser_reference_ingestion_report.md/json`.
+- Kept CloakBrowser out of default project dependencies and static imports; the
+  real probe was run from a temporary venv and cache outside the repository.
+
+Result:
+
+- `index_zh_a_hist`: `SOLVED_BY_CLOAKBROWSER_REFERENCE_INGESTION`.
+- `stock_info_a_code_name`:
+  `SOLVED_BY_CLOAKBROWSER_REFERENCE_DOMAIN_ACCESS_ONLY`.
+- `stock_zh_a_spot_em`:
+  `CLOAKBROWSER_REFERENCE_ATTEMPTED_NOT_SOLVED_EMPTY_RESPONSE` with remaining
+  class `BROWSER_NET_EMPTY_RESPONSE`.
+
+Safety:
+
+- Raw HTML, payload bodies, screenshots, cookies, browser profiles, and browser
+  cache are not stored in GitHub.
+- The default AKShare provider path is unchanged.
+- GOAL-06D remains blocked; recommendation, risk overlay, dashboard,
+  paper/live trading, production writes, production model promotion, and DQN/RL
+  remain locked.
+
 ## 2026-06-22 - GOAL-06C.6A Scoped Finance Network Isolation And Failure Taxonomy Gate
 
 Status: `PASS_WITH_WARNINGS`.
@@ -27,9 +60,8 @@ Safety:
 - The latest explicit AKShare run still fails externally after scoped proxy-env
   cleanup and is classified as
   `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`.
-- No fake data, silent proxy fallback, global config mutation, or
-  browser-based bypass tooling is used by this GOAL-06C.6A provider ingestion
-  gate.
+- No fake data, silent proxy fallback, or global config mutation is used by the
+  default GOAL-06C.6A provider evidence path.
 - GOAL-06D remains blocked until source-backed `engineering_pilot` coverage is
   reached.
 

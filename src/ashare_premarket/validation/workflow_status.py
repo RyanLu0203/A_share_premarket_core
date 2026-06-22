@@ -113,8 +113,8 @@ def run_workflow_status_audit(root: Path) -> bool:
         readiness = _read(root / "outputs/audits/goal06c6_readiness_report.md")
         if "GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness:" not in readiness:
             failures.append("GOAL-06C.6 is implemented_review_only without a readiness report")
-        if "No cloakbrowser" not in readiness:
-            failures.append("GOAL-06C.6 readiness report must state no cloakbrowser/bypass use")
+        if "Default GOAL-06C.6 AKShare provider ingestion used no browser automation" not in readiness:
+            failures.append("GOAL-06C.6 readiness report must state the default AKShare path did not use browser automation")
         if "GOAL-06C.6" not in full_roadmap:
             failures.append("full roadmap does not include GOAL-06C.6")
     if goal06c6a_status != "implemented_review_only":

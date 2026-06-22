@@ -19,6 +19,8 @@
   gate, network-disabled by default.
 - GOAL-06C.6A scoped finance network isolation and provider failure taxonomy
   gate; network failures are classified by specific subtype.
+- GOAL-06C.6A CloakBrowser reference probe for opt-in, sanitized, tag-only
+  provider-access diagnostics.
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.

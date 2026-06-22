@@ -40,8 +40,9 @@ The extension writes review-only evidence under `outputs/stage6c/` and
 `outputs/audits/`. It does not emit recommendations, position bands, portfolio
 weights, risk overlays, dashboard outputs, trading instructions, production
 writes, production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
-ingestion is network-disabled by default and does not use browser-based bypass
-tooling.
+ingestion is network-disabled by default on the direct AKShare path. The
+explicit CloakBrowser reference probe is separate tag-only evidence and does not
+change the active workflow through GOAL-06B.
 
 ## Module Dependency Structure
 
