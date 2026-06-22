@@ -1,0 +1,26 @@
+{
+  "config_id": "goal06c6_engineering_pilot_ingestion",
+  "network_enabled_policy": "disabled_by_default_env_or_cli_opt_in",
+  "symbol_target_count": 50,
+  "candidate_symbol_count": 100,
+  "raw_history_trading_dates": 180,
+  "validation_trading_dates": 120,
+  "minimum_stage6c_rows": 6000,
+  "provider_timeout_seconds": 30,
+  "retry_policy": {
+    "max_retries": 2,
+    "backoff_seconds": 2,
+    "stop_on_403": true,
+    "stop_on_429": true,
+    "stop_on_bot_challenge": true
+  },
+  "rate_limit_policy": {
+    "min_seconds_between_symbol_calls": 0.2
+  },
+  "benchmark_symbols": ["000300"],
+  "adjustment_policy": "qfq",
+  "local_storage_format_priority": ["parquet", "csv"],
+  "fallback_storage_format": "csv",
+  "heavy_data_git_exclusion_policy": "local_bundle_only",
+  "failure_classification_policy": "configs/providers/provider_failure_classification.yaml"
+}

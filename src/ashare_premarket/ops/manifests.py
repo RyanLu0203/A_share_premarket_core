@@ -137,6 +137,12 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/features/panel_expansion.py", "ashare_premarket.features.panel_expansion", "goal06c5_engineering_pit_panel", "GOAL-06C.5", True, "scripts/build_engineering_pit_signal_panel.py"),
             ("src/ashare_premarket/labels/panel_expansion.py", "ashare_premarket.labels.panel_expansion", "goal06c5_engineering_label_panel", "GOAL-06C.5", True, "scripts/build_engineering_label_panel.py"),
             ("src/ashare_premarket/validation/engineering_panel.py", "ashare_premarket.validation.engineering_panel", "goal06c5_engineering_stage6c_panel", "GOAL-06C.5", True, "scripts/rebuild_stage6c_from_engineering_panel.py"),
+            ("src/ashare_premarket/providers/failure_classification.py", "ashare_premarket.providers.failure_classification", "goal06c6_provider_failure_classification", "GOAL-06C.6", True, "scripts/audit_provider_failure_classification.py"),
+            ("src/ashare_premarket/providers/akshare_provider.py", "ashare_premarket.providers.akshare_provider", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
+            ("src/ashare_premarket/providers/provider_registry.py", "ashare_premarket.providers.provider_registry", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
+            ("src/ashare_premarket/providers/schema_normalization.py", "ashare_premarket.providers.schema_normalization", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
+            ("src/ashare_premarket/providers/provider_attempt_log.py", "ashare_premarket.providers.provider_attempt_log", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
+            ("src/ashare_premarket/providers/ingestion.py", "ashare_premarket.providers.ingestion", "goal06c6_source_backed_local_bundle", "GOAL-06C.6", True, "scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py"),
             ("src/ashare_premarket/validation/gates.py", "ashare_premarket.validation.gates", "current_trunk_validation", "GOAL-06B", True, "scripts/run_e2e_trunk_validation_through_goal06b.py"),
             ("src/ashare_premarket/diagnostics/workflow.py", "ashare_premarket.diagnostics.workflow", "workflow_diagnostics", "GOAL-06B", True, "scripts/run_workflow_diagnostics.py"),
             ("src/ashare_premarket/ops/safety.py", "ashare_premarket.ops.safety", "safety_gate", "GOAL-06B", True, "scripts/run_safety_gate.py"),
@@ -236,7 +242,7 @@ def write_static_audit_docs(root: Path) -> None:
                 "# Active Workflow Map Through GOAL-06B And GOAL-06C Review-Only Validation",
                 "",
                 "Project Operating System -> Universe Governance -> Source Health -> PIT Signal Store -> Label Builder -> Feature-Label Merge -> Leakage Audit -> Stage 6A Repair -> Baseline Scoring -> GOAL-06B Review-Only Supervised Training -> Verification / Validation / Diagnostics -> GOAL-06C Review-Only Expanded Validation.",
-                "GOAL-06C.5 adds storage, data bundle, source coverage, and engineering panel readiness gates; GOAL-06D remains blocked until engineering_pilot coverage exists.",
+                "GOAL-06C.5 adds storage, data bundle, source coverage, and engineering panel readiness gates; GOAL-06C.6 adds source-backed provider ingestion infrastructure with network disabled by default. GOAL-06D remains blocked until engineering_pilot coverage exists.",
                 "",
                 "Locked downstream modules are not imported by active source code.",
                 "",
@@ -283,6 +289,11 @@ def _configs_for(capability_id: str) -> str:
         "goal06c5_engineering_pit_panel": "configs/features/engineering_pit_panel_config.yaml",
         "goal06c5_engineering_label_panel": "configs/labels/engineering_label_panel_config.yaml",
         "goal06c5_engineering_stage6c_panel": "configs/validation/panel_size_tiers.yaml",
+        "goal06c6_provider_failure_classification": "configs/providers/provider_failure_classification.yaml",
+        "goal06c6_akshare_provider_contract": "configs/providers/akshare_provider_config.yaml;configs/ingestion/akshare_ingestion_config.yaml",
+        "goal06c6_source_backed_local_bundle": "configs/ingestion/engineering_pilot_ingestion_config.yaml;configs/storage/storage_policy.yaml;configs/storage/data_paths.example.yaml",
+        "goal06c6_source_backed_pit_label_panels": "configs/features/engineering_pit_panel_config.yaml;configs/labels/engineering_label_panel_config.yaml",
+        "goal06c6_source_backed_stage6c_panel": "configs/validation/stage6c_engineering_panel_config.yaml;configs/validation/panel_size_tiers.yaml",
     }
     return mapping.get(capability_id, "")
 
@@ -310,6 +321,16 @@ def _audit_for(capability_id: str) -> str:
         return "outputs/audits/engineering_label_panel_audit.md"
     if capability_id == "goal06c5_engineering_stage6c_panel":
         return "outputs/audits/stage6c_engineering_panel_audit.md;outputs/audits/engineering_panel_readiness_report.md;outputs/audits/active_path_replacement_audit.md"
+    if capability_id == "goal06c6_provider_failure_classification":
+        return "outputs/audits/provider_failure_classification_audit.md"
+    if capability_id == "goal06c6_akshare_provider_contract":
+        return "outputs/audits/akshare_provider_attempt_summary.csv"
+    if capability_id == "goal06c6_source_backed_local_bundle":
+        return "outputs/audits/source_backed_bundle_manifest_summary.md;outputs/audits/source_backed_local_bundle_audit.md;outputs/audits/goal06c6_readiness_report.md"
+    if capability_id == "goal06c6_source_backed_pit_label_panels":
+        return "outputs/audits/source_backed_pit_signal_panel_audit.md;outputs/audits/source_backed_label_panel_audit.md"
+    if capability_id == "goal06c6_source_backed_stage6c_panel":
+        return "outputs/audits/stage6c_source_backed_engineering_panel_audit.md;outputs/audits/engineering_panel_readiness_report.md"
     return ""
 
 

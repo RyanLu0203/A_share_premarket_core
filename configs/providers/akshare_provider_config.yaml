@@ -1,0 +1,32 @@
+{
+  "provider_id": "akshare",
+  "network_enabled_policy": {
+    "enabled_by_default": false,
+    "env_var": "ASHARE_ALLOW_NETWORK_INGESTION",
+    "enabled_values": ["1", "true", "TRUE", "yes", "YES"],
+    "cli_flag": "--allow-network"
+  },
+  "provider_timeout_seconds": 30,
+  "retry_policy": {
+    "max_retries": 2,
+    "backoff_seconds": 2,
+    "stop_on_403": true,
+    "stop_on_429": true,
+    "stop_on_bot_challenge": true
+  },
+  "rate_limit_policy": {
+    "min_seconds_between_symbol_calls": 0.2,
+    "max_symbols_per_run": 120
+  },
+  "provider_functions": {
+    "stock_info_a_code_name": "candidate A-share code/name list",
+    "stock_zh_a_spot_em": "current liquidity and market snapshot filter",
+    "stock_zh_a_hist": "daily stock OHLCV",
+    "index_zh_a_hist": "daily benchmark OHLCV"
+  },
+  "benchmark_symbols": ["000300"],
+  "adjustment_policy": "qfq",
+  "local_storage_format_priority": ["parquet", "csv"],
+  "fallback_storage_format": "csv",
+  "heavy_data_git_exclusion_policy": "full provider data stays under ASHARE_PREMARKET_DATA_ROOT only"
+}

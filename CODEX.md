@@ -4,8 +4,9 @@
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
 GOAL-06B, plus the GOAL-06C review-only expanded validation extension and the
-GOAL-06C.5 engineering data foundation gate. Preserve reproducibility and source
-governance before adding any future model or risk work.
+GOAL-06C.5/GOAL-06C.6 engineering data foundation gates. Preserve
+reproducibility and source governance before adding any future model or risk
+work.
 
 ## Current Reliable Facts
 
@@ -18,8 +19,15 @@ governance before adding any future model or risk work.
   baselines, metrics, walk-forward diagnostics, and stability diagnostics.
 - GOAL-06C.5 is implemented_review_only for storage policy, data bundle,
   source coverage, and engineering panel readiness.
+- GOAL-06C.6 is implemented_review_only for provider failure classification,
+  optional AKShare ingestion, local source-backed bundle creation, and
+  source-backed Stage 6C engineering panel audits.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until at least `engineering_pilot`.
+  blocked until a source-backed panel reaches at least `engineering_pilot`.
+- Network ingestion is disabled by default and requires
+  `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.
+- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
+  are out of scope and not used.
 - GOAL-06D is future_review_only; no model comparison/calibration is
   implemented yet.
 - Production model promotion is false.
@@ -49,6 +57,8 @@ python scripts/audit_storage_policy.py
 python scripts/build_data_bundle_manifest.py
 python scripts/audit_data_bundle_manifest.py
 python scripts/audit_data_source_coverage.py
+python scripts/audit_provider_failure_classification.py
+python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
 python scripts/audit_stage6c_ranking_baselines.py
@@ -90,4 +100,4 @@ gate allows it.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
 - Do not start GOAL-06D unless the engineering panel readiness report explicitly
-  allows it after `engineering_pilot` coverage is reached.
+  allows it after source-backed `engineering_pilot` coverage is reached.

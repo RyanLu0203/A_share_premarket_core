@@ -13,7 +13,8 @@ flowchart TD
     F --> G["GOAL-06B Supervised Baseline Gate<br/>(implemented_active / review_only)"]
     G -. "implemented review-only" .-> H["GOAL-06C Expanded Validation + Ranking Baseline<br/>(implemented_review_only)"]
     H -. "implemented review-only data gate" .-> X["GOAL-06C.5 Storage + Coverage + Engineering Panel<br/>(implemented_review_only; contract_demo)"]
-    X -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    X -. "source-backed ingestion gate" .-> Y["GOAL-06C.6 Source-Backed Engineering Pilot Bundle<br/>(implemented_review_only; network-disabled by default)"]
+    Y -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
     I -. "future design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
@@ -31,7 +32,10 @@ flowchart TD
 ```
 
 The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C and
-GOAL-06C.5 are implemented review-only extensions and not recommendation,
-positioning, risk, trading, dashboard, production, or DQN/RL workflows. Anything
-beyond GOAL-06C.5 must earn a separate promotion gate and update
+GOAL-06C.5 and GOAL-06C.6 are implemented review-only extensions and not
+recommendation, positioning, risk, trading, dashboard, production, or DQN/RL
+workflows. GOAL-06C.6 uses compliant provider ingestion only when explicitly
+network-enabled and does not use cloakbrowser, stealth browser automation,
+captcha solving, or proxy rotation. Anything beyond GOAL-06C.6 must earn a
+separate promotion gate and update
 `configs/project/workflow_status.csv`.

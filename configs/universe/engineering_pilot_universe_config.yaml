@@ -1,0 +1,16 @@
+{
+  "config_id": "goal06c6_engineering_pilot_universe",
+  "symbol_target_count": 50,
+  "candidate_symbol_count": 100,
+  "blocked_symbol_policy": "exclude_before_provider_calls_and_outputs",
+  "selection_priority": [
+    "source_backed_ohlcv_coverage",
+    "non_blocked",
+    "valid_exchange_suffix",
+    "liquidity_proxy_if_available",
+    "sector_or_board_diversity_if_available",
+    "deterministic_symbol_tiebreak"
+  ],
+  "fallback_selection_policy": "sort_by_exchange_and_symbol_when_liquidity_filter_unavailable",
+  "failure_flags": ["liquidity_filter_unavailable", "insufficient_ohlcv_coverage"]
+}

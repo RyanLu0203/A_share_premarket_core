@@ -1,14 +1,17 @@
 # Project State
 
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 ## Current Stage
 
 Status: `PASS_WITH_WARNINGS` for GOAL-06C expanded validation and ranking
 baseline gate. Warnings are limited to small clean-bootstrap review fixture
 size; leakage and downstream boundary audits pass. GOAL-06C.5 is implemented as
-a review-only engineering data foundation gate, but the panel remains
-`contract_demo` and does not unlock GOAL-06D.
+a review-only engineering data foundation gate. GOAL-06C.6 is implemented as a
+source-backed AKShare/provider ingestion gate with network disabled by default.
+The panel remains below `engineering_pilot` unless the source-backed bundle
+audit explicitly proves 50 symbols, 120 trading dates, and 6000 usable rows;
+GOAL-06D remains blocked until then.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -41,6 +44,8 @@ Implemented and protected:
 - GOAL-06B review-only supervised baseline training gate
 - GOAL-06C review-only expanded validation and ranking baseline gate
 - GOAL-06C.5 storage, data bundle, source coverage, and engineering panel gate
+- GOAL-06C.6 provider failure classification, AKShare optional ingestion, and
+  source-backed engineering pilot bundle gate
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -66,11 +71,12 @@ Implemented review-only:
 
 - GOAL-06C expanded validation and ranking baseline
 - GOAL-06C.5 engineering data coverage, storage, and panel expansion gate
+- GOAL-06C.6 source-backed engineering pilot bundle ingestion gate
 
 Future review-only:
 
-- GOAL-06D model comparison and calibration, blocked until GOAL-06C.5 reaches
-  `engineering_pilot`
+- GOAL-06D model comparison and calibration, blocked until GOAL-06C.6 reaches a
+  source-backed `engineering_pilot` panel
 
 Still locked:
 
@@ -85,8 +91,9 @@ Still locked:
 - DQN/RL
 
 GOAL-06D may begin only as a future review-only model comparison/calibration
-task if `outputs/audits/engineering_panel_readiness_report.md` explicitly
-allows it. The current readiness report keeps GOAL-06D blocked.
+task if GOAL-06C.6 readiness explicitly allows it after source-backed
+`engineering_pilot` coverage. The current readiness report keeps GOAL-06D
+blocked unless that threshold is met.
 
 ## Current Evidence Chain
 
@@ -128,8 +135,9 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move from dotted/future to
-implemented. GOAL-06C and GOAL-06C.5 are now `implemented_review_only`; GOAL-06D
-remains future review-only and blocked until `engineering_pilot`.
+implemented. GOAL-06C, GOAL-06C.5, and GOAL-06C.6 are now
+`implemented_review_only`; GOAL-06D remains future review-only and blocked until
+source-backed `engineering_pilot`.
 
 ## Known Warnings
 
@@ -143,6 +151,10 @@ remains future review-only and blocked until `engineering_pilot`.
   dates, and 2 approved symbols.
 - GOAL-06C.5 proves that the current panel is still `contract_demo`; expansion
   requires at least 50 approved symbols, 120 trading dates, and 6000 rows.
+- GOAL-06C.6 provider ingestion is network-disabled by default. If AKShare or
+  provider access fails, the failure is classified and GOAL-06D stays blocked.
+- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
+  are not used.
 
 These warnings do not affect Class A active workflow reproducibility through
 GOAL-06C review-only validation and do not unlock downstream modules.

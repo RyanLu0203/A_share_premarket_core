@@ -45,11 +45,12 @@ Implemented review-only:
 
 - GOAL-06C Expanded Validation and Ranking Baseline
 - GOAL-06C.5 Engineering Data Coverage + Storage + Panel Expansion
+- GOAL-06C.6 Source-Backed Engineering Pilot Bundle
 
 Future review-only:
 
-- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.5
-  engineering panel reaches `engineering_pilot`
+- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.6
+  source-backed engineering panel reaches `engineering_pilot`
 
 Future design-only:
 
@@ -128,6 +129,18 @@ GOAL-06C.5 is `implemented_review_only`. It creates storage policy, data bundle,
 source coverage, provider contract, engineering PIT panel, engineering label
 panel, and Stage 6C engineering panel audit evidence.
 
-The current panel is `contract_demo`, not `engineering_pilot`. GOAL-06D remains
-`future_review_only` and blocked until the engineering panel readiness report
-allows it.
+The current panel is `contract_demo`, not `engineering_pilot`.
+
+## GOAL-06C.6 Status
+
+GOAL-06C.6 is `implemented_review_only`. It adds provider failure
+classification, optional AKShare ingestion wrappers, source-backed local bundle
+manifests, source-backed PIT/label panel builders, and Stage 6C source-backed
+engineering panel audits.
+
+Network ingestion is disabled by default. It must be explicitly enabled with
+`ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`; provider failures are
+classified and reported. Cloakbrowser, stealth browser automation, captcha
+solving, and proxy rotation are not used. GOAL-06D remains
+`future_review_only` and blocked until GOAL-06C.6 reaches
+`engineering_pilot`.

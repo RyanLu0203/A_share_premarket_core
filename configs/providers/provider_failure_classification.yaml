@@ -1,0 +1,36 @@
+{
+  "policy_id": "goal06c6_provider_failure_classification",
+  "failure_classes": [
+    "PROVIDER_OK",
+    "NETWORK_DISABLED_BY_POLICY",
+    "NETWORK_ERROR",
+    "TIMEOUT",
+    "HTTP_403_FORBIDDEN",
+    "HTTP_429_RATE_LIMITED",
+    "BOT_CHALLENGE_DETECTED",
+    "CAPTCHA_OR_VERIFY_PAGE",
+    "AUTH_OR_CONSENT_REQUIRED",
+    "HTML_RETURNED_INSTEAD_OF_DATA",
+    "SCHEMA_CHANGED",
+    "EMPTY_RESPONSE",
+    "SYMBOL_NOT_SUPPORTED",
+    "DATE_RANGE_NOT_SUPPORTED",
+    "PROVIDER_DISABLED_BY_POLICY",
+    "TERMS_OR_ROBOTS_RESTRICTED",
+    "DEPENDENCY_MISSING",
+    "UNKNOWN_PROVIDER_FAILURE"
+  ],
+  "safe_response_metadata_policy": "Do not store raw HTML or payloads in GitHub; record only class, row count, schema validity, and safe notes.",
+  "retry_policy": {
+    "retry_allowed": ["NETWORK_ERROR", "TIMEOUT", "EMPTY_RESPONSE"],
+    "retry_forbidden": [
+      "HTTP_403_FORBIDDEN",
+      "HTTP_429_RATE_LIMITED",
+      "BOT_CHALLENGE_DETECTED",
+      "CAPTCHA_OR_VERIFY_PAGE",
+      "AUTH_OR_CONSENT_REQUIRED",
+      "TERMS_OR_ROBOTS_RESTRICTED",
+      "SCHEMA_CHANGED"
+    ]
+  }
+}

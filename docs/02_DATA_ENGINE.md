@@ -5,9 +5,11 @@ uses deterministic, sanitized contracts to preserve the active Class A behavior
 needed through GOAL-06B.
 
 GOAL-06C.5 adds a local research data-store contract and data coverage audit
-layer without enabling network ingestion by default. Heavy provider data, raw
-payloads, local bundles, Parquet lake files, DuckDB/SQLite databases, logs, and
-notebooks stay outside GitHub.
+layer without enabling network ingestion by default. GOAL-06C.6 adds optional
+AKShare/source-backed ingestion, still disabled by default and guarded by
+`ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`. Heavy provider data,
+raw payloads, local bundles, Parquet lake files, DuckDB/SQLite databases, logs,
+and notebooks stay outside GitHub.
 
 ## Active Contracts
 
@@ -21,6 +23,7 @@ notebooks stay outside GitHub.
 - Leakage audit that prevents labels from entering scoring features.
 - Storage policy, bundle manifest, provider ingestion contract, and engineering
   panel readiness audits.
+- Provider failure classification and source-backed bundle manifest summaries.
 
 ## Source Evidence Warnings
 
@@ -31,6 +34,9 @@ notebooks stay outside GitHub.
 - Current GOAL-06C.5 coverage is a fixture: 2 approved symbols, 4 Stage 6C
   validation dates, and 8 rows. Engineering pilot requires at least 50 symbols,
   120 trading dates, and 6000 rows.
+- GOAL-06C.6 either builds a source-backed local bundle or records classified
+  provider/no-network failures. It does not use cloakbrowser, stealth browser
+  automation, captcha solving, or proxy rotation.
 
 ## Safety Rules
 

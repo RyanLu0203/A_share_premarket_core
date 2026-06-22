@@ -1,0 +1,21 @@
+{
+  "config_id": "goal06c6_akshare_ingestion",
+  "provider_id": "akshare",
+  "network_enabled_policy": "ASHARE_ALLOW_NETWORK_INGESTION=1 or --allow-network",
+  "provider_timeout_seconds": 30,
+  "retry_policy": {
+    "max_retries": 2,
+    "backoff_seconds": 2,
+    "stop_on_403": true,
+    "stop_on_429": true,
+    "stop_on_bot_challenge": true
+  },
+  "function_parameter_policy": "verify runtime signatures with inspect.signature before calling",
+  "required_functions": [
+    "stock_info_a_code_name",
+    "stock_zh_a_spot_em",
+    "stock_zh_a_hist",
+    "index_zh_a_hist"
+  ],
+  "fallback_storage_format": "csv"
+}

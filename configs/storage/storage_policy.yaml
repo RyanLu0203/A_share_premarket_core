@@ -1,10 +1,12 @@
 {
-  "policy_id": "goal06c5_local_research_storage_policy",
+  "policy_id": "goal06c5_goal06c6_local_research_storage_policy",
   "storage_kind": "local_research_store_not_production_database",
   "data_root_env_var": "ASHARE_PREMARKET_DATA_ROOT",
   "default_data_root": "~/data/ashare_premarket/",
   "data_root_must_be_outside_repo": true,
   "network_ingestion_default": "disabled",
+  "network_ingestion_opt_in": "ASHARE_ALLOW_NETWORK_INGESTION=1 or --allow-network",
+  "provider_bypass_policy": "no cloakbrowser, stealth browser automation, captcha solving, or proxy rotation",
   "allowed_github_artifacts": [
     "code",
     "configs",
@@ -53,6 +55,7 @@
     "lake/stage6c_engineering_panel",
     "metadata/schema_registry",
     "exports/github_artifacts",
-    "exports/audit_samples"
+    "exports/audit_samples",
+    "bundles/engineering_pilot/goal06c6_akshare_engineering_pilot_current"
   ]
 }

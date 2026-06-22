@@ -9,8 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_goal06d_and_downstream_remain_locked() -> None:
     status = (ROOT / "configs/project/workflow_status.csv").read_text(encoding="utf-8")
     assert "goal06c5_engineering_data_coverage_storage_panel_expansion" in status
+    assert "goal06c6_source_backed_engineering_pilot_bundle" in status
     assert "goal06d_model_comparison_calibration,GOAL-06D Model Comparison and Calibration,GOAL-06D,future_review_only" in status
-    assert "wait_for_goal06c5_engineering_pilot_readiness" in status
+    assert "wait_for_goal06c6_engineering_pilot_readiness" in status
     for workflow_id in [
         "goal07b_risk_overlay_calculation",
         "position_band_recommendation",

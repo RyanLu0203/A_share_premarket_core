@@ -15,6 +15,8 @@
 - GOAL-06C review-only expanded validation and ranking baseline gate.
 - GOAL-06C.5 engineering data coverage, local storage, data bundle, and panel
   expansion gate.
+- GOAL-06C.6 source-backed AKShare/provider engineering pilot bundle ingestion
+  gate, network-disabled by default.
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -22,12 +24,11 @@
 ## Next Allowed Work
 
 GOAL-06D may begin only if
-`outputs/audits/engineering_panel_readiness_report.md` explicitly allows it.
-The current GOAL-06C.5 decision keeps GOAL-06D blocked because the panel is
-`contract_demo`, not `engineering_pilot`. GOAL-06D must remain review-only model
-comparison/calibration and must not implement recommendation, risk overlay,
-dashboard, paper/live trading, production DB writes, production model promotion,
-or DQN/RL.
+`outputs/audits/goal06c6_readiness_report.md` explicitly allows it after the
+source-backed Stage 6C engineering panel reaches `engineering_pilot`. GOAL-06D
+must remain review-only model comparison/calibration and must not implement
+recommendation, risk overlay, dashboard, paper/live trading, production DB
+writes, production model promotion, or DQN/RL.
 
 Before GOAL-06D starts, keep committed reports deterministic and treat
 `runtime_seconds` as local-only diagnostics.

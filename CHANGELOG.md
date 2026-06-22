@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-22 - GOAL-06C.6
+
+- Added provider failure classification, AKShare optional provider wrappers,
+  source-backed bundle orchestration, and public GOAL-06C.6 wrappers.
+- Added source-backed universe, bundle, PIT panel, label panel, Stage 6C panel,
+  and readiness audit outputs with small GitHub samples only.
+- Added no-network-safe tests for provider classification, network opt-in,
+  optional AKShare import behavior, bundle artifact hygiene, PIT/label leakage,
+  and downstream locks.
+- Kept network ingestion disabled by default and kept GOAL-06D blocked unless a
+  source-backed panel reaches `engineering_pilot`.
+- Did not add cloakbrowser, stealth browser automation, captcha solving, proxy
+  rotation, recommendation, risk, dashboard, paper/live trading, production, or
+  DQN/RL capability.
+
 ## 2026-06-21 - GOAL-06C.5
 
 - Added local research storage policy, data bundle manifest contracts, provider

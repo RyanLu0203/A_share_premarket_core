@@ -5,10 +5,18 @@
   "logical_grain": ["target_trading_date", "symbol"],
   "panel_source_type_allowed": ["real_source_backed", "clean_bootstrap_fixture", "proposed_missing_source", "not_available"],
   "github_policy": "sample_only",
+  "source_backed_sample_output": "outputs/samples/source_backed_pit_signal_panel_sample.csv",
+  "feature_lookback_trading_days": 20,
+  "network_enabled_policy": "source_backed_builder_uses_local_bundle_only",
   "feature_columns": [
     "market_trend_5d",
+    "stock_momentum_5d",
+    "stock_momentum_20d",
     "sector_momentum_5d",
     "stock_gap_signal",
+    "stock_volatility_20d",
+    "turnover_proxy",
+    "relative_strength_20d",
     "event_count_pit",
     "source_health_score",
     "source_count"

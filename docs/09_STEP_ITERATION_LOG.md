@@ -1,5 +1,30 @@
 # 09 Step Iteration Log
 
+## 2026-06-22 - GOAL-06C.6 Source-Backed Engineering Pilot Bundle Ingestion Gate
+
+Status: `PASS_WITH_WARNINGS` unless the source-backed bundle reaches
+`engineering_pilot` during an explicitly network-enabled run.
+
+What changed:
+
+- Added AKShare optional provider wrappers, runtime signature inspection, schema
+  normalization, provider attempt logging, and failure classification.
+- Added source-backed local bundle orchestration with network disabled by
+  default and local-only heavy data storage.
+- Added source-backed PIT panel, label panel, and Stage 6C engineering panel
+  sample/audit outputs.
+- Added workflow status, diagnostics, tests, and docs for GOAL-06C.6.
+
+Safety:
+
+- Network ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or
+  `--allow-network`.
+- Provider challenges are classified, not bypassed.
+- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
+  are not used.
+- GOAL-06D remains blocked unless a source-backed panel reaches
+  `engineering_pilot`.
+
 ## 2026-06-21 - GOAL-06C.5 Engineering Data Coverage Storage And Panel Gate
 
 Status: `PASS_WITH_WARNINGS`.

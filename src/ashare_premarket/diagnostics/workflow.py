@@ -5,6 +5,8 @@ from pathlib import Path
 from ashare_premarket.core.constants import REGRESSION_COMMANDS
 from ashare_premarket.core.io import write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
+from ashare_premarket.providers.akshare_provider import akshare_available
+from ashare_premarket.providers.provider_registry import network_enabled
 
 
 DIAGNOSTIC_FIELDS = [
@@ -64,6 +66,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
     ]
     goal06c_status = _goal06c_status(root)
     goal06c5_status = _goal06c5_status(root)
+    goal06c6_status = _goal06c6_status(root)
+    source_bundle_status = _source_bundle_status(root)
     write_csv(root / "outputs/diagnostics/run_detail_manifest.csv", command_rows, DIAGNOSTIC_FIELDS)
     write_csv(root / "outputs/diagnostics/command_failure_catalog.csv", failure_rows, DIAGNOSTIC_FIELDS)
     write_csv(root / "outputs/diagnostics/capability_health_matrix.csv", health_rows)
@@ -78,14 +82,20 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "The clean active workflow through GOAL-06B is deterministic and local.",
                 f"GOAL-06C review-only validation status: `{goal06c_status}`.",
                 f"GOAL-06C.5 engineering data foundation status: `{goal06c5_status}`.",
+                f"GOAL-06C.6 source-backed ingestion status: `{goal06c6_status}`.",
+                f"AKShare available: `{str(akshare_available()).lower()}`.",
+                f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
+                f"Source-backed bundle manifest: `{source_bundle_status}`.",
                 "Known warnings are source-coverage gaps, the contract-demo Stage 6C panel size, and `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.",
-                "GOAL-06C.5 warnings are limited to documented source limitations and the panel not yet reaching `engineering_pilot`.",
+                "GOAL-06C.5/GOAL-06C.6 warnings are limited to documented source limitations, no-network/provider availability, and the panel not yet reaching `engineering_pilot`.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
                 "- `python scripts/run_goal06c_expanded_validation.py`",
                 "- `python scripts/audit_storage_policy.py`",
+                "- `python scripts/audit_provider_failure_classification.py`",
                 "- `python scripts/audit_data_source_coverage.py`",
+                "- `python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py --allow-network`",
                 "- `python scripts/rebuild_stage6c_from_engineering_panel.py`",
                 "",
             ]
@@ -102,6 +112,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- Historical GOAL-05/GOAL-06 docs named by the migration objective were absent at expected source paths and remain classified as `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.",
                 "- The Class D source-evidence gap is documented only; it is not active code and does not block Class A GOAL-06B reproducibility.",
                 "- GOAL-06C.5 classifies the current 8-row Stage 6C panel as `contract_demo`; GOAL-06D remains blocked until `engineering_pilot` coverage exists.",
+                "- GOAL-06C.6 provider ingestion is disabled by default and records classified failures rather than using cloakbrowser, stealth browser automation, captcha solving, or proxy rotation.",
                 "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.",
                 "",
             ]
@@ -119,8 +130,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "4. Review `outputs/diagnostics/run_detail_manifest.csv` for the command, owning capability, status, and recommended action.",
                 "5. For GOAL-06C work, run `python scripts/run_goal06c_expanded_validation.py` and review `outputs/audits/stage6c_readiness_report.md`.",
                 "6. For GOAL-06C.5 work, run `python scripts/rebuild_stage6c_from_engineering_panel.py` and review `outputs/audits/engineering_panel_readiness_report.md`.",
-                "7. GOAL-06D may proceed only after the engineering panel reaches `engineering_pilot` or higher.",
-                "8. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
+                "7. For GOAL-06C.6 source-backed ingestion, run `python scripts/audit_provider_failure_classification.py` first; provider ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.",
+                "8. GOAL-06D may proceed only after the source-backed engineering panel reaches `engineering_pilot` or higher.",
+                "9. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
                 "",
             ]
         ),
@@ -160,3 +172,27 @@ def _goal06c5_status(root: Path) -> str:
     if "Engineering Panel Readiness: PASS" in text:
         return "engineering panel ready"
     return "unknown"
+
+
+def _goal06c6_status(root: Path) -> str:
+    report = root / "outputs/audits/goal06c6_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness: BLOCKED" in text:
+        return "blocked"
+    if "GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness: PASS_WITH_WARNINGS" in text:
+        return "implemented with warnings; GOAL-06D blocked unless engineering_pilot reached"
+    if "GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness: PASS" in text:
+        return "source-backed engineering_pilot ready"
+    return "unknown"
+
+
+def _source_bundle_status(root: Path) -> str:
+    report = root / "outputs/audits/source_backed_bundle_manifest_summary.md"
+    if not report.exists():
+        return "not generated"
+    for line in report.read_text(encoding="utf-8").splitlines():
+        if line.startswith("Status:"):
+            return line.replace("Status:", "").strip()
+    return "generated"

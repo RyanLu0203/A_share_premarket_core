@@ -1,0 +1,12 @@
+{
+  "config_id": "goal06c6_stage6c_source_backed_engineering_panel",
+  "source_bundle_required": true,
+  "panel_source_type": "real_source_backed",
+  "target_symbols": 50,
+  "target_validation_trading_dates": 120,
+  "target_stage6c_rows": 6000,
+  "feature_lookback_trading_days": 20,
+  "label_lookahead_trading_days": 5,
+  "canonical_output_policy": "replace_contract_demo_only_after_engineering_pilot_audits_pass",
+  "github_sample_max_rows": 100
+}

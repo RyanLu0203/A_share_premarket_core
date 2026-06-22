@@ -7,7 +7,7 @@ This is not an automatic trading bot and does not provide investment advice. It
 is a deterministic, review-only research workflow for PIT-safe data contracts,
 label construction, feature-label merging, leakage checks, baseline scoring, the
 GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, and
-the GOAL-06C.5 engineering data foundation gate.
+the GOAL-06C.5/GOAL-06C.6 engineering data foundation gates.
 
 ## Repository Roles
 
@@ -32,7 +32,9 @@ python scripts/audit_storage_policy.py
 python scripts/build_data_bundle_manifest.py
 python scripts/audit_data_bundle_manifest.py
 python scripts/audit_data_source_coverage.py
+python scripts/audit_provider_failure_classification.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
+python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
 python scripts/run_e2e_trunk_validation_through_goal06b.py
 python scripts/run_safety_gate.py
@@ -70,13 +72,18 @@ flowchart TD
     B -. "review-only ranking" .-> C["Deterministic Ranking Baselines<br/>(implemented_review_only)"]
     C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
     D -. "engineering data gate" .-> E["GOAL-06C.5 Storage + Coverage + Panel Gate<br/>(implemented_review_only)"]
-    E -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    E -. "source-backed provider gate" .-> G["GOAL-06C.6 AKShare Engineering Pilot Bundle Gate<br/>(implemented_review_only)"]
+    G -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
 signals, position bands, portfolio weights, or production model outputs.
 GOAL-06C.5 currently classifies the panel as `contract_demo`: 8 rows, 4 trading
 dates, and 2 approved symbols.
+GOAL-06C.6 adds compliant AKShare/source-backed ingestion infrastructure.
+Network ingestion is disabled by default and requires `ASHARE_ALLOW_NETWORK_INGESTION=1`
+or `--allow-network`. It classifies provider failures and does not use
+cloakbrowser, stealth browser automation, captcha solving, or proxy rotation.
 
 ## Required Public Commands
 
@@ -105,6 +112,16 @@ review-only validation wrappers:
 - `python scripts/build_data_bundle_manifest.py`
 - `python scripts/audit_data_bundle_manifest.py`
 - `python scripts/audit_data_source_coverage.py`
+- `python scripts/audit_provider_failure_classification.py`
+- `python scripts/run_akshare_engineering_pilot_ingestion.py`
+- `python scripts/build_engineering_pilot_universe.py`
+- `python scripts/build_source_backed_local_bundle.py`
+- `python scripts/audit_source_backed_local_bundle.py`
+- `python scripts/build_source_backed_pit_signal_panel.py`
+- `python scripts/build_source_backed_label_panel.py`
+- `python scripts/rebuild_stage6c_source_backed_engineering_panel.py`
+- `python scripts/audit_stage6c_source_backed_engineering_panel.py`
+- `python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py`
 - `python scripts/build_engineering_pit_signal_panel.py`
 - `python scripts/audit_engineering_pit_signal_panel.py`
 - `python scripts/build_engineering_label_panel.py`
@@ -134,6 +151,8 @@ broker/live trading, production DB writes, production model promotion, and
 DQN/RL remain locked. GOAL-06D is future review-only work and may proceed only
 after `outputs/audits/engineering_panel_readiness_report.md` allows it. The
 current contract-demo panel keeps GOAL-06D blocked.
+GOAL-06C.6 can unblock GOAL-06D only as future review-only work after a
+source-backed Stage 6C engineering panel reaches `engineering_pilot` or higher.
 
 ## Workflow Promotion Rule
 

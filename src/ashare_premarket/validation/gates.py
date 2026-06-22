@@ -19,6 +19,8 @@ from ashare_premarket.labels.label_builder import audit_label_snapshot, build_la
 from ashare_premarket.ops.adapter_audit import run_adapter_audit
 from ashare_premarket.ops.manifests import bootstrap_audit_manifests
 from ashare_premarket.ops.safety import run_safety_gate
+from ashare_premarket.providers.failure_classification import audit_provider_failure_classification
+from ashare_premarket.providers.ingestion import audit_stage6c_source_backed_engineering_panel
 from ashare_premarket.scoring.baseline import audit_baseline_scoring_skeleton, run_baseline_scoring_skeleton, run_stage6a_blocker_repair
 from ashare_premarket.storage.policy import audit_data_bundle_manifest, audit_storage_policy, build_data_bundle_manifest
 from ashare_premarket.training.supervised_baseline import audit_supervised_baseline_training, run_supervised_baseline_training
@@ -131,6 +133,8 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal06c5_engineering_pit_panel", bool(build_engineering_pit_signal_panel(root)) and audit_engineering_pit_signal_panel(root)),
         ("goal06c5_engineering_label_panel", bool(build_engineering_label_panel(root)) and audit_engineering_label_panel(root)),
         ("goal06c5_engineering_stage6c_panel", rebuild_stage6c_from_engineering_panel(root)),
+        ("goal06c6_provider_failure_classification", audit_provider_failure_classification(root)),
+        ("goal06c6_source_backed_stage6c_panel", audit_stage6c_source_backed_engineering_panel(root)),
         ("goal06d_blocked_until_engineering_pilot", "GOAL-06D allowed to proceed: false" in _read(root / "outputs/audits/engineering_panel_readiness_report.md")),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -195,7 +199,9 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/build_data_bundle_manifest.py", [sys.executable, "scripts/build_data_bundle_manifest.py"]),
         ("python scripts/audit_data_bundle_manifest.py", [sys.executable, "scripts/audit_data_bundle_manifest.py"]),
         ("python scripts/audit_data_source_coverage.py", [sys.executable, "scripts/audit_data_source_coverage.py"]),
+        ("python scripts/audit_provider_failure_classification.py", [sys.executable, "scripts/audit_provider_failure_classification.py"]),
         ("python scripts/rebuild_stage6c_from_engineering_panel.py", [sys.executable, "scripts/rebuild_stage6c_from_engineering_panel.py"]),
+        ("python scripts/audit_stage6c_source_backed_engineering_panel.py", [sys.executable, "scripts/audit_stage6c_source_backed_engineering_panel.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),

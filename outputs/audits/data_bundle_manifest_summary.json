@@ -18,8 +18,7 @@
   "provider_versions": "provider_registry.goal06c5.v1",
   "quality_flags": [
     "CONTRACT_DEMO_ONLY",
-    "NOT_ENGINEERING_PILOT",
-    "LOCAL_DATA_ROOT_NOT_MATERIALIZED"
+    "NOT_ENGINEERING_PILOT"
   ],
   "raw_rows": 8,
   "source_commit_sha": "stable_committed_summary",

@@ -22,13 +22,17 @@ This file is long-term project memory for Codex and other coding agents.
 - GOAL-06C expanded validation and ranking baseline is implemented_review_only.
 - GOAL-06C.5 storage, data bundle, source coverage, and engineering panel
   readiness is implemented_review_only.
+- GOAL-06C.6 source-backed AKShare/provider ingestion is implemented_review_only
+  and network-disabled by default.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until `engineering_pilot`.
+  blocked until source-backed `engineering_pilot`.
 - GOAL-06D is future_review_only only; no model comparison/calibration is
   implemented yet.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
+- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
+  are not allowed ingestion strategies.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow.
 - Committed validation summaries must be deterministic; volatile runtime timing
   belongs in ignored local diagnostics under `outputs/local/runtime/`.
@@ -64,6 +68,8 @@ python scripts/run_goal06c_expanded_validation.py
 python scripts/audit_storage_policy.py
 python scripts/audit_data_bundle_manifest.py
 python scripts/audit_data_source_coverage.py
+python scripts/audit_provider_failure_classification.py
+python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
 python scripts/audit_stage6c_ranking_baselines.py

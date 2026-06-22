@@ -5,9 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ashare-premarket-core"
 version = "0.1.0"
-description = "Clean review-only A-share premarket workflow through GOAL-06B"
+description = "Clean review-only A-share premarket workflow through GOAL-06C.6"
 requires-python = ">=3.9"
 dependencies = []
+
+[project.optional-dependencies]
+data = [
+  "akshare",
+  "pandas",
+  "pyarrow",
+  "duckdb",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

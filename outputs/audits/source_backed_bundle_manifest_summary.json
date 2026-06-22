@@ -1,0 +1,31 @@
+{
+  "akshare_available": true,
+  "akshare_function_signatures": {
+    "index_zh_a_hist": "(symbol: str = '000859', period: str = 'daily', start_date: str = '19700101', end_date: str = '22220101') -> pandas.core.frame.DataFrame",
+    "stock_info_a_code_name": "() -> pandas.core.frame.DataFrame",
+    "stock_zh_a_hist": "(symbol: str = '000001', period: str = 'daily', start_date: str = '19700101', end_date: str = '20500101', adjust: str = '', timeout: float = None) -> pandas.core.frame.DataFrame",
+    "stock_zh_a_spot_em": "() -> pandas.core.frame.DataFrame"
+  },
+  "blocked_symbol_rows": 0,
+  "bundle_id": "goal06c6_akshare_engineering_pilot_current",
+  "bundle_tier": "source_backed_partial",
+  "clean_rows": 0,
+  "failure_classes": [
+    "NETWORK_ERROR"
+  ],
+  "health_status": "BLOCKED",
+  "label_ready_rows": 0,
+  "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c6_akshare_engineering_pilot_current",
+  "network_status": "network_enabled",
+  "notes": "Source-backed local bundle summary; full data is local-only.",
+  "pit_ready_rows": 0,
+  "provider_attempts": 3,
+  "raw_rows": 0,
+  "source_coverage_ready_symbols": 0,
+  "stage6c_rows": 0,
+  "symbols_failed": 50,
+  "symbols_requested": 50,
+  "symbols_succeeded": 0,
+  "trading_dates_requested": 120,
+  "trading_dates_succeeded": 0
+}

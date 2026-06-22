@@ -1,0 +1,4 @@
+provider_id,function_name,symbol,date_start,date_end,attempt_ts,network_enabled,status,failure_class,http_status_if_available,response_type_if_available,rows_returned,schema_valid,retry_allowed,fallback_provider,notes
+akshare,index_zh_a_hist,000300,2024-01-01,2024-12-31,local_runtime,true,FAIL,NETWORK_ERROR,,,0,false,true,,provider error: ProxyError
+akshare,stock_info_a_code_name,,,,local_runtime,true,FAIL,NETWORK_ERROR,,,0,false,true,,provider error: ProxyError
+akshare,stock_zh_a_spot_em,,,,local_runtime,true,FAIL,NETWORK_ERROR,,,0,false,true,,provider error: ProxyError

@@ -31,13 +31,17 @@ flowchart TD
     A["GOAL-06B Supervised Baseline Training Gate"] -. "review-only validation extension" .-> B["Expanded Validation Panel<br/>(implemented_review_only)"]
     B -. "deterministic offline ranks" .-> C["Ranking Baselines<br/>(implemented_review_only)"]
     C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
-    D -. "future review-only" .-> E["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    D -. "engineering data gate" .-> E["GOAL-06C.5 Storage + Coverage + Panel Gate<br/>(implemented_review_only)"]
+    E -. "source-backed provider gate" .-> F["GOAL-06C.6 Source-Backed Bundle Gate<br/>(implemented_review_only)"]
+    F -. "future review-only after engineering_pilot" .-> G["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/` and
 `outputs/audits/`. It does not emit recommendations, position bands, portfolio
 weights, risk overlays, dashboard outputs, trading instructions, production
-writes, production model promotion, or DQN/RL artifacts.
+writes, production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
+ingestion is network-disabled by default and does not use cloakbrowser, stealth
+browser automation, captcha solving, or proxy rotation.
 
 ## Module Dependency Structure
 
@@ -60,6 +64,8 @@ flowchart TD
     Scoring --> Training["training"]
     Training --> Validation["validation"]
     Validation -. "review-only extension" .-> Stage6C["stage6c validation"]
+    Data -. "optional source-backed provider ingestion" .-> Providers["providers"]
+    Providers -. "local-only heavy bundle" .-> Stage6C
     Validation --> Diagnostics["diagnostics"]
     Ops["ops / safety gates"] --> Validation
     Diagnostics -. "reads workflow results only" .-> Outputs["outputs"]
