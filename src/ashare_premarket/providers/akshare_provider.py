@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ashare_premarket.providers.failure_classification import classify_provider_failure, classify_provider_success
+from ashare_premarket.providers.network_isolation import scoped_finance_network_env
 from ashare_premarket.providers.provider_attempt_log import make_attempt
 from ashare_premarket.providers.schema_normalization import (
     normalize_benchmark_schema,
@@ -109,12 +110,15 @@ def _call(
     if not network_enabled:
         return _empty_result(function_name, symbol, date_start, date_end, "NETWORK_DISABLED_BY_POLICY", "network disabled by policy")
     if not akshare_available():
-        return _empty_result(function_name, symbol, date_start, date_end, "DEPENDENCY_MISSING", "optional dependency akshare is not installed", network_enabled=True)
+        return _empty_result(function_name, symbol, date_start, date_end, "AKSHARE_IMPORT_FAILED", "optional dependency akshare is not installed", network_enabled=True)
+    network_context: dict[str, object] = {}
     try:
         ak = importlib.import_module("akshare")
         fn = getattr(ak, function_name)
         call_kwargs = _filter_kwargs(fn, kwargs)
-        raw = fn(**call_kwargs)
+        with scoped_finance_network_env(function_name, network_enabled=True) as scoped_context:
+            network_context = scoped_context
+            raw = fn(**call_kwargs)
         rows, schema_valid, notes = normalizer(raw)
         classification = classify_provider_success(len(rows), schema_valid)
         attempt = make_attempt(
@@ -134,7 +138,7 @@ def _call(
         )
         return ProviderResult(rows=rows, attempt=attempt, raw=raw)
     except Exception as exc:  # provider/runtime failure path
-        classification = classify_provider_failure(exc=exc)
+        classification = classify_provider_failure(exc=exc, context=network_context)
         return ProviderResult(
             rows=[],
             attempt=make_attempt(
@@ -175,7 +179,7 @@ def _empty_result(
     notes: str,
     network_enabled: bool = False,
 ) -> ProviderResult:
-    classification = classify_provider_failure(exc=ModuleNotFoundError(notes)) if failure_class == "DEPENDENCY_MISSING" else None
+    classification = classify_provider_failure(exc=ModuleNotFoundError(notes)) if failure_class in {"DEPENDENCY_MISSING", "AKSHARE_IMPORT_FAILED"} else None
     return ProviderResult(
         rows=[],
         attempt=make_attempt(

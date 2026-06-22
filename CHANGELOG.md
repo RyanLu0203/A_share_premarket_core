@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-22 - GOAL-06C.6A
+
+- Added scoped finance-only network isolation evidence with temporary provider
+  proxy-env cleanup and parent environment restoration checks.
+- Expanded provider failure taxonomy across policy, dependency, transport,
+  HTTP access, anti-bot, schema, parser, data quality, PIT/label, storage, and
+  workflow governance layers.
+- Added machine-readable provider failure events, summary JSON/Markdown,
+  network isolation reports, and failure taxonomy reports.
+- Classified the current explicit AKShare failure as
+  `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`, not a
+  generic network error; GOAL-06D remains blocked.
+- Added mock-only tests for ProxyError, timeout, DNS, TLS, HTTP 403/429/5xx,
+  captcha/challenge, schema/parser, data quality, PIT/label, storage, and
+  workflow-governance failures.
+
 ## 2026-06-22 - GOAL-06C.6
 
 - Added provider failure classification, AKShare optional provider wrappers,

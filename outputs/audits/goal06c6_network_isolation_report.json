@@ -1,0 +1,27 @@
+{
+  "allowed_finance_domains": [
+    "www.bse.cn",
+    "www.akshare.xyz",
+    "push2.eastmoney.com",
+    "push2his.eastmoney.com",
+    "80.push2.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "quote.eastmoney.com"
+  ],
+  "child_proxy_env_cleanup_proven": true,
+  "cloakbrowser_or_bypass_used": false,
+  "fake_data_used": false,
+  "finance_ingestion_scope": "finance_only",
+  "goal_id": "GOAL-06C.6A",
+  "heavy_local_data_committed": false,
+  "observed_domains": [
+    "80.push2.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "www.bse.cn"
+  ],
+  "parent_environment_mutation_check": "PASS_RESTORED",
+  "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
+  "silent_proxy_fallback_used": false,
+  "status": "PASS_WITH_WARNINGS",
+  "system_proxy_inheritance_allowed": false
+}

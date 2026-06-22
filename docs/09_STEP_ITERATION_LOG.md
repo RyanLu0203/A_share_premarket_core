@@ -1,5 +1,38 @@
 # 09 Step Iteration Log
 
+## 2026-06-22 - GOAL-06C.6A Scoped Finance Network Isolation And Failure Taxonomy Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added finance-only scoped network isolation evidence for provider calls,
+  including proxy-env cleanup and parent environment restoration checks.
+- Expanded provider failure taxonomy so network failures are not collapsed into
+  a generic class: ProxyError, timeout, DNS, TLS, connection reset/refused,
+  HTTP access, and anti-bot/challenge failures are classified separately.
+- Added provider failure event CSV, summary JSON/Markdown, network isolation
+  report, and failure taxonomy report.
+- Added mock-only tests for all required failure layers.
+
+Evidence:
+
+- `outputs/audits/provider_failure_events.csv`
+- `outputs/audits/provider_failure_summary.md`
+- `outputs/audits/goal06c6_network_isolation_report.md`
+- `outputs/audits/goal06c6_failure_taxonomy_report.md`
+
+Safety:
+
+- The latest explicit AKShare run still fails externally after scoped proxy-env
+  cleanup and is classified as
+  `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`.
+- No fake data, silent proxy fallback, global config mutation, or
+  browser-based bypass tooling is used by this GOAL-06C.6A provider ingestion
+  gate.
+- GOAL-06D remains blocked until source-backed `engineering_pilot` coverage is
+  reached.
+
 ## 2026-06-22 - GOAL-06C.6 Source-Backed Engineering Pilot Bundle Ingestion Gate
 
 Status: `PASS_WITH_WARNINGS` unless the source-backed bundle reaches
@@ -20,8 +53,7 @@ Safety:
 - Network ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or
   `--allow-network`.
 - Provider challenges are classified, not bypassed.
-- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
-  are not used.
+- Browser-based bypass tooling is not used by this provider ingestion gate.
 - GOAL-06D remains blocked unless a source-backed panel reaches
   `engineering_pilot`.
 

@@ -35,8 +35,8 @@ and notebooks stay outside GitHub.
   validation dates, and 8 rows. Engineering pilot requires at least 50 symbols,
   120 trading dates, and 6000 rows.
 - GOAL-06C.6 either builds a source-backed local bundle or records classified
-  provider/no-network failures. It does not use cloakbrowser, stealth browser
-  automation, captcha solving, or proxy rotation.
+  provider/no-network failures. The current GOAL-06C.6/GOAL-06C.6A provider
+  ingestion gate does not use browser-based bypass tooling.
 
 ## Safety Rules
 

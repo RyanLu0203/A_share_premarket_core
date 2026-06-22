@@ -17,6 +17,7 @@ from ashare_premarket.providers.akshare_provider import (
     load_benchmark_ohlcv_daily,
     load_stock_ohlcv_daily,
 )
+from ashare_premarket.providers.failure_events import write_goal06c6a_failure_evidence
 from ashare_premarket.providers.provider_attempt_log import make_attempt, write_provider_attempt_log, write_provider_attempt_summary
 from ashare_premarket.providers.provider_registry import engineering_bundle_root, load_ingestion_config, network_enabled
 from ashare_premarket.universe.governance import load_blocked_symbols
@@ -80,7 +81,7 @@ def build_engineering_pilot_universe(root: Path, allow_network: bool = False) ->
     blocked = set(load_blocked_symbols(root))
     if not enabled:
         attempts.append(_network_disabled_attempt("stock_info_a_code_name"))
-        write_provider_attempt_summary(root, attempts)
+        _write_provider_attempt_artifacts(root, attempts, enabled)
         _write_source_backed_universe_audit(root, [], [], "PASS_WITH_WARNINGS", "network_disabled_by_policy")
         write_csv(
             root / "outputs/samples/source_backed_universe_sample.csv",
@@ -98,7 +99,7 @@ def build_engineering_pilot_universe(root: Path, allow_network: bool = False) ->
     selected = candidates[: int(config["symbol_target_count"])]
     status = "PASS" if len(selected) >= int(config["symbol_target_count"]) else "PASS_WITH_WARNINGS"
     notes = "source_backed_code_name_list" if selected else "no_source_backed_candidates"
-    write_provider_attempt_summary(root, attempts)
+    _write_provider_attempt_artifacts(root, attempts, enabled)
     write_csv(root / "outputs/samples/source_backed_universe_sample.csv", selected[:SAMPLE_MAX_ROWS], UNIVERSE_FIELDS)
     _write_source_backed_universe_audit(root, selected, candidates, status, notes)
     return root / "outputs/samples/source_backed_universe_sample.csv"
@@ -111,7 +112,7 @@ def build_source_backed_local_bundle(root: Path, allow_network: bool = False) ->
     attempts: list[dict[str, object]] = []
     if not enabled:
         attempts.append(_network_disabled_attempt("run_goal06c6_source_backed_engineering_pilot_bundle"))
-        write_provider_attempt_summary(root, attempts)
+        _write_provider_attempt_artifacts(root, attempts, enabled)
         _write_no_bundle_outputs(root, bundle_root, attempts, "PASS_WITH_WARNINGS", "network_disabled_by_policy")
         return True
 
@@ -127,7 +128,7 @@ def build_source_backed_local_bundle(root: Path, allow_network: bool = False) ->
                 notes="optional dependency akshare is not installed; install with `pip install .[data]` or `pip install akshare`",
             )
         )
-        write_provider_attempt_summary(root, attempts)
+        _write_provider_attempt_artifacts(root, attempts, enabled)
         _write_no_bundle_outputs(root, bundle_root, attempts, "BLOCKED", "dependency_missing")
         return False
 
@@ -178,7 +179,7 @@ def build_source_backed_local_bundle(root: Path, allow_network: bool = False) ->
         if pause_seconds > 0:
             time.sleep(pause_seconds)
 
-    write_provider_attempt_summary(root, attempts)
+    _write_provider_attempt_artifacts(root, attempts, enabled)
     write_provider_attempt_log(bundle_root / "provider_attempt_log.csv", attempts)
     _write_local_table(bundle_root / "universe", selected)
     _write_local_table(bundle_root / "benchmark_daily", benchmark.rows)
@@ -190,6 +191,7 @@ def build_source_backed_local_bundle(root: Path, allow_network: bool = False) ->
 
     manifest = _bundle_manifest(root, bundle_root, selected, trading_dates, all_stock_rows, benchmark.rows, attempts, source_coverage_rows)
     write_json(bundle_root / "manifest.json", manifest)
+    _write_provider_attempt_artifacts(root, attempts, enabled, manifest=manifest)
     _write_committed_manifest_summary(root, manifest)
     write_csv(root / "outputs/samples/source_backed_universe_sample.csv", selected[:SAMPLE_MAX_ROWS], UNIVERSE_FIELDS)
     write_csv(root / "outputs/samples/source_backed_ohlcv_daily_sample.csv", all_stock_rows[:SAMPLE_MAX_ROWS], STOCK_OHLCV_FIELDS)
@@ -202,6 +204,7 @@ def build_source_backed_local_bundle(root: Path, allow_network: bool = False) ->
     stage_rows = rebuild_stage6c_source_backed_engineering_panel(root, pit_rows, label_rows)
     panel_ok = audit_stage6c_source_backed_engineering_panel(root)
     audit_source_backed_local_bundle(root)
+    _write_provider_attempt_artifacts(root, attempts, enabled, manifest=manifest, panel_ok=panel_ok)
     _write_goal06c6_readiness(root, manifest, panel_ok)
     return panel_ok and manifest["health_status"] != "BLOCKED"
 
@@ -466,6 +469,7 @@ def _write_no_bundle_outputs(root: Path, bundle_root: Path, attempts: list[dict[
         "notes": "No source-backed local bundle was built.",
     }
     _write_committed_manifest_summary(root, manifest)
+    _write_provider_attempt_artifacts(root, attempts, network_status != "network_disabled_by_policy", manifest=manifest, panel_ok=False)
     _write_empty_samples(root)
     _write_stage6c_source_backed_coverage(root, [], {"tier": "not_available", "counts": {"symbols": 0, "trading_dates": 0, "rows": 0}, "contract": {"goal06d_allowed": False}})
     _write_source_backed_universe_audit(root, [], [], status, network_status)
@@ -724,6 +728,9 @@ def _write_stage6c_source_backed_coverage(root: Path, rows: list[dict[str, objec
 
 def _write_goal06c6_readiness(root: Path, manifest: dict[str, object], panel_ok: bool) -> None:
     coverage = read_csv(root / SOURCE_PANEL_COVERAGE)[0] if (root / SOURCE_PANEL_COVERAGE).exists() else {}
+    failure_summary_path = root / "outputs/audits/provider_failure_summary.json"
+    failure_summary = _load_json(failure_summary_path) if failure_summary_path.exists() else {}
+    goal06c6a_status = str(failure_summary.get("goal06c6a_status", "PASS_WITH_WARNINGS"))
     allowed = coverage.get("goal06d_allowed") == "true"
     status = "PASS" if allowed and panel_ok else ("BLOCKED" if manifest.get("health_status") == "BLOCKED" else "PASS_WITH_WARNINGS")
     gap_symbols = max(0, 50 - int(coverage.get("current_symbols", 0) or 0))
@@ -736,11 +743,16 @@ def _write_goal06c6_readiness(root: Path, manifest: dict[str, object], panel_ok:
                 "# GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness Report",
                 "",
                 f"GOAL-06C.6 Source-Backed Engineering Pilot Bundle Readiness: {status}",
+                f"GOAL-06C.6A Network Isolation and Failure Taxonomy Readiness: {goal06c6a_status}",
                 f"Panel tier: `{coverage.get('panel_tier', '')}`",
                 f"GOAL-06D allowed to proceed: {str(allowed).lower()}",
                 f"GOAL-06D mode if allowed: {coverage.get('goal06d_mode', 'blocked')}",
                 f"Remaining gap: symbols={gap_symbols}; dates={gap_dates}; rows={gap_rows}",
                 f"Failure classes: `{';'.join(manifest.get('failure_classes', []))}`",
+                f"Failure layers: `{';'.join(sorted(failure_summary.get('failure_layer_distribution', {}).keys()))}`",
+                "No fake data was used.",
+                "No silent fallback to proxy was used.",
+                "No global proxy/system/shell/git/npm/pip config was modified.",
                 "No cloakbrowser, stealth browser, captcha solving, proxy rotation, or bypass automation is used.",
                 "",
             ]
@@ -866,6 +878,23 @@ def _network_disabled_attempt(function_name: str) -> dict[str, object]:
         failure_class="NETWORK_DISABLED_BY_POLICY",
         retry_allowed=False,
         notes="network_disabled_by_policy",
+    )
+
+
+def _write_provider_attempt_artifacts(
+    root: Path,
+    attempts: list[dict[str, object]],
+    network_enabled_value: bool,
+    manifest: dict[str, object] | None = None,
+    panel_ok: bool = False,
+) -> None:
+    write_provider_attempt_summary(root, attempts)
+    write_goal06c6a_failure_evidence(
+        root,
+        attempts,
+        network_enabled=network_enabled_value,
+        manifest=manifest,
+        panel_ok=panel_ok,
     )
 
 

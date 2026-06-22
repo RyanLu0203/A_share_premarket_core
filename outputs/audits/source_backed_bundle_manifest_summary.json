@@ -11,7 +11,7 @@
   "bundle_tier": "source_backed_partial",
   "clean_rows": 0,
   "failure_classes": [
-    "NETWORK_ERROR"
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"
   ],
   "health_status": "BLOCKED",
   "label_ready_rows": 0,

@@ -1,0 +1,516 @@
+{
+  "decision_matrix": {
+    "AKSHARE_IMPORT_FAILED": {
+      "action": "install or repair AKShare",
+      "layer": "dependency",
+      "owner": "local dependency"
+    },
+    "AKSHARE_VERSION_UNSUPPORTED": {
+      "action": "install or pin the required optional dependency",
+      "layer": "dependency",
+      "owner": "local dependency"
+    },
+    "AUTH_OR_CONSENT_REQUIRED": {
+      "action": "do not bypass; use a compliant provider or local import",
+      "layer": "http_access",
+      "owner": "provider access policy"
+    },
+    "BOT_CHALLENGE_DETECTED": {
+      "action": "do not bypass; disable provider or use compliant source",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "BUG_IN_PROVIDER_WRAPPER": {
+      "action": "fix parser, normalization, or write path",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "BUNDLE_MANIFEST_WRITE_FAILURE": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "CANONICAL_SCHEMA_WRITE_FAILURE": {
+      "action": "fix parser, normalization, or write path",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "CAPTCHA_OR_VERIFY_PAGE": {
+      "action": "do not solve captcha; use compliant source or manual local import",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "CHECKSUM_FAILURE": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "COLUMN_TYPE_MISMATCH": {
+      "action": "update type normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "CONNECTION_REFUSED": {
+      "action": "classify network path; do not modify global proxy or VPN settings",
+      "layer": "network_transport",
+      "owner": "local environment / external network"
+    },
+    "CONNECTION_RESET": {
+      "action": "classify network path; do not modify global proxy or VPN settings",
+      "layer": "network_transport",
+      "owner": "local environment / external network"
+    },
+    "CONTRACT_SCHEMA_MISMATCH": {
+      "action": "update schema normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "DATE_FORMAT_MISMATCH": {
+      "action": "update schema normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "DEPENDENCY_MISSING": {
+      "action": "install optional data dependency",
+      "layer": "dependency",
+      "owner": "local dependency"
+    },
+    "DNS_RESOLUTION_FAILURE": {
+      "action": "classify network path; do not modify global proxy or VPN settings",
+      "layer": "network_transport",
+      "owner": "local environment / external network"
+    },
+    "DOWNSTREAM_LOCK_VIOLATION": {
+      "action": "fix workflow status and locked-boundary evidence",
+      "layer": "workflow_governance",
+      "owner": "workflow governance"
+    },
+    "DUPLICATE_ACTIVE_CANONICAL_PATH": {
+      "action": "fix workflow status and locked-boundary evidence",
+      "layer": "workflow_governance",
+      "owner": "workflow governance"
+    },
+    "DUPLICATE_ROWS_DETECTED": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "EMPTY_RESPONSE": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "EXPLICIT_PROXY_REQUIRED_BUT_MISSING": {
+      "action": "fix the scoped workflow policy violation",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "EXTERNAL_NETWORK_TIMEOUT": {
+      "action": "retry later within rate limits; keep GOAL-06D blocked until data coverage exists",
+      "layer": "network_transport",
+      "owner": "external network"
+    },
+    "EXTERNAL_PROXY_ENVIRONMENT_FAILURE": {
+      "action": "run finance direct child env; keep global VPN/proxy unchanged",
+      "layer": "network_transport",
+      "owner": "local environment / scoped network config"
+    },
+    "EXTERNAL_SYSTEM_PROXY_OR_VPN_ROUTE_FAILURE": {
+      "action": "classify only; do not modify global settings; user may adjust external VPN manually if desired",
+      "layer": "network_transport",
+      "owner": "system route / VPN mode"
+    },
+    "EXTERNAL_WEBSITE_ACCESS_RESTRICTED": {
+      "action": "do not bypass; use a compliant provider or local import",
+      "layer": "http_access",
+      "owner": "provider access policy"
+    },
+    "FEATURE_LABEL_JOIN_FAILURE": {
+      "action": "block panel and fix PIT/calendar/label builder",
+      "layer": "pit_calendar_label",
+      "owner": "project PIT/label logic"
+    },
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED": {
+      "action": "child proxy env was cleaned but provider path still failed; use compliant fallback or local import",
+      "layer": "network_transport",
+      "owner": "external network path"
+    },
+    "GITHUB_STORAGE_POLICY_VIOLATION": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "GLOBAL_CONFIG_MUTATION_DETECTED": {
+      "action": "restore global config and remove mutation path",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "GOAL06D_UNBLOCKED_WITHOUT_ENGINEERING_PILOT": {
+      "action": "re-lock GOAL-06D until engineering_pilot exists",
+      "layer": "workflow_governance",
+      "owner": "workflow governance"
+    },
+    "HEAVY_DATA_STAGED_FOR_GIT": {
+      "action": "unstage/remove heavy data; keep only samples/audits",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "HTML_RETURNED_INSTEAD_OF_DATA": {
+      "action": "do not bypass challenge pages; disable provider or use a compliant source",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "HTTP_403_FORBIDDEN": {
+      "action": "do not bypass; use fallback provider or local import",
+      "layer": "http_access",
+      "owner": "provider access policy / website restriction"
+    },
+    "HTTP_404_NOT_FOUND": {
+      "action": "do not bypass; use a compliant provider or local import",
+      "layer": "http_access",
+      "owner": "provider access policy"
+    },
+    "HTTP_429_RATE_LIMITED": {
+      "action": "wait or reduce request rate; do not bypass",
+      "layer": "http_access",
+      "owner": "provider rate limit"
+    },
+    "HTTP_5XX_PROVIDER_ERROR": {
+      "action": "retry later or use fallback provider",
+      "layer": "http_access",
+      "owner": "provider availability"
+    },
+    "IMPLEMENTATION_PARSER_FAILURE": {
+      "action": "fix parser / normalization",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "INSUFFICIENT_DATE_COVERAGE": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "INSUFFICIENT_PANEL_ROWS": {
+      "action": "expand universe/date/provider; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "INSUFFICIENT_SYMBOL_COVERAGE": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "INVALID_PRICE_VALUES": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "JS_CHALLENGE_DETECTED": {
+      "action": "do not bypass challenge pages; disable provider or use a compliant source",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "LABEL_LEAKAGE_RISK": {
+      "action": "block panel; fix label alignment",
+      "layer": "pit_calendar_label",
+      "owner": "project logic"
+    },
+    "LABEL_LOOKAHEAD_ALIGNMENT_FAILURE": {
+      "action": "block panel and fix PIT/calendar/label builder",
+      "layer": "pit_calendar_label",
+      "owner": "project PIT/label logic"
+    },
+    "LABEL_READY_ROWS_INSUFFICIENT": {
+      "action": "block panel and fix PIT/calendar/label builder",
+      "layer": "pit_calendar_label",
+      "owner": "project PIT/label logic"
+    },
+    "LOCAL_BUNDLE_WRITE_FAILURE": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "LOCAL_DATA_ROOT_MISSING": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "LOCAL_DATA_ROOT_NOT_WRITABLE": {
+      "action": "fix local bundle path or remove forbidden staged artifacts",
+      "layer": "storage_bundle",
+      "owner": "storage policy"
+    },
+    "LOGIN_OR_CONSENT_WALL_DETECTED": {
+      "action": "do not bypass challenge pages; disable provider or use a compliant source",
+      "layer": "anti_bot_access",
+      "owner": "provider access restriction"
+    },
+    "MISSING_OHLCV_VALUES": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "NETWORK_DISABLED_BY_POLICY": {
+      "action": "explicitly enable finance ingestion only when intended",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "NON_FINANCE_DOMAIN_BLOCKED": {
+      "action": "block non-finance domain access",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "NON_FINANCE_DOMAIN_FLAGGED": {
+      "action": "fix the scoped workflow policy violation",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "NORMALIZATION_FAILURE": {
+      "action": "fix parser, normalization, or write path",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "OPTIONAL_DEPENDENCY_MISSING": {
+      "action": "install or pin the required optional dependency",
+      "layer": "dependency",
+      "owner": "local dependency"
+    },
+    "OUTLIER_OR_BAD_TICK_DETECTED": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "PIT_CUTOFF_VIOLATION": {
+      "action": "block panel; fix PIT builder",
+      "layer": "pit_calendar_label",
+      "owner": "project logic"
+    },
+    "PROVIDER_DISABLED_BY_POLICY": {
+      "action": "provider is intentionally disabled",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "PROVIDER_FIELD_RENAMED": {
+      "action": "update schema normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "PROVIDER_OK": {
+      "action": "no failure observed",
+      "layer": "unknown",
+      "owner": "provider"
+    },
+    "PROVIDER_RETURN_TYPE_UNSUPPORTED": {
+      "action": "update schema normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "REQUIRED_COLUMN_MISSING": {
+      "action": "update schema normalization or provider contract",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "SILENT_PROXY_FALLBACK_BLOCKED": {
+      "action": "fail closed instead of silently falling back to proxy settings",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "SUSPENSION_OR_STALE_DATA_DETECTED": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    },
+    "SYMBOL_FORMAT_MISMATCH": {
+      "action": "update schema normalization and tests",
+      "layer": "provider_contract",
+      "owner": "provider contract"
+    },
+    "SYSTEM_PROXY_NOT_ALLOWED_IN_SCOPE": {
+      "action": "run finance-scoped direct environment; do not inherit system proxy silently",
+      "layer": "policy",
+      "owner": "project policy"
+    },
+    "TARGET_FUNCTION_MISSING": {
+      "action": "replace provider function or pin provider version",
+      "layer": "dependency",
+      "owner": "provider contract"
+    },
+    "TARGET_FUNCTION_SIGNATURE_UNSUPPORTED": {
+      "action": "update wrapper signature filtering and tests",
+      "layer": "dependency",
+      "owner": "provider contract"
+    },
+    "TERMS_OR_ROBOTS_RESTRICTED": {
+      "action": "do not bypass; use a compliant provider or local import",
+      "layer": "http_access",
+      "owner": "provider access policy"
+    },
+    "TLS_SSL_FAILURE": {
+      "action": "classify network path; do not modify global proxy or VPN settings",
+      "layer": "network_transport",
+      "owner": "local environment / external network"
+    },
+    "TRADING_CALENDAR_INSUFFICIENT": {
+      "action": "block panel and fix PIT/calendar/label builder",
+      "layer": "pit_calendar_label",
+      "owner": "project PIT/label logic"
+    },
+    "TRADING_DAY_ALIGNMENT_FAILURE": {
+      "action": "block panel and fix PIT/calendar/label builder",
+      "layer": "pit_calendar_label",
+      "owner": "project PIT/label logic"
+    },
+    "UNHANDLED_EXCEPTION": {
+      "action": "fix parser, normalization, or write path",
+      "layer": "parser_implementation",
+      "owner": "project code"
+    },
+    "UNKNOWN_NETWORK_FAILURE": {
+      "action": "classify network path; do not modify global proxy or VPN settings",
+      "layer": "network_transport",
+      "owner": "local environment / external network"
+    },
+    "UNKNOWN_PROVIDER_FAILURE": {
+      "action": "capture safe metadata and add a specific classifier",
+      "layer": "unknown",
+      "owner": "triage"
+    },
+    "WORKFLOW_CLEANLINESS_FAILURE": {
+      "action": "fix workflow status and locked-boundary evidence",
+      "layer": "workflow_governance",
+      "owner": "workflow governance"
+    },
+    "WORKFLOW_STATUS_INCONSISTENT": {
+      "action": "fix workflow status and locked-boundary evidence",
+      "layer": "workflow_governance",
+      "owner": "workflow governance"
+    },
+    "ZERO_ROWS_RETURNED": {
+      "action": "expand universe, date range, provider, or local import; keep GOAL-06D blocked",
+      "layer": "data_quality",
+      "owner": "data coverage"
+    }
+  },
+  "failure_classes_supported": [
+    "PROVIDER_OK",
+    "NETWORK_DISABLED_BY_POLICY",
+    "PROVIDER_DISABLED_BY_POLICY",
+    "NON_FINANCE_DOMAIN_BLOCKED",
+    "NON_FINANCE_DOMAIN_FLAGGED",
+    "SYSTEM_PROXY_NOT_ALLOWED_IN_SCOPE",
+    "EXPLICIT_PROXY_REQUIRED_BUT_MISSING",
+    "SILENT_PROXY_FALLBACK_BLOCKED",
+    "GLOBAL_CONFIG_MUTATION_DETECTED",
+    "DEPENDENCY_MISSING",
+    "AKSHARE_IMPORT_FAILED",
+    "AKSHARE_VERSION_UNSUPPORTED",
+    "TARGET_FUNCTION_MISSING",
+    "TARGET_FUNCTION_SIGNATURE_UNSUPPORTED",
+    "OPTIONAL_DEPENDENCY_MISSING",
+    "EXTERNAL_PROXY_ENVIRONMENT_FAILURE",
+    "EXTERNAL_SYSTEM_PROXY_OR_VPN_ROUTE_FAILURE",
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+    "DNS_RESOLUTION_FAILURE",
+    "TLS_SSL_FAILURE",
+    "CONNECTION_RESET",
+    "CONNECTION_REFUSED",
+    "EXTERNAL_NETWORK_TIMEOUT",
+    "UNKNOWN_NETWORK_FAILURE",
+    "HTTP_403_FORBIDDEN",
+    "HTTP_404_NOT_FOUND",
+    "HTTP_429_RATE_LIMITED",
+    "HTTP_5XX_PROVIDER_ERROR",
+    "EXTERNAL_WEBSITE_ACCESS_RESTRICTED",
+    "AUTH_OR_CONSENT_REQUIRED",
+    "TERMS_OR_ROBOTS_RESTRICTED",
+    "BOT_CHALLENGE_DETECTED",
+    "CAPTCHA_OR_VERIFY_PAGE",
+    "HTML_RETURNED_INSTEAD_OF_DATA",
+    "JS_CHALLENGE_DETECTED",
+    "LOGIN_OR_CONSENT_WALL_DETECTED",
+    "CONTRACT_SCHEMA_MISMATCH",
+    "REQUIRED_COLUMN_MISSING",
+    "COLUMN_TYPE_MISMATCH",
+    "DATE_FORMAT_MISMATCH",
+    "SYMBOL_FORMAT_MISMATCH",
+    "PROVIDER_FIELD_RENAMED",
+    "PROVIDER_RETURN_TYPE_UNSUPPORTED",
+    "IMPLEMENTATION_PARSER_FAILURE",
+    "NORMALIZATION_FAILURE",
+    "CANONICAL_SCHEMA_WRITE_FAILURE",
+    "UNHANDLED_EXCEPTION",
+    "BUG_IN_PROVIDER_WRAPPER",
+    "EMPTY_RESPONSE",
+    "ZERO_ROWS_RETURNED",
+    "INSUFFICIENT_SYMBOL_COVERAGE",
+    "INSUFFICIENT_DATE_COVERAGE",
+    "INSUFFICIENT_PANEL_ROWS",
+    "DUPLICATE_ROWS_DETECTED",
+    "MISSING_OHLCV_VALUES",
+    "INVALID_PRICE_VALUES",
+    "SUSPENSION_OR_STALE_DATA_DETECTED",
+    "OUTLIER_OR_BAD_TICK_DETECTED",
+    "TRADING_CALENDAR_INSUFFICIENT",
+    "TRADING_DAY_ALIGNMENT_FAILURE",
+    "PIT_CUTOFF_VIOLATION",
+    "LABEL_LOOKAHEAD_ALIGNMENT_FAILURE",
+    "LABEL_READY_ROWS_INSUFFICIENT",
+    "LABEL_LEAKAGE_RISK",
+    "FEATURE_LABEL_JOIN_FAILURE",
+    "LOCAL_DATA_ROOT_MISSING",
+    "LOCAL_DATA_ROOT_NOT_WRITABLE",
+    "BUNDLE_MANIFEST_WRITE_FAILURE",
+    "LOCAL_BUNDLE_WRITE_FAILURE",
+    "CHECKSUM_FAILURE",
+    "HEAVY_DATA_STAGED_FOR_GIT",
+    "GITHUB_STORAGE_POLICY_VIOLATION",
+    "WORKFLOW_STATUS_INCONSISTENT",
+    "WORKFLOW_CLEANLINESS_FAILURE",
+    "DUPLICATE_ACTIVE_CANONICAL_PATH",
+    "GOAL06D_UNBLOCKED_WITHOUT_ENGINEERING_PILOT",
+    "DOWNSTREAM_LOCK_VIOLATION",
+    "UNKNOWN_PROVIDER_FAILURE"
+  ],
+  "failure_layer_distribution": {
+    "network_transport": 3
+  },
+  "failure_layers_supported": [
+    "policy",
+    "dependency",
+    "network_transport",
+    "http_access",
+    "anti_bot_access",
+    "provider_contract",
+    "parser_implementation",
+    "data_quality",
+    "pit_calendar_label",
+    "storage_bundle",
+    "workflow_governance",
+    "unknown"
+  ],
+  "goal_id": "GOAL-06C.6A",
+  "raw_failure_to_primary_class": [
+    {
+      "failure_layer": "network_transport",
+      "function_name": "index_zh_a_hist",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    },
+    {
+      "failure_layer": "network_transport",
+      "function_name": "stock_info_a_code_name",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    },
+    {
+      "failure_layer": "network_transport",
+      "function_name": "stock_zh_a_spot_em",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    }
+  ],
+  "status": "PASS_WITH_WARNINGS"
+}

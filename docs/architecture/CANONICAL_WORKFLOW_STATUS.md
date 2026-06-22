@@ -46,11 +46,13 @@ Implemented review-only:
 - GOAL-06C Expanded Validation and Ranking Baseline
 - GOAL-06C.5 Engineering Data Coverage + Storage + Panel Expansion
 - GOAL-06C.6 Source-Backed Engineering Pilot Bundle
+- GOAL-06C.6A Scoped Finance Network Isolation and Failure Taxonomy
 
 Future review-only:
 
 - GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.6
-  source-backed engineering panel reaches `engineering_pilot`
+  source-backed engineering panel reaches `engineering_pilot` and GOAL-06C.6A
+  failure taxonomy evidence remains non-blocking
 
 Future design-only:
 
@@ -140,7 +142,25 @@ engineering panel audits.
 
 Network ingestion is disabled by default. It must be explicitly enabled with
 `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`; provider failures are
-classified and reported. Cloakbrowser, stealth browser automation, captcha
-solving, and proxy rotation are not used. GOAL-06D remains
+classified and reported. The current provider ingestion gate does not use
+browser-based bypass tooling.
+GOAL-06D remains
 `future_review_only` and blocked until GOAL-06C.6 reaches
 `engineering_pilot`.
+
+## GOAL-06C.6A Status
+
+GOAL-06C.6A is `implemented_review_only`. It adds finance-only network
+isolation evidence, provider failure events, a failure summary, and a taxonomy
+report.
+
+Network failures are classified by specific failure type. ProxyError, timeout,
+DNS, TLS, connection reset/refused, HTTP access, anti-bot/challenge, schema,
+parser, data-quality, PIT/label, storage, and workflow-governance failures must
+not be collapsed into a generic network class when a specific class can be
+determined.
+
+The current explicit AKShare run remains externally blocked after scoped
+proxy-env cleanup and is classified as
+`FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`. GOAL-06D
+remains blocked.

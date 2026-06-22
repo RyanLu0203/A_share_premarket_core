@@ -24,6 +24,9 @@ This file is long-term project memory for Codex and other coding agents.
   readiness is implemented_review_only.
 - GOAL-06C.6 source-backed AKShare/provider ingestion is implemented_review_only
   and network-disabled by default.
+- GOAL-06C.6A scoped finance network isolation and provider failure taxonomy is
+  implemented_review_only. Network failures must be classified by specific
+  failure type, not as a generic network bucket when the subtype is knowable.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
   blocked until source-backed `engineering_pilot`.
 - GOAL-06D is future_review_only only; no model comparison/calibration is
@@ -31,8 +34,9 @@ This file is long-term project memory for Codex and other coding agents.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
-- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
-  are not allowed ingestion strategies.
+- The current GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
+  AKShare/local-import paths only. Future browser-ingestion work would require a
+  separate explicit goal, compliance review, and workflow-status update.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow.
 - Committed validation summaries must be deterministic; volatile runtime timing
   belongs in ignored local diagnostics under `outputs/local/runtime/`.

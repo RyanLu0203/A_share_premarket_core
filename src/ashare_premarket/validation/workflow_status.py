@@ -82,9 +82,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
     goal06c5 = by_id.get("goal06c5_engineering_data_coverage_storage_panel_expansion", {})
     goal06c6 = by_id.get("goal06c6_source_backed_engineering_pilot_bundle", {})
+    goal06c6a = by_id.get("goal06c6a_scoped_finance_network_failure_taxonomy", {})
     goal06c_status = goal06c.get("status")
     goal06c5_status = goal06c5.get("status")
     goal06c6_status = goal06c6.get("status")
+    goal06c6a_status = goal06c6a.get("status")
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
         failures.append("GOAL-06C block must be future_review_only or implemented_review_only")
     if goal06c_status == "implemented_review_only":
@@ -115,6 +117,20 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("GOAL-06C.6 readiness report must state no cloakbrowser/bypass use")
         if "GOAL-06C.6" not in full_roadmap:
             failures.append("full roadmap does not include GOAL-06C.6")
+    if goal06c6a_status != "implemented_review_only":
+        failures.append("GOAL-06C.6A must be implemented_review_only")
+    else:
+        summary = _read(root / "outputs/audits/provider_failure_summary.md")
+        network_report = _read(root / "outputs/audits/goal06c6_network_isolation_report.md")
+        taxonomy_report = _read(root / "outputs/audits/goal06c6_failure_taxonomy_report.md")
+        if "GOAL-06C.6A Network Isolation and Failure Taxonomy Readiness:" not in summary:
+            failures.append("GOAL-06C.6A is implemented_review_only without a provider failure summary")
+        if "System proxy inheritance allowed: `false`" not in network_report:
+            failures.append("GOAL-06C.6A network report must prove proxy inheritance is not allowed")
+        if "NETWORK_ERROR" in taxonomy_report:
+            failures.append("GOAL-06C.6A taxonomy report must not use generic NETWORK_ERROR")
+        if "GOAL-06C.6A" not in full_roadmap:
+            failures.append("full roadmap does not include GOAL-06C.6A")
     if by_id.get("goal06d_model_comparison_calibration", {}).get("status") != "future_review_only":
         failures.append("GOAL-06D must remain future_review_only")
     if "engineering_pilot" not in by_id.get("goal06d_model_comparison_calibration", {}).get("allowed_next_action", ""):
@@ -152,7 +168,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06C status: `{goal06c_status or 'missing'}`.",
                 f"GOAL-06C.5 status: `{goal06c5_status or 'missing'}`.",
                 f"GOAL-06C.6 status: `{goal06c6_status or 'missing'}`.",
-                "Next allowed goal after GOAL-06C.6: `GOAL-06D Model Comparison and Calibration` only after source-backed engineering_pilot readiness; currently blocked unless the readiness report says otherwise.",
+                f"GOAL-06C.6A status: `{goal06c6a_status or 'missing'}`.",
+                "Next allowed goal after GOAL-06C.6A: `GOAL-06D Model Comparison and Calibration` only after source-backed engineering_pilot readiness; currently blocked unless the readiness report says otherwise.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -232,6 +249,8 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == "goal06c5_engineering_data_coverage_storage_panel_expansion":
         next_goal = "GOAL-06C.6 source-backed engineering pilot bundle gate"
     elif row["workflow_id"] == "goal06c6_source_backed_engineering_pilot_bundle":
+        next_goal = "GOAL-06C.6A scoped failure taxonomy then GOAL-06D blocked until engineering_pilot"
+    elif row["workflow_id"] == "goal06c6a_scoped_finance_network_failure_taxonomy":
         next_goal = "GOAL-06D blocked until source-backed engineering_pilot"
     else:
         next_goal = row["stage_or_goal"]

@@ -1,36 +1,209 @@
 {
-  "policy_id": "goal06c6_provider_failure_classification",
-  "failure_classes": [
-    "PROVIDER_OK",
-    "NETWORK_DISABLED_BY_POLICY",
-    "NETWORK_ERROR",
-    "TIMEOUT",
-    "HTTP_403_FORBIDDEN",
-    "HTTP_429_RATE_LIMITED",
-    "BOT_CHALLENGE_DETECTED",
-    "CAPTCHA_OR_VERIFY_PAGE",
-    "AUTH_OR_CONSENT_REQUIRED",
-    "HTML_RETURNED_INSTEAD_OF_DATA",
-    "SCHEMA_CHANGED",
-    "EMPTY_RESPONSE",
-    "SYMBOL_NOT_SUPPORTED",
-    "DATE_RANGE_NOT_SUPPORTED",
-    "PROVIDER_DISABLED_BY_POLICY",
-    "TERMS_OR_ROBOTS_RESTRICTED",
-    "DEPENDENCY_MISSING",
-    "UNKNOWN_PROVIDER_FAILURE"
+  "policy_id": "goal06c6a_provider_failure_classification",
+  "goal_id": "GOAL-06C.6A",
+  "scope": "finance_only_network_isolation_and_provider_failure_taxonomy",
+  "failure_layers": [
+    "policy",
+    "dependency",
+    "network_transport",
+    "http_access",
+    "anti_bot_access",
+    "provider_contract",
+    "parser_implementation",
+    "data_quality",
+    "pit_calendar_label",
+    "storage_bundle",
+    "workflow_governance",
+    "unknown"
   ],
-  "safe_response_metadata_policy": "Do not store raw HTML or payloads in GitHub; record only class, row count, schema validity, and safe notes.",
-  "retry_policy": {
-    "retry_allowed": ["NETWORK_ERROR", "TIMEOUT", "EMPTY_RESPONSE"],
-    "retry_forbidden": [
+  "failure_classes": {
+    "policy": [
+      "NETWORK_DISABLED_BY_POLICY",
+      "PROVIDER_DISABLED_BY_POLICY",
+      "NON_FINANCE_DOMAIN_BLOCKED",
+      "NON_FINANCE_DOMAIN_FLAGGED",
+      "SYSTEM_PROXY_NOT_ALLOWED_IN_SCOPE",
+      "EXPLICIT_PROXY_REQUIRED_BUT_MISSING",
+      "SILENT_PROXY_FALLBACK_BLOCKED",
+      "GLOBAL_CONFIG_MUTATION_DETECTED"
+    ],
+    "dependency": [
+      "DEPENDENCY_MISSING",
+      "AKSHARE_IMPORT_FAILED",
+      "AKSHARE_VERSION_UNSUPPORTED",
+      "TARGET_FUNCTION_MISSING",
+      "TARGET_FUNCTION_SIGNATURE_UNSUPPORTED",
+      "OPTIONAL_DEPENDENCY_MISSING"
+    ],
+    "network_transport": [
+      "EXTERNAL_PROXY_ENVIRONMENT_FAILURE",
+      "EXTERNAL_SYSTEM_PROXY_OR_VPN_ROUTE_FAILURE",
+      "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "DNS_RESOLUTION_FAILURE",
+      "TLS_SSL_FAILURE",
+      "CONNECTION_RESET",
+      "CONNECTION_REFUSED",
+      "EXTERNAL_NETWORK_TIMEOUT",
+      "UNKNOWN_NETWORK_FAILURE"
+    ],
+    "http_access": [
       "HTTP_403_FORBIDDEN",
+      "HTTP_404_NOT_FOUND",
       "HTTP_429_RATE_LIMITED",
+      "HTTP_5XX_PROVIDER_ERROR",
+      "EXTERNAL_WEBSITE_ACCESS_RESTRICTED",
+      "AUTH_OR_CONSENT_REQUIRED",
+      "TERMS_OR_ROBOTS_RESTRICTED"
+    ],
+    "anti_bot_access": [
       "BOT_CHALLENGE_DETECTED",
       "CAPTCHA_OR_VERIFY_PAGE",
-      "AUTH_OR_CONSENT_REQUIRED",
-      "TERMS_OR_ROBOTS_RESTRICTED",
-      "SCHEMA_CHANGED"
+      "HTML_RETURNED_INSTEAD_OF_DATA",
+      "JS_CHALLENGE_DETECTED",
+      "LOGIN_OR_CONSENT_WALL_DETECTED"
+    ],
+    "provider_contract": [
+      "CONTRACT_SCHEMA_MISMATCH",
+      "REQUIRED_COLUMN_MISSING",
+      "COLUMN_TYPE_MISMATCH",
+      "DATE_FORMAT_MISMATCH",
+      "SYMBOL_FORMAT_MISMATCH",
+      "PROVIDER_FIELD_RENAMED",
+      "PROVIDER_RETURN_TYPE_UNSUPPORTED"
+    ],
+    "parser_implementation": [
+      "IMPLEMENTATION_PARSER_FAILURE",
+      "NORMALIZATION_FAILURE",
+      "CANONICAL_SCHEMA_WRITE_FAILURE",
+      "UNHANDLED_EXCEPTION",
+      "BUG_IN_PROVIDER_WRAPPER"
+    ],
+    "data_quality": [
+      "EMPTY_RESPONSE",
+      "ZERO_ROWS_RETURNED",
+      "INSUFFICIENT_SYMBOL_COVERAGE",
+      "INSUFFICIENT_DATE_COVERAGE",
+      "INSUFFICIENT_PANEL_ROWS",
+      "DUPLICATE_ROWS_DETECTED",
+      "MISSING_OHLCV_VALUES",
+      "INVALID_PRICE_VALUES",
+      "SUSPENSION_OR_STALE_DATA_DETECTED",
+      "OUTLIER_OR_BAD_TICK_DETECTED"
+    ],
+    "pit_calendar_label": [
+      "TRADING_CALENDAR_INSUFFICIENT",
+      "TRADING_DAY_ALIGNMENT_FAILURE",
+      "PIT_CUTOFF_VIOLATION",
+      "LABEL_LOOKAHEAD_ALIGNMENT_FAILURE",
+      "LABEL_READY_ROWS_INSUFFICIENT",
+      "LABEL_LEAKAGE_RISK",
+      "FEATURE_LABEL_JOIN_FAILURE"
+    ],
+    "storage_bundle": [
+      "LOCAL_DATA_ROOT_MISSING",
+      "LOCAL_DATA_ROOT_NOT_WRITABLE",
+      "BUNDLE_MANIFEST_WRITE_FAILURE",
+      "LOCAL_BUNDLE_WRITE_FAILURE",
+      "CHECKSUM_FAILURE",
+      "HEAVY_DATA_STAGED_FOR_GIT",
+      "GITHUB_STORAGE_POLICY_VIOLATION"
+    ],
+    "workflow_governance": [
+      "WORKFLOW_STATUS_INCONSISTENT",
+      "WORKFLOW_CLEANLINESS_FAILURE",
+      "DUPLICATE_ACTIVE_CANONICAL_PATH",
+      "GOAL06D_UNBLOCKED_WITHOUT_ENGINEERING_PILOT",
+      "DOWNSTREAM_LOCK_VIOLATION"
     ]
+  },
+  "network_isolation_policy": {
+    "network_scope": "finance_only",
+    "enabled_by_default": false,
+    "system_proxy_inheritance_allowed": false,
+    "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
+    "parent_environment_mutation_allowed": false,
+    "silent_proxy_fallback_allowed": false,
+    "global_config_mutation_allowed": false,
+    "bypass_tooling_allowed": false,
+    "allowed_finance_domains": [
+      "www.bse.cn",
+      "www.akshare.xyz",
+      "push2.eastmoney.com",
+      "push2his.eastmoney.com",
+      "80.push2.eastmoney.com",
+      "82.push2.eastmoney.com",
+      "quote.eastmoney.com"
+    ]
+  },
+  "required_event_columns": [
+    "event_id",
+    "run_id",
+    "goal_id",
+    "stage",
+    "provider_id",
+    "function_name",
+    "symbol",
+    "date_start",
+    "date_end",
+    "attempt_ts",
+    "network_scope",
+    "network_mode",
+    "inherit_system_proxy",
+    "parent_proxy_env_present",
+    "child_proxy_env_present_after_cleanup",
+    "target_domain",
+    "domain_allowed",
+    "status",
+    "primary_failure_class",
+    "secondary_failure_class",
+    "failure_layer",
+    "retry_allowed",
+    "fallback_allowed",
+    "requires_user_action",
+    "requires_provider_replacement",
+    "requires_schema_update",
+    "requires_code_fix",
+    "requires_network_fix",
+    "goal06d_allowed_after_failure",
+    "safe_notes"
+  ],
+  "safe_response_metadata_policy": "Do not store raw HTML or payloads in GitHub; record only class, row count, schema validity, safe notes, and provider metadata.",
+  "decision_matrix_examples": {
+    "EXTERNAL_PROXY_ENVIRONMENT_FAILURE": {
+      "owner": "local environment / scoped network config",
+      "action": "run finance direct child env; keep global VPN/proxy unchanged"
+    },
+    "EXTERNAL_SYSTEM_PROXY_OR_VPN_ROUTE_FAILURE": {
+      "owner": "system route / VPN mode",
+      "action": "classify; do not modify global settings; user may adjust external VPN manually if desired"
+    },
+    "HTTP_403_FORBIDDEN": {
+      "owner": "provider access policy / website restriction",
+      "action": "do not bypass; use fallback provider or local import"
+    },
+    "BOT_CHALLENGE_DETECTED": {
+      "owner": "provider access restriction",
+      "action": "do not bypass; disable provider or use compliant source"
+    },
+    "CONTRACT_SCHEMA_MISMATCH": {
+      "owner": "provider contract",
+      "action": "update schema normalization and tests"
+    },
+    "IMPLEMENTATION_PARSER_FAILURE": {
+      "owner": "project code",
+      "action": "fix parser / normalization"
+    },
+    "INSUFFICIENT_PANEL_ROWS": {
+      "owner": "data coverage",
+      "action": "expand universe/date/provider; keep GOAL-06D blocked"
+    },
+    "PIT_CUTOFF_VIOLATION": {
+      "owner": "project logic",
+      "action": "block panel; fix PIT builder"
+    },
+    "HEAVY_DATA_STAGED_FOR_GIT": {
+      "owner": "storage policy",
+      "action": "unstage/remove heavy data; keep only samples/audits"
+    }
   }
 }

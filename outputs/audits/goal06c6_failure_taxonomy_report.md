@@ -1,26 +1,14 @@
-# Provider Failure Classification Audit
+# GOAL-06C.6 Failure Taxonomy Report
 
-Status: `PASS`
-Goal: `GOAL-06C.6A`
-Failure classes: `78`
-Failure layers: `12`
-ProxyError, timeout, DNS, TLS, HTTP access, anti-bot, schema, parser, data quality, PIT/label, storage, and workflow failures are specifically classified.
-No raw HTML challenge pages are stored in GitHub.
-No cloakbrowser, stealth browser, captcha solving, or proxy-rotation bypass is used.
+Status: `PASS_WITH_WARNINGS`
+Supported failure classes: `78`
+Supported failure layers: `12`
+Observed primary failure classes: `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`
 
-## Layer Coverage
-- `policy`: `8`
-- `dependency`: `6`
-- `network_transport`: `9`
-- `http_access`: `7`
-- `anti_bot_access`: `5`
-- `provider_contract`: `7`
-- `parser_implementation`: `5`
-- `data_quality`: `10`
-- `pit_calendar_label`: `7`
-- `storage_bundle`: `7`
-- `workflow_governance`: `5`
-- `unknown`: `2`
+## Raw Failure Mapping
+- `index_zh_a_hist` -> `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`; layer `network_transport`; secondary `EXTERNAL_PROXY_ENVIRONMENT_FAILURE`
+- `stock_info_a_code_name` -> `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`; layer `network_transport`; secondary `EXTERNAL_PROXY_ENVIRONMENT_FAILURE`
+- `stock_zh_a_spot_em` -> `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`; layer `network_transport`; secondary `EXTERNAL_PROXY_ENVIRONMENT_FAILURE`
 
 ## Decision Matrix
 - `PROVIDER_OK` -> owner: provider; action: no failure observed
@@ -101,5 +89,3 @@ No cloakbrowser, stealth browser, captcha solving, or proxy-rotation bypass is u
 - `GOAL06D_UNBLOCKED_WITHOUT_ENGINEERING_PILOT` -> owner: workflow governance; action: re-lock GOAL-06D until engineering_pilot exists
 - `DOWNSTREAM_LOCK_VIOLATION` -> owner: workflow governance; action: fix workflow status and locked-boundary evidence
 - `UNKNOWN_PROVIDER_FAILURE` -> owner: triage; action: capture safe metadata and add a specific classifier
-
-## Failures

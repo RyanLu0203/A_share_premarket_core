@@ -1,0 +1,113 @@
+{
+  "akshare_import_status": "available",
+  "akshare_version": "1.18.64",
+  "allowed_finance_domains": [
+    "www.bse.cn",
+    "www.akshare.xyz",
+    "push2.eastmoney.com",
+    "push2his.eastmoney.com",
+    "80.push2.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "quote.eastmoney.com"
+  ],
+  "child_proxy_env_cleanup_proven": true,
+  "cloakbrowser_or_bypass_used": false,
+  "code_fixable_failures": [],
+  "event_count": 3,
+  "explicit_ingestion_attempted": true,
+  "failure_event_count": 3,
+  "failure_layer_distribution": {
+    "network_transport": 3
+  },
+  "failures_requiring_user_action": [
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"
+  ],
+  "fake_data_used": false,
+  "finance_ingestion_scope": "finance_only",
+  "goal06c6a_status": "PASS_WITH_WARNINGS",
+  "goal06d_allowed_to_proceed": false,
+  "goal_id": "GOAL-06C.6A",
+  "heavy_local_data_committed": false,
+  "local_network_or_system_failures": [
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"
+  ],
+  "network_enabled": true,
+  "observed_domains": [
+    "80.push2.eastmoney.com",
+    "82.push2.eastmoney.com",
+    "www.bse.cn"
+  ],
+  "panel_ok": false,
+  "parent_environment_mutation_check": "PASS_RESTORED",
+  "primary_failure_classes": [
+    "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"
+  ],
+  "provider_or_source_failures": [],
+  "raw_failure_to_primary_class": [
+    {
+      "failure_layer": "network_transport",
+      "function_name": "index_zh_a_hist",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    },
+    {
+      "failure_layer": "network_transport",
+      "function_name": "stock_info_a_code_name",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    },
+    {
+      "failure_layer": "network_transport",
+      "function_name": "stock_zh_a_spot_em",
+      "primary_failure_class": "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED",
+      "raw_failure_note": "ProxyError persisted after finance-scoped proxy env cleanup",
+      "secondary_failure_class": "EXTERNAL_PROXY_ENVIRONMENT_FAILURE"
+    }
+  ],
+  "recommended_next_action": "Keep GOAL-06D blocked; user may adjust external network/VPN manually or use compliant local import/provider replacement.",
+  "required_event_fields": [
+    "event_id",
+    "run_id",
+    "goal_id",
+    "stage",
+    "provider_id",
+    "function_name",
+    "symbol",
+    "date_start",
+    "date_end",
+    "attempt_ts",
+    "network_scope",
+    "network_mode",
+    "inherit_system_proxy",
+    "parent_proxy_env_present",
+    "child_proxy_env_present_after_cleanup",
+    "target_domain",
+    "domain_allowed",
+    "status",
+    "primary_failure_class",
+    "secondary_failure_class",
+    "failure_layer",
+    "retry_allowed",
+    "fallback_allowed",
+    "requires_user_action",
+    "requires_provider_replacement",
+    "requires_schema_update",
+    "requires_code_fix",
+    "requires_network_fix",
+    "goal06d_allowed_after_failure",
+    "safe_notes"
+  ],
+  "run_id": "goal06c6_local_runtime",
+  "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
+  "silent_proxy_fallback_used": false,
+  "source_bundle_health_status": "BLOCKED",
+  "system_proxy_inheritance_allowed": false,
+  "target_functions_inspected": {
+    "index_zh_a_hist": "(symbol: str = '000859', period: str = 'daily', start_date: str = '19700101', end_date: str = '22220101') -> pandas.core.frame.DataFrame",
+    "stock_info_a_code_name": "() -> pandas.core.frame.DataFrame",
+    "stock_zh_a_hist": "(symbol: str = '000001', period: str = 'daily', start_date: str = '19700101', end_date: str = '20500101', adjust: str = '', timeout: float = None) -> pandas.core.frame.DataFrame",
+    "stock_zh_a_spot_em": "() -> pandas.core.frame.DataFrame"
+  }
+}

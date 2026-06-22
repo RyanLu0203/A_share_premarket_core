@@ -138,6 +138,8 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/labels/panel_expansion.py", "ashare_premarket.labels.panel_expansion", "goal06c5_engineering_label_panel", "GOAL-06C.5", True, "scripts/build_engineering_label_panel.py"),
             ("src/ashare_premarket/validation/engineering_panel.py", "ashare_premarket.validation.engineering_panel", "goal06c5_engineering_stage6c_panel", "GOAL-06C.5", True, "scripts/rebuild_stage6c_from_engineering_panel.py"),
             ("src/ashare_premarket/providers/failure_classification.py", "ashare_premarket.providers.failure_classification", "goal06c6_provider_failure_classification", "GOAL-06C.6", True, "scripts/audit_provider_failure_classification.py"),
+            ("src/ashare_premarket/providers/failure_events.py", "ashare_premarket.providers.failure_events", "goal06c6_provider_failure_classification", "GOAL-06C.6A", True, "scripts/audit_provider_failure_classification.py"),
+            ("src/ashare_premarket/providers/network_isolation.py", "ashare_premarket.providers.network_isolation", "goal06c6_akshare_provider_contract", "GOAL-06C.6A", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/akshare_provider.py", "ashare_premarket.providers.akshare_provider", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/provider_registry.py", "ashare_premarket.providers.provider_registry", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/schema_normalization.py", "ashare_premarket.providers.schema_normalization", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
@@ -322,9 +324,9 @@ def _audit_for(capability_id: str) -> str:
     if capability_id == "goal06c5_engineering_stage6c_panel":
         return "outputs/audits/stage6c_engineering_panel_audit.md;outputs/audits/engineering_panel_readiness_report.md;outputs/audits/active_path_replacement_audit.md"
     if capability_id == "goal06c6_provider_failure_classification":
-        return "outputs/audits/provider_failure_classification_audit.md"
+        return "outputs/audits/provider_failure_classification_audit.md;outputs/audits/provider_failure_summary.md;outputs/audits/goal06c6_failure_taxonomy_report.md"
     if capability_id == "goal06c6_akshare_provider_contract":
-        return "outputs/audits/akshare_provider_attempt_summary.csv"
+        return "outputs/audits/akshare_provider_attempt_summary.csv;outputs/audits/provider_failure_events.csv;outputs/audits/goal06c6_network_isolation_report.md"
     if capability_id == "goal06c6_source_backed_local_bundle":
         return "outputs/audits/source_backed_bundle_manifest_summary.md;outputs/audits/source_backed_local_bundle_audit.md;outputs/audits/goal06c6_readiness_report.md"
     if capability_id == "goal06c6_source_backed_pit_label_panels":

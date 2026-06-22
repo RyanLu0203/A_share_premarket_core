@@ -4,7 +4,7 @@
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
 GOAL-06B, plus the GOAL-06C review-only expanded validation extension and the
-GOAL-06C.5/GOAL-06C.6 engineering data foundation gates. Preserve
+GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A engineering data foundation gates. Preserve
 reproducibility and source governance before adding any future model or risk
 work.
 
@@ -22,12 +22,19 @@ work.
 - GOAL-06C.6 is implemented_review_only for provider failure classification,
   optional AKShare ingestion, local source-backed bundle creation, and
   source-backed Stage 6C engineering panel audits.
+- GOAL-06C.6A is implemented_review_only for finance-only network isolation,
+  provider failure events, and specific failure taxonomy reports.
+- Network failures must be classified by precise type, such as ProxyError,
+  timeout, DNS, TLS, connection reset/refused, HTTP access, or anti-bot
+  challenge, not as a broad generic network failure when a specific class is
+  knowable.
 - The current engineering panel tier is `contract_demo`; GOAL-06D remains
   blocked until a source-backed panel reaches at least `engineering_pilot`.
 - Network ingestion is disabled by default and requires
   `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.
-- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
-  are out of scope and not used.
+- The current GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
+  AKShare/local-import paths only. Future browser-ingestion work would require a
+  separate explicit goal, compliance review, and workflow-status update.
 - GOAL-06D is future_review_only; no model comparison/calibration is
   implemented yet.
 - Production model promotion is false.

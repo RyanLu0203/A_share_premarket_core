@@ -9,6 +9,12 @@ baseline gate. Warnings are limited to small clean-bootstrap review fixture
 size; leakage and downstream boundary audits pass. GOAL-06C.5 is implemented as
 a review-only engineering data foundation gate. GOAL-06C.6 is implemented as a
 source-backed AKShare/provider ingestion gate with network disabled by default.
+GOAL-06C.6A is implemented as a scoped finance-only network isolation and
+provider failure taxonomy gate. The latest explicit AKShare run still fails at
+the external network/proxy path after scoped proxy-env cleanup, classified as
+`FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`, so the
+taxonomy/isolation gate is `PASS_WITH_WARNINGS` while the source-backed bundle
+remains blocked.
 The panel remains below `engineering_pilot` unless the source-backed bundle
 audit explicitly proves 50 symbols, 120 trading dates, and 6000 usable rows;
 GOAL-06D remains blocked until then.
@@ -46,6 +52,8 @@ Implemented and protected:
 - GOAL-06C.5 storage, data bundle, source coverage, and engineering panel gate
 - GOAL-06C.6 provider failure classification, AKShare optional ingestion, and
   source-backed engineering pilot bundle gate
+- GOAL-06C.6A finance-only network isolation evidence, provider failure event
+  log, failure summary, and owner/action taxonomy reports
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -72,6 +80,8 @@ Implemented review-only:
 - GOAL-06C expanded validation and ranking baseline
 - GOAL-06C.5 engineering data coverage, storage, and panel expansion gate
 - GOAL-06C.6 source-backed engineering pilot bundle ingestion gate
+- GOAL-06C.6A scoped finance network isolation and provider failure taxonomy
+  gate (`PASS_WITH_WARNINGS` while AKShare remains externally blocked)
 
 Future review-only:
 
@@ -114,6 +124,8 @@ Key GitHub locations after push:
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/goal06b_clean_repo_bootstrap_readiness_report.md`
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/classified_capability_catalog_through_goal06b.csv`
 - `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/diagnostics/workflow_diagnostic_summary.md`
+- `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/provider_failure_events.csv`
+- `https://github.com/RyanLu0203/A_share_premarket_core/blob/main/outputs/audits/provider_failure_summary.md`
 
 ## Runtime Artifact Policy
 
@@ -135,7 +147,7 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move from dotted/future to
-implemented. GOAL-06C, GOAL-06C.5, and GOAL-06C.6 are now
+implemented. GOAL-06C, GOAL-06C.5, GOAL-06C.6, and GOAL-06C.6A are now
 `implemented_review_only`; GOAL-06D remains future review-only and blocked until
 source-backed `engineering_pilot`.
 
@@ -153,8 +165,14 @@ source-backed `engineering_pilot`.
   requires at least 50 approved symbols, 120 trading dates, and 6000 rows.
 - GOAL-06C.6 provider ingestion is network-disabled by default. If AKShare or
   provider access fails, the failure is classified and GOAL-06D stays blocked.
-- Cloakbrowser, stealth browser automation, captcha solving, and proxy rotation
-  are not used.
+- GOAL-06C.6A proves finance-only scoped proxy-env cleanup and parent
+  environment restoration. The current AKShare failure is a specific external
+  network/proxy failure, not a project parser/schema failure and not a generic
+  `NETWORK_ERROR`.
+- Browser-based ingestion or bypass tooling is not used by the current
+  GOAL-06C.6/GOAL-06C.6A provider ingestion gate. Future browser-ingestion work
+  would require a separate explicit goal, compliance review, and
+  workflow-status update.
 
 These warnings do not affect Class A active workflow reproducibility through
 GOAL-06C review-only validation and do not unlock downstream modules.

@@ -73,7 +73,8 @@ flowchart TD
     C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
     D -. "engineering data gate" .-> E["GOAL-06C.5 Storage + Coverage + Panel Gate<br/>(implemented_review_only)"]
     E -. "source-backed provider gate" .-> G["GOAL-06C.6 AKShare Engineering Pilot Bundle Gate<br/>(implemented_review_only)"]
-    G -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    G -. "failure taxonomy gate" .-> H["GOAL-06C.6A Scoped Network + Failure Taxonomy<br/>(implemented_review_only)"]
+    H -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -83,7 +84,12 @@ dates, and 2 approved symbols.
 GOAL-06C.6 adds compliant AKShare/source-backed ingestion infrastructure.
 Network ingestion is disabled by default and requires `ASHARE_ALLOW_NETWORK_INGESTION=1`
 or `--allow-network`. It classifies provider failures and does not use
-cloakbrowser, stealth browser automation, captcha solving, or proxy rotation.
+browser-based bypass tooling for this provider ingestion gate.
+GOAL-06C.6A adds finance-only network isolation evidence and a provider failure
+taxonomy that separates ProxyError, timeout, DNS, TLS, connection reset/refused,
+HTTP access, anti-bot/challenge, schema, parser, data-quality, PIT/label,
+storage, and workflow-governance failures. Network failures must not be
+collapsed into a generic class when a specific class can be determined.
 
 ## Required Public Commands
 
@@ -143,6 +149,14 @@ production promotion are forbidden.
 
 Stable committed reports do not store volatile wall-clock timings. Runtime
 details are preserved in ignored local diagnostics under `outputs/local/runtime/`.
+
+GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
+
+- `outputs/audits/provider_failure_events.csv`
+- `outputs/audits/provider_failure_summary.md`
+- `outputs/audits/provider_failure_summary.json`
+- `outputs/audits/goal06c6_network_isolation_report.md`
+- `outputs/audits/goal06c6_failure_taxonomy_report.md`
 
 ## Lock Boundary
 

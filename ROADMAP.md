@@ -17,6 +17,8 @@
   expansion gate.
 - GOAL-06C.6 source-backed AKShare/provider engineering pilot bundle ingestion
   gate, network-disabled by default.
+- GOAL-06C.6A scoped finance network isolation and provider failure taxonomy
+  gate; network failures are classified by specific subtype.
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -25,8 +27,9 @@
 
 GOAL-06D may begin only if
 `outputs/audits/goal06c6_readiness_report.md` explicitly allows it after the
-source-backed Stage 6C engineering panel reaches `engineering_pilot`. GOAL-06D
-must remain review-only model comparison/calibration and must not implement
+source-backed Stage 6C engineering panel reaches `engineering_pilot`, and
+GOAL-06C.6A failure taxonomy evidence remains non-blocking. GOAL-06D must
+remain review-only model comparison/calibration and must not implement
 recommendation, risk overlay, dashboard, paper/live trading, production DB
 writes, production model promotion, or DQN/RL.
 
