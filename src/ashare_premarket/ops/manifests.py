@@ -16,11 +16,11 @@ def write_classified_capability_catalog(root: Path) -> Path:
                 "capability_name": capability.capability_name,
                 "capability_class": capability.capability_class,
                 "stage_or_goal": capability.stage_or_goal,
-                "business_purpose": "Preserve reproducible clean active workflow through GOAL-06B and GOAL-06C review-only validation.",
+                "business_purpose": "Preserve reproducible clean active workflow through GOAL-06B plus review-only GOAL-06C and GOAL-06D gates.",
                 "active_source_modules": capability.owner_module,
                 "public_scripts": ";".join(capability.public_scripts),
                 "configs": _configs_for(capability.capability_id),
-                "tests": "tests/test_workflow_contracts.py;tests/test_public_entrypoints.py;tests/test_validation_gates.py",
+                "tests": _tests_for(capability.capability_id),
                 "required_inputs": "configs;protected generated outputs from prior active stage",
                 "required_outputs": ";".join(capability.required_outputs),
                 "audit_reports": _audit_for(capability.capability_id),
@@ -61,7 +61,7 @@ def write_classified_capability_catalog(root: Path) -> Path:
                 "capability_name": "Recommendation, risk, dashboard, paper/live trading, DQN/RL",
                 "capability_class": "CLASS_C_LOCKED_DOWNSTREAM",
                 "stage_or_goal": "Future Locked",
-                "business_purpose": "Out of GOAL-06C review-only validation scope.",
+                "business_purpose": "Out of GOAL-06D review-only validation scope.",
                 "active_source_modules": "",
                 "public_scripts": "",
                 "configs": "configs/project/locked_capabilities.json",
@@ -117,7 +117,7 @@ def write_active_trunk_module_map(root: Path) -> Path:
             "called_by_active_script": called,
             "referenced_by_docs": True,
             "covered_by_tests": True,
-            "validation_profile": "active_trunk_through_goal06c_review_only",
+            "validation_profile": "active_trunk_through_goal06d_review_only",
             "action_taken": "created_clean_active_module",
             "compatibility_wrapper": wrapper,
             "notes": "No legacy implementation import.",
@@ -153,6 +153,7 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/providers/schema_normalization.py", "ashare_premarket.providers.schema_normalization", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/provider_attempt_log.py", "ashare_premarket.providers.provider_attempt_log", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/ingestion.py", "ashare_premarket.providers.ingestion", "goal06c6_source_backed_local_bundle", "GOAL-06C.6", True, "scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py"),
+            ("src/ashare_premarket/models/goal06d.py", "ashare_premarket.models.goal06d", "goal06d_model_comparison", "GOAL-06D", True, "scripts/run_goal06d_model_comparison_calibration.py"),
             ("src/ashare_premarket/validation/gates.py", "ashare_premarket.validation.gates", "current_trunk_validation", "GOAL-06B", True, "scripts/run_e2e_trunk_validation_through_goal06b.py"),
             ("src/ashare_premarket/diagnostics/workflow.py", "ashare_premarket.diagnostics.workflow", "workflow_diagnostics", "GOAL-06B", True, "scripts/run_workflow_diagnostics.py"),
             ("src/ashare_premarket/ops/safety.py", "ashare_premarket.ops.safety", "safety_gate", "GOAL-06B", True, "scripts/run_safety_gate.py"),
@@ -249,10 +250,10 @@ def write_static_audit_docs(root: Path) -> None:
         root / "outputs/audits/active_workflow_map_through_goal06b.md",
         "\n".join(
             [
-                "# Active Workflow Map Through GOAL-06B And GOAL-06C Review-Only Validation",
+                "# Active Workflow Map Through GOAL-06B And GOAL-06D Review-Only Validation",
                 "",
-                "Project Operating System -> Universe Governance -> Source Health -> PIT Signal Store -> Label Builder -> Feature-Label Merge -> Leakage Audit -> Stage 6A Repair -> Baseline Scoring -> GOAL-06B Review-Only Supervised Training -> Verification / Validation / Diagnostics -> GOAL-06C Review-Only Expanded Validation.",
-                "GOAL-06C.5 adds storage, data bundle, source coverage, and engineering panel readiness gates; GOAL-06C.6 adds source-backed provider ingestion infrastructure with network disabled by default. GOAL-06C.7 now provides engineering_pilot evidence, so only GOAL-06D review-only work may proceed.",
+                "Project Operating System -> Universe Governance -> Source Health -> PIT Signal Store -> Label Builder -> Feature-Label Merge -> Leakage Audit -> Stage 6A Repair -> Baseline Scoring -> GOAL-06B Review-Only Supervised Training -> Verification / Validation / Diagnostics -> GOAL-06C Review-Only Expanded Validation -> GOAL-06D Review-Only Model Comparison/Calibration/Stability.",
+                "GOAL-06C.5 adds storage, data bundle, source coverage, and engineering panel readiness gates; GOAL-06C.6 adds source-backed provider ingestion infrastructure with network disabled by default. GOAL-06C.7 provides engineering_pilot evidence. GOAL-06D is now implemented as a review-only model comparison/calibration/stability/governance gate with warnings; GOAL-07A and downstream remain locked.",
                 "",
                 "Locked downstream modules are not imported by active source code.",
                 "",
@@ -304,8 +305,18 @@ def _configs_for(capability_id: str) -> str:
         "goal06c6_source_backed_local_bundle": "configs/ingestion/engineering_pilot_ingestion_config.yaml;configs/storage/storage_policy.yaml;configs/storage/data_paths.example.yaml",
         "goal06c6_source_backed_pit_label_panels": "configs/features/engineering_pit_panel_config.yaml;configs/labels/engineering_label_panel_config.yaml",
         "goal06c6_source_backed_stage6c_panel": "configs/validation/stage6c_engineering_panel_config.yaml;configs/validation/panel_size_tiers.yaml",
+        "goal06d_feature_split_contract": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
+        "goal06d_model_comparison": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
+        "goal06d_calibration_stability": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
+        "goal06d_governance_boundary": "configs/project/workflow_status.csv",
     }
     return mapping.get(capability_id, "")
+
+
+def _tests_for(capability_id: str) -> str:
+    if capability_id.startswith("goal06d"):
+        return "tests/test_goal06d_feature_contract.py;tests/test_goal06d_chronological_split.py;tests/test_goal06d_model_comparison.py;tests/test_goal06d_calibration.py;tests/test_goal06d_stability.py;tests/test_goal06d_governance.py;tests/test_goal06d_boundary_locks.py"
+    return "tests/test_workflow_contracts.py;tests/test_public_entrypoints.py;tests/test_validation_gates.py"
 
 
 def _audit_for(capability_id: str) -> str:
@@ -341,6 +352,14 @@ def _audit_for(capability_id: str) -> str:
         return "outputs/audits/source_backed_pit_signal_panel_audit.md;outputs/audits/source_backed_label_panel_audit.md"
     if capability_id == "goal06c6_source_backed_stage6c_panel":
         return "outputs/audits/stage6c_source_backed_engineering_panel_audit.md;outputs/audits/engineering_panel_readiness_report.md"
+    if capability_id == "goal06d_feature_split_contract":
+        return "outputs/audits/goal06d_feature_contract_audit.md;outputs/audits/goal06d_split_audit.md"
+    if capability_id == "goal06d_model_comparison":
+        return "outputs/audits/goal06d_model_comparison_audit.md;outputs/audits/goal06d_readiness_report.md"
+    if capability_id == "goal06d_calibration_stability":
+        return "outputs/audits/goal06d_calibration_audit.md;outputs/audits/goal06d_stability_audit.md"
+    if capability_id == "goal06d_governance_boundary":
+        return "outputs/audits/goal06d_governance_audit.md;outputs/audits/goal06d_boundary_lock_audit.md;outputs/audits/goal06d_readiness_report.md"
     return ""
 
 

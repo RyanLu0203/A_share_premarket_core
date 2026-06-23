@@ -25,7 +25,8 @@ flowchart TD
     N -. "source-backed provider gate" .-> O["GOAL-06C.6 Source-Backed Engineering Pilot Bundle"]
     O -. "failure taxonomy gate" .-> P["GOAL-06C.6A Scoped Network + Failure Taxonomy"]
     P -. "provider ladder gate" .-> Q["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion"]
-    Q -. "review-only after engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration"]
+    Q -. "implemented review-only after engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration / Stability"]
+    M -. "warnings must be fixed first" .-> R["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
 ```
 
 Locked future modules are documented in the roadmap and are not imported by the
@@ -40,7 +41,8 @@ failure type, with a separate opt-in CloakBrowser reference probe for sanitized
 tag-only access diagnostics. GOAL-06C.7 is implemented_review_only for a
 provider ladder whose browser-assisted provider is explicit opt-in only and
 counts only schema-valid finance rows. The latest GOAL-06C.7 readiness report
-is `PASS` at `engineering_pilot`, so GOAL-06D may proceed only as future
-review-only model comparison/calibration. Future, design-only,
-locked, and deleted-from-active-mainline blocks use dotted arrows or side-note
-references.
+is `PASS` at `engineering_pilot`. GOAL-06D is implemented_review_only and
+currently `PASS_WITH_WARNINGS`; it selected `score_based_alpha_ranking` as a
+weak review-only baseline and requires calibration/stability warning fixes
+before any GOAL-07A design-only preparation. Future, design-only, locked, and
+deleted-from-active-mainline blocks use dotted arrows or side-note references.

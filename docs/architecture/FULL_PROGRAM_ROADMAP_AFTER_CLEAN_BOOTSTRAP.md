@@ -16,8 +16,8 @@ flowchart TD
     X -. "source-backed ingestion gate" .-> Y["GOAL-06C.6 Source-Backed Engineering Pilot Bundle<br/>(implemented_review_only; network-disabled by default)"]
     Y -. "scoped failure taxonomy" .-> Z["GOAL-06C.6A Network Isolation + Failure Taxonomy<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     Z -. "provider ladder gate" .-> AA["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; engineering_pilot PASS)"]
-    AA -. "review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
-    I -. "future design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only)"]
+    AA -. "implemented review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    I -. "warnings must be fixed first" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
@@ -33,10 +33,10 @@ flowchart TD
     G -. "optional only" .-> V["DQN/RL Optional Research Benchmark<br/>(deleted_from_active_mainline)"]
 ```
 
-The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C and
-GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, and GOAL-06C.7 are implemented review-only extensions
-and not recommendation, positioning, risk, trading, dashboard, production, or
-DQN/RL workflows. GOAL-06C.6 uses compliant provider ingestion only when
+The clean active scoring mainline is GOAL-06B and earlier. GOAL-06C,
+GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, and GOAL-06D are implemented
+review-only extensions and not recommendation, positioning, risk, trading,
+dashboard, production, or DQN/RL workflows. GOAL-06C.6 uses compliant provider ingestion only when
 explicitly network-enabled. GOAL-06C.6A classifies network failures by type
 rather than using a generic network bucket. The default provider path remains
 direct AKShare/local-import. The explicit CloakBrowser reference probe is
@@ -44,7 +44,9 @@ separate, opt-in, tag-only, sanitized, and does not promote any downstream
 workflow block. GOAL-06C.7 adds a provider ladder where
 `browser_assisted_optional` is disabled by default, requires explicit CLI plus
 env opt-in, and counts only schema-valid finance rows. The latest GOAL-06C.7
-readiness report proves `engineering_pilot`, so GOAL-06D may proceed only as
-future review-only model comparison/calibration. GOAL-07A and all
-recommendation, risk calculation, dashboard, paper/live trading, production,
-and DQN/RL blocks remain locked or design-only.
+readiness report proves `engineering_pilot`. GOAL-06D is implemented
+review-only with `PASS_WITH_WARNINGS`, selected `score_based_alpha_ranking` as
+a weak review-only baseline, and requires calibration/stability warning fixes
+before any GOAL-07A design-only preparation. GOAL-07A and all recommendation,
+risk calculation, dashboard, paper/live trading, production, and DQN/RL blocks
+remain locked or design-only.

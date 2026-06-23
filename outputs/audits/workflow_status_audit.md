@@ -11,7 +11,9 @@ GOAL-06C.5 status: `implemented_review_only`.
 GOAL-06C.6 status: `implemented_review_only`.
 GOAL-06C.6A status: `implemented_review_only`.
 GOAL-06C.7 status: `implemented_review_only`.
-Next allowed goal after GOAL-06C.7: `GOAL-06D Model Comparison and Calibration` only as future review-only work after provider-ladder source-backed engineering_pilot readiness.
+GOAL-06D status: `implemented_review_only`.
+GOAL-06D allowed next action: `fix_goal06d_model_stability_or_calibration_warnings`.
+GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A remains future design-only and downstream stays locked.
 GOAL-06C and later are not represented as `implemented_active`.
 Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.
 

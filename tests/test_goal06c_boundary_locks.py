@@ -28,7 +28,8 @@ def test_goal06c_boundary_locks_and_workflow_status() -> None:
     assert audit_stage6c_leakage_and_boundary(ROOT)
     workflow = {row["workflow_id"]: row for row in _rows("configs/project/workflow_status.csv")}
     assert workflow["goal06c_expanded_validation_ranking"]["status"] == "implemented_review_only"
-    assert workflow["goal06d_model_comparison_calibration"]["status"] == "future_review_only"
+    assert workflow["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
+    assert workflow["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
     assert workflow["goal07a_risk_overlay_design"]["status"] == "future_design_only"
     assert workflow["goal07b_risk_overlay_calculation"]["status"] == "locked_future"
     assert workflow["position_band_recommendation"]["status"] == "locked_future"

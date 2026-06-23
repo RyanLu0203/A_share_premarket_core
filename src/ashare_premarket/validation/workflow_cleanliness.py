@@ -43,10 +43,20 @@ def audit_workflow_cleanliness(root: Path) -> bool:
         failures.append("GOAL-06C.7 workflow row is missing")
     elif goal06c7.get("status") != "implemented_review_only":
         failures.append("GOAL-06C.7 must be implemented_review_only, not active production")
-    if goal06d.get("status") != "future_review_only":
-        failures.append("GOAL-06D must remain future_review_only")
-    if "engineering_pilot" not in goal06d.get("allowed_next_action", ""):
-        failures.append("GOAL-06D must wait for engineering_pilot evidence")
+    if goal06d.get("status") == "future_review_only":
+        if "engineering_pilot" not in goal06d.get("allowed_next_action", ""):
+            failures.append("GOAL-06D future row must wait for engineering_pilot evidence")
+    elif goal06d.get("status") == "implemented_review_only":
+        readiness = _read(root / "outputs/audits/goal06d_readiness_report.md")
+        if "GOAL-06D Model Comparison Calibration Readiness: PASS" not in readiness:
+            failures.append("GOAL-06D implemented_review_only requires PASS/PASS_WITH_WARNINGS readiness evidence")
+        if goal06d.get("allowed_next_action") not in {
+            "prepare_goal07a_risk_overlay_design_only",
+            "fix_goal06d_model_stability_or_calibration_warnings",
+        }:
+            failures.append("GOAL-06D implemented_review_only has an invalid next action")
+    else:
+        failures.append("GOAL-06D must be future_review_only or implemented_review_only")
     if not engineering_pilot_met:
         warnings.append("latest source-backed bundle summary does not yet prove engineering_pilot coverage")
     if browser_provider_project_default(root) is not False:
@@ -93,9 +103,14 @@ def _read_json(path: Path) -> dict[str, object]:
     if not path.exists():
         return {}
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {}
     except json.JSONDecodeError:
         return {}
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8") if path.exists() else ""
 
 
 def _tracked_forbidden_files(root: Path) -> list[str]:

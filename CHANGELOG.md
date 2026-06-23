@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-23 - GOAL-06D Review-Only Model Comparison Gate
+
+- Added GOAL-06D feature/split contracts, review-only model comparison runner,
+  calibration/stability/governance audits, public wrappers, and focused tests.
+- Used the GOAL-06C.7 `engineering_pilot` source-backed panel from the local
+  bundle: 50 approved symbols, 120 validation dates, and 6000 rows.
+- Compared `score_based_alpha_ranking`, `ridge_regression`,
+  `linear_regression`, and `logistic_direction_classifier` against
+  `excess_fwd_3d_return`, with auxiliary target diagnostics for 1d/3d/5d
+  excess forward returns.
+- Wrote only lightweight review artifacts under `outputs/models/goal06d/` and
+  `outputs/audits/goal06d_*`; no row-level recommendation, position, risk,
+  dashboard, trading, production DB, production model, model binary, or DQN/RL
+  artifact was created.
+- GOAL-06D readiness is `PASS_WITH_WARNINGS`: selected
+  `score_based_alpha_ranking` as a weak review-only baseline; calibration and
+  feature/provider concentration warnings remain. GOAL-07A remains
+  future-design-only and locked until warnings are fixed by a later explicit
+  goal.
+
 ## 2026-06-23 - GOAL-06C.7 Engineering Pilot Reached
 
 - Added configured direct-provider retry and rate limiting to the GOAL-06C.7

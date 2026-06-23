@@ -89,6 +89,9 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal06c6_status = goal06c6.get("status")
     goal06c6a_status = goal06c6a.get("status")
     goal06c7_status = goal06c7.get("status")
+    goal06d = by_id.get("goal06d_model_comparison_calibration", {})
+    goal06d_status = goal06d.get("status")
+    goal06d_readiness = _read(root / "outputs/audits/goal06d_readiness_report.md")
     goal06c7_readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
     goal06c7_engineering_pilot_pass = _goal06c7_engineering_pilot_pass(goal06c7_readiness)
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
@@ -151,10 +154,21 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("GOAL-06C.7 workflow cleanliness audit is missing")
         if "GOAL-06C.7" not in full_roadmap:
             failures.append("full roadmap does not include GOAL-06C.7")
-    if by_id.get("goal06d_model_comparison_calibration", {}).get("status") != "future_review_only":
-        failures.append("GOAL-06D must remain future_review_only")
-    if "engineering_pilot" not in by_id.get("goal06d_model_comparison_calibration", {}).get("allowed_next_action", ""):
-        failures.append("GOAL-06D must wait for GOAL-06C.7 engineering_pilot readiness")
+    if goal06d_status == "future_review_only":
+        if "engineering_pilot" not in goal06d.get("allowed_next_action", ""):
+            failures.append("GOAL-06D future row must wait for GOAL-06C.7 engineering_pilot readiness")
+    elif goal06d_status == "implemented_review_only":
+        if not _goal06d_readiness_implemented(goal06d_readiness):
+            failures.append("GOAL-06D is implemented_review_only without PASS/PASS_WITH_WARNINGS readiness evidence")
+        expected_next = (
+            "prepare_goal07a_risk_overlay_design_only"
+            if "GOAL-06D Model Comparison Calibration Readiness: PASS\n" in goal06d_readiness
+            else "fix_goal06d_model_stability_or_calibration_warnings"
+        )
+        if goal06d.get("allowed_next_action") != expected_next:
+            failures.append("GOAL-06D allowed_next_action does not match readiness status")
+    else:
+        failures.append("GOAL-06D must be future_review_only or implemented_review_only")
     if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
         failures.append("GOAL-07A must remain future_design_only")
 
@@ -190,7 +204,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06C.6 status: `{goal06c6_status or 'missing'}`.",
                 f"GOAL-06C.6A status: `{goal06c6a_status or 'missing'}`.",
                 f"GOAL-06C.7 status: `{goal06c7_status or 'missing'}`.",
-                "Next allowed goal after GOAL-06C.7: `GOAL-06D Model Comparison and Calibration` only as future review-only work after provider-ladder source-backed engineering_pilot readiness.",
+                f"GOAL-06D status: `{goal06d_status or 'missing'}`.",
+                f"GOAL-06D allowed next action: `{goal06d.get('allowed_next_action', 'missing')}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A remains future design-only and downstream stays locked.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -275,6 +291,8 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         next_goal = "GOAL-06C.7 provider ladder engineering data base expansion"
     elif row["workflow_id"] == "goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion":
         next_goal = "GOAL-06D review-only after provider-ladder engineering_pilot"
+    elif row["workflow_id"] == "goal06d_model_comparison_calibration":
+        next_goal = "Fix GOAL-06D warnings before GOAL-07A design-only preparation"
     else:
         next_goal = row["stage_or_goal"]
     return {
@@ -298,6 +316,13 @@ def _goal06c7_engineering_pilot_pass(readiness: str) -> bool:
         and "Panel tier: `engineering_pilot`" in readiness
         and "GOAL-06D allowed to proceed: true" in readiness
         and "GOAL-06D mode: review_only" in readiness
+    )
+
+
+def _goal06d_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-06D Model Comparison Calibration Readiness: PASS" in readiness
+        or "GOAL-06D Model Comparison Calibration Readiness: PASS_WITH_WARNINGS" in readiness
     )
 
 

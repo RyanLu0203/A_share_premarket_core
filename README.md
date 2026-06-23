@@ -6,8 +6,9 @@ risk-aware position-building decision support system.
 This is not an automatic trading bot and does not provide investment advice. It
 is a deterministic, review-only research workflow for PIT-safe data contracts,
 label construction, feature-label merging, leakage checks, baseline scoring, the
-GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, and
-the GOAL-06C.5/GOAL-06C.6 engineering data foundation gates.
+GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, the
+GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 engineering data foundation gates, and the
+GOAL-06D review-only model comparison/calibration/stability governance gate.
 
 ## Repository Roles
 
@@ -36,6 +37,14 @@ python scripts/audit_provider_failure_classification.py
 python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
 python scripts/audit_browser_assisted_provider.py
 python scripts/audit_workflow_cleanliness.py
+python scripts/run_goal06d_model_comparison_calibration.py
+python scripts/audit_goal06d_feature_contract.py
+python scripts/audit_goal06d_split.py
+python scripts/audit_goal06d_model_comparison.py
+python scripts/audit_goal06d_calibration.py
+python scripts/audit_goal06d_stability.py
+python scripts/audit_goal06d_governance.py
+python scripts/audit_goal06d_boundary_locks.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -78,7 +87,8 @@ flowchart TD
     E -. "source-backed provider gate" .-> G["GOAL-06C.6 AKShare Engineering Pilot Bundle Gate<br/>(implemented_review_only)"]
     G -. "failure taxonomy gate" .-> H["GOAL-06C.6A Scoped Network + Failure Taxonomy<br/>(implemented_review_only)"]
     H -. "provider ladder gate" .-> I["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only)"]
-    I -. "engineering_pilot reached; review-only next" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    I -. "engineering_pilot reached; review-only gate" .-> F["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    F -. "warnings must be fixed before design-only work" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -106,9 +116,12 @@ default and requires both `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
 stores no raw browser artifacts, and counts only schema-valid rows. Domain
 access alone is tagged separately. The latest explicit network-enabled
 GOAL-06C.7 run reached `engineering_pilot` with 50 approved symbols, 120
-validation trading dates, and 6000 usable rows. That allows only future
-GOAL-06D review-only model comparison/calibration work; it does not unlock
-risk, recommendation, dashboard, paper/live trading, production, or DQN/RL.
+validation trading dates, and 6000 usable rows. GOAL-06D has now run only as a
+review-only model comparison/calibration/stability/governance gate. It is
+`PASS_WITH_WARNINGS`, selected `score_based_alpha_ranking` as a weak
+review-only baseline, and requires calibration/stability warning fixes before
+any GOAL-07A design-only preparation. It does not unlock risk, recommendation,
+dashboard, paper/live trading, production, or DQN/RL.
 
 ## Required Public Commands
 
@@ -143,6 +156,14 @@ review-only validation wrappers:
 - `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 python scripts/run_browser_assisted_finance_ingestion.py --allow-network --enable-browser-assisted`
 - `python scripts/audit_browser_assisted_provider.py`
 - `python scripts/audit_workflow_cleanliness.py`
+- `python scripts/run_goal06d_model_comparison_calibration.py`
+- `python scripts/audit_goal06d_feature_contract.py`
+- `python scripts/audit_goal06d_split.py`
+- `python scripts/audit_goal06d_model_comparison.py`
+- `python scripts/audit_goal06d_calibration.py`
+- `python scripts/audit_goal06d_stability.py`
+- `python scripts/audit_goal06d_governance.py`
+- `python scripts/audit_goal06d_boundary_locks.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -190,16 +211,22 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/browser_assisted_provider_audit.json`
 - `outputs/audits/workflow_cleanliness_audit.md`
 - `outputs/audits/goal06c7_readiness_report.md`
+- `outputs/models/goal06d/model_comparison_summary.csv`
+- `outputs/models/goal06d/calibration_summary.csv`
+- `outputs/models/goal06d/stability_summary.csv`
+- `outputs/audits/goal06d_readiness_report.md`
+- `outputs/audits/goal06d_governance_audit.md`
+- `outputs/audits/goal06d_boundary_lock_audit.md`
 
 ## Lock Boundary
 
 Recommendation, risk overlay calculation, dashboard, paper trading,
 broker/live trading, production DB writes, production model promotion, and
-DQN/RL remain locked. GOAL-06D is future review-only work and may proceed only
-after `outputs/audits/goal06c7_readiness_report.md` proves GOAL-06C.7
-`engineering_pilot`. The current report is `PASS`, so only GOAL-06D review-only
-work may proceed. GOAL-07A and everything downstream remain locked or
-design-only.
+DQN/RL remain locked. GOAL-06D is implemented review-only and currently
+`PASS_WITH_WARNINGS`; the allowed next action is
+`fix_goal06d_model_stability_or_calibration_warnings`. GOAL-07A remains
+future design-only and locked until GOAL-06D warnings are resolved and a later
+explicit goal authorizes design-only preparation.
 
 ## Workflow Promotion Rule
 

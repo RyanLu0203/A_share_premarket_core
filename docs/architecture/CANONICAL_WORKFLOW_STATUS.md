@@ -48,12 +48,12 @@ Implemented review-only:
 - GOAL-06C.6 Source-Backed Engineering Pilot Bundle
 - GOAL-06C.6A Scoped Finance Network Isolation and Failure Taxonomy
 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
+- GOAL-06D Model Comparison, Calibration, Stability, and Governance
+  (`PASS_WITH_WARNINGS`)
 
 Future review-only:
 
-- GOAL-06D Model Comparison and Calibration, blocked until the GOAL-06C.7
-  provider-ladder source-backed engineering panel reaches `engineering_pilot`
-  and workflow cleanliness evidence remains non-blocking
+- none currently unlocked beyond GOAL-06D
 
 Future design-only:
 
@@ -132,7 +132,8 @@ GOAL-06C.5 is `implemented_review_only`. It creates storage policy, data bundle,
 source coverage, provider contract, engineering PIT panel, engineering label
 panel, and Stage 6C engineering panel audit evidence.
 
-The current panel is `contract_demo`, not `engineering_pilot`.
+The historical clean-bootstrap panel was `contract_demo`; GOAL-06C.7 now
+provides separate source-backed `engineering_pilot` evidence.
 
 ## GOAL-06C.6 Status
 
@@ -146,8 +147,8 @@ Network ingestion is disabled by default. It must be explicitly enabled with
 classified and reported on the default AKShare path. The explicit CloakBrowser
 reference probe is separate, opt-in, tag-only, sanitized, and does not unlock
 downstream workflow blocks.
-GOAL-06D remains `future_review_only` and blocked until GOAL-06C.7 reaches
-`engineering_pilot`.
+GOAL-06D is no longer unlocked by GOAL-06C.6 alone; GOAL-06C.7 provides the
+source-backed `engineering_pilot` evidence used by GOAL-06D.
 
 ## GOAL-06C.6A Status
 
@@ -161,10 +162,10 @@ parser, data-quality, PIT/label, storage, and workflow-governance failures must
 not be collapsed into a generic network class when a specific class can be
 determined.
 
-The current explicit AKShare run remains externally blocked after scoped
-proxy-env cleanup and is classified as
-`FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`. GOAL-06D
-remains blocked.
+The earlier explicit AKShare failure after scoped proxy-env cleanup remains
+classified as `FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`.
+Later GOAL-06C.7 provider-ladder evidence reached `engineering_pilot` through
+`akshare_direct`; the older failure taxonomy remains provenance.
 
 ## GOAL-06C.7 Status
 
@@ -190,5 +191,30 @@ Browser outcomes are classified precisely:
 - `BROWSER_NET_EMPTY_RESPONSE`: the finance endpoint/browser path returned an
   empty response.
 
-GOAL-06D remains `future_review_only` and blocked unless
 `outputs/audits/goal06c7_readiness_report.md` proves `engineering_pilot`.
+
+## GOAL-06D Status
+
+GOAL-06D is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It creates lightweight review-only model comparison,
+calibration, stability, and governance artifacts:
+
+- `outputs/models/goal06d/model_comparison_summary.csv`
+- `outputs/models/goal06d/model_metric_by_fold.csv`
+- `outputs/models/goal06d/model_metric_by_target.csv`
+- `outputs/models/goal06d/calibration_summary.csv`
+- `outputs/models/goal06d/stability_summary.csv`
+- `outputs/models/goal06d/model_selection_rationale.md`
+- `outputs/audits/goal06d_readiness_report.md`
+- `outputs/audits/goal06d_governance_audit.md`
+- `outputs/audits/goal06d_boundary_lock_audit.md`
+
+The selected baseline is `score_based_alpha_ranking`, labeled only as a weak
+review-only baseline. Calibration/stability/provider concentration warnings
+remain, so the allowed next action is
+`fix_goal06d_model_stability_or_calibration_warnings`.
+
+GOAL-06D does not generate recommendations, position bands, portfolio weights,
+risk overlays, dashboards, paper/live trading, production DB writes, production
+model promotion, or DQN/RL artifacts. GOAL-07A remains future design-only and
+everything downstream remains locked.

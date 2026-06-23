@@ -38,3 +38,9 @@ goal06c6_akshare_provider_contract,GOAL-06C.6 AKShare provider contract,GOAL-06C
 goal06c6_source_backed_local_bundle,GOAL-06C.6 source-backed local bundle gate,GOAL-06C.6,PASS,ashare_premarket.providers.ingestion,Keep active
 goal06c6_source_backed_pit_label_panels,GOAL-06C.6 source-backed PIT and label panel builders,GOAL-06C.6,PASS,ashare_premarket.providers.ingestion,Keep active
 goal06c6_source_backed_stage6c_panel,GOAL-06C.6 source-backed Stage 6C engineering panel gate,GOAL-06C.6,PASS,ashare_premarket.providers.ingestion,Keep active
+goal06c7_provider_ladder,GOAL-06C.7 provider ladder engineering pilot gate,GOAL-06C.7,PASS,ashare_premarket.providers.provider_ladder,Keep active
+goal06c7_browser_assisted_optional_provider,GOAL-06C.7 optional browser-assisted finance ingestion,GOAL-06C.7,PASS,ashare_premarket.providers.browser_assisted_provider,Keep active
+goal06d_feature_split_contract,GOAL-06D feature and split contract gate,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
+goal06d_model_comparison,GOAL-06D review-only model comparison,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
+goal06d_calibration_stability,GOAL-06D calibration and stability diagnostics,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
+goal06d_governance_boundary,GOAL-06D governance and downstream boundary locks,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active

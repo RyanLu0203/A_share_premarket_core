@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 import ast
+import csv
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_goal06d_and_downstream_remain_locked() -> None:
-    status = (ROOT / "configs/project/workflow_status.csv").read_text(encoding="utf-8")
-    assert "goal06c5_engineering_data_coverage_storage_panel_expansion" in status
-    assert "goal06c6_source_backed_engineering_pilot_bundle" in status
-    assert "goal06d_model_comparison_calibration,GOAL-06D Model Comparison and Calibration,GOAL-06D,future_review_only" in status
-    assert "review_only_entry_allowed_after_goal06c7_engineering_pilot" in status
+    with (ROOT / "configs/project/workflow_status.csv").open(newline="", encoding="utf-8") as handle:
+        rows = {row["workflow_id"]: row for row in csv.DictReader(handle)}
+    assert rows["goal06c5_engineering_data_coverage_storage_panel_expansion"]["status"] == "implemented_review_only"
+    assert rows["goal06c6_source_backed_engineering_pilot_bundle"]["status"] == "implemented_review_only"
+    assert rows["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
+    assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
+    assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
     for workflow_id in [
         "goal07b_risk_overlay_calculation",
         "position_band_recommendation",
@@ -21,7 +24,7 @@ def test_goal06d_and_downstream_remain_locked() -> None:
         "production_db_writes",
         "production_model_promotion",
     ]:
-        assert f"{workflow_id}," in status and ",locked_future," in status
+        assert rows[workflow_id]["status"] == "locked_future"
 
 
 def test_active_source_has_no_downstream_imports() -> None:

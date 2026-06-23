@@ -1,0 +1,35 @@
+{
+  "config_id": "goal06d_split_config",
+  "goal_id": "GOAL-06D",
+  "allowed_split_methods": [
+    "chronological_train_validation_test",
+    "walk_forward_validation",
+    "time_blocked_cross_validation"
+  ],
+  "forbidden_split_methods": [
+    "random_row_split",
+    "random_shuffle_split",
+    "future_to_past_leakage_split",
+    "symbol_only_split_without_time_separation"
+  ],
+  "chronological_train_validation_test": {
+    "train_fraction": 0.70,
+    "validation_fraction": 0.15,
+    "test_fraction": 0.15,
+    "date_column": "trade_date",
+    "sort_order": "ascending",
+    "no_future_data_in_training": true
+  },
+  "walk_forward_validation": {
+    "minimum_folds": 3,
+    "fold_order": "chronological",
+    "test_block_fraction": 0.15,
+    "expanding_training_window": true,
+    "no_future_data_in_training": true
+  },
+  "time_blocked_cross_validation": {
+    "minimum_folds": 3,
+    "shuffle": false,
+    "date_column": "trade_date"
+  }
+}

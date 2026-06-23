@@ -33,7 +33,10 @@ flowchart TD
     C -. "offline evaluation only" .-> D["Rank Metrics + Walk-Forward Diagnostics<br/>(implemented_review_only)"]
     D -. "engineering data gate" .-> E["GOAL-06C.5 Storage + Coverage + Panel Gate<br/>(implemented_review_only)"]
     E -. "source-backed provider gate" .-> F["GOAL-06C.6 Source-Backed Bundle Gate<br/>(implemented_review_only)"]
-    F -. "future review-only after engineering_pilot" .-> G["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    F -. "failure taxonomy gate" .-> G["GOAL-06C.6A Scoped Network + Failure Taxonomy<br/>(implemented_review_only)"]
+    G -. "provider ladder gate" .-> H["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; engineering_pilot)"]
+    H -. "implemented review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    I -. "warnings must be fixed first" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/` and
@@ -42,7 +45,9 @@ weights, risk overlays, dashboard outputs, trading instructions, production
 writes, production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
 ingestion is network-disabled by default on the direct AKShare path. The
 explicit CloakBrowser reference probe is separate tag-only evidence and does not
-change the active workflow through GOAL-06B.
+change the active workflow through GOAL-06B. GOAL-06D is review-only and
+currently `PASS_WITH_WARNINGS`; it does not unlock GOAL-07A execution or any
+downstream trading/production workflow.
 
 ## Module Dependency Structure
 

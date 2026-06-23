@@ -38,3 +38,9 @@ goal06c6_akshare_provider_contract,GOAL-06C.6,ashare_premarket.providers.akshare
 goal06c6_source_backed_local_bundle,GOAL-06C.6,ashare_premarket.providers.ingestion,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06c6_source_backed_pit_label_panels,GOAL-06C.6,ashare_premarket.providers.ingestion,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06c6_source_backed_stage6c_panel,GOAL-06C.6,ashare_premarket.providers.ingestion,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06c7_provider_ladder,GOAL-06C.7,ashare_premarket.providers.provider_ladder,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06c7_browser_assisted_optional_provider,GOAL-06C.7,ashare_premarket.providers.browser_assisted_provider,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d_feature_split_contract,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d_model_comparison,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d_calibration_stability,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d_governance_boundary,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true

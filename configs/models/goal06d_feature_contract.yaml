@@ -1,0 +1,81 @@
+{
+  "config_id": "goal06d_feature_contract",
+  "goal_id": "GOAL-06D",
+  "mode": "review_only_model_comparison",
+  "primary_target": "excess_fwd_3d_return",
+  "allowed_targets": [
+    "excess_fwd_1d_return",
+    "excess_fwd_3d_return",
+    "excess_fwd_5d_return"
+  ],
+  "auxiliary_labels": [
+    "fwd_1d_return",
+    "fwd_3d_return",
+    "fwd_5d_return",
+    "benchmark_fwd_1d_return",
+    "benchmark_fwd_3d_return",
+    "benchmark_fwd_5d_return"
+  ],
+  "feature_columns": [
+    "market_trend_5d",
+    "stock_momentum_5d",
+    "stock_momentum_20d",
+    "stock_gap_signal",
+    "stock_volatility_20d",
+    "turnover_proxy",
+    "relative_strength_20d",
+    "source_health_score",
+    "source_count"
+  ],
+  "required_filter_columns": [
+    "trade_date",
+    "symbol",
+    "as_of_date",
+    "decision_cutoff_ts",
+    "provider_mode",
+    "source_bundle_id",
+    "usable_for_validation",
+    "review_only",
+    "leakage_flags",
+    "panel_tier"
+  ],
+  "forbidden_feature_columns": [
+    "fwd_1d_return",
+    "fwd_3d_return",
+    "fwd_5d_return",
+    "benchmark_fwd_1d_return",
+    "benchmark_fwd_3d_return",
+    "benchmark_fwd_5d_return",
+    "excess_fwd_1d_return",
+    "excess_fwd_3d_return",
+    "excess_fwd_5d_return",
+    "label_ready",
+    "label_quality_flags"
+  ],
+  "forbidden_feature_name_patterns": [
+    "future",
+    "fwd",
+    "label",
+    "target",
+    "realized",
+    "pnl",
+    "recommendation",
+    "position",
+    "weight"
+  ],
+  "pit_policy": {
+    "as_of_date_must_be_before_or_equal_trade_date": true,
+    "decision_cutoff_is_premarket": true,
+    "usable_for_validation_required": true,
+    "review_only_required": true,
+    "leakage_flags_required": "PASS",
+    "panel_tier_required": "engineering_pilot"
+  },
+  "output_policy": {
+    "prediction_level_full_output_committed": false,
+    "recommendation_output_allowed": false,
+    "position_output_allowed": false,
+    "risk_overlay_output_allowed": false,
+    "production_model_artifact_allowed": false
+  }
+}

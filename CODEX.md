@@ -3,10 +3,11 @@
 ## Mission
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
-GOAL-06B, plus the GOAL-06C review-only expanded validation extension and the
-GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A/GOAL-06C.7 engineering data foundation gates. Preserve
-reproducibility and source governance before adding any future model or risk
-work.
+GOAL-06B, plus the GOAL-06C review-only expanded validation extension, the
+GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A/GOAL-06C.7 engineering data foundation gates,
+and the GOAL-06D review-only model comparison/calibration/stability governance
+gate. Preserve reproducibility and source governance before adding any future
+risk design work.
 
 ## Current Reliable Facts
 
@@ -34,17 +35,18 @@ work.
   timeout, DNS, TLS, connection reset/refused, HTTP access, or anti-bot
   challenge, not as a broad generic network failure when a specific class is
   knowable.
-- The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until a GOAL-06C.7 source-backed panel reaches at least
-  `engineering_pilot`.
+- The current source-backed GOAL-06C.7 provider-ladder panel tier is
+  `engineering_pilot`: 50 symbols, 120 validation dates, and 6000 rows.
 - Network ingestion is disabled by default and requires
   `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
   AKShare/local-import paths. The explicit CloakBrowser reference probe is
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
   downstream module by itself.
-- GOAL-06D is future_review_only; no model comparison/calibration is
-  implemented yet.
+- GOAL-06D is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It selected `score_based_alpha_ranking` as a weak review-only baseline;
+  calibration/stability/provider concentration warnings must be fixed before
+  GOAL-07A design-only preparation.
 - Production model promotion is false.
 - Recommendation, risk overlay, dashboard, paper trading, broker/live trading,
   production DB writes, and DQN/RL are locked.
@@ -76,6 +78,14 @@ python scripts/audit_provider_failure_classification.py
 python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
 python scripts/audit_browser_assisted_provider.py
 python scripts/audit_workflow_cleanliness.py
+python scripts/run_goal06d_model_comparison_calibration.py
+python scripts/audit_goal06d_feature_contract.py
+python scripts/audit_goal06d_split.py
+python scripts/audit_goal06d_model_comparison.py
+python scripts/audit_goal06d_calibration.py
+python scripts/audit_goal06d_stability.py
+python scripts/audit_goal06d_governance.py
+python scripts/audit_goal06d_boundary_locks.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -117,5 +127,5 @@ gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not start GOAL-06D unless the engineering panel readiness report explicitly
-  allows it after GOAL-06C.7 source-backed `engineering_pilot` coverage is reached.
+- Do not start GOAL-07A unless a later explicit goal authorizes design-only
+  preparation after GOAL-06D warnings are resolved.

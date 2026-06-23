@@ -1,5 +1,45 @@
 # 09 Step Iteration Log
 
+## 2026-06-23 - GOAL-06D Review-Only Model Comparison Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added GOAL-06D feature contract and chronological split contract.
+- Added review-only model comparison/calibration/stability runner and audit
+  wrappers.
+- Compared `score_based_alpha_ranking`, `ridge_regression`,
+  `linear_regression`, and `logistic_direction_classifier` on the
+  GOAL-06C.7 engineering_pilot panel.
+- Selected `score_based_alpha_ranking` only as a weak review-only baseline.
+- Updated workflow status and diagnostics so GOAL-06D is
+  `implemented_review_only` while GOAL-07A remains future design-only and
+  downstream workflows remain locked.
+
+Evidence:
+
+- `outputs/models/goal06d/model_comparison_summary.csv`
+- `outputs/models/goal06d/calibration_summary.csv`
+- `outputs/models/goal06d/stability_summary.csv`
+- `outputs/audits/goal06d_readiness_report.md`
+- `outputs/audits/goal06d_governance_audit.md`
+- `outputs/audits/goal06d_boundary_lock_audit.md`
+
+Warnings:
+
+- Calibration is weak or non-monotonic for compared review-only baselines.
+- Feature/provider concentration warnings remain.
+- Allowed next action is
+  `fix_goal06d_model_stability_or_calibration_warnings`; GOAL-07A design-only
+  preparation is not unlocked in this state.
+
+Safety:
+
+- No recommendation, position, portfolio, risk overlay, dashboard, paper/live
+  trading, production DB, production model, model binary, or DQN/RL output was
+  created.
+
 ## 2026-06-23 - GOAL-06C.7 Provider Ladder Engineering Pilot Run
 
 Status: `PASS`.

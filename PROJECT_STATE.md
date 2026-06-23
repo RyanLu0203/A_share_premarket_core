@@ -4,9 +4,11 @@ Last updated: 2026-06-23
 
 ## Current Stage
 
-Status: `PASS` for GOAL-06C.7 provider-ladder engineering data base expansion.
-The latest explicit network-enabled run reached `engineering_pilot`: 50
-approved symbols, 120 validation trading dates, and 6000 usable Stage 6C rows.
+Status: `PASS_WITH_WARNINGS` for GOAL-06D review-only model comparison,
+calibration, stability, and governance. GOAL-06C.7 provider-ladder engineering
+data base expansion remains `PASS`; the latest explicit network-enabled run
+reached `engineering_pilot`: 50 approved symbols, 120 validation trading dates,
+and 6000 usable Stage 6C rows.
 GOAL-06C expanded validation remains review-only; leakage and downstream
 boundary audits pass. GOAL-06C.5 is implemented as a review-only engineering
 data foundation gate. GOAL-06C.6 is implemented as a source-backed
@@ -21,11 +23,12 @@ default, requires both `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
 `--enable-browser-assisted`, dynamically imports the runtime only after opt-in,
 and counts only schema-valid finance rows. Domain access alone is classified
 separately and does not count as ingestion success.
-The panel remains below `engineering_pilot` unless the source-backed bundle
-audit explicitly proves 50 symbols, 120 trading dates, and 6000 usable rows.
-The current GOAL-06C.7 readiness report proves that threshold. GOAL-06D may
-therefore proceed only as future review-only model comparison/calibration work;
-GOAL-07A and everything downstream remain locked.
+The current GOAL-06C.7 readiness report proves the `engineering_pilot`
+threshold. GOAL-06D has now run only as review-only model
+comparison/calibration/stability/governance. It selected
+`score_based_alpha_ranking` as a weak review-only baseline and remains
+`PASS_WITH_WARNINGS` because calibration/stability/provider concentration
+warnings remain. GOAL-07A and everything downstream remain locked.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -68,6 +71,8 @@ Implemented and protected:
 - GOAL-06C.7 provider ladder with optional browser-assisted finance ingestion,
   local import fallback, source-backed local bundle evidence, browser provider
   audit, and workflow cleanliness audit
+- GOAL-06D review-only model comparison, calibration, stability diagnostics,
+  governance audit, and downstream boundary lock audit (`PASS_WITH_WARNINGS`)
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -98,12 +103,13 @@ Implemented review-only:
   gate (`PASS_WITH_WARNINGS` while AKShare remains externally blocked)
 - GOAL-06C.7 provider ladder engineering data base expansion gate
   (`PASS`; current provider-ladder bundle reached `engineering_pilot`)
+- GOAL-06D model comparison/calibration/stability/governance gate
+  (`PASS_WITH_WARNINGS`; selected weak review-only baseline:
+  `score_based_alpha_ranking`)
 
 Future review-only:
 
-- GOAL-06D model comparison and calibration. GOAL-06C.7 now satisfies the
-  `engineering_pilot` entry condition, so GOAL-06D may proceed only as
-  review-only future work.
+- none currently unlocked beyond GOAL-06D.
 
 Still locked:
 
@@ -117,11 +123,12 @@ Still locked:
 - production model promotion
 - DQN/RL
 
-GOAL-06D may begin only as a future review-only model comparison/calibration
-task. After GOAL-06C.7, the authoritative readiness check is
-`outputs/audits/goal06c7_readiness_report.md`; the current report is `PASS` and
-allows only GOAL-06D review-only work. It does not unlock risk, recommendation,
-dashboard, paper/live trading, production, or DQN/RL.
+GOAL-06D has run only as review-only model comparison/calibration/stability
+governance. Its authoritative readiness check is
+`outputs/audits/goal06d_readiness_report.md`, currently
+`PASS_WITH_WARNINGS`, with allowed next action
+`fix_goal06d_model_stability_or_calibration_warnings`. It does not unlock
+risk, recommendation, dashboard, paper/live trading, production, or DQN/RL.
 
 ## Current Evidence Chain
 
@@ -135,6 +142,7 @@ The protected regenerated outputs live under:
 - `outputs/stage6b/`
 - `outputs/stage6c/`
 - `outputs/models/goal06b/`
+- `outputs/models/goal06d/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -165,9 +173,9 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move from dotted/future to
-implemented. GOAL-06C, GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, and GOAL-06C.7 are now
-`implemented_review_only`; GOAL-06D remains future review-only and blocked until
-source-backed `engineering_pilot`.
+implemented. GOAL-06C, GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, and
+GOAL-06D are now `implemented_review_only`; GOAL-06D remains
+`PASS_WITH_WARNINGS` and does not unlock GOAL-07A execution.
 
 ## Known Warnings
 
@@ -179,10 +187,12 @@ source-backed `engineering_pilot`.
   `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.
 - GOAL-06C uses the small clean-bootstrap review fixture: 8 rows, 4 trading
   dates, and 2 approved symbols.
-- GOAL-06C.5 proves that the current panel is still `contract_demo`; expansion
-  requires at least 50 approved symbols, 120 trading dates, and 6000 rows.
-- GOAL-06C.6 provider ingestion is network-disabled by default. If AKShare or
-  provider access fails, the failure is classified and GOAL-06D stays blocked.
+- GOAL-06C.5 preserves the historical `contract_demo` warning for the earlier
+  small engineering-foundation panel; GOAL-06C.7 now separately proves
+  source-backed `engineering_pilot`.
+- GOAL-06C.6 provider ingestion is network-disabled by default. Provider access
+  failures are still classified precisely, but GOAL-06C.7 now supplies the
+  engineering_pilot evidence used by GOAL-06D.
 - GOAL-06C.6A proves finance-only scoped proxy-env cleanup and parent
   environment restoration. The current AKShare failure is a specific external
   network/proxy failure, not a project parser/schema failure and not a generic
@@ -202,7 +212,11 @@ source-backed `engineering_pilot`.
   so it is not counted as source-backed ingestion for this panel. Existing
   `cloakbrowser_reference_*` solved-problem tags remain preserved as reference
   evidence only.
+- GOAL-06D selected `score_based_alpha_ranking` only as a weak review-only
+  baseline. Calibration is weak/non-monotonic for compared baselines and
+  provider/source concentration remains single-mode `akshare_direct`.
 
 These warnings do not affect Class A active workflow reproducibility through
-GOAL-06C.7 review-only validation and do not unlock downstream modules beyond
-GOAL-06D review-only entry.
+GOAL-06D review-only validation and do not unlock GOAL-07A execution or any
+downstream recommendation, position, risk, dashboard, trading, production, or
+DQN/RL module.

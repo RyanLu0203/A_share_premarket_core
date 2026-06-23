@@ -4,7 +4,7 @@ Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `not yet promoted`.
-GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
+GOAL-06C.5 engineering data foundation status: `engineering panel ready`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
 Provider ladder panel tier: `engineering_pilot`.
@@ -13,11 +13,20 @@ Provider ladder validation trading dates: `120`.
 Provider ladder Stage 6C engineering rows: `6000`.
 Browser-assisted provider project default: `false`.
 GOAL-06D allowed by provider ladder: `true`.
+GOAL-06D readiness: `PASS_WITH_WARNINGS`.
+GOAL-06D selected review-only baseline: `score_based_alpha_ranking`.
+GOAL-06D model comparison status: `PASS_WITH_WARNINGS`.
+GOAL-06D calibration status: `PASS_WITH_WARNINGS`.
+GOAL-06D stability status: `PASS_WITH_WARNINGS`.
+GOAL-06D governance status: `PASS`.
+GOAL-06D boundary lock status: `PASS`.
+GOAL-07A lock status: `future_design_only; locked until GOAL-06D warnings are resolved`.
+Downstream lock status: `locked_future_or_deleted_from_active_mainline`.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
-Known warnings are source-coverage gaps, the contract-demo Stage 6C panel size, and `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.
-GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 warnings are limited to documented source limitations, no-network/provider availability, browser-assisted optional runtime availability, and the panel not yet reaching `engineering_pilot`.
+Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, and GOAL-06D calibration/stability/provider concentration warnings.
+GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D is implemented review-only with warnings and does not unlock GOAL-07A execution.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -43,3 +52,11 @@ Protected regression commands:
 - `python scripts/audit_data_source_coverage.py`
 - `python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py --allow-network`
 - `python scripts/rebuild_stage6c_from_engineering_panel.py`
+- `python scripts/run_goal06d_model_comparison_calibration.py`
+- `python scripts/audit_goal06d_feature_contract.py`
+- `python scripts/audit_goal06d_split.py`
+- `python scripts/audit_goal06d_model_comparison.py`
+- `python scripts/audit_goal06d_calibration.py`
+- `python scripts/audit_goal06d_stability.py`
+- `python scripts/audit_goal06d_governance.py`
+- `python scripts/audit_goal06d_boundary_locks.py`

@@ -31,10 +31,12 @@ This file is long-term project memory for Codex and other coding agents.
   implemented_review_only. Browser-assisted ingestion is optional,
   finance-domain-only, disabled by default, and requires
   `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.
-- The current engineering panel tier is `contract_demo`; GOAL-06D remains
-  blocked until GOAL-06C.7 reaches source-backed `engineering_pilot`.
-- GOAL-06D is future_review_only only; no model comparison/calibration is
-  implemented yet.
+- The current source-backed GOAL-06C.7 provider-ladder panel tier is
+  `engineering_pilot`: 50 symbols, 120 validation dates, and 6000 rows.
+- GOAL-06D is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It selected `score_based_alpha_ranking` as a weak review-only baseline;
+  calibration/stability/provider concentration warnings must be fixed before
+  GOAL-07A design-only preparation.
 - Feature-label merge and leakage audit are active.
 - Recommendation, risk overlay, dashboard, paper/live trading, production DB
   writes, production model promotion, and DQN/RL remain locked.
@@ -81,6 +83,14 @@ python scripts/audit_provider_failure_classification.py
 python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py
 python scripts/audit_browser_assisted_provider.py
 python scripts/audit_workflow_cleanliness.py
+python scripts/run_goal06d_model_comparison_calibration.py
+python scripts/audit_goal06d_feature_contract.py
+python scripts/audit_goal06d_split.py
+python scripts/audit_goal06d_model_comparison.py
+python scripts/audit_goal06d_calibration.py
+python scripts/audit_goal06d_stability.py
+python scripts/audit_goal06d_governance.py
+python scripts/audit_goal06d_boundary_locks.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py

@@ -1,0 +1,13 @@
+model_name,target,split,rows,mae,rmse,spearman,pearson,directional_accuracy,mean_daily_ic,ic_information_ratio,review_only
+score_based_alpha_ranking,excess_fwd_1d_return,test,900,0.035063,0.048884,-0.032119,-0.047996,0.514444,0.002052,0.007995,true
+score_based_alpha_ranking,excess_fwd_3d_return,test,900,0.038201,0.053401,0.035451,0.035738,0.555556,0.050146,0.207507,true
+score_based_alpha_ranking,excess_fwd_5d_return,test,900,0.040382,0.059384,0.073445,0.004084,0.553333,0.06767,0.293074,true
+ridge_regression,excess_fwd_1d_return,test,900,0.011894,0.016532,-0.06526,-0.05539,0.486667,-0.072021,-0.363154,true
+ridge_regression,excess_fwd_3d_return,test,900,0.023367,0.031957,-0.136302,-0.11719,0.455556,-0.142979,-0.663341,true
+ridge_regression,excess_fwd_5d_return,test,900,0.030783,0.042326,-0.178626,-0.150208,0.438889,-0.193085,-1.022961,true
+linear_regression,excess_fwd_1d_return,test,900,0.011895,0.016532,-0.065278,-0.055463,0.485556,-0.071952,-0.362769,true
+linear_regression,excess_fwd_3d_return,test,900,0.023369,0.031959,-0.136416,-0.117289,0.455556,-0.143516,-0.666199,true
+linear_regression,excess_fwd_5d_return,test,900,0.030787,0.042331,-0.178705,-0.150317,0.438889,-0.193464,-1.02587,true
+logistic_direction_classifier,excess_fwd_1d_return,test,900,0.029288,0.033409,-0.006162,-0.004725,0.564444,-0.018437,-0.098439,true
+logistic_direction_classifier,excess_fwd_3d_return,test,900,0.038219,0.050205,-0.117887,-0.082254,0.582222,-0.104652,-0.511641,true
+logistic_direction_classifier,excess_fwd_5d_return,test,900,0.049554,0.063724,-0.182117,-0.123279,0.542222,-0.179603,-0.931107,true

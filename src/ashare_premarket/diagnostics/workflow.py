@@ -69,6 +69,13 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal06c5_status = _goal06c5_status(root)
     goal06c6_status = _goal06c6_status(root)
     goal06c7_status = _goal06c7_status(root)
+    goal06d_status = _goal06d_status(root)
+    goal06d_selected = _goal06d_selected_baseline(root)
+    goal06d_model_status = _audit_status(root / "outputs/audits/goal06d_model_comparison_audit.md")
+    goal06d_calibration_status = _audit_status(root / "outputs/audits/goal06d_calibration_audit.md")
+    goal06d_stability_status = _audit_status(root / "outputs/audits/goal06d_stability_audit.md")
+    goal06d_governance_status = _audit_status(root / "outputs/audits/goal06d_governance_audit.md")
+    goal06d_boundary_status = _audit_status(root / "outputs/audits/goal06d_boundary_lock_audit.md")
     provider_ladder = _provider_ladder_status(root)
     source_bundle_status = _source_bundle_status(root)
     write_csv(root / "outputs/diagnostics/run_detail_manifest.csv", command_rows, DIAGNOSTIC_FIELDS)
@@ -93,11 +100,20 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"Provider ladder Stage 6C engineering rows: `{provider_ladder.get('stage6c_engineering_rows', 0)}`.",
                 f"Browser-assisted provider project default: `{str(browser_provider_project_default(root)).lower()}`.",
                 f"GOAL-06D allowed by provider ladder: `{str(provider_ladder.get('goal06d_allowed_to_proceed', False)).lower()}`.",
+                f"GOAL-06D readiness: `{goal06d_status}`.",
+                f"GOAL-06D selected review-only baseline: `{goal06d_selected}`.",
+                f"GOAL-06D model comparison status: `{goal06d_model_status}`.",
+                f"GOAL-06D calibration status: `{goal06d_calibration_status}`.",
+                f"GOAL-06D stability status: `{goal06d_stability_status}`.",
+                f"GOAL-06D governance status: `{goal06d_governance_status}`.",
+                f"GOAL-06D boundary lock status: `{goal06d_boundary_status}`.",
+                "GOAL-07A lock status: `future_design_only; locked until GOAL-06D warnings are resolved`.",
+                "Downstream lock status: `locked_future_or_deleted_from_active_mainline`.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
-                "Known warnings are source-coverage gaps, the contract-demo Stage 6C panel size, and `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.",
-                "GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 warnings are limited to documented source limitations, no-network/provider availability, browser-assisted optional runtime availability, and the panel not yet reaching `engineering_pilot`.",
+                "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, and GOAL-06D calibration/stability/provider concentration warnings.",
+                "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D is implemented review-only with warnings and does not unlock GOAL-07A execution.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -111,6 +127,14 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_data_source_coverage.py`",
                 "- `python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py --allow-network`",
                 "- `python scripts/rebuild_stage6c_from_engineering_panel.py`",
+                "- `python scripts/run_goal06d_model_comparison_calibration.py`",
+                "- `python scripts/audit_goal06d_feature_contract.py`",
+                "- `python scripts/audit_goal06d_split.py`",
+                "- `python scripts/audit_goal06d_model_comparison.py`",
+                "- `python scripts/audit_goal06d_calibration.py`",
+                "- `python scripts/audit_goal06d_stability.py`",
+                "- `python scripts/audit_goal06d_governance.py`",
+                "- `python scripts/audit_goal06d_boundary_locks.py`",
                 "",
             ]
         ),
@@ -125,9 +149,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- Tencent returned no usable rows under bounded variants in the inspected source evidence branch.",
                 "- Historical GOAL-05/GOAL-06 docs named by the migration objective were absent at expected source paths and remain classified as `CLASS_D_UNCLEAR_KEEP_DOCUMENTED`.",
                 "- The Class D source-evidence gap is documented only; it is not active code and does not block Class A GOAL-06B reproducibility.",
-                "- GOAL-06C.5 classifies the current 8-row Stage 6C panel as `contract_demo`; GOAL-06D remains blocked until `engineering_pilot` coverage exists.",
+                "- GOAL-06C.5 retains the old contract-demo warning as historical engineering-foundation context; GOAL-06C.7 now provides separate source-backed `engineering_pilot` evidence.",
                 "- GOAL-06C.6 provider ingestion is disabled by default and records classified failures on the default AKShare path; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
                 "- GOAL-06C.7 provider ladder is disabled from network by default; browser-assisted ingestion requires explicit CLI plus env opt-in and counts only schema-valid finance rows.",
+                "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.",
                 "",
             ]
@@ -147,8 +172,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "6. For GOAL-06C.5 work, run `python scripts/rebuild_stage6c_from_engineering_panel.py` and review `outputs/audits/engineering_panel_readiness_report.md`.",
                 "7. For GOAL-06C.6 source-backed ingestion, run `python scripts/audit_provider_failure_classification.py` first; provider ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.",
                 "8. For GOAL-06C.7 provider-ladder expansion, run `python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py`; browser-assisted mode additionally requires `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.",
-                "9. GOAL-06D may proceed only after the source-backed engineering panel reaches `engineering_pilot` or higher and workflow cleanliness passes.",
-                "10. Do not unlock recommendation, risk overlay, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
+                "9. For GOAL-06D, run `python scripts/run_goal06d_model_comparison_calibration.py` and then every `scripts/audit_goal06d_*.py` wrapper.",
+                "10. Current GOAL-06D is `PASS_WITH_WARNINGS`; fix calibration/stability/provider concentration warnings before GOAL-07A design-only preparation.",
+                "11. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
                 "",
             ]
         ),
@@ -218,6 +244,30 @@ def _goal06c7_status(root: Path) -> str:
     return "unknown"
 
 
+def _goal06d_status(root: Path) -> str:
+    report = root / "outputs/audits/goal06d_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-06D Model Comparison Calibration Readiness: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-06D Model Comparison Calibration Readiness: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-06D Model Comparison Calibration Readiness: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal06d_selected_baseline(root: Path) -> str:
+    report = root / "outputs/audits/goal06d_readiness_report.md"
+    if not report.exists():
+        return "not_selected"
+    for line in report.read_text(encoding="utf-8").splitlines():
+        if line.startswith("Selected review-only baseline:"):
+            return line.split("`", 2)[1]
+    return "not_selected"
+
+
 def _provider_ladder_status(root: Path) -> dict[str, object]:
     path = root / "outputs/audits/source_backed_bundle_manifest_summary.json"
     if not path.exists():
@@ -235,4 +285,13 @@ def _source_bundle_status(root: Path) -> str:
     for line in report.read_text(encoding="utf-8").splitlines():
         if line.startswith("Status:"):
             return line.replace("Status:", "").strip()
+    return "generated"
+
+
+def _audit_status(path: Path) -> str:
+    if not path.exists():
+        return "MISSING"
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("Status:"):
+            return line.replace("Status:", "").strip(" `")
     return "generated"
