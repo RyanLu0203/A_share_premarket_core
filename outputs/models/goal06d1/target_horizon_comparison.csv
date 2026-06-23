@@ -1,0 +1,4 @@
+target,best_score_variant,test_spearman,test_pearson,test_directional_accuracy,mean_daily_ic,ic_information_ratio,calibration_error,fold_stability,feature_sign_stability,top_bottom_spread_offline_diagnostic_only,target_horizon_recommendation,warnings
+excess_fwd_1d_return,raw_score_based_alpha_ranking,-0.032119,-0.047996,0.514444,0.002052,0.007995,0.033244,0.967706,0.477778,-0.000774,no_stable_target_horizon_selected,weak_target_horizon_rank_signal;target_horizon_calibration_warning
+excess_fwd_3d_return,raw_score_based_alpha_ranking,0.035451,0.035738,0.555556,0.050146,0.207507,0.032896,0.967706,0.473148,-0.001591,no_stable_target_horizon_selected,weak_target_horizon_rank_signal;target_horizon_calibration_warning
+excess_fwd_5d_return,raw_score_based_alpha_ranking,0.073445,0.004084,0.553333,0.06767,0.293074,0.032193,0.967706,0.480556,-0.004097,no_stable_target_horizon_selected,target_horizon_calibration_warning

@@ -26,19 +26,23 @@
 - GOAL-06D review-only model comparison/calibration/stability/governance gate
   (`PASS_WITH_WARNINGS`; weak selected baseline
   `score_based_alpha_ranking`).
+- GOAL-06D.1 review-only calibration/stability warning repair gate
+  (`PASS_WITH_WARNINGS`; weak repaired score baseline bounded and documented).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
 
 ## Next Allowed Work
 
-GOAL-06D currently allows only
-`fix_goal06d_model_stability_or_calibration_warnings`. Calibration is
-weak/non-monotonic for compared baselines, the selected review-only baseline is
-weak, and provider/source concentration remains single-mode `akshare_direct`.
-GOAL-06D must remain review-only model comparison/calibration and must not
-implement recommendation, risk overlay, dashboard, paper/live trading,
-production DB writes, production model promotion, or DQN/RL.
+GOAL-06D.1 has bounded the GOAL-06D calibration/stability/provider warnings in
+a review-only repair layer. GOAL-07A may proceed at most as design-only
+preparation with warnings; no risk overlay calculation, recommendation,
+position, dashboard, paper/live trading, production DB writes, production model
+promotion, factor mining, or DQN/RL is unlocked.
+
+V2 factor research is planned but inactive. It remains `planned_locked` until a
+future explicit V2 goal; no factor mining, IC/RankIC mining, factor library
+generation, or factor integration is active in V1.
 
 Future goals must also update `configs/project/workflow_status.csv` and the
 workflow diagrams before any future block is promoted.
@@ -57,3 +61,4 @@ workflow diagrams before any future block is promoted.
 - Broker/live trading.
 - Production DB writes.
 - DQN/RL optional research benchmark.
+- V2 factor research upgrade (`planned_locked`; inactive in V1).

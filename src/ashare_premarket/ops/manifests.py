@@ -154,6 +154,7 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/providers/provider_attempt_log.py", "ashare_premarket.providers.provider_attempt_log", "goal06c6_akshare_provider_contract", "GOAL-06C.6", True, "scripts/run_akshare_engineering_pilot_ingestion.py"),
             ("src/ashare_premarket/providers/ingestion.py", "ashare_premarket.providers.ingestion", "goal06c6_source_backed_local_bundle", "GOAL-06C.6", True, "scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py"),
             ("src/ashare_premarket/models/goal06d.py", "ashare_premarket.models.goal06d", "goal06d_model_comparison", "GOAL-06D", True, "scripts/run_goal06d_model_comparison_calibration.py"),
+            ("src/ashare_premarket/models/goal06d1.py", "ashare_premarket.models.goal06d1", "goal06d1_warning_repair", "GOAL-06D.1", True, "scripts/run_goal06d1_calibration_stability_warning_repair.py"),
             ("src/ashare_premarket/validation/gates.py", "ashare_premarket.validation.gates", "current_trunk_validation", "GOAL-06B", True, "scripts/run_e2e_trunk_validation_through_goal06b.py"),
             ("src/ashare_premarket/diagnostics/workflow.py", "ashare_premarket.diagnostics.workflow", "workflow_diagnostics", "GOAL-06B", True, "scripts/run_workflow_diagnostics.py"),
             ("src/ashare_premarket/ops/safety.py", "ashare_premarket.ops.safety", "safety_gate", "GOAL-06B", True, "scripts/run_safety_gate.py"),
@@ -309,12 +310,17 @@ def _configs_for(capability_id: str) -> str:
         "goal06d_model_comparison": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
         "goal06d_calibration_stability": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
         "goal06d_governance_boundary": "configs/project/workflow_status.csv",
+        "goal06d1_warning_repair": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
+        "goal06d1_calibration_feature_provider": "configs/models/goal06d_feature_contract.yaml;configs/models/goal06d_split_config.yaml",
+        "goal06d1_governance_v2_lock": "configs/project/workflow_status.csv;configs/factors/v2_factor_research_contract.yaml",
     }
     return mapping.get(capability_id, "")
 
 
 def _tests_for(capability_id: str) -> str:
     if capability_id.startswith("goal06d"):
+        if capability_id.startswith("goal06d1"):
+            return "tests/test_goal06d1_target_horizon.py;tests/test_goal06d1_score_repair.py;tests/test_goal06d1_calibration_repair.py;tests/test_goal06d1_feature_sign_stability.py;tests/test_goal06d1_provider_concentration_disclosure.py;tests/test_goal06d1_governance.py;tests/test_goal06d1_boundary_locks.py;tests/test_v2_factor_interface_locked.py"
         return "tests/test_goal06d_feature_contract.py;tests/test_goal06d_chronological_split.py;tests/test_goal06d_model_comparison.py;tests/test_goal06d_calibration.py;tests/test_goal06d_stability.py;tests/test_goal06d_governance.py;tests/test_goal06d_boundary_locks.py"
     return "tests/test_workflow_contracts.py;tests/test_public_entrypoints.py;tests/test_validation_gates.py"
 
@@ -360,6 +366,12 @@ def _audit_for(capability_id: str) -> str:
         return "outputs/audits/goal06d_calibration_audit.md;outputs/audits/goal06d_stability_audit.md"
     if capability_id == "goal06d_governance_boundary":
         return "outputs/audits/goal06d_governance_audit.md;outputs/audits/goal06d_boundary_lock_audit.md;outputs/audits/goal06d_readiness_report.md"
+    if capability_id == "goal06d1_warning_repair":
+        return "outputs/audits/goal06d1_target_horizon_audit.md;outputs/audits/goal06d1_score_repair_audit.md;outputs/audits/goal06d1_model_selection_repair_audit.md;outputs/audits/goal06d1_readiness_report.md"
+    if capability_id == "goal06d1_calibration_feature_provider":
+        return "outputs/audits/goal06d1_calibration_repair_audit.md;outputs/audits/goal06d1_feature_sign_stability_audit.md;outputs/audits/goal06d1_provider_concentration_disclosure.md"
+    if capability_id == "goal06d1_governance_v2_lock":
+        return "outputs/audits/goal06d1_governance_audit.md;outputs/audits/goal06d1_boundary_lock_audit.md;outputs/audits/goal06d1_readiness_report.md"
     return ""
 
 

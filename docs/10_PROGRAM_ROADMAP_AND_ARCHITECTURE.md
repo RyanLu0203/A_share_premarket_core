@@ -26,7 +26,9 @@ flowchart TD
     O -. "failure taxonomy gate" .-> P["GOAL-06C.6A Scoped Network + Failure Taxonomy"]
     P -. "provider ladder gate" .-> Q["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion"]
     Q -. "implemented review-only after engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration / Stability"]
-    M -. "warnings must be fixed first" .-> R["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
+    M -. "warning repair review-only" .-> M2["GOAL-06D.1 Calibration / Stability Warning Repair"]
+    M2 -. "design-only preparation only" .-> R["GOAL-07A Risk Overlay Design<br/>(future_design_only; design-only prep)"]
+    M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
 Locked future modules are documented in the roadmap and are not imported by the
@@ -44,5 +46,12 @@ counts only schema-valid finance rows. The latest GOAL-06C.7 readiness report
 is `PASS` at `engineering_pilot`. GOAL-06D is implemented_review_only and
 currently `PASS_WITH_WARNINGS`; it selected `score_based_alpha_ranking` as a
 weak review-only baseline and requires calibration/stability warning fixes
-before any GOAL-07A design-only preparation. Future, design-only, locked, and
-deleted-from-active-mainline blocks use dotted arrows or side-note references.
+before any GOAL-07A design-only preparation. GOAL-06D.1 is implemented
+review-only and bounds those warnings with repaired score variants,
+target-horizon diagnostics, calibration reliability checks, feature sign
+stability diagnostics, and provider concentration disclosure. GOAL-07A may
+proceed only as design-only preparation with warnings and no risk overlay
+calculation. V2 factor research is planned but inactive; no V2 factor mining,
+IC/RankIC mining, factor library generation, or factor integration is active in
+V1. Future, design-only, locked, planned-locked, and deleted-from-active-mainline
+blocks use dotted arrows or side-note references.

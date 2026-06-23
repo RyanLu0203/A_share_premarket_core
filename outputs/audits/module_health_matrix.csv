@@ -44,3 +44,6 @@ goal06d_feature_split_contract,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLA
 goal06d_model_comparison,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06d_calibration_stability,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06d_governance_boundary,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d1_warning_repair,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d1_calibration_feature_provider,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal06d1_governance_v2_lock,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true

@@ -139,3 +139,14 @@ gate allows it.
   sanitized, tiny, review-facing fixture or required GOAL-06B audit output.
 - Do not commit local-only runtime timing files.
 - Report branch, commit hash, validation, excluded files, and review items.
+
+## GOAL-06D.1 Agent Note
+
+GOAL-06D.1 is implemented review-only warning repair. The repaired baseline may
+remain weak but bounded; GOAL-07A may proceed only as design-only preparation
+with warnings. Do not create recommendation, position, risk calculation,
+dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
+
+V2 factor research is planned but inactive. Keep
+`configs/factors/v2_factor_research_contract.yaml` locked unless a future
+explicit V2 goal authorizes activation.

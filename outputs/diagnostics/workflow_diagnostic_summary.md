@@ -4,7 +4,7 @@ Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `not yet promoted`.
-GOAL-06C.5 engineering data foundation status: `engineering panel ready`.
+GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
 Provider ladder panel tier: `engineering_pilot`.
@@ -20,13 +20,22 @@ GOAL-06D calibration status: `PASS_WITH_WARNINGS`.
 GOAL-06D stability status: `PASS_WITH_WARNINGS`.
 GOAL-06D governance status: `PASS`.
 GOAL-06D boundary lock status: `PASS`.
-GOAL-07A lock status: `future_design_only; locked until GOAL-06D warnings are resolved`.
+GOAL-06D.1 readiness: `PASS_WITH_WARNINGS`.
+GOAL-06D.1 selected repaired review-only baseline: `raw_score_based_alpha_ranking`.
+GOAL-06D.1 target horizon recommendation: `no_stable_target_horizon_selected`.
+GOAL-06D.1 calibration repair status: `PASS_WITH_WARNINGS`.
+GOAL-06D.1 feature sign stability status: `PASS_WITH_WARNINGS`.
+GOAL-06D.1 provider concentration disclosure status: `PASS_WITH_WARNINGS`.
+GOAL-06D.1 governance status: `PASS`.
+GOAL-06D.1 boundary lock status: `PASS`.
+V2 factor placeholder status: `planned_locked_disabled`.
+GOAL-07A lock status: `future_design_only; at most design-only preparation after GOAL-06D.1 warning repair`.
 Downstream lock status: `locked_future_or_deleted_from_active_mainline`.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
-Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, and GOAL-06D calibration/stability/provider concentration warnings.
-GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D is implemented review-only with warnings and does not unlock GOAL-07A execution.
+Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
+GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only and allow GOAL-07A at most as design-only preparation.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -60,3 +69,11 @@ Protected regression commands:
 - `python scripts/audit_goal06d_stability.py`
 - `python scripts/audit_goal06d_governance.py`
 - `python scripts/audit_goal06d_boundary_locks.py`
+- `python scripts/run_goal06d1_calibration_stability_warning_repair.py`
+- `python scripts/audit_goal06d1_target_horizon.py`
+- `python scripts/audit_goal06d1_score_repair.py`
+- `python scripts/audit_goal06d1_calibration_repair.py`
+- `python scripts/audit_goal06d1_feature_sign_stability.py`
+- `python scripts/audit_goal06d1_provider_concentration_disclosure.py`
+- `python scripts/audit_goal06d1_governance.py`
+- `python scripts/audit_goal06d1_boundary_locks.py`

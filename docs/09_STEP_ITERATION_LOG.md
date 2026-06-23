@@ -1,5 +1,36 @@
 # 09 Step Iteration Log
 
+## 2026-06-23 - GOAL-06D.1 Calibration Stability Warning Repair
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added GOAL-06D.1 review-only warning repair on the GOAL-06C.7
+  `engineering_pilot` panel.
+- Compared allowed target horizons and PIT-safe score variants without label or
+  forward-return leakage in score construction.
+- Added conservative calibration diagnostics that mark weak calibration as not
+  reliable for thresholding instead of creating trading thresholds.
+- Added feature sign stability diagnostics, provider concentration disclosure,
+  and model-selection repair rationale.
+- Added locked V2 factor research placeholder. V2 factor mining, IC/RankIC
+  mining, factor library generation, factor-to-model integration, and
+  factor-to-recommendation integration remain inactive in V1.
+- Kept GOAL-07A future design-only; no recommendation, position, risk overlay,
+  dashboard, paper/live trading, production, factor-mining, or DQN/RL output was
+  created.
+
+Evidence:
+
+- `outputs/models/goal06d1/model_comparison_repair_summary.csv`
+- `outputs/models/goal06d1/target_horizon_comparison.csv`
+- `outputs/models/goal06d1/calibration_repair_summary.csv`
+- `outputs/models/goal06d1/feature_sign_stability_repair.csv`
+- `outputs/audits/goal06d1_readiness_report.md`
+- `outputs/audits/goal06d1_governance_audit.md`
+- `outputs/audits/goal06d1_boundary_lock_audit.md`
+
 ## 2026-06-23 - GOAL-06D Review-Only Model Comparison Gate
 
 Status: `PASS_WITH_WARNINGS`.

@@ -216,7 +216,18 @@ GOAL-06D are now `implemented_review_only`; GOAL-06D remains
   baseline. Calibration is weak/non-monotonic for compared baselines and
   provider/source concentration remains single-mode `akshare_direct`.
 
+GOAL-06D.1 repairs these warnings as a review-only diagnostic layer. It compares
+target horizons, bounded score variants, calibration reliability, feature sign
+stability, and provider/source concentration. It currently allows GOAL-07A only
+as future design-only preparation with warnings; it does not calculate risk,
+recommend positions, produce trading signals, activate dashboards, promote
+models, or unlock production.
+
+V2 factor research is documented only as `planned_locked`. No V2 factor mining,
+IC/RankIC mining, factor library generation, factor outputs, or factor-to-model
+integration is active in V1.
+
 These warnings do not affect Class A active workflow reproducibility through
-GOAL-06D review-only validation and do not unlock GOAL-07A execution or any
-downstream recommendation, position, risk, dashboard, trading, production, or
-DQN/RL module.
+GOAL-06D.1 review-only validation and do not unlock any downstream
+recommendation, position, risk calculation, dashboard, trading, production, V2
+factor-mining, or DQN/RL module.

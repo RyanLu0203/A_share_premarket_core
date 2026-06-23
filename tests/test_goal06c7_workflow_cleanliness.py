@@ -16,7 +16,10 @@ def test_goal06c7_workflow_row_allows_only_goal06d_review_only_and_locks_goal07a
     assert rows["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
     assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
-    assert rows["goal07a_risk_overlay_design"]["allowed_next_action"] == "locked_until_goal06d_pass"
+    assert rows["goal07a_risk_overlay_design"]["allowed_next_action"] in {
+        "locked_until_goal06d_pass",
+        "prepare_design_only_after_goal06d1_warning_repair",
+    }
 
 
 def test_workflow_cleanliness_audit_passes_or_warns_without_blocking() -> None:

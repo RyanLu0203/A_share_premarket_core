@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ashare_premarket.core.constants import REGRESSION_COMMANDS
-from ashare_premarket.core.io import read_json, write_csv, write_text
+from ashare_premarket.core.io import read_csv, read_json, write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
 from ashare_premarket.providers.akshare_provider import akshare_available
 from ashare_premarket.providers.browser_provider_switches import browser_provider_project_default
@@ -76,6 +76,15 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal06d_stability_status = _audit_status(root / "outputs/audits/goal06d_stability_audit.md")
     goal06d_governance_status = _audit_status(root / "outputs/audits/goal06d_governance_audit.md")
     goal06d_boundary_status = _audit_status(root / "outputs/audits/goal06d_boundary_lock_audit.md")
+    goal06d1_status = _goal06d1_status(root)
+    goal06d1_selected = _goal06d1_selected_baseline(root)
+    goal06d1_target = _goal06d1_target_recommendation(root)
+    goal06d1_calibration_status = _audit_status(root / "outputs/audits/goal06d1_calibration_repair_audit.md")
+    goal06d1_feature_status = _audit_status(root / "outputs/audits/goal06d1_feature_sign_stability_audit.md")
+    goal06d1_provider_status = _audit_status(root / "outputs/audits/goal06d1_provider_concentration_disclosure.md")
+    goal06d1_governance_status = _audit_status(root / "outputs/audits/goal06d1_governance_audit.md")
+    goal06d1_boundary_status = _audit_status(root / "outputs/audits/goal06d1_boundary_lock_audit.md")
+    v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
     source_bundle_status = _source_bundle_status(root)
     write_csv(root / "outputs/diagnostics/run_detail_manifest.csv", command_rows, DIAGNOSTIC_FIELDS)
@@ -107,13 +116,22 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-06D stability status: `{goal06d_stability_status}`.",
                 f"GOAL-06D governance status: `{goal06d_governance_status}`.",
                 f"GOAL-06D boundary lock status: `{goal06d_boundary_status}`.",
-                "GOAL-07A lock status: `future_design_only; locked until GOAL-06D warnings are resolved`.",
+                f"GOAL-06D.1 readiness: `{goal06d1_status}`.",
+                f"GOAL-06D.1 selected repaired review-only baseline: `{goal06d1_selected}`.",
+                f"GOAL-06D.1 target horizon recommendation: `{goal06d1_target}`.",
+                f"GOAL-06D.1 calibration repair status: `{goal06d1_calibration_status}`.",
+                f"GOAL-06D.1 feature sign stability status: `{goal06d1_feature_status}`.",
+                f"GOAL-06D.1 provider concentration disclosure status: `{goal06d1_provider_status}`.",
+                f"GOAL-06D.1 governance status: `{goal06d1_governance_status}`.",
+                f"GOAL-06D.1 boundary lock status: `{goal06d1_boundary_status}`.",
+                f"V2 factor placeholder status: `{v2_factor_status}`.",
+                "GOAL-07A lock status: `future_design_only; at most design-only preparation after GOAL-06D.1 warning repair`.",
                 "Downstream lock status: `locked_future_or_deleted_from_active_mainline`.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
-                "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, and GOAL-06D calibration/stability/provider concentration warnings.",
-                "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D is implemented review-only with warnings and does not unlock GOAL-07A execution.",
+                "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.",
+                "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only and allow GOAL-07A at most as design-only preparation.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -135,6 +153,14 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal06d_stability.py`",
                 "- `python scripts/audit_goal06d_governance.py`",
                 "- `python scripts/audit_goal06d_boundary_locks.py`",
+                "- `python scripts/run_goal06d1_calibration_stability_warning_repair.py`",
+                "- `python scripts/audit_goal06d1_target_horizon.py`",
+                "- `python scripts/audit_goal06d1_score_repair.py`",
+                "- `python scripts/audit_goal06d1_calibration_repair.py`",
+                "- `python scripts/audit_goal06d1_feature_sign_stability.py`",
+                "- `python scripts/audit_goal06d1_provider_concentration_disclosure.py`",
+                "- `python scripts/audit_goal06d1_governance.py`",
+                "- `python scripts/audit_goal06d1_boundary_locks.py`",
                 "",
             ]
         ),
@@ -153,7 +179,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06C.6 provider ingestion is disabled by default and records classified failures on the default AKShare path; explicit CloakBrowser reference probes are separate tag-only diagnostics.",
                 "- GOAL-06C.7 provider ladder is disabled from network by default; browser-assisted ingestion requires explicit CLI plus env opt-in and counts only schema-valid finance rows.",
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
-                "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, or DQN/RL.",
+                "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
+                "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
+                "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -173,8 +201,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "7. For GOAL-06C.6 source-backed ingestion, run `python scripts/audit_provider_failure_classification.py` first; provider ingestion requires `ASHARE_ALLOW_NETWORK_INGESTION=1` or `--allow-network`.",
                 "8. For GOAL-06C.7 provider-ladder expansion, run `python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py`; browser-assisted mode additionally requires `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.",
                 "9. For GOAL-06D, run `python scripts/run_goal06d_model_comparison_calibration.py` and then every `scripts/audit_goal06d_*.py` wrapper.",
-                "10. Current GOAL-06D is `PASS_WITH_WARNINGS`; fix calibration/stability/provider concentration warnings before GOAL-07A design-only preparation.",
-                "11. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, or DQN/RL.",
+                "10. For GOAL-06D.1, run `python scripts/run_goal06d1_calibration_stability_warning_repair.py` and then every `scripts/audit_goal06d1_*.py` wrapper.",
+                "11. Current GOAL-06D.1 is a review-only warning repair gate; GOAL-07A may proceed at most as design-only preparation with warnings bounded.",
+                "12. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "13. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -255,6 +285,49 @@ def _goal06d_status(root: Path) -> str:
         return "PASS_WITH_WARNINGS"
     if "GOAL-06D Model Comparison Calibration Readiness: PASS" in text:
         return "PASS"
+    return "unknown"
+
+
+def _goal06d1_status(root: Path) -> str:
+    report = root / "outputs/audits/goal06d1_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-06D.1 Calibration Stability Warning Repair Readiness: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal06d1_selected_baseline(root: Path) -> str:
+    report = root / "outputs/audits/goal06d1_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    for line in report.read_text(encoding="utf-8").splitlines():
+        if line.startswith("Selected repaired review-only baseline:"):
+            return line.split("`")[1] if "`" in line else line.split(":", 1)[1].strip()
+    return "unknown"
+
+
+def _goal06d1_target_recommendation(root: Path) -> str:
+    path = root / "outputs/models/goal06d1/target_horizon_comparison.csv"
+    if not path.exists():
+        return "not yet generated"
+    rows = read_csv(path)
+    recommendations = sorted({row.get("target_horizon_recommendation", "") for row in rows if row.get("target_horizon_recommendation")})
+    return ";".join(recommendations) if recommendations else "unknown"
+
+
+def _v2_factor_status(root: Path) -> str:
+    path = root / "configs/factors/v2_factor_research_contract.yaml"
+    if not path.exists():
+        return "not yet generated"
+    text = path.read_text(encoding="utf-8")
+    if "status: planned_locked" in text and "enabled: false" in text and "active_in_v1: false" in text:
+        return "planned_locked_disabled"
     return "unknown"
 
 

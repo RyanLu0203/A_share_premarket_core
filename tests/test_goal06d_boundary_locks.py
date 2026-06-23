@@ -27,7 +27,10 @@ def test_goal06d_keeps_goal07a_design_only_and_downstream_locked() -> None:
     assert workflow["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert workflow["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
     assert workflow["goal07a_risk_overlay_design"]["status"] == "future_design_only"
-    assert workflow["goal07a_risk_overlay_design"]["allowed_next_action"] == "locked_until_goal06d_pass"
+    assert workflow["goal07a_risk_overlay_design"]["allowed_next_action"] in {
+        "locked_until_goal06d_pass",
+        "prepare_design_only_after_goal06d1_warning_repair",
+    }
     assert {workflow[workflow_id]["status"] for workflow_id in LOCKED_IDS} == {"locked_future"}
 
 

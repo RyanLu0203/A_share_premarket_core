@@ -228,6 +228,18 @@ DQN/RL remain locked. GOAL-06D is implemented review-only and currently
 future design-only and locked until GOAL-06D warnings are resolved and a later
 explicit goal authorizes design-only preparation.
 
+GOAL-06D.1 is the review-only warning repair layer for those GOAL-06D warnings.
+It tests PIT-safe score variants, target horizons, calibration reliability,
+feature sign stability, and provider concentration disclosure. It may allow
+GOAL-07A only as design-only preparation with warnings; it still does not
+calculate risk overlays or produce recommendation, position, dashboard,
+trading, production, factor-mining, or DQN/RL outputs.
+
+V2 factor research is planned but inactive. The placeholder contract is locked,
+disabled in V1, and forbids factor mining, IC/RankIC mining, factor library
+generation, factor-to-model integration, and factor-to-recommendation
+integration.
+
 ## Workflow Promotion Rule
 
 A future workflow block can only be promoted from dotted/future to

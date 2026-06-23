@@ -218,3 +218,19 @@ GOAL-06D does not generate recommendations, position bands, portfolio weights,
 risk overlays, dashboards, paper/live trading, production DB writes, production
 model promotion, or DQN/RL artifacts. GOAL-07A remains future design-only and
 everything downstream remains locked.
+
+## GOAL-06D.1 Status
+
+GOAL-06D.1 is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It repairs GOAL-06D warnings by comparing target horizons,
+PIT-safe score variants, calibration reliability, feature sign stability, and
+provider/source concentration.
+
+The repaired baseline remains weak but bounded and review-only. Calibration may
+be marked `calibration_not_reliable_for_thresholding`; this means no trading
+threshold, position band, risk cutoff, or recommendation threshold is allowed.
+
+GOAL-07A may proceed only as design-only preparation with warnings. V2 factor
+research is `planned_locked`, disabled in V1, and has no active factor mining,
+IC/RankIC mining, factor library generation, factor outputs, or factor
+integration.

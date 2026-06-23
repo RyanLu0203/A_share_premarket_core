@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-23 - GOAL-06D.1 Calibration Stability Warning Repair
+
+- Added GOAL-06D.1 review-only warning repair for target horizon selection,
+  PIT-safe score variants, calibration reliability, feature sign stability, and
+  provider/source concentration disclosure.
+- Selected a repaired review-only score baseline as weak but bounded; remaining
+  calibration warnings are marked not reliable for thresholding where
+  appropriate.
+- Added a locked V2 factor research placeholder. V2 factor mining, IC/RankIC
+  mining, factor library generation, and factor integration remain inactive in
+  V1.
+- Kept GOAL-07A limited to future design-only preparation with warnings; no
+  recommendation, position, risk overlay, dashboard, trading, production,
+  factor-mining, or DQN/RL output was created.
+
 ## 2026-06-23 - GOAL-06D Review-Only Model Comparison Gate
 
 - Added GOAL-06D feature/split contracts, review-only model comparison runner,

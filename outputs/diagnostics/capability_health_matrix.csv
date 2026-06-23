@@ -44,3 +44,6 @@ goal06d_feature_split_contract,GOAL-06D feature and split contract gate,GOAL-06D
 goal06d_model_comparison,GOAL-06D review-only model comparison,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
 goal06d_calibration_stability,GOAL-06D calibration and stability diagnostics,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
 goal06d_governance_boundary,GOAL-06D governance and downstream boundary locks,GOAL-06D,PASS,ashare_premarket.models.goal06d,Keep active
+goal06d1_warning_repair,GOAL-06D.1 calibration and stability warning repair,GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active
+goal06d1_calibration_feature_provider,"GOAL-06D.1 calibration, feature, and provider diagnostics",GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active
+goal06d1_governance_v2_lock,GOAL-06D.1 governance and locked V2 factor placeholder,GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active

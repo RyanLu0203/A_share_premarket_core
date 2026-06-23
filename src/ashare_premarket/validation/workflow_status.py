@@ -11,6 +11,7 @@ ALLOWED_STATUSES = {
     "future_review_only",
     "future_design_only",
     "locked_future",
+    "planned_locked",
     "not_started",
     "deleted_from_active_mainline",
 }
@@ -90,8 +91,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal06c6a_status = goal06c6a.get("status")
     goal06c7_status = goal06c7.get("status")
     goal06d = by_id.get("goal06d_model_comparison_calibration", {})
+    goal06d1 = by_id.get("goal06d1_calibration_stability_warning_repair", {})
     goal06d_status = goal06d.get("status")
+    goal06d1_status = goal06d1.get("status")
     goal06d_readiness = _read(root / "outputs/audits/goal06d_readiness_report.md")
+    goal06d1_readiness = _read(root / "outputs/audits/goal06d1_readiness_report.md")
     goal06c7_readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
     goal06c7_engineering_pilot_pass = _goal06c7_engineering_pilot_pass(goal06c7_readiness)
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
@@ -169,6 +173,20 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("GOAL-06D allowed_next_action does not match readiness status")
     else:
         failures.append("GOAL-06D must be future_review_only or implemented_review_only")
+    if goal06d1:
+        if goal06d1_status != "implemented_review_only":
+            failures.append("GOAL-06D.1 must be implemented_review_only when present")
+        if not _goal06d1_readiness_implemented(goal06d1_readiness):
+            failures.append("GOAL-06D.1 is implemented_review_only without PASS/PASS_WITH_WARNINGS readiness evidence")
+        if goal06d1.get("allowed_next_action") not in {
+            "prepare_goal07a_risk_overlay_design_only",
+            "proceed_to_goal07a_design_only_with_warnings",
+            "continue_goal06d_warning_repair",
+        }:
+            failures.append("GOAL-06D.1 allowed_next_action is invalid")
+    v2_factor = by_id.get("v2_factor_research_upgrade", {})
+    if v2_factor and v2_factor.get("status") != "planned_locked":
+        failures.append("V2 factor research upgrade must remain planned_locked")
     if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
         failures.append("GOAL-07A must remain future_design_only")
 
@@ -206,6 +224,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06C.7 status: `{goal06c7_status or 'missing'}`.",
                 f"GOAL-06D status: `{goal06d_status or 'missing'}`.",
                 f"GOAL-06D allowed next action: `{goal06d.get('allowed_next_action', 'missing')}`.",
+                f"GOAL-06D.1 status: `{goal06d1_status or 'missing'}`.",
+                f"GOAL-06D.1 allowed next action: `{goal06d1.get('allowed_next_action', 'missing')}`.",
+                f"V2 factor research status: `{v2_factor.get('status', 'missing')}`.",
                 "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A remains future design-only and downstream stays locked.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
@@ -254,6 +275,8 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
         if workflow_id.startswith("goal06c") or workflow_id.startswith("goal06d"):
             if status == "implemented_active":
                 failures.append(f"{workflow_id} is incorrectly implemented_active")
+        if workflow_id == "v2_factor_research_upgrade" and status != "planned_locked":
+            failures.append("v2_factor_research_upgrade must remain planned_locked")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -293,6 +316,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         next_goal = "GOAL-06D review-only after provider-ladder engineering_pilot"
     elif row["workflow_id"] == "goal06d_model_comparison_calibration":
         next_goal = "Fix GOAL-06D warnings before GOAL-07A design-only preparation"
+    elif row["workflow_id"] == "goal06d1_calibration_stability_warning_repair":
+        next_goal = "GOAL-07A design-only preparation with warnings bounded"
+    elif row["workflow_id"] == "v2_factor_research_upgrade":
+        next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
         next_goal = row["stage_or_goal"]
     return {
@@ -323,6 +350,13 @@ def _goal06d_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-06D Model Comparison Calibration Readiness: PASS" in readiness
         or "GOAL-06D Model Comparison Calibration Readiness: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal06d1_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS" in readiness
+        or "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS_WITH_WARNINGS" in readiness
     )
 
 

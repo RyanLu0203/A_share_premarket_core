@@ -1,0 +1,13 @@
+factor_research_v2:
+  status: planned_locked
+  enabled: false
+  active_in_v1: false
+  allowed_after:
+    - v1_research_prototype_complete
+  forbidden_in_v1:
+    - factor_mining
+    - IC_mining
+    - RankIC_mining
+    - factor_library_generation
+    - factor_to_model_integration
+    - factor_to_recommendation_integration

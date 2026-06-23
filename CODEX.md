@@ -127,5 +127,16 @@ gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not start GOAL-07A unless a later explicit goal authorizes design-only
-  preparation after GOAL-06D warnings are resolved.
+- Do not start GOAL-07A implementation. GOAL-06D.1 allows at most design-only
+  preparation with warnings; no risk overlay calculation is active.
+
+## GOAL-06D.1 Agent Note
+
+GOAL-06D.1 is review-only warning repair for GOAL-06D. It may compare target
+horizons and PIT-safe score variants, but it must not generate recommendations,
+positions, risk overlays, dashboards, trading outputs, production model
+promotion, or factor-mining outputs.
+
+V2 factor research is `planned_locked` and disabled in V1. Do not create factor
+mining, IC/RankIC mining, factor library generation, or factor integration
+runners unless a future explicit V2 goal unlocks them.
