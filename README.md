@@ -8,7 +8,8 @@ is a deterministic, review-only research workflow for PIT-safe data contracts,
 label construction, feature-label merging, leakage checks, baseline scoring, the
 GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, the
 GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 engineering data foundation gates, and the
-GOAL-06D review-only model comparison/calibration/stability governance gate.
+GOAL-06D/GOAL-06D.1 review-only model comparison/calibration/stability
+governance gates, plus the GOAL-07A design-only risk overlay governance gate.
 
 ## Repository Roles
 
@@ -45,6 +46,15 @@ python scripts/audit_goal06d_calibration.py
 python scripts/audit_goal06d_stability.py
 python scripts/audit_goal06d_governance.py
 python scripts/audit_goal06d_boundary_locks.py
+python scripts/run_goal07a_risk_overlay_design_gate.py
+python scripts/audit_goal07a_allowed_input_contract.py
+python scripts/audit_goal07a_output_schema.py
+python scripts/audit_goal07a_risk_rule_catalog.py
+python scripts/audit_goal07a_state_machine.py
+python scripts/audit_goal07a_upstream_warning_mapping.py
+python scripts/audit_goal07a_governance_boundary.py
+python scripts/audit_goal07a_boundary_locks.py
+python scripts/audit_goal07a_v2_factor_lock.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -88,7 +98,9 @@ flowchart TD
     G -. "failure taxonomy gate" .-> H["GOAL-06C.6A Scoped Network + Failure Taxonomy<br/>(implemented_review_only)"]
     H -. "provider ladder gate" .-> I["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only)"]
     I -. "engineering_pilot reached; review-only gate" .-> F["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    F -. "warnings must be fixed before design-only work" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only; locked)"]
+    F -. "warning repair review-only" .-> I2["GOAL-06D.1 Calibration / Stability Warning Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    I2 -. "design-only implemented" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
+    J -. "locked future explicit unlock required" .-> K["GOAL-07B Risk Overlay Calculation<br/>(locked_future)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -119,9 +131,12 @@ GOAL-06C.7 run reached `engineering_pilot` with 50 approved symbols, 120
 validation trading dates, and 6000 usable rows. GOAL-06D has now run only as a
 review-only model comparison/calibration/stability/governance gate. It is
 `PASS_WITH_WARNINGS`, selected `score_based_alpha_ranking` as a weak
-review-only baseline, and requires calibration/stability warning fixes before
-any GOAL-07A design-only preparation. It does not unlock risk, recommendation,
-dashboard, paper/live trading, production, or DQN/RL.
+review-only baseline. GOAL-06D.1 repairs those warnings only as review-only
+diagnostics and allows GOAL-07A only as design-only preparation with warnings.
+GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
+rule catalog, state machine, upstream-warning mapping, and governance audits
+only. It does not calculate risk values or unlock recommendation, position,
+dashboard, paper/live trading, production, factor mining, or DQN/RL.
 
 ## Required Public Commands
 
@@ -164,6 +179,15 @@ review-only validation wrappers:
 - `python scripts/audit_goal06d_stability.py`
 - `python scripts/audit_goal06d_governance.py`
 - `python scripts/audit_goal06d_boundary_locks.py`
+- `python scripts/run_goal07a_risk_overlay_design_gate.py`
+- `python scripts/audit_goal07a_allowed_input_contract.py`
+- `python scripts/audit_goal07a_output_schema.py`
+- `python scripts/audit_goal07a_risk_rule_catalog.py`
+- `python scripts/audit_goal07a_state_machine.py`
+- `python scripts/audit_goal07a_upstream_warning_mapping.py`
+- `python scripts/audit_goal07a_governance_boundary.py`
+- `python scripts/audit_goal07a_boundary_locks.py`
+- `python scripts/audit_goal07a_v2_factor_lock.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -217,23 +241,24 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal06d_readiness_report.md`
 - `outputs/audits/goal06d_governance_audit.md`
 - `outputs/audits/goal06d_boundary_lock_audit.md`
+- `outputs/audits/goal07a_readiness_report.md`
+- `outputs/audits/goal07a_governance_boundary_audit.md`
+- `outputs/audits/goal07a_boundary_lock_audit.md`
 
 ## Lock Boundary
 
 Recommendation, risk overlay calculation, dashboard, paper trading,
-broker/live trading, production DB writes, production model promotion, and
-DQN/RL remain locked. GOAL-06D is implemented review-only and currently
-`PASS_WITH_WARNINGS`; the allowed next action is
-`fix_goal06d_model_stability_or_calibration_warnings`. GOAL-07A remains
-future design-only and locked until GOAL-06D warnings are resolved and a later
-explicit goal authorizes design-only preparation.
+broker/live trading, production DB writes, production model promotion, V2 factor
+mining, and DQN/RL remain locked. GOAL-07A is implemented only as
+design-only governance; GOAL-07B is not implemented and requires a later
+explicit unlock.
 
 GOAL-06D.1 is the review-only warning repair layer for those GOAL-06D warnings.
 It tests PIT-safe score variants, target horizons, calibration reliability,
-feature sign stability, and provider concentration disclosure. It may allow
-GOAL-07A only as design-only preparation with warnings; it still does not
-calculate risk overlays or produce recommendation, position, dashboard,
-trading, production, factor-mining, or DQN/RL outputs.
+feature sign stability, and provider concentration disclosure. GOAL-07A carries
+those warnings into design-only risk governance; it still does not calculate
+risk overlays or produce recommendation, position, dashboard, trading,
+production, factor-mining, or DQN/RL outputs.
 
 V2 factor research is planned but inactive. The placeholder contract is locked,
 disabled in V1, and forbids factor mining, IC/RankIC mining, factor library

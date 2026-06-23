@@ -19,7 +19,7 @@ def test_workflow_status_contract_exists_and_has_required_statuses() -> None:
     statuses = {row["status"] for row in rows}
     assert "implemented_active" in statuses
     assert "implemented_review_only" in statuses
-    assert "future_design_only" in statuses
+    assert "implemented_design_only" in statuses
     assert "locked_future" in statuses
     assert "deleted_from_active_mainline" in statuses
 
@@ -29,7 +29,7 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal06c_expanded_validation_ranking"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
-    assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
+    assert rows["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
     assert rows["goal07b_risk_overlay_calculation"]["status"] == "locked_future"
     assert rows["position_band_recommendation"]["status"] == "locked_future"
     assert rows["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"

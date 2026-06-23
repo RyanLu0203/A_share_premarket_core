@@ -16,7 +16,8 @@ GOAL-06D allowed next action: `fix_goal06d_model_stability_or_calibration_warnin
 GOAL-06D.1 status: `implemented_review_only`.
 GOAL-06D.1 allowed next action: `proceed_to_goal07a_design_only_with_warnings`.
 V2 factor research status: `planned_locked`.
-GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A remains future design-only and downstream stays locked.
+GOAL-07A status: `implemented_design_only`.
+GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B and downstream stay locked.
 GOAL-06C and later are not represented as `implemented_active`.
 Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.
 

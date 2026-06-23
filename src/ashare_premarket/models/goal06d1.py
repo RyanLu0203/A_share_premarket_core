@@ -977,6 +977,8 @@ def _write_audits(root: Path, outputs: dict[str, object], readiness: dict[str, o
             ]
         ),
     )
+    workflow_rows = read_csv(root / "configs/project/workflow_status.csv")
+    goal07a_status = {row["workflow_id"]: row for row in workflow_rows}.get("goal07a_risk_overlay_design", {}).get("status", "future_design_only")
     write_text(
         root / "outputs/audits/goal06d1_boundary_lock_audit.md",
         "\n".join(
@@ -984,7 +986,7 @@ def _write_audits(root: Path, outputs: dict[str, object], readiness: dict[str, o
                 "# GOAL-06D.1 Boundary Lock Audit",
                 "",
                 "Status: `PASS`",
-                "GOAL-07A status remains future_design_only.",
+                f"GOAL-07A remains design-only: `{goal07a_status}`.",
                 "GOAL-07B remains locked.",
                 "Recommendation remains locked.",
                 "Dashboard remains locked.",
@@ -1112,7 +1114,7 @@ def _update_workflow_status(root: Path, readiness: dict[str, object]) -> None:
             "notes": "V2 factor research is planned but inactive; no factor mining is active in V1.",
         }
     )
-    if "goal07a_risk_overlay_design" in by_id:
+    if "goal07a_risk_overlay_design" in by_id and by_id["goal07a_risk_overlay_design"].get("status") != "implemented_design_only":
         by_id["goal07a_risk_overlay_design"]["status"] = "future_design_only"
         by_id["goal07a_risk_overlay_design"]["allowed_next_action"] = "prepare_design_only_after_goal06d1_warning_repair"
         by_id["goal07a_risk_overlay_design"]["notes"] = "Design-only future after GOAL-06D.1; no risk overlay calculation, recommendation, position, dashboard, trading, or production output."

@@ -1,0 +1,290 @@
+{
+  "allowed_future_input_fields": [
+    "source_bundle_id",
+    "panel_tier",
+    "provider_id",
+    "provider_mode",
+    "source_health_score",
+    "source_count",
+    "data_quality_flags",
+    "leakage_flags",
+    "model_name",
+    "selection_label",
+    "review_only_baseline_score_metadata",
+    "calibration_warning_flags",
+    "feature_stability_warning_flags",
+    "target_horizon_warning_flags",
+    "market_trend_5d",
+    "stock_volatility_20d",
+    "turnover_proxy",
+    "stock_gap_signal",
+    "relative_strength_20d"
+  ],
+  "forbidden_inputs": [
+    "future_returns_as_risk_features",
+    "forward_labels_as_live_risk_features",
+    "recommendation_output",
+    "position_output",
+    "portfolio_output",
+    "live_trading_output",
+    "manually_edited_risk_score",
+    "anything_not_pit_safe"
+  ],
+  "future_goal_that_may_consume_contract": "GOAL-07B_after_explicit_unlock",
+  "goal": "GOAL-07A",
+  "goal07a_execution_policy": {
+    "assign_symbol_tags": false,
+    "calculate_risk_values": false,
+    "consume_real_symbol_rows": false,
+    "write_symbol_level_outputs": false
+  },
+  "mode": "design_only",
+  "pit_safety_rule": "future GOAL-07B inputs must be available at or before as_of_date and must not include forward labels or future returns",
+  "risk_domains": [
+    {
+      "allowed_input_fields": [
+        "data_quality_flags",
+        "leakage_flags"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block when leakage_flags or hard governance checks fail",
+      "description": "PIT/data leakage and quality flags",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when non-hard warning conditions remain unresolved",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "data_quality_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "data_quality_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "provider_id",
+        "provider_mode",
+        "source_count"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block when required provider evidence is missing or source_count is zero",
+      "description": "Provider/source concentration warnings",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when non-hard warning conditions remain unresolved",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "provider_concentration_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "provider_concentration_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "provider_source_concentration_disclosed or single_provider_mode_akshare_direct"
+    },
+    {
+      "allowed_input_fields": [
+        "model_name",
+        "selection_label",
+        "review_only_baseline_score_metadata"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Weak selected baseline and score metadata",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade review-only recommendation eligibility when upstream weak-baseline warnings are present",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "model_confidence_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "model_confidence_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "selected_score_variant_weak_rank_signal"
+    },
+    {
+      "allowed_input_fields": [
+        "calibration_warning_flags"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Calibration warning flags from GOAL-06D.1",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade review-only recommendation eligibility when upstream weak-baseline warnings are present",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "calibration_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "calibration_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "calibration_not_reliable_for_thresholding or target_horizon_calibration_warning"
+    },
+    {
+      "allowed_input_fields": [
+        "feature_stability_warning_flags"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Feature sign stability warnings",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade review-only recommendation eligibility when upstream weak-baseline warnings are present",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "feature_stability_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "feature_stability_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "feature_sign_instability_bounded"
+    },
+    {
+      "allowed_input_fields": [
+        "target_horizon_warning_flags"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Weak target horizon diagnostics",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade review-only recommendation eligibility when upstream weak-baseline warnings are present",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "target_horizon_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "target_horizon_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "weak_target_horizon_rank_signal"
+    },
+    {
+      "allowed_input_fields": [
+        "market_trend_5d"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Market trend context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when future thresholds mark the context as adverse",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "market_regime_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "market_regime_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "turnover_proxy"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Turnover/liquidity proxy context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when future thresholds mark the context as adverse",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "liquidity_proxy_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "liquidity_proxy_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "stock_volatility_20d"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "20-day volatility proxy context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when future thresholds mark the context as adverse",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "volatility_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "volatility_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "stock_gap_signal"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Premarket gap proxy context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when future thresholds mark the context as adverse",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "gap_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "gap_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "source_health_score",
+        "source_count"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block only when this domain has a hard invalid/missing contract condition",
+      "description": "Source health and source count context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when non-hard warning conditions remain unresolved",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "source_health_risk_tag",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "source_health_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    },
+    {
+      "allowed_input_fields": [
+        "panel_tier",
+        "leakage_flags"
+      ],
+      "blocking_condition_design": "future GOAL-07B should block when leakage_flags or hard governance checks fail",
+      "description": "Downstream lock and review-only governance context",
+      "design_only_rule": "define future rule contract only; do not evaluate or materialize real-row values in GOAL-07A",
+      "downgrade_condition_design": "future GOAL-07B should downgrade when non-hard warning conditions remain unresolved",
+      "forbidden_use_in_goal07a": "must_not_compute_values_or_assign_tags_to_real_symbols",
+      "future_allowed_output_fields": [
+        "overall_risk_state",
+        "risk_explanation_code",
+        "risk_governance_flags",
+        "review_only"
+      ],
+      "risk_domain_id": "governance_boundary_risk",
+      "upstream_evidence_source": "GOAL-06D.1 readiness/audits plus GOAL-06C.7 engineering_pilot evidence",
+      "warning_condition_design": "future warning flag present for this domain"
+    }
+  ],
+  "upstream_source": "GOAL-06D.1 review-only model baseline",
+  "upstream_warnings_to_carry": [
+    "calibration_not_reliable_for_thresholding",
+    "feature_sign_instability_bounded",
+    "provider_source_concentration_disclosed",
+    "selected_score_variant_weak_rank_signal",
+    "single_provider_mode_akshare_direct",
+    "weak_target_horizon_rank_signal",
+    "target_horizon_calibration_warning"
+  ]
+}

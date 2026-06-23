@@ -1,0 +1,48 @@
+{
+  "goal": "GOAL-07A",
+  "mappings": [
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "calibration_risk",
+      "warning_code": "calibration_not_reliable_for_thresholding"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "feature_stability_risk",
+      "warning_code": "feature_sign_instability_bounded"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "provider_concentration_risk",
+      "warning_code": "provider_source_concentration_disclosed"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "model_confidence_risk",
+      "warning_code": "selected_score_variant_weak_rank_signal"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "provider_concentration_risk",
+      "warning_code": "single_provider_mode_akshare_direct"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "target_horizon_risk",
+      "warning_code": "weak_target_horizon_rank_signal"
+    },
+    {
+      "carry_forward_to_goal07b_design": true,
+      "goal07a_action": "document_only_no_risk_tag_assignment",
+      "risk_domain_id": "calibration_risk",
+      "warning_code": "target_horizon_calibration_warning"
+    }
+  ],
+  "mode": "warning_mapping_design_only"
+}

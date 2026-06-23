@@ -14,7 +14,7 @@ def test_goal06c6_workflow_row_keeps_goal06d_review_only_after_engineering_pilot
     assert rows["goal06c6_source_backed_engineering_pilot_bundle"]["allowed_next_action"] == "block_goal06d_until_engineering_pilot"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
-    assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
+    assert rows["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
 
 
 def test_no_cloakbrowser_or_bypass_dependency_is_added() -> None:

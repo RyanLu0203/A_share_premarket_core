@@ -26,7 +26,7 @@ def test_goal06d1_keeps_goal07a_design_only_and_downstream_locked() -> None:
         "proceed_to_goal07a_design_only_with_warnings",
         "continue_goal06d_warning_repair",
     }
-    assert workflow["goal07a_risk_overlay_design"]["status"] == "future_design_only"
+    assert workflow["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
     for workflow_id in LOCKED_ROWS:
         assert workflow[workflow_id]["status"] == "locked_future"
     assert workflow["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"
@@ -36,5 +36,5 @@ def test_goal06d1_keeps_goal07a_design_only_and_downstream_locked() -> None:
 def test_goal06d1_boundary_audit_locks_v2_and_downstream() -> None:
     text = (ROOT / "outputs/audits/goal06d1_boundary_lock_audit.md").read_text(encoding="utf-8")
     assert "Status: `PASS`" in text
-    assert "GOAL-07A status remains future_design_only" in text
+    assert "GOAL-07A remains design-only" in text
     assert "V2 factor research remains planned_locked" in text

@@ -47,3 +47,6 @@ goal06d_governance_boundary,GOAL-06D governance and downstream boundary locks,GO
 goal06d1_warning_repair,GOAL-06D.1 calibration and stability warning repair,GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active
 goal06d1_calibration_feature_provider,"GOAL-06D.1 calibration, feature, and provider diagnostics",GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active
 goal06d1_governance_v2_lock,GOAL-06D.1 governance and locked V2 factor placeholder,GOAL-06D.1,PASS,ashare_premarket.models.goal06d1,Keep active
+goal07a_input_output_contracts,GOAL-07A allowed input and future output schema design,GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active
+goal07a_rules_state_warning_mapping,"GOAL-07A risk rule catalog, state machine, and warning mapping design",GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active
+goal07a_governance_boundary_v2_lock,GOAL-07A design-only governance boundary and V2 factor lock,GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active

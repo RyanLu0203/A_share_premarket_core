@@ -4,11 +4,10 @@ Last updated: 2026-06-23
 
 ## Current Stage
 
-Status: `PASS_WITH_WARNINGS` for GOAL-06D review-only model comparison,
-calibration, stability, and governance. GOAL-06C.7 provider-ladder engineering
-data base expansion remains `PASS`; the latest explicit network-enabled run
-reached `engineering_pilot`: 50 approved symbols, 120 validation trading dates,
-and 6000 usable Stage 6C rows.
+Status: `PASS_WITH_WARNINGS` for GOAL-07A design-only risk overlay governance.
+GOAL-06C.7 provider-ladder engineering data base expansion remains `PASS`; the
+latest explicit network-enabled run reached `engineering_pilot`: 50 approved
+symbols, 120 validation trading dates, and 6000 usable Stage 6C rows.
 GOAL-06C expanded validation remains review-only; leakage and downstream
 boundary audits pass. GOAL-06C.5 is implemented as a review-only engineering
 data foundation gate. GOAL-06C.6 is implemented as a source-backed
@@ -24,11 +23,13 @@ default, requires both `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
 and counts only schema-valid finance rows. Domain access alone is classified
 separately and does not count as ingestion success.
 The current GOAL-06C.7 readiness report proves the `engineering_pilot`
-threshold. GOAL-06D has now run only as review-only model
-comparison/calibration/stability/governance. It selected
-`score_based_alpha_ranking` as a weak review-only baseline and remains
-`PASS_WITH_WARNINGS` because calibration/stability/provider concentration
-warnings remain. GOAL-07A and everything downstream remain locked.
+threshold. GOAL-06D and GOAL-06D.1 have run only as review-only model
+comparison/calibration/stability/warning-repair governance. GOAL-06D.1 selected
+`raw_score_based_alpha_ranking` as a weak but bounded review-only baseline and
+allowed GOAL-07A only as design-only preparation with warnings. GOAL-07A is now
+`implemented_design_only`; it defines contracts, schemas, rule catalog, state
+machine, upstream-warning mapping, and governance audits only. GOAL-07B risk
+calculation and everything downstream remain locked.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -73,6 +74,10 @@ Implemented and protected:
   audit, and workflow cleanliness audit
 - GOAL-06D review-only model comparison, calibration, stability diagnostics,
   governance audit, and downstream boundary lock audit (`PASS_WITH_WARNINGS`)
+- GOAL-06D.1 review-only calibration/stability warning repair and V2 factor
+  placeholder lock (`PASS_WITH_WARNINGS`)
+- GOAL-07A risk overlay design-only contracts, rule catalog, state machine,
+  upstream warning mapping, governance boundary, and V2 lock audit
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -106,6 +111,14 @@ Implemented review-only:
 - GOAL-06D model comparison/calibration/stability/governance gate
   (`PASS_WITH_WARNINGS`; selected weak review-only baseline:
   `score_based_alpha_ranking`)
+- GOAL-06D.1 calibration/stability warning repair gate (`PASS_WITH_WARNINGS`;
+  selected weak but bounded repaired baseline:
+  `raw_score_based_alpha_ranking`)
+
+Implemented design-only:
+
+- GOAL-07A risk overlay design gate (`PASS_WITH_WARNINGS`; contracts, schemas,
+  rule catalog, state machine, upstream-warning mapping, and audits only)
 
 Future review-only:
 
@@ -113,7 +126,7 @@ Future review-only:
 
 Still locked:
 
-- GOAL-07A / GOAL-07B
+- GOAL-07B
 - recommendation or position-band output
 - risk overlay calculation
 - dashboard
@@ -123,12 +136,13 @@ Still locked:
 - production model promotion
 - DQN/RL
 
-GOAL-06D has run only as review-only model comparison/calibration/stability
-governance. Its authoritative readiness check is
-`outputs/audits/goal06d_readiness_report.md`, currently
+GOAL-07A has run only as design-only risk overlay governance. Its authoritative
+readiness check is `outputs/audits/goal07a_readiness_report.md`, currently
 `PASS_WITH_WARNINGS`, with allowed next action
-`fix_goal06d_model_stability_or_calibration_warnings`. It does not unlock
-risk, recommendation, dashboard, paper/live trading, production, or DQN/RL.
+`prepare_goal07b_design_review_or_fix_goal07a_warnings`. It does not calculate
+risk values, assign real symbol risk tags, generate recommendations or
+positions, unlock dashboards/trading/production, activate factor mining, or
+restore DQN/RL.
 
 ## Current Evidence Chain
 
@@ -143,6 +157,9 @@ The protected regenerated outputs live under:
 - `outputs/stage6c/`
 - `outputs/models/goal06b/`
 - `outputs/models/goal06d/`
+- `outputs/models/goal06d1/`
+- `configs/risk/`
+- `docs/risk/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -172,10 +189,12 @@ Canonical status contract:
 - `configs/project/workflow_status.csv`
 
 Future goals must update that file, README diagrams, architecture diagrams, and
-`PROJECT_STATE.md` before any workflow block can move from dotted/future to
-implemented. GOAL-06C, GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, and
-GOAL-06D are now `implemented_review_only`; GOAL-06D remains
-`PASS_WITH_WARNINGS` and does not unlock GOAL-07A execution.
+`PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
+GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, and GOAL-06D.1 are
+`implemented_review_only`; GOAL-07A is `implemented_design_only`. GOAL-07B and
+all downstream calculation, recommendation, position, dashboard, trading,
+production, V2 factor-mining, and DQN/RL paths remain locked or deleted from
+active mainline.
 
 ## Known Warnings
 
@@ -218,10 +237,10 @@ GOAL-06D are now `implemented_review_only`; GOAL-06D remains
 
 GOAL-06D.1 repairs these warnings as a review-only diagnostic layer. It compares
 target horizons, bounded score variants, calibration reliability, feature sign
-stability, and provider/source concentration. It currently allows GOAL-07A only
-as future design-only preparation with warnings; it does not calculate risk,
-recommend positions, produce trading signals, activate dashboards, promote
-models, or unlock production.
+stability, and provider/source concentration. GOAL-07A carries these warnings
+into design-only risk governance as `PASS_WITH_WARNINGS`; it does not calculate
+risk, assign risk tags to real symbols, recommend positions, produce trading
+signals, activate dashboards, promote models, or unlock production.
 
 V2 factor research is documented only as `planned_locked`. No V2 factor mining,
 IC/RankIC mining, factor library generation, factor outputs, or factor-to-model

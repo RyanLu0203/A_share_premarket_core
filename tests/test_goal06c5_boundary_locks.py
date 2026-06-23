@@ -14,7 +14,7 @@ def test_goal06d_and_downstream_remain_locked() -> None:
     assert rows["goal06c6_source_backed_engineering_pilot_bundle"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
-    assert rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
+    assert rows["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
     for workflow_id in [
         "goal07b_risk_overlay_calculation",
         "position_band_recommendation",

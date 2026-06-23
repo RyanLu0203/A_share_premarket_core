@@ -50,6 +50,11 @@ Implemented review-only:
 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
 - GOAL-06D Model Comparison, Calibration, Stability, and Governance
   (`PASS_WITH_WARNINGS`)
+- GOAL-06D.1 Calibration Stability Warning Repair (`PASS_WITH_WARNINGS`)
+
+Implemented design-only:
+
+- GOAL-07A Risk Overlay Design (`PASS_WITH_WARNINGS`)
 
 Future review-only:
 
@@ -57,7 +62,7 @@ Future review-only:
 
 Future design-only:
 
-- GOAL-07A Risk Overlay Design
+- none currently unlocked
 
 Locked future:
 
@@ -216,8 +221,8 @@ remain, so the allowed next action is
 
 GOAL-06D does not generate recommendations, position bands, portfolio weights,
 risk overlays, dashboards, paper/live trading, production DB writes, production
-model promotion, or DQN/RL artifacts. GOAL-07A remains future design-only and
-everything downstream remains locked.
+model promotion, or DQN/RL artifacts. GOAL-06D.1 is the review-only warning
+repair layer that allows GOAL-07A only as design-only preparation.
 
 ## GOAL-06D.1 Status
 
@@ -230,7 +235,25 @@ The repaired baseline remains weak but bounded and review-only. Calibration may
 be marked `calibration_not_reliable_for_thresholding`; this means no trading
 threshold, position band, risk cutoff, or recommendation threshold is allowed.
 
-GOAL-07A may proceed only as design-only preparation with warnings. V2 factor
+GOAL-07A has proceeded only as design-only preparation with warnings. V2 factor
 research is `planned_locked`, disabled in V1, and has no active factor mining,
 IC/RankIC mining, factor library generation, factor outputs, or factor
 integration.
+
+## GOAL-07A Status
+
+GOAL-07A is `implemented_design_only` and currently `PASS_WITH_WARNINGS`. It
+creates risk design artifacts only:
+
+- `configs/risk/goal07a_allowed_input_contract.yaml`
+- `configs/risk/goal07a_future_risk_overlay_output_schema.yaml`
+- `configs/risk/goal07a_risk_rule_catalog.yaml`
+- `configs/risk/goal07a_risk_state_machine.yaml`
+- `configs/risk/goal07a_upstream_warning_mapping.yaml`
+- `docs/risk/GOAL07A_RISK_OVERLAY_DESIGN.md`
+- `outputs/audits/goal07a_readiness_report.md`
+
+GOAL-07A does not calculate risk values, assign symbol-level risk tags, generate
+recommendations, create positions, create dashboards, write trading or
+production data, activate V2 factor mining, or implement GOAL-07B. GOAL-07B and
+all downstream modules remain `locked_future`.

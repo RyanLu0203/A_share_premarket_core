@@ -84,6 +84,16 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal06d1_provider_status = _audit_status(root / "outputs/audits/goal06d1_provider_concentration_disclosure.md")
     goal06d1_governance_status = _audit_status(root / "outputs/audits/goal06d1_governance_audit.md")
     goal06d1_boundary_status = _audit_status(root / "outputs/audits/goal06d1_boundary_lock_audit.md")
+    goal07a_status = _goal07a_status(root)
+    goal07a_allowed_input_status = _audit_status(root / "outputs/audits/goal07a_allowed_input_contract_audit.md")
+    goal07a_output_schema_status = _audit_status(root / "outputs/audits/goal07a_output_schema_audit.md")
+    goal07a_rule_catalog_status = _audit_status(root / "outputs/audits/goal07a_risk_rule_catalog_audit.md")
+    goal07a_state_machine_status = _audit_status(root / "outputs/audits/goal07a_state_machine_audit.md")
+    goal07a_warning_mapping_status = _audit_status(root / "outputs/audits/goal07a_upstream_warning_mapping_audit.md")
+    goal07a_governance_status = _audit_status(root / "outputs/audits/goal07a_governance_boundary_audit.md")
+    goal07a_boundary_status = _audit_status(root / "outputs/audits/goal07a_boundary_lock_audit.md")
+    goal07a_v2_lock_status = _audit_status(root / "outputs/audits/goal07a_v2_factor_lock_audit.md")
+    downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
     source_bundle_status = _source_bundle_status(root)
@@ -124,14 +134,28 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-06D.1 provider concentration disclosure status: `{goal06d1_provider_status}`.",
                 f"GOAL-06D.1 governance status: `{goal06d1_governance_status}`.",
                 f"GOAL-06D.1 boundary lock status: `{goal06d1_boundary_status}`.",
+                f"GOAL-07A readiness: `{goal07a_status}`.",
+                f"GOAL-07A allowed input contract status: `{goal07a_allowed_input_status}`.",
+                f"GOAL-07A future output schema status: `{goal07a_output_schema_status}`.",
+                f"GOAL-07A risk rule catalog status: `{goal07a_rule_catalog_status}`.",
+                f"GOAL-07A risk state machine status: `{goal07a_state_machine_status}`.",
+                f"GOAL-07A upstream warning mapping status: `{goal07a_warning_mapping_status}`.",
+                f"GOAL-07A governance boundary status: `{goal07a_governance_status}`.",
+                f"GOAL-07A boundary lock status: `{goal07a_boundary_status}`.",
+                f"GOAL-07A V2 factor lock status: `{goal07a_v2_lock_status}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
-                "GOAL-07A lock status: `future_design_only; at most design-only preparation after GOAL-06D.1 warning repair`.",
+                f"GOAL-07B lock status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
+                f"Recommendation lock status: `{downstream_status.get('position_band_recommendation', 'missing')}`.",
+                f"Position lock status: `{downstream_status.get('position_band_recommendation', 'missing')}`.",
+                f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
+                f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
+                f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
                 "Downstream lock status: `locked_future_or_deleted_from_active_mainline`.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
                 "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.",
-                "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only and allow GOAL-07A at most as design-only preparation.",
+                "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -161,6 +185,15 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal06d1_provider_concentration_disclosure.py`",
                 "- `python scripts/audit_goal06d1_governance.py`",
                 "- `python scripts/audit_goal06d1_boundary_locks.py`",
+                "- `python scripts/run_goal07a_risk_overlay_design_gate.py`",
+                "- `python scripts/audit_goal07a_allowed_input_contract.py`",
+                "- `python scripts/audit_goal07a_output_schema.py`",
+                "- `python scripts/audit_goal07a_risk_rule_catalog.py`",
+                "- `python scripts/audit_goal07a_state_machine.py`",
+                "- `python scripts/audit_goal07a_upstream_warning_mapping.py`",
+                "- `python scripts/audit_goal07a_governance_boundary.py`",
+                "- `python scripts/audit_goal07a_boundary_locks.py`",
+                "- `python scripts/audit_goal07a_v2_factor_lock.py`",
                 "",
             ]
         ),
@@ -180,8 +213,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06C.7 provider ladder is disabled from network by default; browser-assisted ingestion requires explicit CLI plus env opt-in and counts only schema-valid finance rows.",
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
+                "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
-                "- These warnings do not unlock recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
+                "- These warnings do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -202,9 +236,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "8. For GOAL-06C.7 provider-ladder expansion, run `python scripts/run_goal06c7_provider_ladder_engineering_data_base_expansion.py`; browser-assisted mode additionally requires `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1 --enable-browser-assisted`.",
                 "9. For GOAL-06D, run `python scripts/run_goal06d_model_comparison_calibration.py` and then every `scripts/audit_goal06d_*.py` wrapper.",
                 "10. For GOAL-06D.1, run `python scripts/run_goal06d1_calibration_stability_warning_repair.py` and then every `scripts/audit_goal06d1_*.py` wrapper.",
-                "11. Current GOAL-06D.1 is a review-only warning repair gate; GOAL-07A may proceed at most as design-only preparation with warnings bounded.",
-                "12. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "13. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.",
+                "11. For GOAL-07A, run `python scripts/run_goal07a_risk_overlay_design_gate.py` and then every `scripts/audit_goal07a_*.py` wrapper.",
+                "12. Current GOAL-07A is design-only. Do not calculate risk values, assign symbol risk tags, create recommendation/position outputs, or unlock GOAL-07B without a future explicit goal.",
+                "13. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "14. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -302,6 +337,20 @@ def _goal06d1_status(root: Path) -> str:
     return "unknown"
 
 
+def _goal07a_status(root: Path) -> str:
+    report = root / "outputs/audits/goal07a_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-07A Risk Overlay Design Readiness: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-07A Risk Overlay Design Readiness: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-07A Risk Overlay Design Readiness: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -329,6 +378,25 @@ def _v2_factor_status(root: Path) -> str:
     if "status: planned_locked" in text and "enabled: false" in text and "active_in_v1: false" in text:
         return "planned_locked_disabled"
     return "unknown"
+
+
+def _downstream_lock_status(root: Path) -> dict[str, str]:
+    path = root / "configs/project/workflow_status.csv"
+    if not path.exists():
+        return {}
+    rows = {row["workflow_id"]: row for row in read_csv(path)}
+    return {
+        key: rows.get(key, {}).get("status", "missing")
+        for key in [
+            "goal07b_risk_overlay_calculation",
+            "position_band_recommendation",
+            "dashboard_daily_report",
+            "paper_trading_journal",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]
+    }
 
 
 def _goal06d_selected_baseline(root: Path) -> str:

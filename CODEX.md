@@ -5,9 +5,9 @@
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
 GOAL-06B, plus the GOAL-06C review-only expanded validation extension, the
 GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A/GOAL-06C.7 engineering data foundation gates,
-and the GOAL-06D review-only model comparison/calibration/stability governance
-gate. Preserve reproducibility and source governance before adding any future
-risk design work.
+the GOAL-06D/GOAL-06D.1 review-only model comparison/calibration/stability
+governance gates, and the GOAL-07A design-only risk governance gate. Preserve
+reproducibility and source governance before any future risk calculation work.
 
 ## Current Reliable Facts
 
@@ -44,12 +44,17 @@ risk design work.
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
   downstream module by itself.
 - GOAL-06D is implemented_review_only and currently `PASS_WITH_WARNINGS`.
-  It selected `score_based_alpha_ranking` as a weak review-only baseline;
-  calibration/stability/provider concentration warnings must be fixed before
-  GOAL-07A design-only preparation.
+  It selected `score_based_alpha_ranking` as a weak review-only baseline.
+- GOAL-06D.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It selected `raw_score_based_alpha_ranking` as a weak but bounded review-only
+  baseline and allows GOAL-07A only as design-only preparation with warnings.
+- GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
+  defines contracts, future schema, rule catalog, state machine,
+  upstream-warning mapping, governance boundary, and V2 lock audits only.
 - Production model promotion is false.
-- Recommendation, risk overlay, dashboard, paper trading, broker/live trading,
-  production DB writes, and DQN/RL are locked.
+- GOAL-07B risk calculation, recommendation, position output, dashboard, paper
+  trading, broker/live trading, production DB writes, V2 factor mining, and
+  DQN/RL are locked.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow; Python `3.9.21`
   passed fresh-clone verification.
 - Stable committed reports intentionally use `runtime_seconds=local_only`;
@@ -115,9 +120,9 @@ solid/implemented if:
 
 Do not silently change the workflow diagram to make future stages look
 implemented. Do not add new downstream blocks without updating
-`workflow_status.csv`. Do not remove locks from risk, recommendation,
-dashboard, paper/live trading, production, or DQN/RL unless a later explicit
-gate allows it.
+`workflow_status.csv`. Do not remove locks from risk calculation,
+recommendation, dashboard, paper/live trading, production, or DQN/RL unless a
+later explicit gate allows it.
 
 ## Do Not Drift
 
@@ -127,8 +132,8 @@ gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not start GOAL-07A implementation. GOAL-06D.1 allows at most design-only
-  preparation with warnings; no risk overlay calculation is active.
+- Do not implement GOAL-07B or risk calculations. GOAL-07A is already
+  design-only; no risk overlay calculation is active.
 
 ## GOAL-06D.1 Agent Note
 
@@ -136,6 +141,14 @@ GOAL-06D.1 is review-only warning repair for GOAL-06D. It may compare target
 horizons and PIT-safe score variants, but it must not generate recommendations,
 positions, risk overlays, dashboards, trading outputs, production model
 promotion, or factor-mining outputs.
+
+## GOAL-07A Agent Note
+
+GOAL-07A is implemented only as design governance. It may define input
+contracts, future schemas, rule catalogs, state machines, warning mappings, and
+audits. It must not calculate risk values, assign symbol-level risk tags,
+generate recommendations or positions, create dashboards, write trading or
+production data, activate factor mining, or implement GOAL-07B.
 
 V2 factor research is `planned_locked` and disabled in V1. Do not create factor
 mining, IC/RankIC mining, factor library generation, or factor integration

@@ -47,3 +47,6 @@ goal06d_governance_boundary,GOAL-06D,ashare_premarket.models.goal06d,PASS,CLASS_
 goal06d1_warning_repair,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06d1_calibration_feature_provider,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal06d1_governance_v2_lock,GOAL-06D.1,ashare_premarket.models.goal06d1,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal07a_input_output_contracts,GOAL-07A,ashare_premarket.risk_design.goal07a,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal07a_rules_state_warning_mapping,GOAL-07A,ashare_premarket.risk_design.goal07a,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal07a_governance_boundary_v2_lock,GOAL-07A,ashare_premarket.risk_design.goal07a,PASS,CLASS_A_REQUIRED_ACTIVE,true

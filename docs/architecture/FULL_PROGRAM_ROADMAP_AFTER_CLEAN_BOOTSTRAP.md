@@ -18,7 +18,7 @@ flowchart TD
     Z -. "provider ladder gate" .-> AA["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; engineering_pilot PASS)"]
     AA -. "implemented review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I -. "warning repair review-only" .-> I2["GOAL-06D.1 Calibration / Stability Warning Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    I2 -. "design-only preparation only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only; design-only prep)"]
+    I2 -. "implemented design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
@@ -49,9 +49,9 @@ env opt-in, and counts only schema-valid finance rows. The latest GOAL-06C.7
 readiness report proves `engineering_pilot`. GOAL-06D is implemented
 review-only with `PASS_WITH_WARNINGS`; GOAL-06D.1 bounds the calibration,
 stability, target-horizon, and provider-concentration warnings in a review-only
-repair layer. GOAL-07A may proceed only as design-only preparation with
-warnings and no risk calculation. V2 factor research is planned but inactive in
-V1; no factor mining, IC/RankIC mining, factor library generation, or factor
-integration is active. GOAL-07A and all recommendation, risk calculation,
+repair layer. GOAL-07A is implemented only as design governance with warnings
+and no risk calculation. V2 factor research is planned but inactive in V1; no
+factor mining, IC/RankIC mining, factor library generation, or factor
+integration is active. GOAL-07B and all recommendation, risk calculation,
 dashboard, paper/live trading, production, factor-mining, and DQN/RL blocks
 remain locked, planned-locked, or design-only.

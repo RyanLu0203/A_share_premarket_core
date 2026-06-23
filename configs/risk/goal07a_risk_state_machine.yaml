@@ -1,0 +1,93 @@
+{
+  "goal": "GOAL-07A",
+  "mode": "state_machine_design_only",
+  "states": [
+    "not_evaluated",
+    "input_invalid",
+    "data_blocked",
+    "model_warning",
+    "source_warning",
+    "market_warning",
+    "eligible_for_review_only_snapshot",
+    "blocked_from_recommendation"
+  ],
+  "transitions": [
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "input_invalid",
+      "trigger_design": "input contract failure"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "data_blocked",
+      "trigger_design": "leakage flag failure"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "data_blocked",
+      "trigger_design": "panel below engineering_pilot"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "model_warning",
+      "trigger_design": "calibration warning"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "model_warning",
+      "trigger_design": "feature instability warning"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "source_warning",
+      "trigger_design": "single provider concentration"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "not_evaluated",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "market_warning",
+      "trigger_design": "high volatility or gap warning"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "model_warning",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "eligible_for_review_only_snapshot",
+      "trigger_design": "all governance conditions satisfied"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "source_warning",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "eligible_for_review_only_snapshot",
+      "trigger_design": "all governance conditions satisfied"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "market_warning",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "eligible_for_review_only_snapshot",
+      "trigger_design": "all governance conditions satisfied"
+    },
+    {
+      "execution_in_goal07a": false,
+      "from_state": "eligible_for_review_only_snapshot",
+      "real_symbol_transition_in_goal07a": false,
+      "to_state": "blocked_from_recommendation",
+      "trigger_design": "any hard boundary violation"
+    }
+  ]
+}

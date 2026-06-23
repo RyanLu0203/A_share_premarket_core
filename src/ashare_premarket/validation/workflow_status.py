@@ -187,8 +187,38 @@ def run_workflow_status_audit(root: Path) -> bool:
     v2_factor = by_id.get("v2_factor_research_upgrade", {})
     if v2_factor and v2_factor.get("status") != "planned_locked":
         failures.append("V2 factor research upgrade must remain planned_locked")
-    if by_id.get("goal07a_risk_overlay_design", {}).get("status") != "future_design_only":
-        failures.append("GOAL-07A must remain future_design_only")
+    goal07a = by_id.get("goal07a_risk_overlay_design", {})
+    goal07a_status = goal07a.get("status")
+    goal07a_readiness = _read(root / "outputs/audits/goal07a_readiness_report.md")
+    if goal07a_status == "future_design_only":
+        if goal07a.get("allowed_next_action") not in {
+            "prepare_design_only_after_goal06d1_warning_repair",
+            "block_goal07b_until_goal07a_pass",
+        }:
+            failures.append("GOAL-07A future row has invalid allowed_next_action")
+    elif goal07a_status == "implemented_design_only":
+        if not _goal07a_readiness_implemented(goal07a_readiness):
+            failures.append("GOAL-07A is implemented_design_only without PASS/PASS_WITH_WARNINGS readiness evidence")
+        if goal07a.get("allowed_next_action") not in {
+            "prepare_goal07b_risk_overlay_calculation_prototype_after_explicit_unlock",
+            "prepare_goal07b_design_review_or_fix_goal07a_warnings",
+        }:
+            failures.append("GOAL-07A implemented design row has invalid allowed_next_action")
+        required_goal07a_audits = [
+            "outputs/audits/goal07a_allowed_input_contract_audit.md",
+            "outputs/audits/goal07a_output_schema_audit.md",
+            "outputs/audits/goal07a_risk_rule_catalog_audit.md",
+            "outputs/audits/goal07a_state_machine_audit.md",
+            "outputs/audits/goal07a_upstream_warning_mapping_audit.md",
+            "outputs/audits/goal07a_governance_boundary_audit.md",
+            "outputs/audits/goal07a_boundary_lock_audit.md",
+            "outputs/audits/goal07a_v2_factor_lock_audit.md",
+        ]
+        for audit_path in required_goal07a_audits:
+            if "Status: `PASS`" not in _read(root / audit_path):
+                failures.append(f"GOAL-07A audit is missing or not PASS: {audit_path}")
+    else:
+        failures.append("GOAL-07A must be future_design_only or implemented_design_only")
 
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
@@ -227,7 +257,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06D.1 status: `{goal06d1_status or 'missing'}`.",
                 f"GOAL-06D.1 allowed next action: `{goal06d1.get('allowed_next_action', 'missing')}`.",
                 f"V2 factor research status: `{v2_factor.get('status', 'missing')}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A remains future design-only and downstream stays locked.",
+                f"GOAL-07A status: `{goal07a_status or 'missing'}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B and downstream stay locked.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -296,6 +327,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "dotted_review_only"
         can_promote = False
         blocker = "already implemented review-only"
+    elif status == "implemented_design_only":
+        edge_type = "dotted_design_only"
+        can_promote = False
+        blocker = "already implemented design-only; calculation remains locked"
     elif status == "deleted_from_active_mainline":
         edge_type = "dotted_side_note"
         can_promote = False
@@ -318,6 +353,8 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         next_goal = "Fix GOAL-06D warnings before GOAL-07A design-only preparation"
     elif row["workflow_id"] == "goal06d1_calibration_stability_warning_repair":
         next_goal = "GOAL-07A design-only preparation with warnings bounded"
+    elif row["workflow_id"] == "goal07a_risk_overlay_design":
+        next_goal = "GOAL-07B only after explicit future unlock; currently locked"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -357,6 +394,13 @@ def _goal06d1_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS" in readiness
         or "GOAL-06D.1 Calibration Stability Warning Repair Readiness: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal07a_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-07A Risk Overlay Design Readiness: PASS" in readiness
+        or "GOAL-07A Risk Overlay Design Readiness: PASS_WITH_WARNINGS" in readiness
     )
 
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-23 - GOAL-07A Risk Overlay Design-Only Gate
+
+- Added GOAL-07A design-only risk governance contracts under `configs/risk/`
+  and `docs/risk/`.
+- Defined V1 risk domains, allowed future PIT-safe inputs, future output schema,
+  rule catalog, state machine, and upstream warning mapping.
+- Added GOAL-07A runner, audit wrappers, focused tests, workflow status,
+  diagnostics, and readiness report.
+- Carried GOAL-06D.1 weak-baseline, calibration, feature-stability,
+  target-horizon, and provider-concentration warnings into risk design.
+- Kept GOAL-07B, risk calculation, recommendation, position, dashboard,
+  paper/live trading, production, V2 factor mining, and DQN/RL locked.
+
 ## 2026-06-23 - GOAL-06D.1 Calibration Stability Warning Repair
 
 - Added GOAL-06D.1 review-only warning repair for target horizon selection,

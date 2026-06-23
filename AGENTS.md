@@ -34,12 +34,16 @@ This file is long-term project memory for Codex and other coding agents.
 - The current source-backed GOAL-06C.7 provider-ladder panel tier is
   `engineering_pilot`: 50 symbols, 120 validation dates, and 6000 rows.
 - GOAL-06D is implemented_review_only and currently `PASS_WITH_WARNINGS`.
-  It selected `score_based_alpha_ranking` as a weak review-only baseline;
-  calibration/stability/provider concentration warnings must be fixed before
-  GOAL-07A design-only preparation.
+  It selected `score_based_alpha_ranking` as a weak review-only baseline.
+- GOAL-06D.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It selected `raw_score_based_alpha_ranking` as a weak but bounded review-only
+  baseline and allows GOAL-07A only as design-only preparation with warnings.
+- GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
+  defines design artifacts and audits only; no risk calculation is active.
 - Feature-label merge and leakage audit are active.
-- Recommendation, risk overlay, dashboard, paper/live trading, production DB
-  writes, production model promotion, and DQN/RL remain locked.
+- GOAL-07B risk calculation, recommendation, position output, dashboard,
+  paper/live trading, production DB writes, production model promotion, V2
+  factor mining, and DQN/RL remain locked.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
   AKShare/local-import paths. The explicit CloakBrowser reference probe is
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
@@ -126,9 +130,9 @@ solid/implemented if:
 
 Do not silently change the workflow diagram to make future stages look
 implemented. Do not add new downstream blocks without updating
-`workflow_status.csv`. Do not remove locks from risk, recommendation,
-dashboard, paper/live trading, production, or DQN/RL unless a later explicit
-gate allows it.
+`workflow_status.csv`. Do not remove locks from risk calculation,
+recommendation, dashboard, paper/live trading, production, or DQN/RL unless a
+later explicit gate allows it.
 
 ## Git Safety
 
@@ -143,9 +147,17 @@ gate allows it.
 ## GOAL-06D.1 Agent Note
 
 GOAL-06D.1 is implemented review-only warning repair. The repaired baseline may
-remain weak but bounded; GOAL-07A may proceed only as design-only preparation
+remain weak but bounded; GOAL-07A has proceeded only as design-only governance
 with warnings. Do not create recommendation, position, risk calculation,
 dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
+
+## GOAL-07A Agent Note
+
+GOAL-07A is design-only. It may maintain contracts, schema definitions, rule
+catalogs, state machine designs, warning mappings, governance docs, and audits.
+It must not calculate risk overlay values, assign risk tags to real symbols,
+produce recommendations or positions, create dashboards, write trading or
+production data, activate factor mining, or implement GOAL-07B.
 
 V2 factor research is planned but inactive. Keep
 `configs/factors/v2_factor_research_contract.yaml` locked unless a future

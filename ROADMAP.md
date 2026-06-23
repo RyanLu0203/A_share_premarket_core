@@ -28,17 +28,21 @@
   `score_based_alpha_ranking`).
 - GOAL-06D.1 review-only calibration/stability warning repair gate
   (`PASS_WITH_WARNINGS`; weak repaired score baseline bounded and documented).
+- GOAL-07A risk overlay design-only governance gate (`PASS_WITH_WARNINGS`;
+  no risk calculation, recommendation, position, dashboard, trading,
+  production, factor-mining, or DQN/RL output).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
 
 ## Next Allowed Work
 
-GOAL-06D.1 has bounded the GOAL-06D calibration/stability/provider warnings in
-a review-only repair layer. GOAL-07A may proceed at most as design-only
-preparation with warnings; no risk overlay calculation, recommendation,
-position, dashboard, paper/live trading, production DB writes, production model
-promotion, factor mining, or DQN/RL is unlocked.
+GOAL-07A has implemented the risk overlay blueprint only as design governance.
+The next possible step is GOAL-07B design review or a future explicit
+calculation-prototype unlock after GOAL-07A warnings are accepted or repaired.
+No risk overlay calculation, recommendation, position, dashboard,
+paper/live trading, production DB writes, production model promotion, factor
+mining, or DQN/RL is unlocked.
 
 V2 factor research is planned but inactive. It remains `planned_locked` until a
 future explicit V2 goal; no factor mining, IC/RankIC mining, factor library
@@ -49,7 +53,6 @@ workflow diagrams before any future block is promoted.
 
 ## Locked Future
 
-- GOAL-07A risk overlay design.
 - GOAL-07B risk overlay calculation prototype.
 - Position-band recommendation.
 - Signal and portfolio backtests.

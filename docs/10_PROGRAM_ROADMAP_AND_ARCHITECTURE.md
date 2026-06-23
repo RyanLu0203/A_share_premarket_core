@@ -27,7 +27,7 @@ flowchart TD
     P -. "provider ladder gate" .-> Q["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion"]
     Q -. "implemented review-only after engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration / Stability"]
     M -. "warning repair review-only" .-> M2["GOAL-06D.1 Calibration / Stability Warning Repair"]
-    M2 -. "design-only preparation only" .-> R["GOAL-07A Risk Overlay Design<br/>(future_design_only; design-only prep)"]
+    M2 -. "implemented design-only" .-> R["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -49,9 +49,10 @@ weak review-only baseline and requires calibration/stability warning fixes
 before any GOAL-07A design-only preparation. GOAL-06D.1 is implemented
 review-only and bounds those warnings with repaired score variants,
 target-horizon diagnostics, calibration reliability checks, feature sign
-stability diagnostics, and provider concentration disclosure. GOAL-07A may
-proceed only as design-only preparation with warnings and no risk overlay
-calculation. V2 factor research is planned but inactive; no V2 factor mining,
-IC/RankIC mining, factor library generation, or factor integration is active in
-V1. Future, design-only, locked, planned-locked, and deleted-from-active-mainline
-blocks use dotted arrows or side-note references.
+stability diagnostics, and provider concentration disclosure. GOAL-07A is
+implemented only as design governance with warnings and no risk overlay
+calculation. GOAL-07B remains locked until a future explicit unlock. V2 factor
+research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
+library generation, or factor integration is active in V1. Future,
+design-only, locked, planned-locked, and deleted-from-active-mainline blocks use
+dotted arrows or side-note references.

@@ -1,5 +1,30 @@
 # 09 Step Iteration Log
 
+## 2026-06-23 - GOAL-07A Risk Overlay Design-Only Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added GOAL-07A design-only risk governance contracts, future output schema,
+  rule catalog, state machine, upstream-warning mapping, and risk boundary docs.
+- Mapped GOAL-06D.1 weak-baseline, calibration, feature-stability,
+  target-horizon, and provider-concentration warnings into future risk domains.
+- Added GOAL-07A audit wrappers, tests, diagnostics, workflow status, and
+  readiness report.
+- Kept GOAL-07B, risk overlay calculation, recommendation, position, dashboard,
+  paper/live trading, production, V2 factor mining, and DQN/RL locked.
+
+Evidence:
+
+- `configs/risk/goal07a_allowed_input_contract.yaml`
+- `configs/risk/goal07a_future_risk_overlay_output_schema.yaml`
+- `configs/risk/goal07a_risk_rule_catalog.yaml`
+- `configs/risk/goal07a_risk_state_machine.yaml`
+- `configs/risk/goal07a_upstream_warning_mapping.yaml`
+- `outputs/audits/goal07a_readiness_report.md`
+- `outputs/audits/goal07a_boundary_lock_audit.md`
+
 ## 2026-06-23 - GOAL-06D.1 Calibration Stability Warning Repair
 
 Status: `PASS_WITH_WARNINGS`.
@@ -17,9 +42,9 @@ What changed:
 - Added locked V2 factor research placeholder. V2 factor mining, IC/RankIC
   mining, factor library generation, factor-to-model integration, and
   factor-to-recommendation integration remain inactive in V1.
-- Kept GOAL-07A future design-only; no recommendation, position, risk overlay,
-  dashboard, paper/live trading, production, factor-mining, or DQN/RL output was
-  created.
+- Allowed GOAL-07A only as design-only preparation; no recommendation,
+  position, risk overlay calculation, dashboard, paper/live trading,
+  production, factor-mining, or DQN/RL output was created.
 
 Evidence:
 
@@ -44,9 +69,9 @@ What changed:
   `linear_regression`, and `logistic_direction_classifier` on the
   GOAL-06C.7 engineering_pilot panel.
 - Selected `score_based_alpha_ranking` only as a weak review-only baseline.
-- Updated workflow status and diagnostics so GOAL-06D is
-  `implemented_review_only` while GOAL-07A remains future design-only and
-  downstream workflows remain locked.
+- Updated workflow status and diagnostics so GOAL-06D was
+  `implemented_review_only` while GOAL-07A remained future design-only at that
+  stage and downstream workflows remained locked.
 
 Evidence:
 
@@ -322,7 +347,8 @@ Evidence:
 Safety:
 
 - GOAL-06C remains future review-only.
-- GOAL-06D and GOAL-07A remain future review/design-only.
+- GOAL-06D was future review-only and GOAL-07A was future design-only at that
+  stage.
 - Recommendation, risk overlay calculation, dashboard, paper/live trading,
   production writes, model promotion, and DQN/RL remain locked or deleted from
   active mainline.

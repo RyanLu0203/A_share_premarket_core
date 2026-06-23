@@ -1,0 +1,71 @@
+{
+  "allowed_future_schema_fields": [
+    "as_of_date",
+    "target_trading_date",
+    "symbol",
+    "risk_overlay_version",
+    "data_quality_risk_tag",
+    "provider_concentration_risk_tag",
+    "model_confidence_risk_tag",
+    "calibration_risk_tag",
+    "feature_stability_risk_tag",
+    "target_horizon_risk_tag",
+    "market_regime_risk_tag",
+    "liquidity_proxy_risk_tag",
+    "volatility_risk_tag",
+    "gap_risk_tag",
+    "source_health_risk_tag",
+    "overall_risk_state",
+    "risk_explanation_code",
+    "risk_governance_flags",
+    "review_only"
+  ],
+  "empty_schema_sample": {
+    "columns": [
+      "as_of_date",
+      "target_trading_date",
+      "symbol",
+      "risk_overlay_version",
+      "data_quality_risk_tag",
+      "provider_concentration_risk_tag",
+      "model_confidence_risk_tag",
+      "calibration_risk_tag",
+      "feature_stability_risk_tag",
+      "target_horizon_risk_tag",
+      "market_regime_risk_tag",
+      "liquidity_proxy_risk_tag",
+      "volatility_risk_tag",
+      "gap_risk_tag",
+      "source_health_risk_tag",
+      "overall_risk_state",
+      "risk_explanation_code",
+      "risk_governance_flags",
+      "review_only"
+    ],
+    "row_count": 0
+  },
+  "forbidden_schema_fields": [
+    "buy",
+    "sell",
+    "hold",
+    "recommended_position",
+    "position_weight",
+    "portfolio_weight",
+    "risk_score",
+    "final_score",
+    "final_rank",
+    "tradable_rank",
+    "trade_signal",
+    "order_action",
+    "broker_instruction"
+  ],
+  "future_schema_version": "goal07b_v1_review_only",
+  "goal": "GOAL-07A",
+  "goal07a_forbidden_generation": {
+    "calculated_risk_overlay_values": false,
+    "position_outputs": false,
+    "recommendation_like_outputs": false,
+    "symbol_level_rows": false
+  },
+  "mode": "schema_design_only"
+}

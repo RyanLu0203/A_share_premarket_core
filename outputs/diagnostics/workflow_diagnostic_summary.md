@@ -3,7 +3,7 @@
 Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
-GOAL-06C review-only validation status: `not yet promoted`.
+GOAL-06C review-only validation status: `implemented with warnings`.
 GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
@@ -28,14 +28,28 @@ GOAL-06D.1 feature sign stability status: `PASS_WITH_WARNINGS`.
 GOAL-06D.1 provider concentration disclosure status: `PASS_WITH_WARNINGS`.
 GOAL-06D.1 governance status: `PASS`.
 GOAL-06D.1 boundary lock status: `PASS`.
+GOAL-07A readiness: `PASS_WITH_WARNINGS`.
+GOAL-07A allowed input contract status: `PASS`.
+GOAL-07A future output schema status: `PASS`.
+GOAL-07A risk rule catalog status: `PASS`.
+GOAL-07A risk state machine status: `PASS`.
+GOAL-07A upstream warning mapping status: `PASS`.
+GOAL-07A governance boundary status: `PASS`.
+GOAL-07A boundary lock status: `PASS`.
+GOAL-07A V2 factor lock status: `PASS`.
 V2 factor placeholder status: `planned_locked_disabled`.
-GOAL-07A lock status: `future_design_only; at most design-only preparation after GOAL-06D.1 warning repair`.
+GOAL-07B lock status: `locked_future`.
+Recommendation lock status: `locked_future`.
+Position lock status: `locked_future`.
+Dashboard lock status: `locked_future`.
+Paper/live trading lock status: `locked_future;locked_future`.
+Production lock status: `locked_future;locked_future`.
 Downstream lock status: `locked_future_or_deleted_from_active_mainline`.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
-GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only and allow GOAL-07A at most as design-only preparation.
+GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -77,3 +91,12 @@ Protected regression commands:
 - `python scripts/audit_goal06d1_provider_concentration_disclosure.py`
 - `python scripts/audit_goal06d1_governance.py`
 - `python scripts/audit_goal06d1_boundary_locks.py`
+- `python scripts/run_goal07a_risk_overlay_design_gate.py`
+- `python scripts/audit_goal07a_allowed_input_contract.py`
+- `python scripts/audit_goal07a_output_schema.py`
+- `python scripts/audit_goal07a_risk_rule_catalog.py`
+- `python scripts/audit_goal07a_state_machine.py`
+- `python scripts/audit_goal07a_upstream_warning_mapping.py`
+- `python scripts/audit_goal07a_governance_boundary.py`
+- `python scripts/audit_goal07a_boundary_locks.py`
+- `python scripts/audit_goal07a_v2_factor_lock.py`

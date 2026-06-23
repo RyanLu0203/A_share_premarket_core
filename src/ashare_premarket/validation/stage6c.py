@@ -367,8 +367,8 @@ def audit_stage6c_leakage_and_boundary(root: Path) -> bool:
     workflow_rows = {row["workflow_id"]: row for row in read_csv(root / "configs/project/workflow_status.csv")}
     if workflow_rows["goal06d_model_comparison_calibration"]["status"] not in {"future_review_only", "implemented_review_only"}:
         failures.append("GOAL-06D is not future_review_only or implemented_review_only")
-    if workflow_rows["goal07a_risk_overlay_design"]["status"] != "future_design_only":
-        failures.append("GOAL-07A is not future_design_only")
+    if workflow_rows["goal07a_risk_overlay_design"]["status"] not in {"future_design_only", "implemented_design_only"}:
+        failures.append("GOAL-07A is not future_design_only or implemented_design_only")
     for workflow_id in [
         "goal07b_risk_overlay_calculation",
         "position_band_recommendation",
@@ -392,7 +392,7 @@ def audit_stage6c_leakage_and_boundary(root: Path) -> bool:
         [
             "Ranking baselines use review-only features or prior review scores, never labels as inputs.",
             "Blocked/pending symbols are excluded from Stage 6C outputs.",
-            "Recommendation, position sizing, risk overlay, dashboard, paper/live trading, production, and DQN/RL remain locked.",
+            "Recommendation, position sizing, risk overlay calculation, dashboard, paper/live trading, production, and DQN/RL remain locked.",
         ],
     )
     return not failures
@@ -421,7 +421,7 @@ def write_stage6c_readiness_report(root: Path, core_checks_passed: bool) -> None
     workflow_ok = (
         workflow_rows["goal06c_expanded_validation_ranking"]["status"] == "implemented_review_only"
         and workflow_rows["goal06d_model_comparison_calibration"]["status"] in {"future_review_only", "implemented_review_only"}
-        and workflow_rows["goal07a_risk_overlay_design"]["status"] == "future_design_only"
+        and workflow_rows["goal07a_risk_overlay_design"]["status"] in {"future_design_only", "implemented_design_only"}
         and workflow_rows["goal07b_risk_overlay_calculation"]["status"] == "locked_future"
     )
     missing_outputs = [path for path in [*STAGE6C_OUTPUTS, *STAGE6C_AUDITS[:-1]] if not (root / path).exists()]

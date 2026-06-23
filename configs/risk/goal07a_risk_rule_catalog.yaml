@@ -1,0 +1,93 @@
+{
+  "allowed_future_risk_states": [
+    "PASS",
+    "WARNING",
+    "DEGRADED",
+    "BLOCKED",
+    "NOT_EVALUATED"
+  ],
+  "goal": "GOAL-07A",
+  "mode": "rule_catalog_design_only",
+  "rules": [
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "WARNING",
+      "future_output_field": "overall_risk_state",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "calibration_warning_minimum_warning_state",
+      "trigger_design": "calibration_not_reliable_for_thresholding"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "WEAK",
+      "future_output_field": "model_confidence_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "weak_rank_signal_model_confidence",
+      "trigger_design": "selected_score_variant_weak_rank_signal"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "SINGLE_SOURCE_WARNING",
+      "future_output_field": "provider_concentration_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "single_provider_concentration",
+      "trigger_design": "provider_source_concentration_disclosed"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "BLOCKED",
+      "future_output_field": "data_quality_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "data_quality_non_pass_blocks",
+      "trigger_design": "data_quality_flags contain non-PASS"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "BLOCKED",
+      "future_output_field": "overall_risk_state",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "leakage_failure_blocks",
+      "trigger_design": "leakage_flags not PASS"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "BLOCKED",
+      "future_output_field": "overall_risk_state",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "panel_tier_floor_blocks",
+      "trigger_design": "panel_tier below engineering_pilot"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "DEGRADED",
+      "future_output_field": "feature_stability_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "feature_instability_downgrades",
+      "trigger_design": "feature_sign_instability_bounded"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "WARNING",
+      "future_output_field": "target_horizon_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "target_horizon_warning_downgrades",
+      "trigger_design": "weak_target_horizon_rank_signal"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "WARNING",
+      "future_output_field": "source_health_risk_tag",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "source_health_warning_downgrades",
+      "trigger_design": "source_health_score below future review threshold"
+    },
+    {
+      "execution_in_goal07a": false,
+      "future_effect_design": "WARNING",
+      "future_output_field": "overall_risk_state",
+      "real_symbol_assignment_in_goal07a": false,
+      "rule_id": "gap_or_volatility_market_warning",
+      "trigger_design": "future volatility/gap threshold warning"
+    }
+  ]
+}
