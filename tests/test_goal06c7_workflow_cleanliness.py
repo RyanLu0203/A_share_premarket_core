@@ -8,11 +8,11 @@ from ashare_premarket.validation.workflow_cleanliness import audit_workflow_clea
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_goal06c7_workflow_row_blocks_goal06d_until_engineering_pilot() -> None:
+def test_goal06c7_workflow_row_allows_only_goal06d_review_only_after_engineering_pilot() -> None:
     with (ROOT / "configs/project/workflow_status.csv").open(newline="", encoding="utf-8") as handle:
         rows = {row["workflow_id"]: row for row in csv.DictReader(handle)}
     assert rows["goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion"]["status"] == "implemented_review_only"
-    assert rows["goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion"]["allowed_next_action"] == "block_goal06d_until_engineering_pilot"
+    assert rows["goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion"]["allowed_next_action"] == "allow_goal06d_review_only_after_engineering_pilot"
     assert rows["goal06d_model_comparison_calibration"]["status"] == "future_review_only"
     assert "goal06c7" in rows["goal06d_model_comparison_calibration"]["allowed_next_action"]
 

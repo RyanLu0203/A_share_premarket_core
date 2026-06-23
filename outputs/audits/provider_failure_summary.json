@@ -102,7 +102,7 @@
   "run_id": "goal06c6_local_runtime",
   "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
   "silent_proxy_fallback_used": false,
-  "source_bundle_health_status": "PASS_WITH_WARNINGS",
+  "source_bundle_health_status": "PASS",
   "system_proxy_inheritance_allowed": false,
   "target_functions_inspected": {}
 }

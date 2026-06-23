@@ -35,7 +35,7 @@ Status: `PASS_WITH_WARNINGS`
 - `goal06c5_engineering_stage6c_panel`: PASS
 - `goal06c6_provider_failure_classification`: PASS
 - `goal06c6_source_backed_stage6c_panel`: PASS
-- `goal06d_blocked_until_engineering_pilot`: PASS
+- `goal06d_blocked_or_review_only_after_engineering_pilot`: PASS
 - `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS
 - `adapter_audit_passes`: PASS

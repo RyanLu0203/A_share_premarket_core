@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import os
+import time
 from collections import defaultdict
 from pathlib import Path
 from urllib.parse import urlencode
@@ -15,6 +16,7 @@ from ashare_premarket.providers.browser_assisted_provider import browser_depende
 from ashare_premarket.providers.browser_provider_events import BROWSER_EVENT_FIELDS, write_browser_assisted_audit
 from ashare_premarket.providers.browser_provider_policy import browser_assisted_enabled, browser_domain_allowed, target_domain
 from ashare_premarket.providers.browser_provider_switches import browser_provider_project_default
+from ashare_premarket.providers.failure_classification import retry_allowed
 from ashare_premarket.providers.local_import_provider import local_import_status, read_local_import_table
 from ashare_premarket.providers.provider_registry import engineering_bundle_root, load_ingestion_config, network_enabled
 from ashare_premarket.storage.policy import resolve_data_root
@@ -71,11 +73,13 @@ def run_goal06c7_provider_ladder_expansion(
 
     candidates = [symbol for symbol in ladder["candidate_universe_seed"] if _valid_symbol(symbol) and symbol not in set(load_blocked_symbols(root))]
     candidates = candidates[: int(config.get("candidate_symbol_count", 100))]
+    rate_limit_seconds = _rate_limit_seconds(config)
     benchmark_symbol = str(config.get("benchmark_symbols", ["000300"])[0])
     raw_start, raw_end = "20230101", "20241231"
     events: list[dict[str, object]] = []
     benchmark_rows, benchmark_event = _fetch_role(root, "benchmark_ohlcv_daily", benchmark_symbol, raw_start, raw_end, browser_enabled)
     events.extend(benchmark_event)
+    _sleep_between_provider_calls(rate_limit_seconds)
 
     selected: list[dict[str, object]] = []
     stock_rows: list[dict[str, object]] = []
@@ -86,6 +90,7 @@ def run_goal06c7_provider_ladder_expansion(
             break
         rows, role_events = _fetch_role(root, "stock_ohlcv_daily", symbol, raw_start, raw_end, browser_enabled)
         events.extend(role_events)
+        _sleep_between_provider_calls(rate_limit_seconds)
         symbol_dates = {row["trade_date"] for row in rows}
         overlap = sorted(symbol_dates & benchmark_dates)
         ready = len(rows) >= int(config.get("raw_history_trading_dates", 180)) and len(overlap) >= int(config.get("validation_trading_dates", 120)) + 25
@@ -137,10 +142,18 @@ def run_goal06c7_provider_ladder_expansion(
 def _fetch_role(root: Path, data_role: str, symbol: str, start: str, end: str, browser_enabled: bool) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
     events: list[dict[str, object]] = []
     url = _kline_url(symbol, start, end, data_role)
-    rows, event = _fetch_direct(url, data_role, symbol)
-    events.append(event)
-    if rows:
-        return rows, events
+    max_retries, backoff_seconds = _retry_policy(root)
+    for attempt_number in range(max_retries + 1):
+        rows, event = _fetch_direct(url, data_role, symbol)
+        if attempt_number:
+            event["safe_notes"] = f"retry={attempt_number}; {event['safe_notes']}"[:240]
+        events.append(event)
+        if rows:
+            return rows, events
+        failure_class = str(event.get("primary_failure_class", "UNKNOWN_PROVIDER_FAILURE"))
+        if not retry_allowed(failure_class) or attempt_number >= max_retries:
+            break
+        _sleep_between_provider_calls(backoff_seconds)
     if browser_enabled:
         if not browser_domain_allowed(root, url):
             events.append(_attempt("browser_assisted", "browser_assisted_optional", _function_name(data_role), data_role, target_domain(url), "FAIL", "BROWSER_ASSISTED_FORBIDDEN_BY_POLICY", "policy", fallback_provider_used="local_import", fallback_reason="non_finance_domain", safe_notes="domain blocked by finance policy"))
@@ -199,6 +212,28 @@ def _fetch_direct(url: str, data_role: str, symbol: str) -> tuple[list[dict[str,
     except Exception as exc:
         failure = _network_failure_class(exc)
         return [], _attempt("akshare", "akshare_direct", _function_name(data_role), data_role, target_domain(url), "FAIL", failure, "network_transport", fallback_provider_used="browser_assisted_optional", fallback_reason=failure, safe_notes=f"{type(exc).__name__}: {_safe_note(exc)}")
+
+
+def _retry_policy(root: Path) -> tuple[int, float]:
+    try:
+        policy = load_ingestion_config(root).get("retry_policy", {})
+    except FileNotFoundError:
+        return 0, 0.0
+    max_retries = max(0, int(policy.get("max_retries", 0)))
+    backoff_seconds = max(0.0, float(policy.get("backoff_seconds", 0.0)))
+    return max_retries, backoff_seconds
+
+
+def _rate_limit_seconds(config: dict[str, object]) -> float:
+    policy = config.get("rate_limit_policy", {})
+    if not isinstance(policy, dict):
+        return 0.0
+    return max(0.0, float(policy.get("min_seconds_between_symbol_calls", 0.0)))
+
+
+def _sleep_between_provider_calls(seconds: float) -> None:
+    if seconds > 0:
+        time.sleep(seconds)
 
 
 def _local_rows(root: Path, data_role: str, symbol: str) -> list[dict[str, object]]:

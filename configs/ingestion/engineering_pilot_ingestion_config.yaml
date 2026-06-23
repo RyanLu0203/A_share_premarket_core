@@ -2,14 +2,14 @@
   "config_id": "goal06c6_engineering_pilot_ingestion",
   "network_enabled_policy": "disabled_by_default_env_or_cli_opt_in",
   "symbol_target_count": 50,
-  "candidate_symbol_count": 100,
+  "candidate_symbol_count": 240,
   "raw_history_trading_dates": 180,
   "validation_trading_dates": 120,
   "minimum_stage6c_rows": 6000,
   "provider_timeout_seconds": 30,
   "retry_policy": {
     "max_retries": 2,
-    "backoff_seconds": 2,
+    "backoff_seconds": 0.5,
     "stop_on_403": true,
     "stop_on_429": true,
     "stop_on_bot_challenge": true

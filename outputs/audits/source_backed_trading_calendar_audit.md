@@ -1,6 +1,6 @@
 # Source-Backed Trading Calendar Audit
 
-Status: `PASS_WITH_WARNINGS`
-Raw history trading dates: `0`
-Validation trading dates: `0`
+Status: `PASS`
+Raw history trading dates: `484`
+Validation trading dates: `120`
 Dates are source-backed OHLCV trading dates, not calendar shortcuts.

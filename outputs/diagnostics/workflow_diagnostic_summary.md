@@ -6,16 +6,16 @@ The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `not yet promoted`.
 GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
-GOAL-06C.7 provider ladder status: `implemented with warnings; GOAL-06D blocked unless engineering_pilot reached`.
-Provider ladder panel tier: `below_contract_demo`.
-Provider ladder approved symbols: `0`.
-Provider ladder validation trading dates: `0`.
-Provider ladder Stage 6C engineering rows: `0`.
+GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
+Provider ladder panel tier: `engineering_pilot`.
+Provider ladder approved symbols: `50`.
+Provider ladder validation trading dates: `120`.
+Provider ladder Stage 6C engineering rows: `6000`.
 Browser-assisted provider project default: `false`.
-GOAL-06D allowed by provider ladder: `false`.
+GOAL-06D allowed by provider ladder: `true`.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
-Source-backed bundle manifest: ``PASS_WITH_WARNINGS``.
+Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, the contract-demo Stage 6C panel size, and `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs.
 GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 warnings are limited to documented source limitations, no-network/provider availability, browser-assisted optional runtime availability, and the panel not yet reaching `engineering_pilot`.
 

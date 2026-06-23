@@ -1,5 +1,49 @@
 # 09 Step Iteration Log
 
+## 2026-06-23 - GOAL-06C.7 Provider Ladder Engineering Pilot Run
+
+Status: `PASS`.
+
+What changed:
+
+- Wired GOAL-06C.7 provider-ladder retry and rate-limit policy into
+  `akshare_direct` calls so recoverable direct-provider failures are retried
+  and logged as distinct attempt events.
+- Expanded the candidate A-share seed universe and reran explicit
+  network-enabled provider-ladder ingestion.
+- Reached `engineering_pilot`: 50 approved symbols, 120 validation trading
+  dates, and 6000 usable Stage 6C engineering rows.
+- Updated workflow governance so GOAL-06D may proceed only as future
+  review-only model comparison/calibration after GOAL-06C.7 PASS.
+
+Evidence:
+
+- `outputs/audits/goal06c7_readiness_report.md`
+- `outputs/audits/source_backed_bundle_manifest_summary.json`
+- `outputs/stage6c/STAGE6C_source_backed_engineering_panel_coverage_summary.csv`
+- Local full bundle:
+  `/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current/`
+
+Failure classification:
+
+- Direct-provider failures remain classified separately, including
+  `BROWSER_NET_EMPTY_RESPONSE`.
+- Optional browser-assisted provider remains disabled by default and explicit
+  opt-in only.
+- A temporary CloakBrowser runtime probe installed dependencies in `/tmp` but
+  was interrupted during binary download fallback; it did not reach finance
+  page ingestion and is not counted as solving this Stage 6C panel.
+- Existing `cloakbrowser_reference_*` solved-problem tags remain preserved as
+  reference evidence only.
+
+Safety:
+
+- No raw HTML, payload bodies, screenshots, cookies, browser profiles, browser
+  cache, DB files, notebooks, production model artifacts, or heavy local
+  bundles were added to Git.
+- GOAL-06D is still `future_review_only`; GOAL-07A/07B, recommendation, risk,
+  dashboard, paper/live trading, production, and DQN/RL remain locked.
+
 ## 2026-06-22 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
 
 Status: `PASS_WITH_WARNINGS` unless an explicit provider-ladder run reaches

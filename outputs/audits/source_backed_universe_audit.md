@@ -1,7 +1,7 @@
 # Source-Backed Universe Audit
 
-Status: `PASS_WITH_WARNINGS`
-Selected symbols: `0`
-Candidate symbols: `100`
-Remaining symbol gap: `50`
+Status: `PASS`
+Selected symbols: `50`
+Candidate symbols: `240`
+Remaining symbol gap: `0`
 Blocked symbols are excluded.

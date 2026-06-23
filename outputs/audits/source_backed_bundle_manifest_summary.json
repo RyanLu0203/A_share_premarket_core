@@ -1,18 +1,18 @@
 {
-  "approved_symbols": 0,
-  "benchmark_rows": 0,
-  "browser_dependency_status": "AVAILABLE",
+  "approved_symbols": 50,
+  "benchmark_rows": 484,
+  "browser_dependency_status": "BROWSER_RUNTIME_DEPENDENCY_MISSING",
   "bundle_id": "goal06c7_provider_ladder_engineering_pilot_current",
-  "bundle_tier": "below_contract_demo",
-  "candidate_symbols": 100,
+  "bundle_tier": "engineering_pilot",
+  "candidate_symbols": 240,
   "data_root": "/Users/luxinyu/data/ashare_premarket",
-  "engineering_pilot_met": false,
-  "goal06d_allowed_to_proceed": false,
-  "goal06d_mode": "blocked",
+  "engineering_pilot_met": true,
+  "goal06d_allowed_to_proceed": true,
+  "goal06d_mode": "review_only",
   "goal_id": "GOAL-06C.7",
-  "health_status": "PASS_WITH_WARNINGS",
+  "health_status": "PASS",
   "heavy_data_committed": false,
-  "label_ready_rows": 0,
+  "label_ready_rows": 6000,
   "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current",
   "local_import_status": {
     "available_roles": [],
@@ -23,24 +23,24 @@
       "universe"
     ]
   },
-  "panel_tier": "below_contract_demo",
-  "pit_ready_rows": 0,
-  "provider_attempt_count": 303,
+  "panel_tier": "engineering_pilot",
+  "pit_ready_rows": 6000,
+  "provider_attempt_count": 139,
   "provider_ladder_order": [
     "akshare_direct",
     "browser_assisted_optional",
     "local_import",
     "future_vendor_data_placeholder"
   ],
-  "raw_history_trading_dates": 0,
+  "raw_history_trading_dates": 484,
   "raw_html_stored": false,
   "raw_payload_stored": false,
   "remaining_gap": {
-    "stage6c_rows": 6000,
-    "symbols": 50,
-    "validation_trading_dates": 120
+    "stage6c_rows": 0,
+    "symbols": 0,
+    "validation_trading_dates": 0
   },
-  "stage6c_engineering_rows": 0,
-  "stock_ohlcv_rows": 0,
-  "validation_trading_dates": 0
+  "stage6c_engineering_rows": 6000,
+  "stock_ohlcv_rows": 24190,
+  "validation_trading_dates": 120
 }

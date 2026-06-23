@@ -15,8 +15,8 @@ flowchart TD
     H -. "implemented review-only data gate" .-> X["GOAL-06C.5 Storage + Coverage + Engineering Panel<br/>(implemented_review_only; contract_demo)"]
     X -. "source-backed ingestion gate" .-> Y["GOAL-06C.6 Source-Backed Engineering Pilot Bundle<br/>(implemented_review_only; network-disabled by default)"]
     Y -. "scoped failure taxonomy" .-> Z["GOAL-06C.6A Network Isolation + Failure Taxonomy<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    Z -. "provider ladder gate" .-> AA["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; browser-assisted optional)"]
-    AA -. "blocked until engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    Z -. "provider ladder gate" .-> AA["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only; engineering_pilot PASS)"]
+    AA -. "review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
     I -. "future design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(future_design_only)"]
     J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
@@ -43,5 +43,8 @@ direct AKShare/local-import. The explicit CloakBrowser reference probe is
 separate, opt-in, tag-only, sanitized, and does not promote any downstream
 workflow block. GOAL-06C.7 adds a provider ladder where
 `browser_assisted_optional` is disabled by default, requires explicit CLI plus
-env opt-in, and counts only schema-valid finance rows. GOAL-06D remains blocked
-until the GOAL-06C.7 readiness report proves `engineering_pilot`.
+env opt-in, and counts only schema-valid finance rows. The latest GOAL-06C.7
+readiness report proves `engineering_pilot`, so GOAL-06D may proceed only as
+future review-only model comparison/calibration. GOAL-07A and all
+recommendation, risk calculation, dashboard, paper/live trading, production,
+and DQN/RL blocks remain locked or design-only.

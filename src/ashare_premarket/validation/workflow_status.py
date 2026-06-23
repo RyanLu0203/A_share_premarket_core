@@ -89,6 +89,8 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal06c6_status = goal06c6.get("status")
     goal06c6a_status = goal06c6a.get("status")
     goal06c7_status = goal06c7.get("status")
+    goal06c7_readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
+    goal06c7_engineering_pilot_pass = _goal06c7_engineering_pilot_pass(goal06c7_readiness)
     if goal06c_status not in {"future_review_only", "implemented_review_only"}:
         failures.append("GOAL-06C block must be future_review_only or implemented_review_only")
     if goal06c_status == "implemented_review_only":
@@ -105,8 +107,10 @@ def run_workflow_status_audit(root: Path) -> bool:
         readiness = _read(root / "outputs/audits/engineering_panel_readiness_report.md")
         if "Engineering Panel Readiness: PASS_WITH_WARNINGS" not in readiness and "Engineering Panel Readiness: PASS" not in readiness:
             failures.append("GOAL-06C.5 is implemented_review_only without a PASS/PASS_WITH_WARNINGS engineering panel readiness report")
-        if "GOAL-06D allowed to proceed: false" not in readiness:
-            failures.append("GOAL-06C.5 must keep GOAL-06D blocked until engineering_pilot")
+        goal06d_blocked = "GOAL-06D allowed to proceed: false" in readiness
+        goal06d_review_only_after_pilot = "GOAL-06D allowed to proceed: true" in readiness and goal06c7_engineering_pilot_pass
+        if not goal06d_blocked and not goal06d_review_only_after_pilot:
+            failures.append("GOAL-06C.5 must keep GOAL-06D blocked unless GOAL-06C.7 proves engineering_pilot readiness")
         if "GOAL-06C.5" not in full_roadmap:
             failures.append("full roadmap does not include GOAL-06C.5")
     if goal06c6_status != "implemented_review_only":
@@ -136,7 +140,7 @@ def run_workflow_status_audit(root: Path) -> bool:
     if goal06c7_status != "implemented_review_only":
         failures.append("GOAL-06C.7 must be implemented_review_only")
     else:
-        readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
+        readiness = goal06c7_readiness
         browser_audit = _read(root / "outputs/audits/browser_assisted_provider_audit.md")
         cleanliness = _read(root / "outputs/audits/workflow_cleanliness_audit.md")
         if "GOAL-06C.7 Engineering Data Base Expansion Readiness:" not in readiness:
@@ -186,7 +190,7 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06C.6 status: `{goal06c6_status or 'missing'}`.",
                 f"GOAL-06C.6A status: `{goal06c6a_status or 'missing'}`.",
                 f"GOAL-06C.7 status: `{goal06c7_status or 'missing'}`.",
-                "Next allowed goal after GOAL-06C.7: `GOAL-06D Model Comparison and Calibration` only after provider-ladder source-backed engineering_pilot readiness; currently blocked unless the readiness report says otherwise.",
+                "Next allowed goal after GOAL-06C.7: `GOAL-06D Model Comparison and Calibration` only as future review-only work after provider-ladder source-backed engineering_pilot readiness.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -266,11 +270,11 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == "goal06c5_engineering_data_coverage_storage_panel_expansion":
         next_goal = "GOAL-06C.6 source-backed engineering pilot bundle gate"
     elif row["workflow_id"] == "goal06c6_source_backed_engineering_pilot_bundle":
-        next_goal = "GOAL-06C.6A scoped failure taxonomy then GOAL-06D blocked until engineering_pilot"
+        next_goal = "GOAL-06C.6A scoped failure taxonomy then GOAL-06C.7 provider ladder"
     elif row["workflow_id"] == "goal06c6a_scoped_finance_network_failure_taxonomy":
         next_goal = "GOAL-06C.7 provider ladder engineering data base expansion"
     elif row["workflow_id"] == "goal06c7_provider_ladder_browser_assisted_engineering_data_base_expansion":
-        next_goal = "GOAL-06D blocked until provider-ladder engineering_pilot"
+        next_goal = "GOAL-06D review-only after provider-ladder engineering_pilot"
     else:
         next_goal = row["stage_or_goal"]
     return {
@@ -286,6 +290,15 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
 
 def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8") if path.exists() else ""
+
+
+def _goal06c7_engineering_pilot_pass(readiness: str) -> bool:
+    return (
+        "GOAL-06C.7 Engineering Data Base Expansion Readiness: PASS" in readiness
+        and "Panel tier: `engineering_pilot`" in readiness
+        and "GOAL-06D allowed to proceed: true" in readiness
+        and "GOAL-06D mode: review_only" in readiness
+    )
 
 
 def _first_mermaid_block(text: str) -> str:

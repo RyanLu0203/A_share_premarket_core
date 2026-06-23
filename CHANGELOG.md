@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-23 - GOAL-06C.7 Engineering Pilot Reached
+
+- Added configured direct-provider retry and rate limiting to the GOAL-06C.7
+  provider ladder so recoverable finance endpoint failures are retried and
+  recorded as separate attempt events.
+- Expanded the candidate A-share seed universe and reran explicit
+  network-enabled provider-ladder ingestion.
+- Reached `engineering_pilot` with 50 approved symbols, 120 validation trading
+  dates, and 6000 usable Stage 6C engineering rows.
+- Preserved the optional browser-assisted path as explicit opt-in only. The
+  current GOAL-06C.7 panel was solved by `akshare_direct`; the temporary
+  CloakBrowser runtime probe was interrupted during binary download and was not
+  counted as ingestion success.
+- Updated GOAL-06D governance so only future review-only model
+  comparison/calibration may proceed after GOAL-06C.7 PASS. Risk,
+  recommendation, dashboard, paper/live trading, production, and DQN/RL remain
+  locked.
+
 ## 2026-06-22 - GOAL-06C.7 Provider Ladder Engineering Data Base Expansion
 
 - Added a deterministic provider ladder:

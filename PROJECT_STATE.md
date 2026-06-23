@@ -1,20 +1,18 @@
 # Project State
 
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 
 ## Current Stage
 
-Status: `PASS_WITH_WARNINGS` for GOAL-06C expanded validation and ranking
-baseline gate. Warnings are limited to small clean-bootstrap review fixture
-size; leakage and downstream boundary audits pass. GOAL-06C.5 is implemented as
-a review-only engineering data foundation gate. GOAL-06C.6 is implemented as a
-source-backed AKShare/provider ingestion gate with network disabled by default.
-GOAL-06C.6A is implemented as a scoped finance-only network isolation and
-provider failure taxonomy gate. The latest explicit AKShare run still fails at
-the external network/proxy path after scoped proxy-env cleanup, classified as
-`FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED`, so the
-taxonomy/isolation gate is `PASS_WITH_WARNINGS` while the source-backed bundle
-remains blocked.
+Status: `PASS` for GOAL-06C.7 provider-ladder engineering data base expansion.
+The latest explicit network-enabled run reached `engineering_pilot`: 50
+approved symbols, 120 validation trading dates, and 6000 usable Stage 6C rows.
+GOAL-06C expanded validation remains review-only; leakage and downstream
+boundary audits pass. GOAL-06C.5 is implemented as a review-only engineering
+data foundation gate. GOAL-06C.6 is implemented as a source-backed
+AKShare/provider ingestion gate with network disabled by default. GOAL-06C.6A
+is implemented as a scoped finance-only network isolation and provider failure
+taxonomy gate.
 GOAL-06C.7 is implemented as a review-only provider-ladder engineering data
 base expansion gate. Its provider ladder is `akshare_direct`,
 `browser_assisted_optional`, `local_import`, and
@@ -24,8 +22,10 @@ default, requires both `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
 and counts only schema-valid finance rows. Domain access alone is classified
 separately and does not count as ingestion success.
 The panel remains below `engineering_pilot` unless the source-backed bundle
-audit explicitly proves 50 symbols, 120 trading dates, and 6000 usable rows;
-GOAL-06D remains blocked until then.
+audit explicitly proves 50 symbols, 120 trading dates, and 6000 usable rows.
+The current GOAL-06C.7 readiness report proves that threshold. GOAL-06D may
+therefore proceed only as future review-only model comparison/calibration work;
+GOAL-07A and everything downstream remain locked.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -97,12 +97,13 @@ Implemented review-only:
 - GOAL-06C.6A scoped finance network isolation and provider failure taxonomy
   gate (`PASS_WITH_WARNINGS` while AKShare remains externally blocked)
 - GOAL-06C.7 provider ladder engineering data base expansion gate
-  (`PASS_WITH_WARNINGS` unless the bundle reaches `engineering_pilot`)
+  (`PASS`; current provider-ladder bundle reached `engineering_pilot`)
 
 Future review-only:
 
-- GOAL-06D model comparison and calibration, blocked until GOAL-06C.7 reaches a
-  source-backed `engineering_pilot` panel and cleanliness evidence passes
+- GOAL-06D model comparison and calibration. GOAL-06C.7 now satisfies the
+  `engineering_pilot` entry condition, so GOAL-06D may proceed only as
+  review-only future work.
 
 Still locked:
 
@@ -117,10 +118,10 @@ Still locked:
 - DQN/RL
 
 GOAL-06D may begin only as a future review-only model comparison/calibration
-task if GOAL-06C.6 readiness explicitly allows it after source-backed
-`engineering_pilot` coverage. After GOAL-06C.7, the authoritative readiness
-check is `outputs/audits/goal06c7_readiness_report.md`; the current readiness
-report keeps GOAL-06D blocked unless that threshold is met.
+task. After GOAL-06C.7, the authoritative readiness check is
+`outputs/audits/goal06c7_readiness_report.md`; the current report is `PASS` and
+allows only GOAL-06D review-only work. It does not unlock risk, recommendation,
+dashboard, paper/live trading, production, or DQN/RL.
 
 ## Current Evidence Chain
 
@@ -190,11 +191,18 @@ source-backed `engineering_pilot`.
   AKShare/local-import paths. The explicit CloakBrowser reference probe is
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
   downstream module by itself.
-- GOAL-06C.7 upgrades the reference idea into a controlled provider ladder.
+- GOAL-06C.7 upgraded the reference idea into a controlled provider ladder and
+  reached `engineering_pilot` in the latest explicit network-enabled run.
   Browser-assisted ingestion remains opt-in, finance-domain-only, sanitized,
   and non-default; `BROWSER_ASSISTED_DOMAIN_ACCESS_ONLY`,
   `BROWSER_NET_EMPTY_RESPONSE`, and
-  `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED` are distinct labels.
+  `BROWSER_ASSISTED_STRUCTURED_INGESTION_SOLVED` are distinct labels. In the
+  latest GOAL-06C.7 run the engineering panel was solved by `akshare_direct`;
+  the temporary CloakBrowser runtime probe was interrupted at binary download,
+  so it is not counted as source-backed ingestion for this panel. Existing
+  `cloakbrowser_reference_*` solved-problem tags remain preserved as reference
+  evidence only.
 
 These warnings do not affect Class A active workflow reproducibility through
-GOAL-06C review-only validation and do not unlock downstream modules.
+GOAL-06C.7 review-only validation and do not unlock downstream modules beyond
+GOAL-06D review-only entry.

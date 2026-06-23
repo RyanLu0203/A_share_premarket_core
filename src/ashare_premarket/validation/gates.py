@@ -135,7 +135,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal06c5_engineering_stage6c_panel", rebuild_stage6c_from_engineering_panel(root)),
         ("goal06c6_provider_failure_classification", audit_provider_failure_classification(root)),
         ("goal06c6_source_backed_stage6c_panel", audit_stage6c_source_backed_engineering_panel(root)),
-        ("goal06d_blocked_until_engineering_pilot", "GOAL-06D allowed to proceed: false" in _read(root / "outputs/audits/engineering_panel_readiness_report.md")),
+        ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
         ("adapter_audit_passes", run_adapter_audit(root)),
@@ -147,6 +147,19 @@ def run_e2e_validation(root: Path) -> bool:
     write_text(root / "outputs/audits/e2e_trunk_validation_report_through_goal06b.md", "\n".join(body))
     write_readiness_report(root, status)
     return status != "BLOCKED"
+
+
+def _goal06d_gate_satisfied(root: Path) -> bool:
+    engineering_readiness = _read(root / "outputs/audits/engineering_panel_readiness_report.md")
+    if "GOAL-06D allowed to proceed: false" in engineering_readiness:
+        return True
+    goal06c7_readiness = _read(root / "outputs/audits/goal06c7_readiness_report.md")
+    return (
+        "GOAL-06D allowed to proceed: true" in engineering_readiness
+        and "GOAL-06C.7 Engineering Data Base Expansion Readiness: PASS" in goal06c7_readiness
+        and "Panel tier: `engineering_pilot`" in goal06c7_readiness
+        and "GOAL-06D mode: review_only" in goal06c7_readiness
+    )
 
 
 def run_goal06b_regression_suite(root: Path) -> bool:

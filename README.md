@@ -78,13 +78,13 @@ flowchart TD
     E -. "source-backed provider gate" .-> G["GOAL-06C.6 AKShare Engineering Pilot Bundle Gate<br/>(implemented_review_only)"]
     G -. "failure taxonomy gate" .-> H["GOAL-06C.6A Scoped Network + Failure Taxonomy<br/>(implemented_review_only)"]
     H -. "provider ladder gate" .-> I["GOAL-06C.7 Provider Ladder Engineering Data Base Expansion<br/>(implemented_review_only)"]
-    I -. "blocked until engineering_pilot" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
+    I -. "engineering_pilot reached; review-only next" .-> F["GOAL-06D Model Comparison / Calibration<br/>(future_review_only)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
 signals, position bands, portfolio weights, or production model outputs.
-GOAL-06C.5 currently classifies the panel as `contract_demo`: 8 rows, 4 trading
-dates, and 2 approved symbols.
+GOAL-06C.5 originally classified the small clean-bootstrap panel as
+`contract_demo`: 8 rows, 4 trading dates, and 2 approved symbols.
 GOAL-06C.6 adds compliant AKShare/source-backed ingestion infrastructure.
 Network ingestion is disabled by default and requires `ASHARE_ALLOW_NETWORK_INGESTION=1`
 or `--allow-network`. It classifies provider failures on the default AKShare
@@ -104,7 +104,11 @@ GOAL-06C.7 adds a deterministic provider ladder:
 default and requires both `ASHARE_ENABLE_BROWSER_ASSISTED_PROVIDER=1` and
 `--enable-browser-assisted`. It is finance-domain-only, dynamic-import-only,
 stores no raw browser artifacts, and counts only schema-valid rows. Domain
-access alone is tagged separately and does not unlock GOAL-06D.
+access alone is tagged separately. The latest explicit network-enabled
+GOAL-06C.7 run reached `engineering_pilot` with 50 approved symbols, 120
+validation trading dates, and 6000 usable rows. That allows only future
+GOAL-06D review-only model comparison/calibration work; it does not unlock
+risk, recommendation, dashboard, paper/live trading, production, or DQN/RL.
 
 ## Required Public Commands
 
@@ -192,10 +196,10 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 Recommendation, risk overlay calculation, dashboard, paper trading,
 broker/live trading, production DB writes, production model promotion, and
 DQN/RL remain locked. GOAL-06D is future review-only work and may proceed only
-after `outputs/audits/engineering_panel_readiness_report.md` allows it. The
-current contract-demo panel keeps GOAL-06D blocked.
-GOAL-06C.7 can unblock GOAL-06D only as future review-only work after a
-source-backed Stage 6C engineering panel reaches `engineering_pilot` or higher.
+after `outputs/audits/goal06c7_readiness_report.md` proves GOAL-06C.7
+`engineering_pilot`. The current report is `PASS`, so only GOAL-06D review-only
+work may proceed. GOAL-07A and everything downstream remain locked or
+design-only.
 
 ## Workflow Promotion Rule
 
