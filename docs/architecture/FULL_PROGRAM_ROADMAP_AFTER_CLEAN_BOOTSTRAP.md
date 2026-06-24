@@ -19,7 +19,8 @@ flowchart TD
     AA -. "implemented review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I -. "warning repair review-only" .-> I2["GOAL-06D.1 Calibration / Stability Warning Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I2 -. "implemented design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
-    J -. "locked future" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
+    J -. "review-only unlock readiness" .-> J2["GOAL-07A.1 Design Review + Unlock Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    J2 -. "locked future explicit unlock required" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(locked_future)"]
     K -. "locked future" .-> L["Position-Band Recommendation<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
@@ -50,7 +51,7 @@ readiness report proves `engineering_pilot`. GOAL-06D is implemented
 review-only with `PASS_WITH_WARNINGS`; GOAL-06D.1 bounds the calibration,
 stability, target-horizon, and provider-concentration warnings in a review-only
 repair layer. GOAL-07A is implemented only as design governance with warnings
-and no risk calculation. V2 factor research is planned but inactive in V1; no
+and no risk calculation. GOAL-07A.1 is implemented as review-only design review and marks GOAL-07B ready only for a future explicit review-only unlock request while keeping GOAL-07B locked. V2 factor research is planned but inactive in V1; no
 factor mining, IC/RankIC mining, factor library generation, or factor
 integration is active. GOAL-07B and all recommendation, risk calculation,
 dashboard, paper/live trading, production, factor-mining, and DQN/RL blocks

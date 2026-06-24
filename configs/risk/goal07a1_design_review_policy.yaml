@@ -1,0 +1,78 @@
+{
+  "forbidden_outputs": [
+    "outputs/risk_overlay",
+    "outputs/recommendations",
+    "outputs/positions",
+    "outputs/dashboard",
+    "outputs/paper_trading",
+    "outputs/live_trading",
+    "outputs/factors"
+  ],
+  "forbidden_schema_terms": [
+    "broker",
+    "buy",
+    "dashboard_decision",
+    "execution_instruction",
+    "final_rank",
+    "final_score",
+    "hold",
+    "order_action",
+    "portfolio_weight",
+    "position_size",
+    "position_weight",
+    "production_signal",
+    "recommend",
+    "recommended",
+    "risk_score",
+    "sell",
+    "target_position",
+    "tradable_rank",
+    "trade_signal"
+  ],
+  "goal": "GOAL-07A.1",
+  "goal07a1_execution_policy": {
+    "calculate_risk_values": false,
+    "generate_recommendations_or_positions": false,
+    "implement_goal07b": false,
+    "write_symbol_level_risk_rows": false
+  },
+  "goal07b_unlock_readiness_values": [
+    "ready_for_explicit_review_only_unlock",
+    "not_ready_fix_goal07a_warnings",
+    "blocked_due_to_boundary_violation"
+  ],
+  "mode": "design_review_only",
+  "required_dataset_ids": [
+    "goal06c7_engineering_panel",
+    "goal06d1_model_comparison_repair_summary",
+    "goal06d1_warning_audits",
+    "workflow_status_governance"
+  ],
+  "required_warning_fields": [
+    "calibration_warning_flags",
+    "feature_stability_warning_flags",
+    "provider_mode",
+    "selection_label",
+    "source_count",
+    "target_horizon_warning_flags"
+  ],
+  "status_values": [
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "FAIL"
+  ],
+  "warning_policy": {
+    "calibration_not_reliable_for_thresholding": "PASS_THROUGH_WARNING",
+    "feature_sign_instability_bounded": "PASS_THROUGH_WARNING",
+    "goal06c7_engineering_pilot_pass": "NOT_APPLICABLE",
+    "leakage_flags_not_pass": "BLOCKER_FOR_07B",
+    "missing_required_input_contract_fields": "BLOCKER_FOR_07B",
+    "output_schema_forbidden_overlap": "BLOCKER_FOR_07B",
+    "provider_source_concentration_disclosed": "PASS_THROUGH_WARNING",
+    "selected_score_variant_weak_rank_signal": "PASS_THROUGH_WARNING",
+    "single_provider_mode_akshare_direct": "DESIGN_REVIEW_WARNING",
+    "state_machine_ambiguity": "BLOCKER_FOR_07B",
+    "target_horizon_calibration_warning": "PASS_THROUGH_WARNING",
+    "weak_target_horizon_rank_signal": "PASS_THROUGH_WARNING"
+  }
+}

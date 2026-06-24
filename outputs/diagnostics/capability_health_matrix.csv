@@ -50,3 +50,4 @@ goal06d1_governance_v2_lock,GOAL-06D.1 governance and locked V2 factor placehold
 goal07a_input_output_contracts,GOAL-07A allowed input and future output schema design,GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active
 goal07a_rules_state_warning_mapping,"GOAL-07A risk rule catalog, state machine, and warning mapping design",GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active
 goal07a_governance_boundary_v2_lock,GOAL-07A design-only governance boundary and V2 factor lock,GOAL-07A,PASS,ashare_premarket.risk_design.goal07a,Keep active
+goal07a1_design_review_unlock_readiness,GOAL-07A.1 risk overlay design review and GOAL-07B unlock readiness,GOAL-07A.1,PASS,ashare_premarket.risk_design.goal07a1,Keep active

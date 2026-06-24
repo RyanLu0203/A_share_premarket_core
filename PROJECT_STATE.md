@@ -5,6 +5,7 @@ Last updated: 2026-06-23
 ## Current Stage
 
 Status: `PASS_WITH_WARNINGS` for GOAL-07A design-only risk overlay governance.
+Status: `PASS_WITH_WARNINGS` for GOAL-07A.1 risk overlay design review and GOAL-07B explicit unlock readiness.
 GOAL-06C.7 provider-ladder engineering data base expansion remains `PASS`; the
 latest explicit network-enabled run reached `engineering_pilot`: 50 approved
 symbols, 120 validation trading dates, and 6000 usable Stage 6C rows.
@@ -78,6 +79,8 @@ Implemented and protected:
   placeholder lock (`PASS_WITH_WARNINGS`)
 - GOAL-07A risk overlay design-only contracts, rule catalog, state machine,
   upstream warning mapping, governance boundary, and V2 lock audit
+- GOAL-07A.1 risk overlay design review, warning classification, forbidden
+  schema overlap audit, and GOAL-07B explicit unlock readiness manifest
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -119,6 +122,8 @@ Implemented design-only:
 
 - GOAL-07A risk overlay design gate (`PASS_WITH_WARNINGS`; contracts, schemas,
   rule catalog, state machine, upstream-warning mapping, and audits only)
+- GOAL-07A.1 risk overlay design review gate (`PASS_WITH_WARNINGS`; GOAL-07B
+  is ready only for a future explicit review-only unlock request)
 
 Future review-only:
 
@@ -136,7 +141,8 @@ Still locked:
 - production model promotion
 - DQN/RL
 
-GOAL-07A has run only as design-only risk overlay governance. Its authoritative
+GOAL-07A has run only as design-only risk overlay governance.
+GOAL-07A.1 has run only as review-only design review governance. Its report is `outputs/audits/goal07a1_design_review_report.md`; it marks GOAL-07B readiness as `ready_for_explicit_review_only_unlock` while keeping GOAL-07B `locked_future`. Its authoritative
 readiness check is `outputs/audits/goal07a_readiness_report.md`, currently
 `PASS_WITH_WARNINGS`, with allowed next action
 `prepare_goal07b_design_review_or_fix_goal07a_warnings`. It does not calculate

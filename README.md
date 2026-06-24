@@ -55,6 +55,13 @@ python scripts/audit_goal07a_upstream_warning_mapping.py
 python scripts/audit_goal07a_governance_boundary.py
 python scripts/audit_goal07a_boundary_locks.py
 python scripts/audit_goal07a_v2_factor_lock.py
+python scripts/run_goal07a1_risk_overlay_design_review_gate.py
+python scripts/audit_goal07a1_input_contract_readiness.py
+python scripts/audit_goal07a1_output_schema_safety.py
+python scripts/audit_goal07a1_rule_convertibility.py
+python scripts/audit_goal07a1_state_machine_review.py
+python scripts/audit_goal07a1_warning_policy.py
+python scripts/audit_goal07a1_boundary_locks.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -100,7 +107,8 @@ flowchart TD
     I -. "engineering_pilot reached; review-only gate" .-> F["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     F -. "warning repair review-only" .-> I2["GOAL-06D.1 Calibration / Stability Warning Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I2 -. "design-only implemented" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
-    J -. "locked future explicit unlock required" .-> K["GOAL-07B Risk Overlay Calculation<br/>(locked_future)"]
+    J -. "design review readiness" .-> J2["GOAL-07A.1 Design Review + Unlock Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    J2 -. "locked future explicit unlock required" .-> K["GOAL-07B Risk Overlay Calculation<br/>(locked_future)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -137,6 +145,7 @@ GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
 rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
+GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. It does not implement GOAL-07B; GOAL-07B remains `locked_future`.
 
 ## Required Public Commands
 
@@ -244,6 +253,8 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal07a_readiness_report.md`
 - `outputs/audits/goal07a_governance_boundary_audit.md`
 - `outputs/audits/goal07a_boundary_lock_audit.md`
+- `outputs/audits/goal07a1_design_review_report.md`
+- `outputs/audits/goal07a1_unlock_readiness_manifest.json`
 
 ## Lock Boundary
 

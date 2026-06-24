@@ -10,5 +10,6 @@
 - GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.
 - GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.
 - GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.
+- GOAL-07A.1 is review-only. It may mark GOAL-07B ready for an explicit future review-only unlock request, but does not unlock or execute GOAL-07B.
 - V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.
 - These warnings do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.

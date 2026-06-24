@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-06-24 - GOAL-07A.1 Risk Overlay Design Review Unlock Readiness
+
+- Added a review-only GOAL-07A.1 gate that checks GOAL-07A input contracts, future output schema safety, rule convertibility, state machine executability, warning policy, and downstream locks.
+- Added GOAL-07B unlock readiness manifest and warning classification table.
+- Marked GOAL-07B ready only for a future explicit review-only unlock request while keeping GOAL-07B `locked_future`.
+- Kept risk calculation, recommendation, position, dashboard, paper/live trading, production, backtest, factor mining, broker integration, and DQN/RL outputs absent.
+
 ## 2026-06-23 - GOAL-07A Risk Overlay Design-Only Gate
 
 - Added GOAL-07A design-only risk governance contracts under `configs/risk/`

@@ -1,0 +1,21 @@
+{
+  "allowed_next_action": "request_explicit_goal07b_review_only_unlock",
+  "dashboard_trading_production_backtest_factor_dqn_output_created": false,
+  "failures": [],
+  "goal": "GOAL-07A.1",
+  "goal07b_remains": "locked_future",
+  "goal07b_unlock_readiness": "ready_for_explicit_review_only_unlock",
+  "recommendation_or_position_output_created": false,
+  "risk_calculation_performed": false,
+  "status": "PASS_WITH_WARNINGS",
+  "symbol_level_risk_rows_created": false,
+  "warnings": [
+    "warning_policy:calibration_not_reliable_for_thresholding",
+    "warning_policy:feature_sign_instability_bounded",
+    "warning_policy:provider_source_concentration_disclosed",
+    "warning_policy:selected_score_variant_weak_rank_signal",
+    "warning_policy:single_provider_mode_akshare_direct",
+    "warning_policy:target_horizon_calibration_warning",
+    "warning_policy:weak_target_horizon_rank_signal"
+  ]
+}

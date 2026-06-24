@@ -28,6 +28,8 @@ flowchart TD
     Q -. "implemented review-only after engineering_pilot" .-> M["GOAL-06D Model Comparison / Calibration / Stability"]
     M -. "warning repair review-only" .-> M2["GOAL-06D.1 Calibration / Stability Warning Repair"]
     M2 -. "implemented design-only" .-> R["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
+    R -. "review-only unlock readiness" .-> R2["GOAL-07A.1 Design Review<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    R2 -. "locked future explicit unlock required" .-> R3["GOAL-07B Risk Overlay Calculation<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -51,7 +53,7 @@ review-only and bounds those warnings with repaired score variants,
 target-horizon diagnostics, calibration reliability checks, feature sign
 stability diagnostics, and provider concentration disclosure. GOAL-07A is
 implemented only as design governance with warnings and no risk overlay
-calculation. GOAL-07B remains locked until a future explicit unlock. V2 factor
+calculation. GOAL-07A.1 is implemented only as review-only design review and marks GOAL-07B ready for a future explicit review-only unlock request; GOAL-07B remains locked. GOAL-07B remains locked until a future explicit unlock. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, locked, planned-locked, and deleted-from-active-mainline blocks use

@@ -38,8 +38,49 @@
     "consume_real_symbol_rows": false,
     "write_symbol_level_outputs": false
   },
+  "grain": "trade_date + symbol",
+  "missing_optional_field_policy": "classify_as_DESIGN_REVIEW_WARNING_not_silent_failure",
   "mode": "design_only",
+  "optional_future_input_fields": [
+    "stock_volatility_20d",
+    "turnover_proxy",
+    "relative_strength_20d"
+  ],
   "pit_safety_rule": "future GOAL-07B inputs must be available at or before as_of_date and must not include forward labels or future returns",
+  "required_upstream_datasets": [
+    {
+      "dataset_id": "goal06c7_engineering_panel",
+      "grain": "trade_date + symbol",
+      "path": "outputs/stage6c/STAGE6C_source_backed_engineering_panel_coverage_summary.csv",
+      "required_for_goal07b_review_only": true
+    },
+    {
+      "dataset_id": "goal06d1_model_comparison_repair_summary",
+      "grain": "model_name + target_horizon",
+      "path": "outputs/models/goal06d1/model_comparison_repair_summary.csv",
+      "required_for_goal07b_review_only": true
+    },
+    {
+      "dataset_id": "goal06d1_warning_audits",
+      "grain": "review_only_warning_code",
+      "path": "outputs/audits/goal06d1_readiness_report.md",
+      "required_for_goal07b_review_only": true
+    },
+    {
+      "dataset_id": "workflow_status_governance",
+      "grain": "workflow_id",
+      "path": "configs/project/workflow_status.csv",
+      "required_for_goal07b_review_only": true
+    }
+  ],
+  "required_warning_fields": [
+    "selection_label",
+    "calibration_warning_flags",
+    "feature_stability_warning_flags",
+    "target_horizon_warning_flags",
+    "provider_mode",
+    "source_count"
+  ],
   "risk_domains": [
     {
       "allowed_input_fields": [

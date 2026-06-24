@@ -31,6 +31,9 @@
 - GOAL-07A risk overlay design-only governance gate (`PASS_WITH_WARNINGS`;
   no risk calculation, recommendation, position, dashboard, trading,
   production, factor-mining, or DQN/RL output).
+- GOAL-07A.1 risk overlay design review unlock-readiness gate
+  (`PASS_WITH_WARNINGS`; GOAL-07B remains locked until a separate explicit
+  review-only unlock goal).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -38,8 +41,7 @@
 ## Next Allowed Work
 
 GOAL-07A has implemented the risk overlay blueprint only as design governance.
-The next possible step is GOAL-07B design review or a future explicit
-calculation-prototype unlock after GOAL-07A warnings are accepted or repaired.
+GOAL-07A.1 has completed the GOAL-07B unlock-readiness design review. The next possible step is a future explicit GOAL-07B review-only unlock request; GOAL-07B remains locked until that separate goal is approved.
 No risk overlay calculation, recommendation, position, dashboard,
 paper/live trading, production DB writes, production model promotion, factor
 mining, or DQN/RL is unlocked.

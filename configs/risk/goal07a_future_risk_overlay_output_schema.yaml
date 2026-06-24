@@ -18,7 +18,11 @@
     "overall_risk_state",
     "risk_explanation_code",
     "risk_governance_flags",
-    "review_only"
+    "review_only",
+    "risk_severity",
+    "risk_confidence_level",
+    "risk_rule_trace",
+    "risk_audit_metadata"
   ],
   "empty_schema_sample": {
     "columns": [
@@ -40,7 +44,11 @@
       "overall_risk_state",
       "risk_explanation_code",
       "risk_governance_flags",
-      "review_only"
+      "review_only",
+      "risk_severity",
+      "risk_confidence_level",
+      "risk_rule_trace",
+      "risk_audit_metadata"
     ],
     "row_count": 0
   },

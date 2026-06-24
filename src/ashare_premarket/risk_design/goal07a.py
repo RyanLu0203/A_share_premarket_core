@@ -90,6 +90,10 @@ ALLOWED_SCHEMA_FIELDS = [
     "risk_explanation_code",
     "risk_governance_flags",
     "review_only",
+    "risk_severity",
+    "risk_confidence_level",
+    "risk_rule_trace",
+    "risk_audit_metadata",
 ]
 
 FORBIDDEN_SCHEMA_FIELDS = [
@@ -251,6 +255,47 @@ def _allowed_input_contract() -> dict[str, object]:
         "mode": "design_only",
         "future_goal_that_may_consume_contract": "GOAL-07B_after_explicit_unlock",
         "upstream_source": "GOAL-06D.1 review-only model baseline",
+        "grain": "trade_date + symbol",
+        "required_upstream_datasets": [
+            {
+                "dataset_id": "goal06c7_engineering_panel",
+                "path": "outputs/stage6c/STAGE6C_source_backed_engineering_panel_coverage_summary.csv",
+                "grain": "trade_date + symbol",
+                "required_for_goal07b_review_only": True,
+            },
+            {
+                "dataset_id": "goal06d1_model_comparison_repair_summary",
+                "path": "outputs/models/goal06d1/model_comparison_repair_summary.csv",
+                "grain": "model_name + target_horizon",
+                "required_for_goal07b_review_only": True,
+            },
+            {
+                "dataset_id": "goal06d1_warning_audits",
+                "path": "outputs/audits/goal06d1_readiness_report.md",
+                "grain": "review_only_warning_code",
+                "required_for_goal07b_review_only": True,
+            },
+            {
+                "dataset_id": "workflow_status_governance",
+                "path": "configs/project/workflow_status.csv",
+                "grain": "workflow_id",
+                "required_for_goal07b_review_only": True,
+            },
+        ],
+        "required_warning_fields": [
+            "selection_label",
+            "calibration_warning_flags",
+            "feature_stability_warning_flags",
+            "target_horizon_warning_flags",
+            "provider_mode",
+            "source_count",
+        ],
+        "optional_future_input_fields": [
+            "stock_volatility_20d",
+            "turnover_proxy",
+            "relative_strength_20d",
+        ],
+        "missing_optional_field_policy": "classify_as_DESIGN_REVIEW_WARNING_not_silent_failure",
         "allowed_future_input_fields": ALLOWED_INPUT_FIELDS,
         "forbidden_inputs": FORBIDDEN_INPUTS,
         "pit_safety_rule": "future GOAL-07B inputs must be available at or before as_of_date and must not include forward labels or future returns",
@@ -341,16 +386,16 @@ def _output_schema_design() -> dict[str, object]:
 
 def _rule_catalog_design() -> dict[str, object]:
     rules = [
-        ("calibration_warning_minimum_warning_state", "calibration_not_reliable_for_thresholding", "overall_risk_state", "WARNING"),
-        ("weak_rank_signal_model_confidence", "selected_score_variant_weak_rank_signal", "model_confidence_risk_tag", "WEAK"),
-        ("single_provider_concentration", "provider_source_concentration_disclosed", "provider_concentration_risk_tag", "SINGLE_SOURCE_WARNING"),
-        ("data_quality_non_pass_blocks", "data_quality_flags contain non-PASS", "data_quality_risk_tag", "BLOCKED"),
-        ("leakage_failure_blocks", "leakage_flags not PASS", "overall_risk_state", "BLOCKED"),
-        ("panel_tier_floor_blocks", "panel_tier below engineering_pilot", "overall_risk_state", "BLOCKED"),
-        ("feature_instability_downgrades", "feature_sign_instability_bounded", "feature_stability_risk_tag", "DEGRADED"),
-        ("target_horizon_warning_downgrades", "weak_target_horizon_rank_signal", "target_horizon_risk_tag", "WARNING"),
-        ("source_health_warning_downgrades", "source_health_score below future review threshold", "source_health_risk_tag", "WARNING"),
-        ("gap_or_volatility_market_warning", "future volatility/gap threshold warning", "overall_risk_state", "WARNING"),
+        ("calibration_warning_minimum_warning_state", "calibration_risk", "calibration_not_reliable_for_thresholding", "overall_risk_state", "WARNING", "WARNING", "boolean warning flag present in GOAL-06D.1 readiness evidence", "pass through as a calibration risk warning; never convert to a trading decision"),
+        ("weak_rank_signal_model_confidence", "model_confidence_risk", "selected_score_variant_weak_rank_signal", "model_confidence_risk_tag", "WEAK", "WARNING", "boolean weak-rank warning from GOAL-06D.1 selected repaired baseline", "pass through as model confidence warning"),
+        ("single_provider_concentration", "provider_concentration_risk", "provider_source_concentration_disclosed", "provider_concentration_risk_tag", "SINGLE_SOURCE_WARNING", "WARNING", "provider/source concentration warning present or source_count <= 1", "pass through as source concentration warning"),
+        ("data_quality_non_pass_blocks", "data_quality_risk", "data_quality_flags contain non-PASS", "data_quality_risk_tag", "BLOCKED", "BLOCKED", "split data_quality_flags on semicolon and block when any required flag is not PASS", "hard block for future GOAL-07B review-only calculation"),
+        ("leakage_failure_blocks", "governance_boundary_risk", "leakage_flags not PASS", "overall_risk_state", "BLOCKED", "BLOCKED", "leakage_flags must equal PASS at the future PIT-safe grain", "hard block; no risk tag or recommendation can be produced"),
+        ("panel_tier_floor_blocks", "governance_boundary_risk", "panel_tier below engineering_pilot", "overall_risk_state", "BLOCKED", "BLOCKED", "panel_tier must be one of engineering_pilot, research_ready, strong_panel", "hard block until engineering_pilot evidence exists"),
+        ("feature_instability_downgrades", "feature_stability_risk", "feature_sign_instability_bounded", "feature_stability_risk_tag", "DEGRADED", "DEGRADED", "boolean bounded feature-instability warning present", "downgrade future review-only risk confidence"),
+        ("target_horizon_warning_downgrades", "target_horizon_risk", "weak_target_horizon_rank_signal", "target_horizon_risk_tag", "WARNING", "WARNING", "boolean weak target-horizon rank warning present", "pass through as target-horizon risk warning"),
+        ("source_health_warning_downgrades", "source_health_risk", "source_health_score below future configured min_source_health_score", "source_health_risk_tag", "WARNING", "WARNING", "future GOAL-07B config must define min_source_health_score before execution", "warn or block according to the future explicit config"),
+        ("gap_or_volatility_market_warning", "market_regime_risk", "future volatility/gap threshold warning", "overall_risk_state", "WARNING", "WARNING", "future GOAL-07B config must define max_volatility_20d and max_abs_gap_signal before execution", "market warning only; no trading action"),
     ]
     return {
         "goal": "GOAL-07A",
@@ -359,13 +404,18 @@ def _rule_catalog_design() -> dict[str, object]:
         "rules": [
             {
                 "rule_id": rule_id,
+                "risk_domain_id": risk_domain_id,
                 "trigger_design": trigger,
                 "future_output_field": output_field,
                 "future_effect_design": effect,
+                "severity_level": severity,
+                "threshold_logic_design": threshold_logic,
+                "warning_behavior": warning_behavior,
+                "data_dependency_policy": "PIT_safe_review_only_contract_fields_no_execution_feed",
                 "execution_in_goal07a": False,
                 "real_symbol_assignment_in_goal07a": False,
             }
-            for rule_id, trigger, output_field, effect in rules
+            for rule_id, risk_domain_id, trigger, output_field, effect, severity, threshold_logic, warning_behavior in rules
         ],
     }
 
@@ -384,20 +434,28 @@ def _state_machine_design() -> dict[str, object]:
         ("market_warning", "eligible_for_review_only_snapshot", "all governance conditions satisfied"),
         ("eligible_for_review_only_snapshot", "blocked_from_recommendation", "any hard boundary violation"),
     ]
+    blocked_transitions = [
+        {"from_state": "data_blocked", "to_state": "eligible_for_review_only_snapshot", "reason": "data or leakage blockers cannot become eligible without a fresh explicit GOAL-07B unlock audit"},
+        {"from_state": "input_invalid", "to_state": "eligible_for_review_only_snapshot", "reason": "invalid input contracts cannot be promoted"},
+        {"from_state": "blocked_from_recommendation", "to_state": "eligible_for_review_only_snapshot", "reason": "hard boundary violations require a separate repair goal"},
+    ]
     return {
         "goal": "GOAL-07A",
         "mode": "state_machine_design_only",
         "states": STATE_MACHINE_STATES,
+        "transition_output_policy": "diagnostic_state_only_no_trade_action_no_recommendation_no_position",
         "transitions": [
             {
                 "from_state": source,
                 "to_state": target,
                 "trigger_design": trigger,
+                "output_semantics": "diagnostic_only",
                 "execution_in_goal07a": False,
                 "real_symbol_transition_in_goal07a": False,
             }
             for source, target, trigger in transitions
         ],
+        "blocked_transitions": blocked_transitions,
     }
 
 
@@ -631,7 +689,12 @@ def _audit_allowed_input_contract(payload: dict[str, object]) -> str:
         "forbidden_use_in_goal07a",
     }
     complete_domains = all(required_domain_fields <= set(domain) for domain in domains if isinstance(domain, dict))
-    return "PASS" if set(RISK_DOMAINS) == domain_ids and complete_domains and payload["goal07a_execution_policy"]["calculate_risk_values"] is False else "BLOCKED"
+    datasets = payload.get("required_upstream_datasets", [])
+    dataset_ids = {item.get("dataset_id") for item in datasets if isinstance(item, dict)}
+    required_dataset_ids = {"goal06c7_engineering_panel", "goal06d1_model_comparison_repair_summary", "goal06d1_warning_audits", "workflow_status_governance"}
+    grain_ok = payload.get("grain") == "trade_date + symbol"
+    warning_fields_ok = set(payload.get("required_warning_fields", [])) <= set(payload.get("allowed_future_input_fields", []))
+    return "PASS" if set(RISK_DOMAINS) == domain_ids and complete_domains and required_dataset_ids <= dataset_ids and grain_ok and warning_fields_ok and payload["goal07a_execution_policy"]["calculate_risk_values"] is False else "BLOCKED"
 
 
 def _audit_output_schema(payload: dict[str, object]) -> str:
@@ -645,7 +708,8 @@ def _audit_rule_catalog(payload: dict[str, object]) -> str:
     states_ok = set(RISK_STATES) <= set(payload.get("allowed_future_risk_states", []))
     rules = payload.get("rules", [])
     design_only = all(rule.get("execution_in_goal07a") is False and rule.get("real_symbol_assignment_in_goal07a") is False for rule in rules if isinstance(rule, dict))
-    return "PASS" if states_ok and len(rules) >= 6 and design_only else "BLOCKED"
+    convertible = all(rule.get("risk_domain_id") and rule.get("threshold_logic_design") and rule.get("severity_level") in RISK_STATES and rule.get("warning_behavior") for rule in rules if isinstance(rule, dict))
+    return "PASS" if states_ok and len(rules) >= 6 and design_only and convertible else "BLOCKED"
 
 
 def _audit_state_machine(payload: dict[str, object]) -> str:
@@ -664,7 +728,9 @@ def _audit_state_machine(payload: dict[str, object]) -> str:
         "any hard boundary violation",
     }
     triggers = {item.get("trigger_design") for item in transitions if isinstance(item, dict)}
-    return "PASS" if states_ok and required_triggers <= triggers and design_only else "BLOCKED"
+    blocked_explicit = bool(payload.get("blocked_transitions"))
+    diagnostic_only = payload.get("transition_output_policy") == "diagnostic_state_only_no_trade_action_no_recommendation_no_position"
+    return "PASS" if states_ok and required_triggers <= triggers and design_only and blocked_explicit and diagnostic_only else "BLOCKED"
 
 
 def _audit_warning_mapping(payload: dict[str, object]) -> str:

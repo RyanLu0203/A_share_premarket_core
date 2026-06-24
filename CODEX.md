@@ -51,6 +51,7 @@ reproducibility and source governance before any future risk calculation work.
 - GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
   defines contracts, future schema, rule catalog, state machine,
   upstream-warning mapping, governance boundary, and V2 lock audits only.
+- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and marks GOAL-07B ready only for a future explicit review-only unlock request; it does not implement GOAL-07B.
 - Production model promotion is false.
 - GOAL-07B risk calculation, recommendation, position output, dashboard, paper
   trading, broker/live trading, production DB writes, V2 factor mining, and
@@ -143,6 +144,11 @@ positions, risk overlays, dashboards, trading outputs, production model
 promotion, or factor-mining outputs.
 
 ## GOAL-07A Agent Note
+## GOAL-07A.1 Agent Note
+
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+
+
 
 GOAL-07A is implemented only as design governance. It may define input
 contracts, future schemas, rule catalogs, state machines, warning mappings, and

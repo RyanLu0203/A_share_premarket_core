@@ -4,7 +4,7 @@ Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `implemented with warnings`.
-GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
+GOAL-06C.5 engineering data foundation status: `engineering panel ready`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
 Provider ladder panel tier: `engineering_pilot`.
@@ -37,6 +37,14 @@ GOAL-07A upstream warning mapping status: `PASS`.
 GOAL-07A governance boundary status: `PASS`.
 GOAL-07A boundary lock status: `PASS`.
 GOAL-07A V2 factor lock status: `PASS`.
+GOAL-07A.1 design review status: `PASS_WITH_WARNINGS`.
+GOAL-07A.1 input contract review status: `PASS`.
+GOAL-07A.1 schema safety status: `PASS`.
+GOAL-07A.1 rule convertibility status: `PASS`.
+GOAL-07A.1 state machine review status: `PASS`.
+GOAL-07A.1 boundary lock status: `PASS`.
+GOAL-07B unlock readiness: `ready_for_explicit_review_only_unlock`.
+GOAL-07A.1 allowed next action: `request_explicit_goal07b_review_only_unlock`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B lock status: `locked_future`.
 Recommendation lock status: `locked_future`.
@@ -50,6 +58,7 @@ Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
 GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
+GOAL-07A.1 reviews GOAL-07A design readiness only; it can mark GOAL-07B ready for an explicit future review-only unlock request, but it does not implement GOAL-07B.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -100,3 +109,10 @@ Protected regression commands:
 - `python scripts/audit_goal07a_governance_boundary.py`
 - `python scripts/audit_goal07a_boundary_locks.py`
 - `python scripts/audit_goal07a_v2_factor_lock.py`
+- `python scripts/run_goal07a1_risk_overlay_design_review_gate.py`
+- `python scripts/audit_goal07a1_input_contract_readiness.py`
+- `python scripts/audit_goal07a1_output_schema_safety.py`
+- `python scripts/audit_goal07a1_rule_convertibility.py`
+- `python scripts/audit_goal07a1_state_machine_review.py`
+- `python scripts/audit_goal07a1_warning_policy.py`
+- `python scripts/audit_goal07a1_boundary_locks.py`

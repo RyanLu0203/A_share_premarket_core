@@ -1,0 +1,13 @@
+warning_code,classification,active_in_current_design,goal07b_policy
+calibration_not_reliable_for_thresholding,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+feature_sign_instability_bounded,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+provider_source_concentration_disclosed,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+selected_score_variant_weak_rank_signal,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+single_provider_mode_akshare_direct,DESIGN_REVIEW_WARNING,true,Keep visible during explicit unlock review; does not create trading action.
+weak_target_horizon_rank_signal,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+target_horizon_calibration_warning,PASS_THROUGH_WARNING,true,Pass through into future review-only risk warning metadata.
+missing_required_input_contract_fields,BLOCKER_FOR_07B,false,Blocks future GOAL-07B until repaired.
+leakage_flags_not_pass,BLOCKER_FOR_07B,false,Blocks future GOAL-07B until repaired.
+output_schema_forbidden_overlap,BLOCKER_FOR_07B,false,Blocks future GOAL-07B until repaired.
+state_machine_ambiguity,BLOCKER_FOR_07B,false,Blocks future GOAL-07B until repaired.
+goal06c7_engineering_pilot_pass,NOT_APPLICABLE,false,No current blocking action.

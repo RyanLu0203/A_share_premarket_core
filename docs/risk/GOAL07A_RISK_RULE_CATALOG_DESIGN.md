@@ -15,5 +15,5 @@ Representative rules:
 - `panel_tier_floor_blocks`: if panel_tier below engineering_pilot then future `overall_risk_state` should be `BLOCKED`.
 - `feature_instability_downgrades`: if feature_sign_instability_bounded then future `feature_stability_risk_tag` should be `DEGRADED`.
 - `target_horizon_warning_downgrades`: if weak_target_horizon_rank_signal then future `target_horizon_risk_tag` should be `WARNING`.
-- `source_health_warning_downgrades`: if source_health_score below future review threshold then future `source_health_risk_tag` should be `WARNING`.
+- `source_health_warning_downgrades`: if source_health_score below future configured min_source_health_score then future `source_health_risk_tag` should be `WARNING`.
 - `gap_or_volatility_market_warning`: if future volatility/gap threshold warning then future `overall_risk_state` should be `WARNING`.

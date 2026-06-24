@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-06-24 - GOAL-07A.1 Risk Overlay Design Review Unlock Readiness
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added a review-only GOAL-07A.1 gate for GOAL-07A design output review.
+- Checked input contract readiness, future output schema safety, rule catalog convertibility, state machine review-only executability, upstream warning policy, and GOAL-07B/downstream locks.
+- Produced GOAL-07B unlock readiness as `ready_for_explicit_review_only_unlock` while keeping GOAL-07B `locked_future`.
+- Created no risk calculation rows, recommendations, positions, dashboards, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+
+Evidence:
+
+- `outputs/audits/goal07a1_design_review_report.md`
+- `outputs/audits/goal07a1_unlock_readiness_manifest.json`
+- `outputs/audits/goal07a1_warning_classification.csv`
+- `outputs/audits/goal07a1_boundary_lock_audit.md`
+
 ## 2026-06-23 - GOAL-07A Risk Overlay Design-Only Gate
 
 Status: `PASS_WITH_WARNINGS`.

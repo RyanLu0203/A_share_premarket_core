@@ -51,6 +51,7 @@ Implemented review-only:
 - GOAL-06D Model Comparison, Calibration, Stability, and Governance
   (`PASS_WITH_WARNINGS`)
 - GOAL-06D.1 Calibration Stability Warning Repair (`PASS_WITH_WARNINGS`)
+- GOAL-07A.1 Risk Overlay Design Review Unlock Readiness (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -197,6 +198,18 @@ Browser outcomes are classified precisely:
   empty response.
 
 `outputs/audits/goal06c7_readiness_report.md` proves `engineering_pilot`.
+
+## GOAL-07A.1 Status
+
+GOAL-07A.1 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It creates:
+
+- `outputs/audits/goal07a1_design_review_report.md`
+- `outputs/audits/goal07a1_unlock_readiness_manifest.json`
+- `outputs/audits/goal07a1_warning_classification.csv`
+
+The gate may mark GOAL-07B as ready for a future explicit review-only unlock request. It does not implement GOAL-07B and does not create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+
+
 
 ## GOAL-06D Status
 

@@ -156,6 +156,7 @@ def write_active_trunk_module_map(root: Path) -> Path:
             ("src/ashare_premarket/models/goal06d.py", "ashare_premarket.models.goal06d", "goal06d_model_comparison", "GOAL-06D", True, "scripts/run_goal06d_model_comparison_calibration.py"),
             ("src/ashare_premarket/models/goal06d1.py", "ashare_premarket.models.goal06d1", "goal06d1_warning_repair", "GOAL-06D.1", True, "scripts/run_goal06d1_calibration_stability_warning_repair.py"),
             ("src/ashare_premarket/risk_design/goal07a.py", "ashare_premarket.risk_design.goal07a", "goal07a_input_output_contracts", "GOAL-07A", True, "scripts/run_goal07a_risk_overlay_design_gate.py"),
+            ("src/ashare_premarket/risk_design/goal07a1.py", "ashare_premarket.risk_design.goal07a1", "goal07a1_design_review_unlock_readiness", "GOAL-07A.1", True, "scripts/run_goal07a1_risk_overlay_design_review_gate.py"),
             ("src/ashare_premarket/validation/gates.py", "ashare_premarket.validation.gates", "current_trunk_validation", "GOAL-06B", True, "scripts/run_e2e_trunk_validation_through_goal06b.py"),
             ("src/ashare_premarket/diagnostics/workflow.py", "ashare_premarket.diagnostics.workflow", "workflow_diagnostics", "GOAL-06B", True, "scripts/run_workflow_diagnostics.py"),
             ("src/ashare_premarket/ops/safety.py", "ashare_premarket.ops.safety", "safety_gate", "GOAL-06B", True, "scripts/run_safety_gate.py"),
@@ -317,6 +318,7 @@ def _configs_for(capability_id: str) -> str:
         "goal07a_input_output_contracts": "configs/risk/goal07a_allowed_input_contract.yaml;configs/risk/goal07a_future_risk_overlay_output_schema.yaml",
         "goal07a_rules_state_warning_mapping": "configs/risk/goal07a_risk_rule_catalog.yaml;configs/risk/goal07a_risk_state_machine.yaml;configs/risk/goal07a_upstream_warning_mapping.yaml",
         "goal07a_governance_boundary_v2_lock": "configs/project/workflow_status.csv;configs/factors/v2_factor_research_contract.yaml",
+        "goal07a1_design_review_unlock_readiness": "configs/risk/goal07a1_design_review_policy.yaml;configs/project/workflow_status.csv",
     }
     return mapping.get(capability_id, "")
 
@@ -326,6 +328,8 @@ def _tests_for(capability_id: str) -> str:
         if capability_id.startswith("goal06d1"):
             return "tests/test_goal06d1_target_horizon.py;tests/test_goal06d1_score_repair.py;tests/test_goal06d1_calibration_repair.py;tests/test_goal06d1_feature_sign_stability.py;tests/test_goal06d1_provider_concentration_disclosure.py;tests/test_goal06d1_governance.py;tests/test_goal06d1_boundary_locks.py;tests/test_v2_factor_interface_locked.py"
         return "tests/test_goal06d_feature_contract.py;tests/test_goal06d_chronological_split.py;tests/test_goal06d_model_comparison.py;tests/test_goal06d_calibration.py;tests/test_goal06d_stability.py;tests/test_goal06d_governance.py;tests/test_goal06d_boundary_locks.py"
+    if capability_id.startswith("goal07a1"):
+        return "tests/test_goal07a1_design_review.py"
     if capability_id.startswith("goal07a"):
         return "tests/test_goal07a_allowed_input_contract.py;tests/test_goal07a_output_schema_design.py;tests/test_goal07a_risk_rule_catalog.py;tests/test_goal07a_state_machine_design.py;tests/test_goal07a_upstream_warning_mapping.py;tests/test_goal07a_boundary_locks.py;tests/test_goal07a_governance.py;tests/test_goal07a_no_calculation_outputs.py;tests/test_goal07a_v2_factor_lock.py"
     return "tests/test_workflow_contracts.py;tests/test_public_entrypoints.py;tests/test_validation_gates.py"
@@ -384,6 +388,8 @@ def _audit_for(capability_id: str) -> str:
         return "outputs/audits/goal07a_risk_rule_catalog_audit.md;outputs/audits/goal07a_state_machine_audit.md;outputs/audits/goal07a_upstream_warning_mapping_audit.md"
     if capability_id == "goal07a_governance_boundary_v2_lock":
         return "outputs/audits/goal07a_governance_boundary_audit.md;outputs/audits/goal07a_boundary_lock_audit.md;outputs/audits/goal07a_v2_factor_lock_audit.md;outputs/audits/goal07a_readiness_report.md"
+    if capability_id == "goal07a1_design_review_unlock_readiness":
+        return "outputs/audits/goal07a1_design_review_report.md;outputs/audits/goal07a1_unlock_readiness_manifest.json;outputs/audits/goal07a1_warning_classification.csv"
     return ""
 
 

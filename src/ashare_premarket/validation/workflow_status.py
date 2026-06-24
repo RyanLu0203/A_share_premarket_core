@@ -190,6 +190,9 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal07a = by_id.get("goal07a_risk_overlay_design", {})
     goal07a_status = goal07a.get("status")
     goal07a_readiness = _read(root / "outputs/audits/goal07a_readiness_report.md")
+    goal07a1 = by_id.get("goal07a1_risk_overlay_design_review_unlock_readiness", {})
+    goal07a1_status = goal07a1.get("status")
+    goal07a1_readiness = _read(root / "outputs/audits/goal07a1_design_review_report.md")
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -219,6 +222,30 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-07A audit is missing or not PASS: {audit_path}")
     else:
         failures.append("GOAL-07A must be future_design_only or implemented_design_only")
+    if goal07a1:
+        if goal07a1_status != "implemented_review_only":
+            failures.append("GOAL-07A.1 must be implemented_review_only when present")
+        if not _goal07a1_readiness_implemented(goal07a1_readiness):
+            failures.append("GOAL-07A.1 is implemented_review_only without PASS/PASS_WITH_WARNINGS design review evidence")
+        if "GOAL-07B remains: locked_future" not in goal07a1_readiness:
+            failures.append("GOAL-07A.1 report must keep GOAL-07B locked_future")
+        if goal07a1.get("allowed_next_action") not in {
+            "request_explicit_goal07b_review_only_unlock",
+            "repair_goal07a_design_review_warnings_before_goal07b",
+            "block_goal07b_due_to_boundary_violation",
+        }:
+            failures.append("GOAL-07A.1 allowed_next_action is invalid")
+        required_goal07a1_audits = [
+            "outputs/audits/goal07a1_input_contract_readiness_audit.md",
+            "outputs/audits/goal07a1_forbidden_schema_overlap_audit.md",
+            "outputs/audits/goal07a1_rule_convertibility_audit.md",
+            "outputs/audits/goal07a1_state_machine_review_audit.md",
+            "outputs/audits/goal07a1_boundary_lock_audit.md",
+        ]
+        for audit_path in required_goal07a1_audits:
+            if "Status: `PASS`" not in _read(root / audit_path):
+                failures.append(f"GOAL-07A.1 audit is missing or not PASS: {audit_path}")
+
 
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
@@ -258,6 +285,7 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-06D.1 allowed next action: `{goal06d1.get('allowed_next_action', 'missing')}`.",
                 f"V2 factor research status: `{v2_factor.get('status', 'missing')}`.",
                 f"GOAL-07A status: `{goal07a_status or 'missing'}`.",
+                f"GOAL-07A.1 status: `{goal07a1_status or 'missing'}`.",
                 "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B and downstream stay locked.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.",
@@ -355,6 +383,8 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         next_goal = "GOAL-07A design-only preparation with warnings bounded"
     elif row["workflow_id"] == "goal07a_risk_overlay_design":
         next_goal = "GOAL-07B only after explicit future unlock; currently locked"
+    elif row["workflow_id"] == "goal07a1_risk_overlay_design_review_unlock_readiness":
+        next_goal = "GOAL-07B explicit review-only unlock request; GOAL-07B still locked"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -401,6 +431,13 @@ def _goal07a_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-07A Risk Overlay Design Readiness: PASS" in readiness
         or "GOAL-07A Risk Overlay Design Readiness: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal07a1_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-07A.1 Risk Overlay Design Review: PASS" in readiness
+        or "GOAL-07A.1 Risk Overlay Design Review: PASS_WITH_WARNINGS" in readiness
     )
 
 

@@ -40,6 +40,7 @@ This file is long-term project memory for Codex and other coding agents.
   baseline and allows GOAL-07A only as design-only preparation with warnings.
 - GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
   defines design artifacts and audits only; no risk calculation is active.
+- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and records GOAL-07B readiness only for a future explicit review-only unlock request; GOAL-07B remains locked_future.
 - Feature-label merge and leakage audit are active.
 - GOAL-07B risk calculation, recommendation, position output, dashboard,
   paper/live trading, production DB writes, production model promotion, V2
@@ -152,6 +153,11 @@ with warnings. Do not create recommendation, position, risk calculation,
 dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
 
 ## GOAL-07A Agent Note
+## GOAL-07A.1 Agent Note
+
+GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+
+
 
 GOAL-07A is design-only. It may maintain contracts, schema definitions, rule
 catalogs, state machine designs, warning mappings, governance docs, and audits.

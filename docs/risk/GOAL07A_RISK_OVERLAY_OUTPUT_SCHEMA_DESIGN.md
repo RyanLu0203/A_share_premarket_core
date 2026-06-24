@@ -24,6 +24,10 @@ Allowed future fields:
 - `risk_explanation_code`
 - `risk_governance_flags`
 - `review_only`
+- `risk_severity`
+- `risk_confidence_level`
+- `risk_rule_trace`
+- `risk_audit_metadata`
 
 Forbidden fields:
 - `buy`
