@@ -32,7 +32,8 @@ flowchart TD
     R2 -. "explicit unlock gate" .-> R3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R3 -. "review-only diagnostics" .-> R4["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R4 -. "implemented design-only" .-> R5["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
-    R5 -. "locked future prototype" .-> R6["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
+    R5 -. "implemented infrastructure-only" .-> R7["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
+    R7 -. "locked future prototype" .-> R6["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -60,8 +61,10 @@ calculation. GOAL-07A.1 is implemented only as review-only design review and
 GOAL-07B.0 is implemented only as a review-only unlock gate. GOAL-07B is
 implemented only as a review-only, non-actionable risk diagnostic prototype.
 GOAL-08A is implemented only as a design-only names-only contract gate with zero
-recommendation rows. GOAL-08B remains locked_future. V2 factor research is
+recommendation rows. GOAL-STORAGE-01 is implemented only as infrastructure
+hardening for local research lake governance and does not unlock GOAL-08B.
+GOAL-08B remains locked_future. V2 factor research is
 planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
-design-only, locked, planned-locked, and deleted-from-active-mainline blocks use
-dotted arrows or side-note references.
+design-only, infrastructure-only, locked, planned-locked, and
+deleted-from-active-mainline blocks use dotted arrows or side-note references.

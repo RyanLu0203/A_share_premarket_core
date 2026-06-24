@@ -10,8 +10,9 @@ GOAL-06B supervised baseline training gate, GOAL-06C expanded validation, the
 GOAL-06C.5/GOAL-06C.6/GOAL-06C.7 engineering data foundation gates, and the
 GOAL-06D/GOAL-06D.1 review-only model comparison/calibration/stability
 governance gates, the GOAL-07A design-only risk overlay governance gate, and
-the GOAL-07B.0 review-only unlock eligibility gate, and the GOAL-07B
-review-only risk overlay diagnostic prototype.
+the GOAL-07B.0 review-only unlock eligibility gate, the GOAL-07B review-only
+risk overlay diagnostic prototype, the GOAL-08A design-only contract gate, and
+GOAL-STORAGE-01 infrastructure-only local research lake hardening.
 
 ## Repository Roles
 
@@ -68,6 +69,10 @@ python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/run_goal07b_risk_overlay_calculation_prototype.py
 python scripts/audit_goal07b_risk_overlay_calculation_prototype.py
+python scripts/run_goal08a_recommendation_contract_design_gate.py
+python scripts/audit_goal08a_recommendation_contract_design_gate.py
+python scripts/run_goal_storage01_local_research_lake_hardening_gate.py
+python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -117,7 +122,8 @@ flowchart TD
     J2 -. "explicit review-only unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J3 -. "review-only diagnostic prototype" .-> K["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     K -. "implemented design-only" .-> O["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
-    O -. "locked future prototype" .-> P["GOAL-08B Recommendation Prototype<br/>(locked_future)"]
+    O -. "implemented infrastructure-only" .-> S["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
+    S -. "locked future prototype" .-> P["GOAL-08B Recommendation Prototype<br/>(locked_future)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -154,7 +160,7 @@ GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
 rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
-GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-08B remains locked_future.
+GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B. GOAL-08B remains locked_future.
 
 ## Required Public Commands
 
@@ -219,6 +225,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`
 - `python scripts/run_goal08a_recommendation_contract_design_gate.py`
 - `python scripts/audit_goal08a_recommendation_contract_design_gate.py`
+- `python scripts/run_goal_storage01_local_research_lake_hardening_gate.py`
+- `python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -293,6 +301,11 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal08a_recommendation_contract_design_report.md`
 - `outputs/audits/goal08a_recommendation_contract_design_manifest.json`
 - `outputs/audits/goal08a_recommendation_contract_design_audit.md`
+- `configs/storage/goal_storage01_local_research_lake_contract.yaml`
+- `docs/storage/GOAL_STORAGE01_LOCAL_RESEARCH_LAKE_HARDENING_GATE.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_report.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_audit.md`
 
 ## Lock Boundary
 
@@ -301,7 +314,9 @@ production DB writes, production model promotion, backtests, V2 factor mining,
 and DQN/RL remain locked. GOAL-07A is implemented only as design-only
 governance; GOAL-07B is implemented only as a review-only diagnostic prototype.
 GOAL-08A is implemented only as a design-only names-only contract gate with
-zero recommendation rows. GOAL-08B remains locked_future.
+zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only storage
+hardening and does not materialize a data lake, fetch broader data, or unlock
+GOAL-08B. GOAL-08B remains locked_future.
 
 GOAL-06D.1 is the review-only warning repair layer for those GOAL-06D warnings.
 It tests PIT-safe score variants, target horizons, calibration reliability,

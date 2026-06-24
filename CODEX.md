@@ -9,7 +9,8 @@ the GOAL-06D/GOAL-06D.1 review-only model comparison/calibration/stability
 governance gates, the GOAL-07A design-only risk governance gate, and the
 GOAL-07B.0 review-only unlock gate, and the GOAL-07B review-only risk overlay
 diagnostic prototype, plus the GOAL-08A design-only future recommendation
-contract gate. Preserve reproducibility and source governance before any future
+contract gate, plus GOAL-STORAGE-01 infrastructure-only local research lake
+hardening. Preserve reproducibility and source governance before any future
 recommendation execution or position work.
 
 ## Current Reliable Facts
@@ -64,6 +65,10 @@ recommendation execution or position work.
   names-only future recommendation input contract from GOAL-07B diagnostics,
   warning propagation, HIGH-risk actionability blocking, and zero-row future
   schema evidence only.
+- GOAL-STORAGE-01 is implemented_infrastructure_only and currently `PASS`. It
+  defines the local research lake contract, `ASHARE_PREMARKET_DATA_ROOT`
+  resolution rule, directory boundaries, placement rules, manifest/checksum
+  requirements, schema registry governance, and GitHub hygiene checks only.
 - Production model promotion is false.
 - GOAL-08B, recommendation execution, position output, dashboard, paper
   trading, broker/live trading, production DB writes, V2 factor mining, and
@@ -110,6 +115,8 @@ python scripts/run_goal07b_risk_overlay_calculation_prototype.py
 python scripts/audit_goal07b_risk_overlay_calculation_prototype.py
 python scripts/run_goal08a_recommendation_contract_design_gate.py
 python scripts/audit_goal08a_recommendation_contract_design_gate.py
+python scripts/run_goal_storage01_local_research_lake_hardening_gate.py
+python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -154,7 +161,8 @@ unless a later explicit gate allows it.
 - Do not proceed to GOAL-08B or create recommendation execution, position,
   dashboard, paper/live trading, production, backtest, factor-mining, broker,
   or DQN/RL outputs. GOAL-07B is review-only diagnostics only, and GOAL-08A is
-  names-only design evidence only.
+  names-only design evidence only. GOAL-STORAGE-01 is infrastructure-only and
+  must not materialize a lake, expand data coverage, or unlock GOAL-08B.
 
 ## GOAL-06D.1 Agent Note
 
@@ -166,7 +174,7 @@ promotion, or factor-mining outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-08B and all decision/execution paths remain locked.
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B. GOAL-08B and all decision/execution paths remain locked.
 
 
 

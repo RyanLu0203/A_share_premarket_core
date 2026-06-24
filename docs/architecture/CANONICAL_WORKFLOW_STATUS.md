@@ -14,6 +14,8 @@ a block is implemented in this repository.
   the current active workflow.
 - `implemented_review_only`: implemented, but review-only.
 - `implemented_design_only`: implemented as design documentation only.
+- `implemented_infrastructure_only`: implemented as infrastructure governance
+  only; downstream execution remains locked.
 - `future_review_only`: future review-only work; dotted arrows only.
 - `future_design_only`: future design-only work; dotted arrows only.
 - `locked_future`: locked future work; dotted arrows only.
@@ -59,6 +61,10 @@ Implemented design-only:
 
 - GOAL-07A Risk Overlay Design (`PASS_WITH_WARNINGS`)
 - GOAL-08A Recommendation Contract Design Gate (`PASS`)
+
+Implemented infrastructure-only:
+
+- GOAL-STORAGE-01 Local Research Lake Hardening Gate (`PASS`)
 
 Future review-only:
 
@@ -272,6 +278,26 @@ future actionable recommendation output. The schema sample has row count `0`.
 It does not generate recommendations, positions, dashboards, trading outputs,
 production behavior, backtests, factor-mining outputs, broker outputs, or
 DQN/RL outputs. GOAL-08B remains `locked_future`.
+
+## GOAL-STORAGE-01 Status
+
+GOAL-STORAGE-01 is `implemented_infrastructure_only` and currently `PASS`. It
+creates:
+
+- `configs/storage/goal_storage01_local_research_lake_contract.yaml`
+- `docs/storage/GOAL_STORAGE01_LOCAL_RESEARCH_LAKE_HARDENING_GATE.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_report.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_audit.md`
+
+The gate requires future heavy data roots to resolve from
+`ASHARE_PREMARKET_DATA_ROOT`; the fallback path is documentation-only. It
+defines local `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`, and
+`audit_samples/` boundaries plus placement, bundle versioning, manifest,
+checksum, schema registry, and GitHub hygiene rules. It does not fetch data,
+materialize lake files, create recommendation or position diagnostics, run
+backtests, create dashboards, write production data, activate factor mining, or
+unlock GOAL-08B. GOAL-08B remains `locked_future`.
 
 
 

@@ -37,7 +37,9 @@ unlocks eligibility only; GOAL-07B now consumes that design evidence as a
 review-only diagnostic prototype. GOAL-08A is implemented only as a names-only
 future recommendation contract design gate with zero rows. GOAL-08B and all
 recommendation, position, dashboard, trading, production, backtest,
-factor-mining, and DQN/RL paths remain locked.
+factor-mining, and DQN/RL paths remain locked. GOAL-STORAGE-01 is now
+implemented as an infrastructure-only local research lake hardening gate
+(`PASS`); it does not unlock GOAL-08B or create local lake data.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -95,6 +97,9 @@ Implemented and protected:
 - GOAL-08A recommendation contract design-only gate with names-only future
   schema, warning propagation policy, HIGH-risk actionability block, and zero
   recommendation rows
+- GOAL-STORAGE-01 local research lake hardening gate with data-root,
+  directory-boundary, placement, manifest, checksum, schema-registry, and
+  GitHub hygiene rules
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -146,6 +151,11 @@ Implemented design-only:
 - GOAL-08A recommendation contract design gate (`PASS`; names-only future
   contract and actionability guardrails only; zero recommendation rows)
 
+Implemented infrastructure-only:
+
+- GOAL-STORAGE-01 local research lake hardening gate (`PASS`; storage contract,
+  hygiene audit, and workflow lock preservation only)
+
 Still locked:
 
 - GOAL-08B recommendation review-only prototype
@@ -189,6 +199,23 @@ GOAL-07B risk severity blocks actionable recommendation output, but it does not
 generate recommendations, positions, dashboards, trading outputs, production
 behavior, backtests, factor-mining outputs, broker outputs, or DQN/RL outputs.
 
+GOAL-STORAGE-01 writes only infrastructure governance evidence:
+
+- `configs/storage/goal_storage01_local_research_lake_contract.yaml`
+- `docs/storage/GOAL_STORAGE01_LOCAL_RESEARCH_LAKE_HARDENING_GATE.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_report.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_audit.md`
+
+The STORAGE-01 contract requires future heavy data roots to resolve from
+`ASHARE_PREMARKET_DATA_ROOT`; the fallback path is documentation-only for this
+gate. It defines `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`, and
+`audit_samples/` boundaries, bundle versioning, manifest and checksum rules,
+schema registry governance, and GitHub hygiene. It generated no local data lake,
+raw provider payloads, recommendation diagnostics, position diagnostics,
+dashboards, backtests, production writes, factor-mining outputs, broker outputs,
+or DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -205,8 +232,10 @@ The protected regenerated outputs live under:
 - `outputs/models/goal06d1/`
 - `configs/risk/`
 - `configs/recommendation/`
+- `configs/storage/`
 - `docs/risk/`
 - `docs/recommendation/`
+- `docs/storage/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -239,10 +268,12 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, and GOAL-07B are `implemented_review_only`; GOAL-07A
-and GOAL-08A are `implemented_design_only`. GOAL-07B is diagnostic-only and
+and GOAL-08A are `implemented_design_only`; GOAL-STORAGE-01 is
+`implemented_infrastructure_only`. GOAL-07B is diagnostic-only and
 non-actionable. GOAL-08A is names-only design evidence with zero recommendation
-rows. GOAL-08B, recommendation, position, dashboard, trading, production, V2
-factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
+rows. STORAGE-01 hardens storage only and does not unlock GOAL-08B. GOAL-08B,
+recommendation, position, dashboard, trading, production, V2 factor-mining, and
+DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings
 

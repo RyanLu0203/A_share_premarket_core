@@ -1,0 +1,210 @@
+{
+  "bundle_versioning_rules": {
+    "bundle_id_format": "<goal_or_stage>_<purpose>_<as_of_date>_<source_hash>_vNN",
+    "immutable_bundle_ids": true,
+    "latest_aliases_local_only": true,
+    "no_in_place_overwrite": true,
+    "source_commit_sha_required": true,
+    "workflow_status_version_required": true
+  },
+  "checksum_requirements": {
+    "algorithm": "sha256",
+    "checksum_manifest_location": "metadata/checksums/<bundle_id>.json",
+    "curated_table_checksums_required": true,
+    "manifest_checksum_required": true,
+    "raw_payload_checksums_required": true
+  },
+  "data_root_resolution": {
+    "fallback_default_documentation_only": true,
+    "fallback_default_path": "~/data/ashare_premarket/",
+    "heavy_write_without_env_allowed": false,
+    "production_deployment_assumed": false,
+    "required_env_var": "ASHARE_PREMARKET_DATA_ROOT",
+    "runner_creates_data_root": false
+  },
+  "directory_boundaries": {
+    "audit_samples": {
+      "github_allowed_by_default": false,
+      "legacy_alias": "${ASHARE_PREMARKET_DATA_ROOT}/exports/audit_samples/",
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/audit_samples/",
+      "purpose": "Tiny sanitized samples selected for manual audit review; commit only by explicit future approval."
+    },
+    "bundles": {
+      "github_allowed": false,
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/bundles/",
+      "purpose": "Immutable source-backed and engineering research bundles."
+    },
+    "exports": {
+      "github_allowed": false,
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/exports/",
+      "purpose": "Local-only generated reports and future export packages."
+    },
+    "lake": {
+      "github_allowed": false,
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/lake/",
+      "purpose": "Curated PIT panels, labels, diagnostics, and table-shaped research lake files."
+    },
+    "metadata": {
+      "github_allowed": false,
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/metadata/",
+      "purpose": "Local schema registry mirrors, bundle aliases, checksums, and non-secret metadata."
+    },
+    "raw": {
+      "github_allowed": false,
+      "path": "${ASHARE_PREMARKET_DATA_ROOT}/raw/",
+      "purpose": "Provider raw payload landing area; local-only and never committed."
+    }
+  },
+  "does_not_unlock_goal08b_by_itself": true,
+  "forbidden_execution": {
+    "backtests": true,
+    "broker_integration": true,
+    "buy_sell_hold_outputs": true,
+    "dashboard_outputs": true,
+    "data_coverage_expansion": true,
+    "dqn_rl": true,
+    "factor_mining": true,
+    "full_market_fetch": true,
+    "paper_or_live_trading": true,
+    "portfolio_construction": true,
+    "position_sizing": true,
+    "production_db_writes": true,
+    "production_model_behavior": true,
+    "recommendation_rows": true
+  },
+  "future_placement_rules": {
+    "future_backtest_outputs": {
+      "committed_artifact_policy": "summary-only after explicit approval",
+      "local_path": "lake/backtest_diagnostics/<schema_version>/<bundle_id>/",
+      "locked_until": "separate explicit future backtest goal"
+    },
+    "future_dashboard_daily_report_exports": {
+      "committed_artifact_policy": "no dashboard output from this gate",
+      "local_path": "exports/daily_reports/<schema_version>/<bundle_id>/",
+      "locked_until": "separate explicit dashboard/report export goal"
+    },
+    "goal07b_risk_overlay_diagnostics": {
+      "committed_artifact_policy": "audit summaries only; no new risk rows from this gate",
+      "local_path": "lake/goal07b_risk_overlay_diagnostics/<schema_version>/<bundle_id>/"
+    },
+    "goal08b_review_diagnostics": {
+      "actionable_output_allowed": false,
+      "local_path": "lake/goal08b_review_diagnostics/<schema_version>/<bundle_id>/",
+      "locked_until": "separate explicit GOAL-08B review-only prototype request"
+    },
+    "goal09_position_band_diagnostics": {
+      "actionable_output_allowed": false,
+      "local_path": "lake/goal09_position_band_diagnostics/<schema_version>/<bundle_id>/",
+      "locked_until": "separate explicit GOAL-09 review-only diagnostics request"
+    },
+    "label_panels": {
+      "local_path": "lake/label_panel/<schema_version>/<bundle_id>/",
+      "schema_registry_key": "label_panel"
+    },
+    "pit_signal_panels": {
+      "local_path": "lake/pit_signal_panel/<schema_version>/<bundle_id>/",
+      "schema_registry_key": "pit_signal_panel"
+    },
+    "provider_raw_data": {
+      "full_payloads_committed": false,
+      "local_path": "raw/<provider>/<category>/<bundle_id>/",
+      "manifest_required": true
+    },
+    "source_backed_bundles": {
+      "immutable": true,
+      "local_path": "bundles/<bundle_tier>/<bundle_id>/",
+      "manifest_required": true
+    },
+    "stage6c_engineering_panels": {
+      "local_path": "lake/stage6c_engineering_panel/<schema_version>/<bundle_id>/",
+      "schema_registry_key": "stage6c_engineering_panel"
+    }
+  },
+  "github_hygiene_rules": {
+    "allowed_committed_artifacts": [
+      "code",
+      "configs",
+      "schemas",
+      "tiny_sanitized_fixtures",
+      "manifest_summaries",
+      "audit_reports",
+      "readiness_reports",
+      "workflow_docs"
+    ],
+    "forbidden_committed_artifacts": [
+      ".arrow",
+      ".csv.gz",
+      ".db",
+      ".duckdb",
+      ".feather",
+      ".h5",
+      ".html",
+      ".ipynb",
+      ".joblib",
+      ".log",
+      ".npy",
+      ".npz",
+      ".onnx",
+      ".parquet",
+      ".payload",
+      ".pkl",
+      ".pt",
+      ".pth",
+      ".raw",
+      ".sqlite",
+      ".sqlite3",
+      ".zip"
+    ],
+    "forbidden_committed_path_markers": [
+      "data/raw/",
+      "data/bundles/",
+      "data/lake/",
+      "data/metadata/",
+      "data/exports/",
+      "local_data/",
+      "raw_provider_payloads",
+      "local_data_lake",
+      "local_bundles",
+      "full_announcement_body_text",
+      "full_news_text",
+      "notebooks/",
+      "production_model_artifacts"
+    ],
+    "storage_hygiene_audit": "python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py"
+  },
+  "goal": "GOAL-STORAGE-01-LOCAL-RESEARCH-LAKE-HARDENING-GATE",
+  "manifest_requirements": {
+    "committed_manifest_policy": "sanitized summaries only unless a future goal explicitly approves a tiny fixture",
+    "manifest_location": "bundles/<bundle_tier>/<bundle_id>/manifest.json",
+    "required_fields": [
+      "bundle_id",
+      "bundle_tier",
+      "schema_version",
+      "created_at_utc",
+      "as_of_date",
+      "source_commit_sha",
+      "workflow_status_version",
+      "universe_version",
+      "calendar_version",
+      "provider_versions",
+      "local_data_root",
+      "local_paths",
+      "row_counts",
+      "source_coverage_summary",
+      "schema_registry_refs",
+      "checksum_manifest",
+      "quality_flags",
+      "non_actionable_flags",
+      "downstream_lock_flags"
+    ]
+  },
+  "mode": "infrastructure_only",
+  "schema_registry_rules": {
+    "ad_hoc_columns_forbidden": true,
+    "committed_registry": "configs/storage/table_schema_registry.yaml",
+    "local_registry_mirror": "metadata/schema_registry/",
+    "schema_migrations_must_be_reviewed": true,
+    "schema_version_required_for_every_table": true
+  },
+  "status_after_pass": "implemented_infrastructure_only"
+}

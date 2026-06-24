@@ -1,5 +1,41 @@
 # 09 Step Iteration Log
 
+## 2026-06-24 - GOAL-STORAGE-01 Local Research Lake Hardening Gate
+
+Status: `PASS`.
+
+What changed:
+
+- Added the GOAL-STORAGE-01 infrastructure-only local research lake hardening
+  gate.
+- Defined required `ASHARE_PREMARKET_DATA_ROOT` resolution, a documentation-only
+  fallback path, and local `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`,
+  and `audit_samples/` boundaries.
+- Added future placement rules for provider raw data, source-backed bundles, PIT
+  signal panels, label panels, Stage 6C engineering panels, GOAL-07B
+  diagnostics, future GOAL-08B diagnostics, future GOAL-09 diagnostics, future
+  backtests, and future dashboard/daily report exports.
+- Added bundle versioning, manifest, SHA-256 checksum, schema registry, and
+  GitHub hygiene rules.
+- Updated workflow status so STORAGE-01 is
+  `implemented_infrastructure_only` and GOAL-08B remains `locked_future`.
+
+Evidence:
+
+- `configs/storage/goal_storage01_local_research_lake_contract.yaml`
+- `docs/storage/GOAL_STORAGE01_LOCAL_RESEARCH_LAKE_HARDENING_GATE.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_report.md`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json`
+- `outputs/audits/goal_storage01_local_research_lake_hardening_audit.md`
+
+Safety:
+
+- No local data lake, raw provider payload, DuckDB, Parquet, cache, notebook, or
+  model artifact was created.
+- No recommendation diagnostics, position diagnostics, dashboard, trading,
+  production, backtest, factor-mining, broker, or DQN/RL output was generated.
+- GOAL-08B and all downstream execution paths remain locked.
+
 ## 2026-06-24 - GOAL-08A Recommendation Contract Design Gate
 
 Status: `PASS`.

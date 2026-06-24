@@ -11,6 +11,14 @@ AKShare/source-backed ingestion, still disabled by default and guarded by
 raw payloads, local bundles, Parquet lake files, DuckDB/SQLite databases, logs,
 and notebooks stay outside GitHub.
 
+GOAL-STORAGE-01 hardens that storage boundary as an infrastructure-only gate.
+Future heavy data writes must resolve from `ASHARE_PREMARKET_DATA_ROOT`; the
+fallback path is documentation-only for this gate. The local research lake
+contract defines `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`, and
+`audit_samples/` boundaries plus bundle versioning, manifest, checksum, schema
+registry, placement, and GitHub hygiene rules. It does not fetch data, expand
+coverage, materialize a local lake, or unlock GOAL-08B.
+
 ## Active Contracts
 
 - Approved-symbol-only universe boundary.
@@ -24,6 +32,7 @@ and notebooks stay outside GitHub.
 - Storage policy, bundle manifest, provider ingestion contract, and engineering
   panel readiness audits.
 - Provider failure classification and source-backed bundle manifest summaries.
+- GOAL-STORAGE-01 local research lake hardening contract and hygiene audit.
 
 ## Source Evidence Warnings
 
@@ -49,3 +58,6 @@ and notebooks stay outside GitHub.
 - Do not treat provider availability as symbol approval.
 - Do not unlock recommendation, risk, dashboard, paper/live trading, production
   writes, model promotion, or DQN/RL.
+- Do not treat STORAGE-01 as permission to create recommendation diagnostics,
+  position diagnostics, backtests, dashboards, local lake files, or production
+  DB behavior.

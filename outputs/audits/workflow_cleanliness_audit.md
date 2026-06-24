@@ -2,7 +2,7 @@
 
 Workflow Cleanliness Audit: PASS
 
-Workflow rows: `41`
+Workflow rows: `42`
 GOAL-06C.7 status: `implemented_review_only`
 GOAL-06D status: `implemented_review_only`
 Engineering pilot met: `true`

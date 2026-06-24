@@ -9,6 +9,7 @@
   "goal07b_risk_overlay_calculation": "implemented_review_only",
   "goal08a_recommendation_contract_design_gate": "implemented_design_only",
   "goal08b_recommendation_review_only_prototype": false,
+  "goal_storage01_local_research_lake_hardening_gate": "implemented_infrastructure_only",
   "paper_trading": false,
   "portfolio_backtest": false,
   "position_band_recommendation": false,

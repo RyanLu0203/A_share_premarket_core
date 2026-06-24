@@ -20,6 +20,7 @@ def test_workflow_status_contract_exists_and_has_required_statuses() -> None:
     assert "implemented_active" in statuses
     assert "implemented_review_only" in statuses
     assert "implemented_design_only" in statuses
+    assert "implemented_infrastructure_only" in statuses
     assert "locked_future" in statuses
     assert "deleted_from_active_mainline" in statuses
 
@@ -35,6 +36,8 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "true"
     assert rows["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only"
     assert rows["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
+    assert rows["goal_storage01_local_research_lake_hardening_gate"]["status"] == "implemented_infrastructure_only"
+    assert rows["goal_storage01_local_research_lake_hardening_gate"]["implemented_in_repo"] == "true"
     assert rows["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
     assert rows["position_band_recommendation"]["status"] == "locked_future"
     assert rows["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"

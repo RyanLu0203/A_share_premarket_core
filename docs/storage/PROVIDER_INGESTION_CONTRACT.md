@@ -27,6 +27,11 @@ Network ingestion is optional and disabled by default. A provider run must use
 only under the local data root, record checksums for local bundles, and keep
 GitHub artifacts sanitized.
 
+GOAL-STORAGE-01 requires future heavy provider data to resolve the local root
+from `ASHARE_PREMARKET_DATA_ROOT` and place raw payloads under
+`raw/<provider>/<category>/<bundle_id>/`; the documented fallback path is not a
+production deployment assumption and does not authorize committed payloads.
+
 GOAL-06C.6 uses AKShare as the primary compliant route:
 
 - `stock_info_a_code_name`

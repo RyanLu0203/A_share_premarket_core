@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-24 - GOAL-STORAGE-01 Local Research Lake Hardening Gate
+
+- Implemented GOAL-STORAGE-01 as an infrastructure-only local research lake
+  hardening gate.
+- Added the storage governance module, runner, audit wrapper, config contract,
+  docs, manifest, workflow-status governance, diagnostics integration, and
+  focused tests.
+- Defined `ASHARE_PREMARKET_DATA_ROOT` root resolution, documentation-only
+  fallback behavior, local `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`,
+  and `audit_samples/` boundaries, placement rules, bundle versioning, manifest
+  requirements, SHA-256 checksum rules, schema registry rules, and GitHub
+  hygiene rules.
+- Kept GOAL-08B and all downstream execution paths locked; generated no local
+  lake files, recommendation diagnostics, position diagnostics, dashboards,
+  trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+
 ## 2026-06-24 - GOAL-08A Recommendation Contract Design Gate
 
 - Implemented GOAL-08A only as a design-only future recommendation contract

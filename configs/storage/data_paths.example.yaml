@@ -7,6 +7,7 @@
   "metadata_root": "${ASHARE_PREMARKET_DATA_ROOT}/metadata",
   "export_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports",
   "github_export_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports/github_artifacts",
-  "audit_sample_root": "${ASHARE_PREMARKET_DATA_ROOT}/exports/audit_samples",
-  "notes": "This file is an example contract. Runtime scripts may use ASHARE_PREMARKET_DATA_ROOT or the documented default, but local data is never committed."
+  "audit_sample_root": "${ASHARE_PREMARKET_DATA_ROOT}/audit_samples",
+  "legacy_audit_sample_alias": "${ASHARE_PREMARKET_DATA_ROOT}/exports/audit_samples",
+  "notes": "This file is an example contract. Future heavy writes must use ASHARE_PREMARKET_DATA_ROOT. The default_data_root is documentation-only for GOAL-STORAGE-01 and local data is never committed."
 }

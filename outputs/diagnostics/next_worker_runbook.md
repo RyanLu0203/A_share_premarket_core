@@ -14,5 +14,6 @@
 12. For GOAL-07A.1, run `python scripts/run_goal07a1_risk_overlay_design_review_gate.py` and then every `scripts/audit_goal07a1_*.py` wrapper.
 13. For GOAL-07B, run `python scripts/run_goal07b_risk_overlay_calculation_prototype.py` and `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`; outputs must remain review-only diagnostics.
 14. For GOAL-08A, run `python scripts/run_goal08a_recommendation_contract_design_gate.py` and `python scripts/audit_goal08a_recommendation_contract_design_gate.py`; schema evidence must stay names-only with zero rows.
-15. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
-16. Do not unlock recommendation execution, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.
+15. For GOAL-STORAGE-01, run `python scripts/run_goal_storage01_local_research_lake_hardening_gate.py` and `python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py`; it is infrastructure-only and does not unlock GOAL-08B.
+16. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
+17. Do not unlock recommendation execution, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.

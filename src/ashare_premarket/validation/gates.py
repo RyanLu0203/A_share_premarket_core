@@ -22,6 +22,7 @@ from ashare_premarket.ops.safety import run_safety_gate
 from ashare_premarket.providers.failure_classification import audit_provider_failure_classification
 from ashare_premarket.providers.ingestion import audit_stage6c_source_backed_engineering_panel
 from ashare_premarket.scoring.baseline import audit_baseline_scoring_skeleton, run_baseline_scoring_skeleton, run_stage6a_blocker_repair
+from ashare_premarket.storage.lake_hardening import audit_goal_storage01_local_research_lake_hardening_gate, run_goal_storage01_local_research_lake_hardening_gate
 from ashare_premarket.storage.policy import audit_data_bundle_manifest, audit_storage_policy, build_data_bundle_manifest
 from ashare_premarket.training.supervised_baseline import audit_supervised_baseline_training, run_supervised_baseline_training
 from ashare_premarket.universe.governance import validate_symbol_governance
@@ -135,6 +136,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal06c5_engineering_stage6c_panel", rebuild_stage6c_from_engineering_panel(root)),
         ("goal06c6_provider_failure_classification", audit_provider_failure_classification(root)),
         ("goal06c6_source_backed_stage6c_panel", audit_stage6c_source_backed_engineering_panel(root)),
+        ("goal_storage01_local_research_lake_hardening", run_goal_storage01_local_research_lake_hardening_gate(root) and audit_goal_storage01_local_research_lake_hardening_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -215,6 +217,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_provider_failure_classification.py", [sys.executable, "scripts/audit_provider_failure_classification.py"]),
         ("python scripts/rebuild_stage6c_from_engineering_panel.py", [sys.executable, "scripts/rebuild_stage6c_from_engineering_panel.py"]),
         ("python scripts/audit_stage6c_source_backed_engineering_panel.py", [sys.executable, "scripts/audit_stage6c_source_backed_engineering_panel.py"]),
+        ("python scripts/run_goal_storage01_local_research_lake_hardening_gate.py", [sys.executable, "scripts/run_goal_storage01_local_research_lake_hardening_gate.py"]),
+        ("python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py", [sys.executable, "scripts/audit_goal_storage01_local_research_lake_hardening_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -279,7 +283,7 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
                 "Warnings are limited to documented source coverage limitations and the `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` source-evidence gap for missing historical GOAL-05/GOAL-06 docs.",
                 "The Class D gap is manifest/documentation only and does not block Class A active workflow through GOAL-06B.",
                 "Committed validation reports use deterministic stable summaries; volatile runtime timing is stored in local-only ignored diagnostics.",
-                "GOAL-07B risk overlay diagnostics are separate review-only evidence. GOAL-08A is design-only contract evidence with zero recommendation rows. Recommendation execution, position, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, and DQN/RL remain locked.",
+                "GOAL-07B risk overlay diagnostics are separate review-only evidence. GOAL-08A is design-only contract evidence with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening and does not unlock GOAL-08B. Recommendation execution, position, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, and DQN/RL remain locked.",
                 "",
                 f"GOAL-06B Clean Repo Bootstrap Readiness: {readiness}",
             ]

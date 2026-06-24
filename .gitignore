@@ -16,6 +16,13 @@ venv/
 *.arrow
 *.pkl
 *.joblib
+*.onnx
+*.pt
+*.pth
+*.h5
+*.npy
+*.npz
+*.csv.gz
 *.zip
 *.log
 *.raw

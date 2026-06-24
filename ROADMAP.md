@@ -41,6 +41,8 @@
 - GOAL-08A recommendation contract design gate (`PASS`; implemented_design_only
   names-only future schema, warning propagation, HIGH-risk actionability block,
   and zero recommendation rows).
+- GOAL-STORAGE-01 local research lake hardening gate (`PASS`;
+  implemented_infrastructure_only storage governance and GitHub hygiene only).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -52,9 +54,11 @@ GOAL-07A.1 completed the GOAL-07B unlock-readiness design review, and
 GOAL-07B.0 completed the explicit review-only unlock gate. GOAL-07B now
 implements a deterministic review-only risk overlay calculation prototype.
 GOAL-08A now implements only a design-only future recommendation contract gate.
+GOAL-STORAGE-01 now implements only an infrastructure hardening gate for the
+local research lake contract and does not unlock GOAL-08B by itself.
 The exact allowed next action is to request a future explicit GOAL-08B
-review-only prototype or fix GOAL-08A / GOAL-07B warnings. Do not proceed to
-GOAL-08B without an explicit future request.
+review-only prototype or fix GOAL-08A / GOAL-07B / STORAGE-01 warnings. Do not
+proceed to GOAL-08B without an explicit future request.
 No recommendation execution, position, dashboard, paper/live trading,
 production DB writes, production model promotion, backtest, factor mining,
 broker, or DQN/RL is unlocked.

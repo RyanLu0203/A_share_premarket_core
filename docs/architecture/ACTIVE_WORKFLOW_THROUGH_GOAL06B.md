@@ -42,7 +42,8 @@ flowchart TD
     J2 -. "explicit unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J3 -. "review-only diagnostics" .-> K["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     K -. "implemented design-only" .-> L["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
-    L -. "locked future prototype" .-> M["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
+    L -. "implemented infrastructure-only" .-> S01["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
+    S01 -. "locked future prototype" .-> M["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/`,
@@ -56,8 +57,9 @@ change the active workflow through GOAL-06B. GOAL-06D and GOAL-06D.1 are
 review-only and currently `PASS_WITH_WARNINGS`; GOAL-07A is design-only,
 GOAL-07B.0 is unlock-only, and GOAL-07B is implemented only as a review-only
 diagnostic prototype. GOAL-08A is implemented only as a names-only design gate
-with zero recommendation rows. GOAL-08B and downstream trading/production
-workflow remain locked.
+with zero recommendation rows. GOAL-STORAGE-01 is implemented only as
+infrastructure hardening for local storage governance and does not unlock
+GOAL-08B. GOAL-08B and downstream trading/production workflow remain locked.
 
 ## Module Dependency Structure
 

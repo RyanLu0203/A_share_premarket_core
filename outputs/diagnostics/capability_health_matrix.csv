@@ -54,3 +54,4 @@ goal07a1_design_review_unlock_readiness,GOAL-07A.1 risk overlay design review an
 goal07b0_review_only_unlock_gate,GOAL-07B.0 review-only unlock gate for future GOAL-07B eligibility,GOAL-07B.0,PASS,ashare_premarket.risk_design.goal07b0,Keep active
 goal07b_review_only_risk_overlay,GOAL-07B review-only risk overlay diagnostic prototype,GOAL-07B,PASS,ashare_premarket.risk_overlay.goal07b,Keep active
 goal08a_contract_design_gate,GOAL-08A recommendation contract design-only gate,GOAL-08A,PASS,ashare_premarket.contract_design.goal08a,Keep active
+goal_storage01_local_research_lake_hardening,GOAL-STORAGE-01 local research lake hardening gate,GOAL-STORAGE-01,PASS,ashare_premarket.storage.lake_hardening,Keep active
