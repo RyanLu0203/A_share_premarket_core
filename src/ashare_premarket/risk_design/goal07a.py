@@ -126,7 +126,6 @@ STATE_MACHINE_STATES = [
 ]
 
 FORBIDDEN_OUTPUT_DIRS = [
-    "outputs/risk_overlay",
     "outputs/recommendations",
     "outputs/positions",
     "outputs/dashboard",
@@ -136,6 +135,8 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
+    "goal08a_recommendation_contract_design_gate",
+    "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -149,7 +150,7 @@ DOWNSTREAM_LOCKED_IDS = [
     "production_hardening",
 ]
 GOAL07B_WORKFLOW_ID = "goal07b_risk_overlay_calculation"
-GOAL07B_ALLOWED_STATUSES = {"locked_future", "future_review_only"}
+GOAL07B_ALLOWED_STATUSES = {"locked_future", "future_review_only", "implemented_review_only"}
 
 SCRIPT_AUDIT_FUNCTIONS = {
     "allowed_input_contract": "audit_goal07a_allowed_input_contract",
@@ -590,9 +591,9 @@ def _write_design_docs(root: Path, upstream: dict[str, object], designs: dict[st
                 "Status: `PASS`",
                 "",
                 "GOAL-07A is implemented only as a design gate.",
-                "GOAL-07B is not implemented.",
-                "Risk overlay calculation remains locked.",
-                "Recommendation, position, portfolio weight, dashboard, paper/live trading, broker/live trading, production DB writes, production model promotion, factor mining, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-07A itself does not implement GOAL-07B or calculate risk.",
+                "GOAL-07B, when present, may only be a separate review-only diagnostic prototype.",
+                "GOAL-08A/GOAL-08B, recommendation, position, portfolio weight, dashboard, paper/live trading, broker/live trading, production DB writes, production model promotion, factor mining, and DQN/RL remain locked or deleted from active mainline.",
                 "V2 factor research remains `planned_locked`, `enabled: false`, and `active_in_v1: false`.",
                 "No full local data bundle or model binary is committed.",
                 "",
@@ -641,8 +642,8 @@ def _write_audits(root: Path, upstream: dict[str, object], designs: dict[str, ob
     ])
     _write_audit_report(root, "goal07a_governance_boundary_audit.md", "GOAL-07A Governance Boundary Audit", statuses["governance_boundary"], [
         "GOAL-07A is design-only: `true`",
-        "GOAL-07B implemented: `false`",
-        "Risk overlay calculation exists: `false`",
+        "GOAL-07B implemented by GOAL-07A: `false`",
+        "Risk overlay calculation executed by GOAL-07A: `false`",
         "Recommendation output exists: `false`",
         "Position output exists: `false`",
         "Dashboard output exists: `false`",
@@ -654,7 +655,7 @@ def _write_audits(root: Path, upstream: dict[str, object], designs: dict[str, ob
         "Factor mining output exists: `false`",
     ])
     _write_audit_report(root, "goal07a_boundary_lock_audit.md", "GOAL-07A Boundary Lock Audit", statuses["boundary_locks"], [
-        f"GOAL-07B remains not implemented; current status: `{_goal07b_status(root)}`.",
+        f"GOAL-07B current status: `{_goal07b_status(root)}`; GOAL-07A itself did not implement or execute it.",
         "Recommendation remains locked_future.",
         "Position output remains locked_future.",
         "Dashboard remains locked_future.",
@@ -757,9 +758,13 @@ def _audit_governance_boundary(root: Path) -> str:
 def _audit_boundary_locks(root: Path) -> str:
     rows = {row["workflow_id"]: row for row in read_csv(root / "configs/project/workflow_status.csv")}
     goal07b = rows.get(GOAL07B_WORKFLOW_ID, {})
-    goal07b_ok = goal07b.get("status") in GOAL07B_ALLOWED_STATUSES and goal07b.get("implemented_in_repo") == "false"
-    if goal07b.get("status") == "future_review_only":
-        goal07b_ok = goal07b_ok and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in _read(root / "outputs/audits/goal07b0_unlock_gate_report.md")
+    goal07b_status = goal07b.get("status")
+    if goal07b_status == "implemented_review_only":
+        goal07b_ok = goal07b.get("implemented_in_repo") == "true" and _goal07b_review_only_outputs_valid(root)
+    else:
+        goal07b_ok = goal07b_status in {"locked_future", "future_review_only"} and goal07b.get("implemented_in_repo") == "false"
+        if goal07b_status == "future_review_only":
+            goal07b_ok = goal07b_ok and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in _read(root / "outputs/audits/goal07b0_unlock_gate_report.md")
     downstream_locked = all(rows.get(workflow_id, {}).get("status") == "locked_future" for workflow_id in DOWNSTREAM_LOCKED_IDS)
     dqn_deleted = rows.get("dqn_rl_mainline", {}).get("status") == "deleted_from_active_mainline"
     return "PASS" if goal07b_ok and downstream_locked and dqn_deleted and _forbidden_dirs_absent(root) else "BLOCKED"
@@ -857,8 +862,9 @@ def _update_workflow_status(root: Path, readiness: dict[str, object]) -> None:
             by_id[workflow_id]["implemented_in_repo"] = "false"
             by_id[workflow_id]["allowed_next_action"] = "remain_locked"
     if GOAL07B_WORKFLOW_ID in by_id:
-        by_id[GOAL07B_WORKFLOW_ID]["status"] = _goal07b_status(root)
-        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "false"
+        goal07b_status = _goal07b_status(root)
+        by_id[GOAL07B_WORKFLOW_ID]["status"] = goal07b_status
+        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "true" if goal07b_status == "implemented_review_only" else "false"
     if "dqn_rl_mainline" in by_id:
         by_id["dqn_rl_mainline"]["status"] = "deleted_from_active_mainline"
         by_id["dqn_rl_mainline"]["allowed_next_action"] = "remain_deleted_unless_explicit_optional_research_goal"
@@ -906,9 +912,29 @@ def _goal07b_status(root: Path) -> str:
         return "locked_future"
     rows = {row["workflow_id"]: row for row in read_csv(path)}
     current = rows.get(GOAL07B_WORKFLOW_ID, {}).get("status", "locked_future")
+    if current == "implemented_review_only" and _goal07b_review_only_outputs_valid(root):
+        return "implemented_review_only"
     if current == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in _read(root / "outputs/audits/goal07b0_unlock_gate_report.md"):
         return "future_review_only"
     return "locked_future"
+
+
+def _goal07b_review_only_outputs_valid(root: Path) -> bool:
+    report = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_report.md")
+    audit = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_audit.md")
+    manifest = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_manifest.json")
+    return (
+        (
+            "GOAL-07B Risk Overlay Calculation Prototype: PASS" in report
+            or "GOAL-07B Risk Overlay Calculation Prototype: PASS_WITH_WARNINGS" in report
+        )
+        and "Status: `PASS`" in audit
+        and '"mode": "review_only"' in manifest
+        and '"recommendation_generated": false' in manifest
+        and '"position_generated": false' in manifest
+        and '"trading_generated": false' in manifest
+        and '"production_generated": false' in manifest
+    )
 
 
 def _status_from_report(path: Path) -> str:

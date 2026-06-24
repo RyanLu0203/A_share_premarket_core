@@ -12,7 +12,7 @@ def test_goal06d_governance_audit_confirms_review_only_boundaries() -> None:
     assert "GOAL-06D is review-only: `true`" in text
     assert "Recommendation outputs exist: `false`" in text
     assert "Position outputs exist: `false`" in text
-    assert "Risk overlay calculation exists: `false`" in text
+    assert "GOAL-07B risk overlay diagnostics are not produced by GOAL-06D: `true`" in text
     assert "Dashboard exists: `false`" in text
     assert "Paper/live trading exists: `false`" in text
     assert "Production DB writes exist: `false`" in text
@@ -35,4 +35,4 @@ def test_goal06d_readiness_warns_instead_of_unlocking_goal07a() -> None:
     assert "GOAL-06D Model Comparison Calibration Readiness: PASS_WITH_WARNINGS" in text
     assert "Allowed next action: `fix_goal06d_model_stability_or_calibration_warnings`" in text
     assert "GOAL-07A mode if allowed: `design_only`" in text
-    assert "No recommendation, position, risk overlay, dashboard, trading, production, or DQN/RL output was created." in text
+    assert "No recommendation, position, dashboard, trading, production, or DQN/RL output was created by GOAL-06D." in text

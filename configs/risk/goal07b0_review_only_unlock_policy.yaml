@@ -12,7 +12,6 @@
     "symbol_level_risk_rows": true
   },
   "forbidden_output_dirs": [
-    "outputs/risk_overlay",
     "outputs/recommendations",
     "outputs/positions",
     "outputs/dashboard",

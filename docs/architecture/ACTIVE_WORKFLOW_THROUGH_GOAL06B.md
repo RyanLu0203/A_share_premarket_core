@@ -40,19 +40,23 @@ flowchart TD
     I2 -. "implemented design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     J -. "review-only design review" .-> J2["GOAL-07A.1 Design Review<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J2 -. "explicit unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    J3 -. "eligible only; not implemented" .-> K["GOAL-07B Risk Overlay Calculation<br/>(future_review_only; not implemented)"]
+    J3 -. "review-only diagnostics" .-> K["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    K -. "locked future design" .-> L["GOAL-08A Recommendation Contract Design<br/>(locked_future)"]
+    L -. "locked future prototype" .-> M["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
 ```
 
-The extension writes review-only evidence under `outputs/stage6c/` and
-`outputs/audits/`. It does not emit recommendations, position bands, portfolio
-weights, risk overlays, dashboard outputs, trading instructions, production
-writes, production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
+The extension writes review-only evidence under `outputs/stage6c/`,
+`outputs/audits/`, and, for GOAL-07B only, non-actionable diagnostics under
+`outputs/risk_overlay/`. It does not emit recommendations, position bands,
+portfolio weights, dashboard outputs, trading instructions, production writes,
+production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
 ingestion is network-disabled by default on the direct AKShare path. The
 explicit CloakBrowser reference probe is separate tag-only evidence and does not
 change the active workflow through GOAL-06B. GOAL-06D and GOAL-06D.1 are
 review-only and currently `PASS_WITH_WARNINGS`; GOAL-07A is design-only,
-GOAL-07B.0 only makes GOAL-07B eligible for a future review-only prototype, and
-no GOAL-07B calculation or downstream trading/production workflow is active.
+GOAL-07B.0 is unlock-only, and GOAL-07B is implemented only as a review-only
+diagnostic prototype. GOAL-08A/GOAL-08B and downstream trading/production
+workflow remain locked.
 
 ## Module Dependency Structure
 

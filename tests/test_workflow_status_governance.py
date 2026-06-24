@@ -31,8 +31,10 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
     assert rows["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
     assert rows["goal07b0_risk_overlay_review_only_unlock_gate"]["status"] == "implemented_review_only"
-    assert rows["goal07b_risk_overlay_calculation"]["status"] == "future_review_only"
-    assert rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+    assert rows["goal07b_risk_overlay_calculation"]["status"] == "implemented_review_only"
+    assert rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "true"
+    assert rows["goal08a_recommendation_contract_design_gate"]["status"] == "locked_future"
+    assert rows["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
     assert rows["position_band_recommendation"]["status"] == "locked_future"
     assert rows["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"
 

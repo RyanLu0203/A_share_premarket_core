@@ -709,7 +709,7 @@ def _write_audit_outputs(root: Path, input_status: dict[str, object], feature_au
                 "GOAL-06D mode: `review_only`",
                 "GOAL-07A mode if allowed: `design_only`",
                 "",
-                "No recommendation, position, risk overlay, dashboard, trading, production, or DQN/RL output was created.",
+                "No recommendation, position, dashboard, trading, production, or DQN/RL output was created by GOAL-06D. GOAL-07B diagnostics, if present, are separate review-only evidence.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in readiness["failures"]],
@@ -856,7 +856,7 @@ def _write_governance_audit(root: Path) -> None:
                 "GOAL-06D is review-only: `true`",
                 "Recommendation outputs exist: `false`",
                 "Position outputs exist: `false`",
-                "Risk overlay calculation exists: `false`",
+                "GOAL-07B risk overlay diagnostics are not produced by GOAL-06D: `true`",
                 "Dashboard exists: `false`",
                 "Paper/live trading exists: `false`",
                 "Production DB writes exist: `false`",
@@ -877,7 +877,9 @@ def _write_boundary_audit(root: Path, readiness: dict[str, object]) -> None:
     locked_ids = list(LOCKED_DOWNSTREAM_WORKFLOWS)
     failures = [workflow_id for workflow_id in locked_ids if workflow.get(workflow_id, {}).get("status") != "locked_future"]
     goal07b = workflow.get("goal07b_risk_overlay_calculation", {})
-    if goal07b.get("status") not in {"locked_future", "future_review_only"} or goal07b.get("implemented_in_repo") == "true":
+    if goal07b.get("status") not in {"locked_future", "future_review_only", "implemented_review_only"}:
+        failures.append("goal07b_risk_overlay_calculation")
+    if goal07b.get("implemented_in_repo") == "true" and goal07b.get("status") != "implemented_review_only":
         failures.append("goal07b_risk_overlay_calculation")
     failures.extend(workflow_id for workflow_id in DELETED_MAINLINE_WORKFLOWS if workflow.get(workflow_id, {}).get("status") != "deleted_from_active_mainline")
     status = "BLOCKED" if failures else "PASS"

@@ -3,8 +3,8 @@
 Status: `PASS`
 
 GOAL-07A is design-only: `true`
-GOAL-07B implemented: `false`
-Risk overlay calculation exists: `false`
+GOAL-07B implemented by GOAL-07A: `false`
+Risk overlay calculation executed by GOAL-07A: `false`
 Recommendation output exists: `false`
 Position output exists: `false`
 Dashboard output exists: `false`

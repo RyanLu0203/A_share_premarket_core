@@ -4,7 +4,7 @@ Status: `PASS`
 GOAL-06D is review-only: `true`
 Recommendation outputs exist: `false`
 Position outputs exist: `false`
-Risk overlay calculation exists: `false`
+GOAL-07B risk overlay diagnostics are not produced by GOAL-06D: `true`
 Dashboard exists: `false`
 Paper/live trading exists: `false`
 Production DB writes exist: `false`

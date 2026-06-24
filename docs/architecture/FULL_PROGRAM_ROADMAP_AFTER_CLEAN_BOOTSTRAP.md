@@ -21,8 +21,10 @@ flowchart TD
     I2 -. "implemented design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     J -. "review-only unlock readiness" .-> J2["GOAL-07A.1 Design Review + Unlock Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J2 -. "explicit review-only unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    J3 -. "eligible only; not implemented" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(future_review_only; not implemented)"]
-    K -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future)"]
+    J3 -. "review-only diagnostics" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    K -. "locked future design" .-> K2["GOAL-08A Recommendation Contract Design<br/>(locked_future)"]
+    K2 -. "locked future prototype" .-> K3["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
+    K3 -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
     N -. "locked future" .-> O["Cost / Slippage Sensitivity<br/>(locked_future)"]
@@ -54,8 +56,9 @@ stability, target-horizon, and provider-concentration warnings in a review-only
 repair layer. GOAL-07A is implemented only as design governance with warnings
 and no risk calculation. GOAL-07A.1 is implemented as review-only design review,
 and GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B
-is now `future_review_only` eligible but not implemented. V2 factor research is planned but inactive in V1; no
+is implemented only as a review-only, non-actionable risk diagnostic prototype.
+GOAL-08A and GOAL-08B remain `locked_future`. V2 factor research is planned but inactive in V1; no
 factor mining, IC/RankIC mining, factor library generation, or factor
-integration is active. GOAL-07B calculation execution and all recommendation,
-dashboard, paper/live trading, production, factor-mining, and DQN/RL blocks
-remain locked, planned-locked, future-review-only, or design-only.
+integration is active. Recommendation, position, dashboard, paper/live trading,
+production, backtest, factor-mining, and DQN/RL blocks remain locked,
+planned-locked, future-review-only, or design-only.

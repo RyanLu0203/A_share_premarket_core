@@ -1,6 +1,5 @@
 {
   "forbidden_outputs": [
-    "outputs/risk_overlay",
     "outputs/recommendations",
     "outputs/positions",
     "outputs/dashboard",

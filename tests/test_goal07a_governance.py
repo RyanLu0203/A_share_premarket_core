@@ -9,8 +9,8 @@ def test_goal07a_governance_boundary_confirms_design_only() -> None:
     text = (ROOT / "outputs/audits/goal07a_governance_boundary_audit.md").read_text(encoding="utf-8")
     assert "Status: `PASS`" in text
     assert "GOAL-07A is design-only: `true`" in text
-    assert "GOAL-07B implemented: `false`" in text
-    assert "Risk overlay calculation exists: `false`" in text
+    assert "GOAL-07B implemented by GOAL-07A: `false`" in text
+    assert "Risk overlay calculation executed by GOAL-07A: `false`" in text
     assert "Recommendation output exists: `false`" in text
     assert "Position output exists: `false`" in text
 

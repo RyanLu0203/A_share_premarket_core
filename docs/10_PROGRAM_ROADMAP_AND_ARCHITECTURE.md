@@ -30,7 +30,9 @@ flowchart TD
     M2 -. "implemented design-only" .-> R["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     R -. "review-only unlock readiness" .-> R2["GOAL-07A.1 Design Review<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R2 -. "explicit unlock gate" .-> R3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    R3 -. "eligible only; not implemented" .-> R4["GOAL-07B Risk Overlay Calculation<br/>(future_review_only; not implemented)"]
+    R3 -. "review-only diagnostics" .-> R4["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    R4 -. "locked future design" .-> R5["GOAL-08A Recommendation Contract Design<br/>(locked_future)"]
+    R5 -. "locked future prototype" .-> R6["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -56,7 +58,8 @@ stability diagnostics, and provider concentration disclosure. GOAL-07A is
 implemented only as design governance with warnings and no risk overlay
 calculation. GOAL-07A.1 is implemented only as review-only design review and
 GOAL-07B.0 is implemented only as a review-only unlock gate. GOAL-07B is
-`future_review_only` eligible but not implemented. V2 factor
+implemented only as a review-only, non-actionable risk diagnostic prototype.
+GOAL-08A and GOAL-08B remain locked_future. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, locked, planned-locked, and deleted-from-active-mainline blocks use

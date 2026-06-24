@@ -220,6 +220,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
         ("python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py", [sys.executable, "scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py"]),
         ("python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py"]),
+        ("python scripts/run_goal07b_risk_overlay_calculation_prototype.py", [sys.executable, "scripts/run_goal07b_risk_overlay_calculation_prototype.py"]),
+        ("python scripts/audit_goal07b_risk_overlay_calculation_prototype.py", [sys.executable, "scripts/audit_goal07b_risk_overlay_calculation_prototype.py"]),
     ]
     rows = []
     runtime_rows = []
@@ -275,7 +277,7 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
                 "Warnings are limited to documented source coverage limitations and the `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` source-evidence gap for missing historical GOAL-05/GOAL-06 docs.",
                 "The Class D gap is manifest/documentation only and does not block Class A active workflow through GOAL-06B.",
                 "Committed validation reports use deterministic stable summaries; volatile runtime timing is stored in local-only ignored diagnostics.",
-                "Recommendation, risk overlay, dashboard, paper/live trading, production DB writes, production model promotion, and DQN/RL remain locked.",
+                "GOAL-07B risk overlay diagnostics are separate review-only evidence. Recommendation, position, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, and DQN/RL remain locked.",
                 "",
                 f"GOAL-06B Clean Repo Bootstrap Readiness: {readiness}",
             ]

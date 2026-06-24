@@ -7,7 +7,7 @@ Allowed next action: `fix_goal06d_model_stability_or_calibration_warnings`
 GOAL-06D mode: `review_only`
 GOAL-07A mode if allowed: `design_only`
 
-No recommendation, position, risk overlay, dashboard, trading, production, or DQN/RL output was created.
+No recommendation, position, dashboard, trading, production, or DQN/RL output was created by GOAL-06D. GOAL-07B diagnostics, if present, are separate review-only evidence.
 
 ## Failures
 

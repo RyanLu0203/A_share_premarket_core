@@ -344,8 +344,10 @@ def review_goal07a1_boundaries(workflow_rows: list[dict[str, str]], forbidden_ou
     rows = {row.get("workflow_id", ""): row for row in workflow_rows}
     goal07b = rows.get(GOAL07B_WORKFLOW_ID, {})
     if goal07b.get("status") not in GOAL07B_ALLOWED_STATUSES:
-        failures.append("goal07b_not_locked_or_future_review_only")
-    if goal07b.get("implemented_in_repo") == "true":
+        failures.append("goal07b_not_locked_future_review_only_or_implemented_review_only")
+    if goal07b.get("status") == "implemented_review_only" and goal07b.get("implemented_in_repo") != "true":
+        failures.append("goal07b_implemented_review_only_not_marked_implemented")
+    elif goal07b.get("status") != "implemented_review_only" and goal07b.get("implemented_in_repo") == "true":
         failures.append("goal07b_marked_implemented")
     if goal07b.get("status") == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" not in goal07b0_unlock_report:
         failures.append("goal07b_future_review_only_without_goal07b0_evidence")
@@ -489,7 +491,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         "primary_scripts": "scripts/run_goal07a1_risk_overlay_design_review_gate.py;scripts/audit_goal07a1_input_contract_readiness.py;scripts/audit_goal07a1_output_schema_safety.py;scripts/audit_goal07a1_rule_convertibility.py;scripts/audit_goal07a1_state_machine_review.py;scripts/audit_goal07a1_warning_policy.py;scripts/audit_goal07a1_boundary_locks.py",
         "primary_outputs": "outputs/audits/goal07a1_design_review_report.md;outputs/audits/goal07a1_unlock_readiness_manifest.json",
         "promotion_rule": "implemented_review_only_after_goal07a1_design_review_pass_with_warnings",
-        "notes": "Review-only design review gate; GOAL-07B remains not implemented and may become future_review_only only after GOAL-07B.0.",
+        "notes": "Review-only design review gate; GOAL-07B may be implemented only by its own diagnostic-only prototype after GOAL-07B.0.",
     }
     if row["workflow_id"] in by_id:
         by_id[row["workflow_id"]].update(row)
@@ -500,10 +502,13 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
     if GOAL07B_WORKFLOW_ID in by_id:
         goal07b_status = _goal07b_status_from_rows(rows, _read(root / f"{AUDIT_DIR}/goal07b0_unlock_gate_report.md"))
         by_id[GOAL07B_WORKFLOW_ID]["status"] = goal07b_status
-        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "false"
-        by_id[GOAL07B_WORKFLOW_ID]["allowed_next_action"] = "await_explicit_goal07b_review_only_calculation_prototype" if goal07b_status == "future_review_only" else "remain_locked"
-        by_id[GOAL07B_WORKFLOW_ID]["depends_on"] = "goal07b0_risk_overlay_review_only_unlock_gate" if goal07b_status == "future_review_only" else "goal07a1_risk_overlay_design_review_unlock_readiness"
-        by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B remains not implemented; future_review_only eligibility requires GOAL-07B.0 evidence."
+        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "true" if goal07b_status == "implemented_review_only" else "false"
+        if goal07b_status == "implemented_review_only":
+            by_id[GOAL07B_WORKFLOW_ID]["allowed_next_action"] = "prepare_goal08a_recommendation_contract_design_gate_or_fix_goal07b_warnings"
+        else:
+            by_id[GOAL07B_WORKFLOW_ID]["allowed_next_action"] = "await_explicit_goal07b_review_only_calculation_prototype" if goal07b_status == "future_review_only" else "remain_locked"
+        by_id[GOAL07B_WORKFLOW_ID]["depends_on"] = "goal07b0_risk_overlay_review_only_unlock_gate" if goal07b_status in {"future_review_only", "implemented_review_only"} else "goal07a1_risk_overlay_design_review_unlock_readiness"
+        by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B may be implemented_review_only only by its own diagnostic-only prototype; future_review_only eligibility requires GOAL-07B.0 evidence."
     write_csv(path, rows, list(rows[0].keys()))
 
 
@@ -535,6 +540,8 @@ def _goal07b_status_from_rows(workflow_rows: object, goal07b0_unlock_report: str
         return "locked_future"
     rows = {row.get("workflow_id", ""): row for row in workflow_rows if isinstance(row, dict)}
     current = rows.get(GOAL07B_WORKFLOW_ID, {}).get("status", "locked_future")
+    if current == "implemented_review_only":
+        return "implemented_review_only"
     if current == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in goal07b0_unlock_report:
         return "future_review_only"
     return "locked_future"

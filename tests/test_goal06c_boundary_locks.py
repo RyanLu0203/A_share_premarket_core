@@ -31,8 +31,9 @@ def test_goal06c_boundary_locks_and_workflow_status() -> None:
     assert workflow["goal06d_model_comparison_calibration"]["status"] == "implemented_review_only"
     assert workflow["goal06d_model_comparison_calibration"]["allowed_next_action"] == "fix_goal06d_model_stability_or_calibration_warnings"
     assert workflow["goal07a_risk_overlay_design"]["status"] == "implemented_design_only"
-    assert workflow["goal07b_risk_overlay_calculation"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+    goal07b = workflow["goal07b_risk_overlay_calculation"]
+    assert goal07b["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
+    assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
     assert workflow["position_band_recommendation"]["status"] == "locked_future"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
     assert workflow["paper_trading_journal"]["status"] == "locked_future"

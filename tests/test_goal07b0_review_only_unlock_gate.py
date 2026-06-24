@@ -24,15 +24,15 @@ def test_goal07b0_runner_unlocks_only_future_review_eligibility() -> None:
     assert run_goal07b0_risk_overlay_review_only_unlock_gate(ROOT)
     report = (ROOT / "outputs/audits/goal07b0_unlock_gate_report.md").read_text(encoding="utf-8")
     assert "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate: PASS_WITH_WARNINGS" in report
-    assert "GOAL-07B target status: `future_review_only`" in report
+    assert "GOAL-07B target status: `future_review_only`" in report or "GOAL-07B target status: `implemented_review_only`" in report
     assert "GOAL-07B is not implemented by this gate." in report
-    assert "No risk calculation was performed." in report
+    assert "No risk calculation was performed by this gate." in report
     assert "Evidence basis: prior PASS/PASS_WITH_WARNINGS design-review reports and manifests only" in report
 
     manifest = json.loads((ROOT / "outputs/audits/goal07b0_unlock_gate_manifest.json").read_text(encoding="utf-8"))
     assert manifest["goal07b0_unlock_status"] == "eligible_for_future_review_only_prototype"
-    assert manifest["goal07b_target_status"] == "future_review_only"
-    assert manifest["goal07b_implemented"] is False
+    assert manifest["goal07b_target_status"] in {"future_review_only", "implemented_review_only"}
+    assert manifest["goal07b_implemented_by_this_gate"] is False
     assert manifest["risk_calculation_performed"] is False
     assert manifest["symbol_level_risk_rows_created"] is False
     assert manifest["live_calculation_outputs_used"] is False
@@ -43,8 +43,9 @@ def test_goal07b0_audit_wrapper_passes_and_downstream_stays_locked() -> None:
     assert audit_goal07b0_risk_overlay_review_only_unlock_gate(ROOT)
     workflow = _workflow()
     assert workflow["goal07b0_risk_overlay_review_only_unlock_gate"]["status"] == "implemented_review_only"
-    assert workflow["goal07b_risk_overlay_calculation"]["status"] == "future_review_only"
-    assert workflow["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+    goal07b = workflow["goal07b_risk_overlay_calculation"]
+    assert goal07b["status"] in {"future_review_only", "implemented_review_only"}
+    assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
     for workflow_id in [
         "position_band_recommendation",
         "dashboard_daily_report",
@@ -80,9 +81,9 @@ def test_goal07b0_detects_forbidden_calculation_outputs() -> None:
 
 
 def test_goal07b0_creates_no_forbidden_output_directories_or_rows() -> None:
+    existing_risk_outputs = set((ROOT / "outputs").glob("**/*risk_overlay*.csv"))
     assert run_goal07b0_risk_overlay_review_only_unlock_gate(ROOT)
     for rel in [
-        "outputs/risk_overlay",
         "outputs/recommendations",
         "outputs/positions",
         "outputs/dashboard",
@@ -92,4 +93,4 @@ def test_goal07b0_creates_no_forbidden_output_directories_or_rows() -> None:
         "outputs/factors",
     ]:
         assert not (ROOT / rel).exists()
-    assert list((ROOT / "outputs").glob("**/*risk_overlay*.csv")) == []
+    assert set((ROOT / "outputs").glob("**/*risk_overlay*.csv")) == existing_risk_outputs

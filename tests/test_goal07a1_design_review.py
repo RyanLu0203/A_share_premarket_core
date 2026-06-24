@@ -92,19 +92,20 @@ def test_upstream_warnings_are_classified() -> None:
     assert mapping["single_provider_mode_akshare_direct"] == "DESIGN_REVIEW_WARNING"
 
 
-def test_goal07b_is_not_implemented_or_executed() -> None:
+def test_goal07a1_does_not_implement_goal07b_itself() -> None:
     assert run_goal07a1_risk_overlay_design_review_gate(ROOT)
     with (ROOT / "configs/project/workflow_status.csv").open(newline="", encoding="utf-8") as handle:
         workflow = {row["workflow_id"]: row for row in csv.DictReader(handle)}
     assert workflow["goal07a1_risk_overlay_design_review_unlock_readiness"]["status"] == "implemented_review_only"
-    assert workflow["goal07b_risk_overlay_calculation"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+    goal07b = workflow["goal07b_risk_overlay_calculation"]
+    assert goal07b["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
+    assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
 
 
-def test_no_risk_calculation_output_files_are_created() -> None:
+def test_goal07a1_does_not_create_new_risk_calculation_output_files() -> None:
+    existing_risk_outputs = set((ROOT / "outputs").glob("**/*risk_overlay*.csv"))
     assert run_goal07a1_risk_overlay_design_review_gate(ROOT)
     for rel in [
-        "outputs/risk_overlay",
         "outputs/recommendations",
         "outputs/positions",
         "outputs/dashboard",
@@ -113,8 +114,7 @@ def test_no_risk_calculation_output_files_are_created() -> None:
         "outputs/factors",
     ]:
         assert not (ROOT / rel).exists()
-    generated = list((ROOT / "outputs").glob("**/*risk_overlay*.csv"))
-    assert generated == []
+    assert set((ROOT / "outputs").glob("**/*risk_overlay*.csv")) == existing_risk_outputs
 
 
 def test_goal07a1_current_bundle_is_ready_with_warnings() -> None:
@@ -122,4 +122,4 @@ def test_goal07a1_current_bundle_is_ready_with_warnings() -> None:
     review = evaluate_goal07a1_design_review(bundle)
     assert review["status"] == "PASS_WITH_WARNINGS"
     assert review["goal07b_unlock_readiness"] == "ready_for_explicit_review_only_unlock"
-    assert review["goal07b_remains"] in {"locked_future", "future_review_only"}
+    assert review["goal07b_remains"] in {"locked_future", "future_review_only", "implemented_review_only"}

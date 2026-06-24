@@ -34,7 +34,10 @@
 - GOAL-07A.1 risk overlay design review unlock-readiness gate
   (`PASS_WITH_WARNINGS`; GOAL-07B ready for explicit review-only unlock).
 - GOAL-07B.0 risk overlay review-only unlock gate (`PASS_WITH_WARNINGS`;
-  GOAL-07B is `future_review_only` eligible but not implemented).
+  preserves GOAL-07B eligibility and remains unlock-only).
+- GOAL-07B risk overlay calculation prototype (`PASS_WITH_WARNINGS`;
+  implemented_review_only non-actionable diagnostics at `trade_date + symbol`
+  grain).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -43,12 +46,14 @@
 
 GOAL-07A has implemented the risk overlay blueprint only as design governance.
 GOAL-07A.1 completed the GOAL-07B unlock-readiness design review, and
-GOAL-07B.0 completed the explicit review-only unlock gate. The next possible
-step is a future explicit GOAL-07B review-only calculation prototype request;
-GOAL-07B is eligible but not implemented.
-No risk overlay calculation rows, recommendation, position, dashboard,
-paper/live trading, production DB writes, production model promotion, factor
-mining, or DQN/RL is unlocked.
+GOAL-07B.0 completed the explicit review-only unlock gate. GOAL-07B now
+implements a deterministic review-only risk overlay calculation prototype. The
+exact allowed next action is to prepare a future GOAL-08A recommendation
+contract design gate, or fix GOAL-07B warnings. Do not proceed to GOAL-08A in
+this state without an explicit future request.
+No recommendation, position, dashboard, paper/live trading, production DB
+writes, production model promotion, backtest, factor mining, broker, or DQN/RL
+is unlocked.
 
 V2 factor research is planned but inactive. It remains `planned_locked` until a
 future explicit V2 goal; no factor mining, IC/RankIC mining, factor library
@@ -59,7 +64,8 @@ workflow diagrams before any future block is promoted.
 
 ## Locked Future
 
-- GOAL-07B risk overlay calculation prototype implementation and execution.
+- GOAL-08A recommendation contract design gate.
+- GOAL-08B recommendation review-only prototype.
 - Position-band recommendation.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity.

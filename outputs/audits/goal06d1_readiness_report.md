@@ -11,7 +11,7 @@ Input rows: `6000`
 Input symbols: `50`
 Input trading dates: `120`
 
-No recommendation, position, risk overlay, dashboard, trading, production, factor-mining, or DQN/RL output was created.
+No recommendation, position, dashboard, trading, production, factor-mining, or DQN/RL output was created by GOAL-06D.1. GOAL-07B diagnostics, if present, are separate review-only evidence.
 
 ## Failures
 

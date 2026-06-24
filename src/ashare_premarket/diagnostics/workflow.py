@@ -103,6 +103,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal07b0_status = _goal07b0_status(root)
     goal07b0_manifest = _goal07b0_manifest(root)
     goal07b0_audit_status = _audit_status(root / "outputs/audits/goal07b0_unlock_gate_audit_report.md")
+    goal07b_status = _goal07b_status(root)
+    goal07b_manifest = _goal07b_manifest(root)
+    goal07b_audit_status = _audit_status(root / "outputs/audits/goal07b_risk_overlay_calculation_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -165,8 +168,13 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-07B.0 audit status: `{goal07b0_audit_status}`.",
                 f"GOAL-07B.0 unlock result: `{goal07b0_manifest.get('goal07b0_unlock_status', 'not yet reviewed')}`.",
                 f"GOAL-07B target status: `{goal07b0_manifest.get('goal07b_target_status', downstream_status.get('goal07b_risk_overlay_calculation', 'missing'))}`.",
+                f"GOAL-07B calculation prototype status: `{goal07b_status}`.",
+                f"GOAL-07B calculation audit status: `{goal07b_audit_status}`.",
+                f"GOAL-07B risk overlay diagnostic rows: `{goal07b_manifest.get('risk_overlay_row_count', 0)}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
+                f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
+                f"GOAL-08B workflow status: `{downstream_status.get('goal08b_recommendation_review_only_prototype', 'missing')}`.",
                 f"Recommendation lock status: `{downstream_status.get('position_band_recommendation', 'missing')}`.",
                 f"Position lock status: `{downstream_status.get('position_band_recommendation', 'missing')}`.",
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
@@ -178,7 +186,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
                 "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.",
                 "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.",
-                "GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible, but it does not implement GOAL-07B.",
+                "GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible, and GOAL-07B may produce review-only non-actionable diagnostics after an explicit prototype request.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -226,6 +234,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal07a1_boundary_locks.py`",
                 "- `python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py`",
                 "- `python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py`",
+                "- `python scripts/run_goal07b_risk_overlay_calculation_prototype.py`",
+                "- `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`",
                 "",
             ]
         ),
@@ -246,9 +256,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
                 "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
-                "- GOAL-07A.1 is review-only. GOAL-07B.0 may make GOAL-07B eligible for a future review-only prototype, but no GOAL-07B calculation is implemented or executed.",
+                "- GOAL-07A.1 and GOAL-07B.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; recommendations, positions, dashboards, trading, production, backtests, factor mining, and DQN/RL remain locked.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
-                "- These warnings do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
+                "- These warnings do not unlock recommendation, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -271,9 +281,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "10. For GOAL-06D.1, run `python scripts/run_goal06d1_calibration_stability_warning_repair.py` and then every `scripts/audit_goal06d1_*.py` wrapper.",
                 "11. For GOAL-07A, run `python scripts/run_goal07a_risk_overlay_design_gate.py` and then every `scripts/audit_goal07a_*.py` wrapper.",
                 "12. For GOAL-07A.1, run `python scripts/run_goal07a1_risk_overlay_design_review_gate.py` and then every `scripts/audit_goal07a1_*.py` wrapper.",
-                "13. Current GOAL-07A is design-only. GOAL-07B.0 may mark GOAL-07B future_review_only eligible only; do not calculate risk values, assign symbol risk tags, or create recommendation/position outputs.",
+                "13. For GOAL-07B, run `python scripts/run_goal07b_risk_overlay_calculation_prototype.py` and `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`; outputs must remain review-only diagnostics.",
                 "14. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "15. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.",
+                "15. Do not unlock recommendation, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.",
                 "",
             ]
         ),
@@ -433,6 +443,30 @@ def _goal07b0_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal07b_status(root: Path) -> str:
+    report = root / "outputs/audits/goal07b_risk_overlay_calculation_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-07B Risk Overlay Calculation Prototype: FAIL" in text:
+        return "FAIL"
+    if "GOAL-07B Risk Overlay Calculation Prototype: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-07B Risk Overlay Calculation Prototype: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal07b_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal07b_risk_overlay_calculation_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -471,6 +505,8 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
         key: rows.get(key, {}).get("status", "missing")
         for key in [
             "goal07b_risk_overlay_calculation",
+            "goal08a_recommendation_contract_design_gate",
+            "goal08b_recommendation_review_only_prototype",
             "position_band_recommendation",
             "dashboard_daily_report",
             "paper_trading_journal",

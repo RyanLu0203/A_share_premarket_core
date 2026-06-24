@@ -369,10 +369,11 @@ def audit_stage6c_leakage_and_boundary(root: Path) -> bool:
         failures.append("GOAL-06D is not future_review_only or implemented_review_only")
     if workflow_rows["goal07a_risk_overlay_design"]["status"] not in {"future_design_only", "implemented_design_only"}:
         failures.append("GOAL-07A is not future_design_only or implemented_design_only")
-    if workflow_rows["goal07b_risk_overlay_calculation"]["status"] not in {"locked_future", "future_review_only"}:
-        failures.append("goal07b_risk_overlay_calculation is not locked_future or future_review_only")
-    if workflow_rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] != "false":
-        failures.append("goal07b_risk_overlay_calculation is marked implemented")
+    goal07b = workflow_rows["goal07b_risk_overlay_calculation"]
+    if goal07b["status"] not in {"locked_future", "future_review_only", "implemented_review_only"}:
+        failures.append("goal07b_risk_overlay_calculation is not locked_future, future_review_only, or implemented_review_only")
+    if goal07b["implemented_in_repo"] == "true" and goal07b["status"] != "implemented_review_only":
+        failures.append("goal07b_risk_overlay_calculation is marked implemented outside implemented_review_only")
     for workflow_id in [
         "position_band_recommendation",
         "dashboard_daily_report",
@@ -425,8 +426,11 @@ def write_stage6c_readiness_report(root: Path, core_checks_passed: bool) -> None
         workflow_rows["goal06c_expanded_validation_ranking"]["status"] == "implemented_review_only"
         and workflow_rows["goal06d_model_comparison_calibration"]["status"] in {"future_review_only", "implemented_review_only"}
         and workflow_rows["goal07a_risk_overlay_design"]["status"] in {"future_design_only", "implemented_design_only"}
-        and workflow_rows["goal07b_risk_overlay_calculation"]["status"] in {"locked_future", "future_review_only"}
-        and workflow_rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+        and workflow_rows["goal07b_risk_overlay_calculation"]["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
+        and (
+            workflow_rows["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
+            or workflow_rows["goal07b_risk_overlay_calculation"]["status"] == "implemented_review_only"
+        )
     )
     missing_outputs = [path for path in [*STAGE6C_OUTPUTS, *STAGE6C_AUDITS[:-1]] if not (root / path).exists()]
     blocked = not core_checks_passed or not workflow_ok or bool(missing_outputs)
@@ -448,7 +452,7 @@ def write_stage6c_readiness_report(root: Path, core_checks_passed: bool) -> None
         "",
         "## Blockers",
         *([f"- Missing outputs: {missing_outputs}"] if missing_outputs else []),
-        *([] if workflow_ok else ["- Workflow status is not promoted to GOAL-06C implemented_review_only with GOAL-06D future_review_only or implemented_review_only."]),
+        *([] if workflow_ok else ["- Workflow status is not promoted to GOAL-06C implemented_review_only with GOAL-06D future_review_only or implemented_review_only and GOAL-07B locked/future/review-only only."]),
         *([] if core_checks_passed else ["- One or more GOAL-06C audits failed."]),
         "",
     ]

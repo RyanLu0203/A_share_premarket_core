@@ -2,7 +2,7 @@
 
 Status: `PASS`
 
-GOAL-07B remains not implemented; current status: `future_review_only`.
+GOAL-07B current status: `implemented_review_only`; GOAL-07A itself did not implement or execute it.
 Recommendation remains locked_future.
 Position output remains locked_future.
 Dashboard remains locked_future.

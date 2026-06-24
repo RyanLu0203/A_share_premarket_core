@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-24 - GOAL-07B Risk Overlay Calculation Prototype
+
+- Implemented GOAL-07B as a deterministic review-only risk overlay diagnostic
+  prototype.
+- Generated 100 non-actionable diagnostic rows at `trade_date + symbol` grain
+  under `outputs/risk_overlay/goal07b_review_only_risk_overlay.csv`.
+- Added the GOAL-07B runner, audit wrapper, policy, report, manifest,
+  diagnostics output, docs, workflow-status governance, and focused tests.
+- Propagated GOAL-06D.1 / GOAL-07A.1 weak-baseline, calibration, feature
+  stability, target-horizon, and provider-concentration warnings into bounded
+  risk diagnostics.
+- Kept GOAL-08A, GOAL-08B, recommendation, position, dashboard, paper/live
+  trading, production, backtest, factor-mining, broker, and DQN/RL outputs
+  locked or absent.
+
 ## 2026-06-24 - GOAL-07B.0 Risk Overlay Review-Only Unlock Gate
 
 - Added a strict GOAL-07B.0 review-only unlock gate based only on prior

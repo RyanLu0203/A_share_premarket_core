@@ -2,7 +2,7 @@
 
 GOAL-07A.1 Risk Overlay Design Review: PASS_WITH_WARNINGS
 GOAL-07B unlock readiness: ready_for_explicit_review_only_unlock
-GOAL-07B remains: future_review_only
+GOAL-07B remains: implemented_review_only
 Allowed next action: `request_explicit_goal07b_review_only_unlock`
 No risk calculation was performed
 No recommendation/position/dashboard/paper/live/production/backtest/factor-mining/DQN/RL output was created

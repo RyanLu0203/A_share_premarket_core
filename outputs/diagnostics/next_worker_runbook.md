@@ -12,6 +12,6 @@
 10. For GOAL-06D.1, run `python scripts/run_goal06d1_calibration_stability_warning_repair.py` and then every `scripts/audit_goal06d1_*.py` wrapper.
 11. For GOAL-07A, run `python scripts/run_goal07a_risk_overlay_design_gate.py` and then every `scripts/audit_goal07a_*.py` wrapper.
 12. For GOAL-07A.1, run `python scripts/run_goal07a1_risk_overlay_design_review_gate.py` and then every `scripts/audit_goal07a1_*.py` wrapper.
-13. Current GOAL-07A is design-only. GOAL-07B.0 may mark GOAL-07B future_review_only eligible only; do not calculate risk values, assign symbol risk tags, or create recommendation/position outputs.
+13. For GOAL-07B, run `python scripts/run_goal07b_risk_overlay_calculation_prototype.py` and `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`; outputs must remain review-only diagnostics.
 14. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
-15. Do not unlock recommendation, risk overlay calculation, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.
+15. Do not unlock recommendation, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.

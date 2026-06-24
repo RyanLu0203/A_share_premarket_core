@@ -1,5 +1,39 @@
 # 09 Step Iteration Log
 
+## 2026-06-24 - GOAL-07B Risk Overlay Calculation Prototype
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the deterministic GOAL-07B review-only risk overlay calculation
+  prototype.
+- Loaded approved upstream review-only artifacts from GOAL-06C.7, GOAL-06D.1,
+  GOAL-07A, GOAL-07A.1, and GOAL-07B.0.
+- Generated 100 non-actionable diagnostic rows at `trade_date + symbol` grain.
+- Updated workflow status so GOAL-07B is `implemented_review_only`.
+- Added GOAL-08A and GOAL-08B as `locked_future` rows.
+
+Evidence:
+
+- `outputs/risk_overlay/goal07b_review_only_risk_overlay.csv`
+- `outputs/diagnostics/goal07b_risk_overlay_diagnostics.csv`
+- `outputs/audits/goal07b_risk_overlay_calculation_report.md`
+- `outputs/audits/goal07b_risk_overlay_calculation_manifest.json`
+- `outputs/audits/goal07b_risk_overlay_calculation_audit.md`
+- `docs/risk/GOAL07B_RISK_OVERLAY_CALCULATION_PROTOTYPE.md`
+
+Safety:
+
+- No recommendation output was generated.
+- No position output was generated.
+- No dashboard output was generated.
+- No paper/live trading output was generated.
+- No production output was generated.
+- No backtest output was generated.
+- No factor-mining output was generated.
+- No broker or DQN/RL output was generated.
+
 ## 2026-06-24 - GOAL-07B.0 Risk Overlay Review-Only Unlock Gate
 
 Status: `PASS_WITH_WARNINGS`.
