@@ -32,7 +32,7 @@ def run_adapter_audit(root: Path) -> bool:
                 "# Adapter Audit Report",
                 "",
                 f"Status: `{status}`",
-                "Public commands through GOAL-06B plus GOAL-06C/GOAL-06D review-only gates and the GOAL-07A design-only gate are preserved as clean wrappers.",
+                "Public commands through GOAL-06B plus GOAL-06C/GOAL-06D review-only gates, the GOAL-07A design-only gate, and the GOAL-07B.0 unlock gate are preserved as clean wrappers.",
                 "No wrapper imports legacy implementation code.",
                 "",
                 *[f"- Missing: `{failure}`" for failure in failures],

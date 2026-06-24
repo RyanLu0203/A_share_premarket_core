@@ -38,7 +38,9 @@ flowchart TD
     H -. "implemented review-only after engineering_pilot" .-> I["GOAL-06D Model Comparison / Calibration / Stability<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I -. "warning repair review-only" .-> I2["GOAL-06D.1 Calibration / Stability Warning Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     I2 -. "implemented design-only" .-> J["GOAL-07A Risk Overlay Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
-    J -. "locked future explicit unlock required" .-> K["GOAL-07B Risk Overlay Calculation<br/>(locked_future)"]
+    J -. "review-only design review" .-> J2["GOAL-07A.1 Design Review<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    J2 -. "explicit unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    J3 -. "eligible only; not implemented" .-> K["GOAL-07B Risk Overlay Calculation<br/>(future_review_only; not implemented)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/` and
@@ -48,9 +50,9 @@ writes, production model promotion, or DQN/RL artifacts. GOAL-06C.6 provider
 ingestion is network-disabled by default on the direct AKShare path. The
 explicit CloakBrowser reference probe is separate tag-only evidence and does not
 change the active workflow through GOAL-06B. GOAL-06D and GOAL-06D.1 are
-review-only and currently `PASS_WITH_WARNINGS`; GOAL-07A is design-only and
-does not unlock GOAL-07B calculation or any downstream trading/production
-workflow.
+review-only and currently `PASS_WITH_WARNINGS`; GOAL-07A is design-only,
+GOAL-07B.0 only makes GOAL-07B eligible for a future review-only prototype, and
+no GOAL-07B calculation or downstream trading/production workflow is active.
 
 ## Module Dependency Structure
 

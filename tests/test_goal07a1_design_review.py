@@ -97,7 +97,7 @@ def test_goal07b_is_not_implemented_or_executed() -> None:
     with (ROOT / "configs/project/workflow_status.csv").open(newline="", encoding="utf-8") as handle:
         workflow = {row["workflow_id"]: row for row in csv.DictReader(handle)}
     assert workflow["goal07a1_risk_overlay_design_review_unlock_readiness"]["status"] == "implemented_review_only"
-    assert workflow["goal07b_risk_overlay_calculation"]["status"] == "locked_future"
+    assert workflow["goal07b_risk_overlay_calculation"]["status"] in {"locked_future", "future_review_only"}
     assert workflow["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "false"
 
 
@@ -122,4 +122,4 @@ def test_goal07a1_current_bundle_is_ready_with_warnings() -> None:
     review = evaluate_goal07a1_design_review(bundle)
     assert review["status"] == "PASS_WITH_WARNINGS"
     assert review["goal07b_unlock_readiness"] == "ready_for_explicit_review_only_unlock"
-    assert review["goal07b_remains"] == "locked_future"
+    assert review["goal07b_remains"] in {"locked_future", "future_review_only"}

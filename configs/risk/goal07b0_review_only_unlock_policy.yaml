@@ -1,0 +1,34 @@
+{
+  "evidence_source_policy": "prior_audit_reports_only_no_live_calculation_outputs",
+  "forbidden_execution": {
+    "backtests": true,
+    "dashboard_outputs": true,
+    "dqn_rl": true,
+    "factor_mining": true,
+    "paper_or_live_trading": true,
+    "production_db_writes": true,
+    "recommendation_or_position_outputs": true,
+    "risk_calculation": true,
+    "symbol_level_risk_rows": true
+  },
+  "forbidden_output_dirs": [
+    "outputs/risk_overlay",
+    "outputs/recommendations",
+    "outputs/positions",
+    "outputs/dashboard",
+    "outputs/paper_trading",
+    "outputs/live_trading",
+    "outputs/backtests",
+    "outputs/factors"
+  ],
+  "goal": "GOAL-07B.0",
+  "goal07b_implemented_after_pass": false,
+  "goal07b_status_after_pass": "future_review_only",
+  "mode": "review_only_unlock_gate",
+  "required_prior_evidence": [
+    "GOAL-07A PASS/PASS_WITH_WARNINGS design readiness",
+    "GOAL-07A.1 PASS/PASS_WITH_WARNINGS design review",
+    "GOAL-07A.1 ready_for_explicit_review_only_unlock manifest"
+  ],
+  "unlocks": "GOAL-07B eligibility only"
+}

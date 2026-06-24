@@ -218,6 +218,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
+        ("python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py", [sys.executable, "scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py"]),
+        ("python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py"]),
     ]
     rows = []
     runtime_rows = []

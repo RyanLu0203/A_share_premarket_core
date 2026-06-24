@@ -40,11 +40,14 @@ This file is long-term project memory for Codex and other coding agents.
   baseline and allows GOAL-07A only as design-only preparation with warnings.
 - GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
   defines design artifacts and audits only; no risk calculation is active.
-- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and records GOAL-07B readiness only for a future explicit review-only unlock request; GOAL-07B remains locked_future.
+- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and records GOAL-07B readiness for an explicit review-only unlock request.
+- GOAL-07B.0 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It moves GOAL-07B only to `future_review_only` eligibility for a future
+  explicit prototype request; GOAL-07B calculation remains not implemented.
 - Feature-label merge and leakage audit are active.
-- GOAL-07B risk calculation, recommendation, position output, dashboard,
-  paper/live trading, production DB writes, production model promotion, V2
-  factor mining, and DQN/RL remain locked.
+- GOAL-07B risk calculation execution, recommendation, position output,
+  dashboard, paper/live trading, production DB writes, production model
+  promotion, V2 factor mining, and DQN/RL remain locked or not implemented.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
   AKShare/local-import paths. The explicit CloakBrowser reference probe is
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
@@ -96,6 +99,8 @@ python scripts/audit_goal06d_calibration.py
 python scripts/audit_goal06d_stability.py
 python scripts/audit_goal06d_governance.py
 python scripts/audit_goal06d_boundary_locks.py
+python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py
+python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -155,7 +160,7 @@ dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output.
 
 
 

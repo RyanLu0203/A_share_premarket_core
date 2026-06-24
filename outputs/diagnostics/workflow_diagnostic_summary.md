@@ -4,7 +4,7 @@ Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `implemented with warnings`.
-GOAL-06C.5 engineering data foundation status: `engineering panel ready`.
+GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
 Provider ladder panel tier: `engineering_pilot`.
@@ -45,20 +45,24 @@ GOAL-07A.1 state machine review status: `PASS`.
 GOAL-07A.1 boundary lock status: `PASS`.
 GOAL-07B unlock readiness: `ready_for_explicit_review_only_unlock`.
 GOAL-07A.1 allowed next action: `request_explicit_goal07b_review_only_unlock`.
+GOAL-07B.0 unlock gate status: `PASS_WITH_WARNINGS`.
+GOAL-07B.0 audit status: `PASS`.
+GOAL-07B.0 unlock result: `eligible_for_future_review_only_prototype`.
+GOAL-07B target status: `future_review_only`.
 V2 factor placeholder status: `planned_locked_disabled`.
-GOAL-07B lock status: `locked_future`.
+GOAL-07B workflow status: `future_review_only`.
 Recommendation lock status: `locked_future`.
 Position lock status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream lock status: `locked_future_or_deleted_from_active_mainline`.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
 GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
-GOAL-07A.1 reviews GOAL-07A design readiness only; it can mark GOAL-07B ready for an explicit future review-only unlock request, but it does not implement GOAL-07B.
+GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible, but it does not implement GOAL-07B.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -116,3 +120,5 @@ Protected regression commands:
 - `python scripts/audit_goal07a1_state_machine_review.py`
 - `python scripts/audit_goal07a1_warning_policy.py`
 - `python scripts/audit_goal07a1_boundary_locks.py`
+- `python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py`
+- `python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py`

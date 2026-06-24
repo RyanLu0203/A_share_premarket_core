@@ -51,3 +51,4 @@ goal07a_input_output_contracts,GOAL-07A,ashare_premarket.risk_design.goal07a,PAS
 goal07a_rules_state_warning_mapping,GOAL-07A,ashare_premarket.risk_design.goal07a,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal07a_governance_boundary_v2_lock,GOAL-07A,ashare_premarket.risk_design.goal07a,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal07a1_design_review_unlock_readiness,GOAL-07A.1,ashare_premarket.risk_design.goal07a1,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal07b0_review_only_unlock_gate,GOAL-07B.0,ashare_premarket.risk_design.goal07b0,PASS,CLASS_A_REQUIRED_ACTIVE,true

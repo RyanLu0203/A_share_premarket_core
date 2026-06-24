@@ -1,11 +1,14 @@
 # Project State
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 ## Current Stage
 
 Status: `PASS_WITH_WARNINGS` for GOAL-07A design-only risk overlay governance.
 Status: `PASS_WITH_WARNINGS` for GOAL-07A.1 risk overlay design review and GOAL-07B explicit unlock readiness.
+Status: `PASS_WITH_WARNINGS` for GOAL-07B.0 review-only unlock gate. GOAL-07B
+is now `future_review_only` eligible for a later explicit prototype request,
+but GOAL-07B calculation is not implemented.
 GOAL-06C.7 provider-ladder engineering data base expansion remains `PASS`; the
 latest explicit network-enabled run reached `engineering_pilot`: 50 approved
 symbols, 120 validation trading dates, and 6000 usable Stage 6C rows.
@@ -29,8 +32,9 @@ comparison/calibration/stability/warning-repair governance. GOAL-06D.1 selected
 `raw_score_based_alpha_ranking` as a weak but bounded review-only baseline and
 allowed GOAL-07A only as design-only preparation with warnings. GOAL-07A is now
 `implemented_design_only`; it defines contracts, schemas, rule catalog, state
-machine, upstream-warning mapping, and governance audits only. GOAL-07B risk
-calculation and everything downstream remain locked.
+machine, upstream-warning mapping, and governance audits only. GOAL-07B.0
+unlocks eligibility only; GOAL-07B risk calculation and everything downstream
+remain unimplemented.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -81,6 +85,8 @@ Implemented and protected:
   upstream warning mapping, governance boundary, and V2 lock audit
 - GOAL-07A.1 risk overlay design review, warning classification, forbidden
   schema overlap audit, and GOAL-07B explicit unlock readiness manifest
+- GOAL-07B.0 review-only unlock gate, based only on prior
+  PASS/PASS_WITH_WARNINGS design-review evidence
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -117,23 +123,25 @@ Implemented review-only:
 - GOAL-06D.1 calibration/stability warning repair gate (`PASS_WITH_WARNINGS`;
   selected weak but bounded repaired baseline:
   `raw_score_based_alpha_ranking`)
+- GOAL-07A.1 risk overlay design review gate (`PASS_WITH_WARNINGS`; GOAL-07B
+  was ready for an explicit review-only unlock)
+- GOAL-07B.0 risk overlay review-only unlock gate (`PASS_WITH_WARNINGS`;
+  GOAL-07B is `future_review_only` eligible but not implemented)
 
 Implemented design-only:
 
 - GOAL-07A risk overlay design gate (`PASS_WITH_WARNINGS`; contracts, schemas,
   rule catalog, state machine, upstream-warning mapping, and audits only)
-- GOAL-07A.1 risk overlay design review gate (`PASS_WITH_WARNINGS`; GOAL-07B
-  is ready only for a future explicit review-only unlock request)
 
 Future review-only:
 
-- none currently unlocked beyond GOAL-06D.
+- GOAL-07B risk overlay calculation prototype eligibility only
+  (`future_review_only`; not implemented, no rows/output)
 
 Still locked:
 
-- GOAL-07B
 - recommendation or position-band output
-- risk overlay calculation
+- active risk overlay calculation execution
 - dashboard
 - paper trading
 - broker/live trading
@@ -142,7 +150,7 @@ Still locked:
 - DQN/RL
 
 GOAL-07A has run only as design-only risk overlay governance.
-GOAL-07A.1 has run only as review-only design review governance. Its report is `outputs/audits/goal07a1_design_review_report.md`; it marks GOAL-07B readiness as `ready_for_explicit_review_only_unlock` while keeping GOAL-07B `locked_future`. Its authoritative
+GOAL-07A.1 has run only as review-only design review governance. Its report is `outputs/audits/goal07a1_design_review_report.md`; it marks GOAL-07B readiness as `ready_for_explicit_review_only_unlock`. GOAL-07B.0 then wrote `outputs/audits/goal07b0_unlock_gate_report.md` and moved GOAL-07B only to `future_review_only` eligibility. Its authoritative
 readiness check is `outputs/audits/goal07a_readiness_report.md`, currently
 `PASS_WITH_WARNINGS`, with allowed next action
 `prepare_goal07b_design_review_or_fix_goal07a_warnings`. It does not calculate
@@ -196,11 +204,12 @@ Canonical status contract:
 
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
-GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, and GOAL-06D.1 are
-`implemented_review_only`; GOAL-07A is `implemented_design_only`. GOAL-07B and
-all downstream calculation, recommendation, position, dashboard, trading,
-production, V2 factor-mining, and DQN/RL paths remain locked or deleted from
-active mainline.
+GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
+GOAL-07A.1, and GOAL-07B.0 are `implemented_review_only`; GOAL-07A is
+`implemented_design_only`. GOAL-07B is `future_review_only` eligible only and
+not implemented; all downstream calculation execution, recommendation,
+position, dashboard, trading, production, V2 factor-mining, and DQN/RL paths
+remain locked or deleted from active mainline.
 
 ## Known Warnings
 

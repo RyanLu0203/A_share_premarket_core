@@ -3,7 +3,7 @@
   "dashboard_trading_production_backtest_factor_dqn_output_created": false,
   "failures": [],
   "goal": "GOAL-07A.1",
-  "goal07b_remains": "locked_future",
+  "goal07b_remains": "future_review_only",
   "goal07b_unlock_readiness": "ready_for_explicit_review_only_unlock",
   "recommendation_or_position_output_created": false,
   "risk_calculation_performed": false,

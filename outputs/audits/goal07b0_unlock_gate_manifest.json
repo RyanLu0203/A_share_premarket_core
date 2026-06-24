@@ -1,0 +1,27 @@
+{
+  "allowed_next_action": "future_goal07b_review_only_calculation_prototype_may_be_requested",
+  "dashboard_trading_production_backtest_factor_dqn_output_created": false,
+  "evidence_basis": "prior_pass_or_pass_with_warnings_design_review_evidence_only",
+  "evidence_inputs": [
+    "outputs/audits/goal07a_readiness_report.md",
+    "outputs/audits/goal07a1_design_review_report.md",
+    "outputs/audits/goal07a1_unlock_readiness_manifest.json",
+    "configs/project/workflow_status.csv"
+  ],
+  "failures": [],
+  "goal": "GOAL-07B.0-RISK-OVERLAY-REVIEW-ONLY-UNLOCK-GATE",
+  "goal07b0_unlock_status": "eligible_for_future_review_only_prototype",
+  "goal07b_implemented": false,
+  "goal07b_prior_status": "future_review_only",
+  "goal07b_target_status": "future_review_only",
+  "goal07b_transition_rule": "locked_future_to_future_review_only_or_idempotent_future_review_only_rerun",
+  "live_calculation_outputs_used": false,
+  "recommendation_or_position_output_created": false,
+  "risk_calculation_performed": false,
+  "status": "PASS_WITH_WARNINGS",
+  "symbol_level_risk_rows_created": false,
+  "warnings": [
+    "goal07a1_prior_pass_with_warnings",
+    "goal07a_prior_pass_with_warnings"
+  ]
+}

@@ -8,6 +8,8 @@ from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.risk_design.goal07a import (
     DOWNSTREAM_LOCKED_IDS,
     FORBIDDEN_OUTPUT_DIRS,
+    GOAL07B_ALLOWED_STATUSES,
+    GOAL07B_WORKFLOW_ID,
     RISK_DOMAINS,
     RISK_STATES,
     STATE_MACHINE_STATES,
@@ -149,6 +151,7 @@ def load_goal07a1_design_bundle(root: Path) -> dict[str, object]:
         "state_machine": read_json(root / f"{RISK_DIR}/goal07a_risk_state_machine.yaml"),
         "warning_mapping": read_json(root / f"{RISK_DIR}/goal07a_upstream_warning_mapping.yaml"),
         "workflow_rows": read_csv(root / "configs/project/workflow_status.csv"),
+        "goal07b0_unlock_report": _read(root / f"{AUDIT_DIR}/goal07b0_unlock_gate_report.md"),
         "goal06c7_readiness": _read(root / f"{AUDIT_DIR}/goal06c7_readiness_report.md"),
         "goal06d_readiness": _read(root / f"{AUDIT_DIR}/goal06d_readiness_report.md"),
         "goal06d1_readiness": _read(root / f"{AUDIT_DIR}/goal06d1_readiness_report.md"),
@@ -162,7 +165,8 @@ def evaluate_goal07a1_design_review(bundle: dict[str, object]) -> dict[str, obje
     rule_review = review_goal07a1_rule_catalog(bundle["rule_catalog"])
     state_review = review_goal07a1_state_machine(bundle["state_machine"])
     warning_rows = classify_goal07a1_upstream_warnings(bundle.get("goal06c7_readiness", ""), bundle.get("goal06d_readiness", ""), bundle.get("goal06d1_readiness", ""))
-    boundary_review = review_goal07a1_boundaries(bundle.get("workflow_rows", []), bundle.get("forbidden_output_dirs_present", []))
+    boundary_review = review_goal07a1_boundaries(bundle.get("workflow_rows", []), bundle.get("forbidden_output_dirs_present", []), str(bundle.get("goal07b0_unlock_report", "")))
+    goal07b_status = _goal07b_status_from_rows(bundle.get("workflow_rows", []), str(bundle.get("goal07b0_unlock_report", "")))
     reviews = {
         "input_contract": input_review,
         "output_schema": schema_review,
@@ -197,7 +201,7 @@ def evaluate_goal07a1_design_review(bundle: dict[str, object]) -> dict[str, obje
         "status": status,
         "goal07b_unlock_readiness": readiness,
         "allowed_next_action": allowed_next_action,
-        "goal07b_remains": "locked_future",
+        "goal07b_remains": goal07b_status,
         "reviews": reviews,
         "warning_classifications": warning_rows,
         "failures": failures,
@@ -334,12 +338,17 @@ def classify_goal07a1_upstream_warnings(goal06c7_readiness: str, goal06d_readine
     return rows
 
 
-def review_goal07a1_boundaries(workflow_rows: list[dict[str, str]], forbidden_output_dirs_present: list[str]) -> dict[str, object]:
+def review_goal07a1_boundaries(workflow_rows: list[dict[str, str]], forbidden_output_dirs_present: list[str], goal07b0_unlock_report: str = "") -> dict[str, object]:
     failures: list[str] = []
     warnings: list[str] = []
     rows = {row.get("workflow_id", ""): row for row in workflow_rows}
-    if rows.get("goal07b_risk_overlay_calculation", {}).get("status") != "locked_future":
-        failures.append("goal07b_not_locked_future")
+    goal07b = rows.get(GOAL07B_WORKFLOW_ID, {})
+    if goal07b.get("status") not in GOAL07B_ALLOWED_STATUSES:
+        failures.append("goal07b_not_locked_or_future_review_only")
+    if goal07b.get("implemented_in_repo") == "true":
+        failures.append("goal07b_marked_implemented")
+    if goal07b.get("status") == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" not in goal07b0_unlock_report:
+        failures.append("goal07b_future_review_only_without_goal07b0_evidence")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if rows.get(workflow_id, {}).get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
@@ -480,7 +489,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         "primary_scripts": "scripts/run_goal07a1_risk_overlay_design_review_gate.py;scripts/audit_goal07a1_input_contract_readiness.py;scripts/audit_goal07a1_output_schema_safety.py;scripts/audit_goal07a1_rule_convertibility.py;scripts/audit_goal07a1_state_machine_review.py;scripts/audit_goal07a1_warning_policy.py;scripts/audit_goal07a1_boundary_locks.py",
         "primary_outputs": "outputs/audits/goal07a1_design_review_report.md;outputs/audits/goal07a1_unlock_readiness_manifest.json",
         "promotion_rule": "implemented_review_only_after_goal07a1_design_review_pass_with_warnings",
-        "notes": "Review-only design review gate; GOAL-07B remains locked_future until a separate explicit unlock goal.",
+        "notes": "Review-only design review gate; GOAL-07B remains not implemented and may become future_review_only only after GOAL-07B.0.",
     }
     if row["workflow_id"] in by_id:
         by_id[row["workflow_id"]].update(row)
@@ -488,12 +497,13 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         insert_at = next((index for index, existing in enumerate(rows) if existing["workflow_id"] == "goal07b_risk_overlay_calculation"), len(rows))
         rows.insert(insert_at, row)
     by_id = {existing["workflow_id"]: existing for existing in rows}
-    if "goal07b_risk_overlay_calculation" in by_id:
-        by_id["goal07b_risk_overlay_calculation"]["status"] = "locked_future"
-        by_id["goal07b_risk_overlay_calculation"]["implemented_in_repo"] = "false"
-        by_id["goal07b_risk_overlay_calculation"]["allowed_next_action"] = "remain_locked"
-        by_id["goal07b_risk_overlay_calculation"]["depends_on"] = "goal07a1_risk_overlay_design_review_unlock_readiness"
-        by_id["goal07b_risk_overlay_calculation"]["notes"] = "Locked downstream workflow; GOAL-07A.1 says ready only for a future explicit review-only unlock request, not implementation."
+    if GOAL07B_WORKFLOW_ID in by_id:
+        goal07b_status = _goal07b_status_from_rows(rows, _read(root / f"{AUDIT_DIR}/goal07b0_unlock_gate_report.md"))
+        by_id[GOAL07B_WORKFLOW_ID]["status"] = goal07b_status
+        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "false"
+        by_id[GOAL07B_WORKFLOW_ID]["allowed_next_action"] = "await_explicit_goal07b_review_only_calculation_prototype" if goal07b_status == "future_review_only" else "remain_locked"
+        by_id[GOAL07B_WORKFLOW_ID]["depends_on"] = "goal07b0_risk_overlay_review_only_unlock_gate" if goal07b_status == "future_review_only" else "goal07a1_risk_overlay_design_review_unlock_readiness"
+        by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B remains not implemented; future_review_only eligibility requires GOAL-07B.0 evidence."
     write_csv(path, rows, list(rows[0].keys()))
 
 
@@ -518,6 +528,16 @@ def _review_result(failures: list[str], warnings: list[str]) -> dict[str, object
         "failures": failures,
         "warnings": warnings,
     }
+
+
+def _goal07b_status_from_rows(workflow_rows: object, goal07b0_unlock_report: str) -> str:
+    if not isinstance(workflow_rows, list):
+        return "locked_future"
+    rows = {row.get("workflow_id", ""): row for row in workflow_rows if isinstance(row, dict)}
+    current = rows.get(GOAL07B_WORKFLOW_ID, {}).get("status", "locked_future")
+    if current == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in goal07b0_unlock_report:
+        return "future_review_only"
+    return "locked_future"
 
 
 def _status_from_report(path: Path) -> str:

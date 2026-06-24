@@ -2,7 +2,7 @@
 
 Status: `PASS`
 GOAL-07A remains design-only: `implemented_design_only`.
-GOAL-07B remains locked.
+GOAL-07B remains not implemented.
 Recommendation remains locked.
 Dashboard remains locked.
 Paper/live trading remains locked.

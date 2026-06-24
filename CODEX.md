@@ -6,8 +6,9 @@ Maintain a clean, PIT-safe, review-only A-share pre-market workflow through
 GOAL-06B, plus the GOAL-06C review-only expanded validation extension, the
 GOAL-06C.5/GOAL-06C.6/GOAL-06C.6A/GOAL-06C.7 engineering data foundation gates,
 the GOAL-06D/GOAL-06D.1 review-only model comparison/calibration/stability
-governance gates, and the GOAL-07A design-only risk governance gate. Preserve
-reproducibility and source governance before any future risk calculation work.
+governance gates, the GOAL-07A design-only risk governance gate, and the
+GOAL-07B.0 review-only unlock gate. Preserve reproducibility and source
+governance before any future risk calculation work.
 
 ## Current Reliable Facts
 
@@ -51,11 +52,14 @@ reproducibility and source governance before any future risk calculation work.
 - GOAL-07A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
   defines contracts, future schema, rule catalog, state machine,
   upstream-warning mapping, governance boundary, and V2 lock audits only.
-- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and marks GOAL-07B ready only for a future explicit review-only unlock request; it does not implement GOAL-07B.
+- GOAL-07A.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It reviews GOAL-07A design convertibility and marks GOAL-07B ready for an explicit review-only unlock request; it does not implement GOAL-07B.
+- GOAL-07B.0 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It moves GOAL-07B only to `future_review_only` eligibility for a later
+  explicit prototype request; GOAL-07B is not implemented.
 - Production model promotion is false.
-- GOAL-07B risk calculation, recommendation, position output, dashboard, paper
-  trading, broker/live trading, production DB writes, V2 factor mining, and
-  DQN/RL are locked.
+- GOAL-07B risk calculation execution, recommendation, position output,
+  dashboard, paper trading, broker/live trading, production DB writes, V2 factor
+  mining, and DQN/RL are locked or not implemented.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow; Python `3.9.21`
   passed fresh-clone verification.
 - Stable committed reports intentionally use `runtime_seconds=local_only`;
@@ -92,6 +96,8 @@ python scripts/audit_goal06d_calibration.py
 python scripts/audit_goal06d_stability.py
 python scripts/audit_goal06d_governance.py
 python scripts/audit_goal06d_boundary_locks.py
+python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py
+python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -133,8 +139,9 @@ later explicit gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not implement GOAL-07B or risk calculations. GOAL-07A is already
-  design-only; no risk overlay calculation is active.
+- Do not implement GOAL-07B or risk calculations. GOAL-07B may be
+  `future_review_only` eligible after GOAL-07B.0, but no risk overlay
+  calculation is active.
 
 ## GOAL-06D.1 Agent Note
 
@@ -146,7 +153,7 @@ promotion, or factor-mining outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs.
 
 
 

@@ -98,7 +98,6 @@ WORKFLOW_FIELDS = [
     "notes",
 ]
 LOCKED_DOWNSTREAM_WORKFLOWS = {
-    "goal07b_risk_overlay_calculation": "GOAL-07B Risk Overlay Calculation",
     "position_band_recommendation": "Recommendation / Position Band Output",
     "signal_backtest": "Signal Backtest",
     "portfolio_backtest": "Portfolio Backtest",
@@ -877,6 +876,9 @@ def _write_boundary_audit(root: Path, readiness: dict[str, object]) -> None:
     workflow = {row["workflow_id"]: row for row in read_csv(root / "configs/project/workflow_status.csv")}
     locked_ids = list(LOCKED_DOWNSTREAM_WORKFLOWS)
     failures = [workflow_id for workflow_id in locked_ids if workflow.get(workflow_id, {}).get("status") != "locked_future"]
+    goal07b = workflow.get("goal07b_risk_overlay_calculation", {})
+    if goal07b.get("status") not in {"locked_future", "future_review_only"} or goal07b.get("implemented_in_repo") == "true":
+        failures.append("goal07b_risk_overlay_calculation")
     failures.extend(workflow_id for workflow_id in DELETED_MAINLINE_WORKFLOWS if workflow.get(workflow_id, {}).get("status") != "deleted_from_active_mainline")
     status = "BLOCKED" if failures else "PASS"
     write_text(
@@ -889,7 +891,8 @@ def _write_boundary_audit(root: Path, readiness: dict[str, object]) -> None:
                 f"GOAL-07A status: `{workflow.get('goal07a_risk_overlay_design', {}).get('status', 'missing')}`",
                 f"GOAL-06D allowed next action: `{readiness['allowed_next_action']}`",
                 "GOAL-07A may proceed only as design-only if GOAL-06D readiness is PASS.",
-                "GOAL-07B, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked.",
+                f"GOAL-07B status: `{goal07b.get('status', 'missing')}` and implemented: `{goal07b.get('implemented_in_repo', 'missing')}`.",
+                "Recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked.",
                 "",
                 "## Failures",
                 *[f"- unlocked downstream workflow: {failure}" for failure in failures],

@@ -136,7 +136,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    "goal07b_risk_overlay_calculation",
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -149,6 +148,8 @@ DOWNSTREAM_LOCKED_IDS = [
     "failure_attribution",
     "production_hardening",
 ]
+GOAL07B_WORKFLOW_ID = "goal07b_risk_overlay_calculation"
+GOAL07B_ALLOWED_STATUSES = {"locked_future", "future_review_only"}
 
 SCRIPT_AUDIT_FUNCTIONS = {
     "allowed_input_contract": "audit_goal07a_allowed_input_contract",
@@ -653,7 +654,7 @@ def _write_audits(root: Path, upstream: dict[str, object], designs: dict[str, ob
         "Factor mining output exists: `false`",
     ])
     _write_audit_report(root, "goal07a_boundary_lock_audit.md", "GOAL-07A Boundary Lock Audit", statuses["boundary_locks"], [
-        "GOAL-07B remains locked_future.",
+        f"GOAL-07B remains not implemented; current status: `{_goal07b_status(root)}`.",
         "Recommendation remains locked_future.",
         "Position output remains locked_future.",
         "Dashboard remains locked_future.",
@@ -755,9 +756,13 @@ def _audit_governance_boundary(root: Path) -> str:
 
 def _audit_boundary_locks(root: Path) -> str:
     rows = {row["workflow_id"]: row for row in read_csv(root / "configs/project/workflow_status.csv")}
+    goal07b = rows.get(GOAL07B_WORKFLOW_ID, {})
+    goal07b_ok = goal07b.get("status") in GOAL07B_ALLOWED_STATUSES and goal07b.get("implemented_in_repo") == "false"
+    if goal07b.get("status") == "future_review_only":
+        goal07b_ok = goal07b_ok and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in _read(root / "outputs/audits/goal07b0_unlock_gate_report.md")
     downstream_locked = all(rows.get(workflow_id, {}).get("status") == "locked_future" for workflow_id in DOWNSTREAM_LOCKED_IDS)
     dqn_deleted = rows.get("dqn_rl_mainline", {}).get("status") == "deleted_from_active_mainline"
-    return "PASS" if downstream_locked and dqn_deleted and _forbidden_dirs_absent(root) else "BLOCKED"
+    return "PASS" if goal07b_ok and downstream_locked and dqn_deleted and _forbidden_dirs_absent(root) else "BLOCKED"
 
 
 def _audit_v2_factor_lock(root: Path) -> str:
@@ -802,7 +807,7 @@ def _write_readiness_report(root: Path, readiness: dict[str, object], upstream: 
                 f"GOAL-07A Risk Overlay Design Readiness: {readiness['status']}",
                 f"Allowed next action: `{readiness['allowed_next_action']}`",
                 "GOAL-07A mode: `design_only`",
-                "GOAL-07B status: `locked_future`",
+                f"GOAL-07B status: `{_goal07b_status(root)}`",
                 "GOAL-07B may proceed only after an explicit future unlock and only as a separate review-only calculation prototype goal.",
                 f"GOAL-06C.7 engineering_pilot evidence verified: `{str(upstream['goal06c7_engineering_pilot']).lower()}`",
                 f"GOAL-06D.1 PASS/PASS_WITH_WARNINGS evidence verified: `{str(upstream['goal06d1_ready']).lower()}`",
@@ -851,6 +856,9 @@ def _update_workflow_status(root: Path, readiness: dict[str, object]) -> None:
             by_id[workflow_id]["status"] = "locked_future"
             by_id[workflow_id]["implemented_in_repo"] = "false"
             by_id[workflow_id]["allowed_next_action"] = "remain_locked"
+    if GOAL07B_WORKFLOW_ID in by_id:
+        by_id[GOAL07B_WORKFLOW_ID]["status"] = _goal07b_status(root)
+        by_id[GOAL07B_WORKFLOW_ID]["implemented_in_repo"] = "false"
     if "dqn_rl_mainline" in by_id:
         by_id["dqn_rl_mainline"]["status"] = "deleted_from_active_mainline"
         by_id["dqn_rl_mainline"]["allowed_next_action"] = "remain_deleted_unless_explicit_optional_research_goal"
@@ -864,7 +872,7 @@ def _update_locked_capabilities(root: Path) -> None:
     path = root / "configs/project/locked_capabilities.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     payload["goal07a_risk_overlay_design"] = "implemented_design_only"
-    payload["goal07b_risk_overlay_calculation"] = "locked_future"
+    payload["goal07b_risk_overlay_calculation"] = _goal07b_status(root)
     for key in [
         "position_band_recommendation",
         "signal_backtest",
@@ -890,6 +898,17 @@ def _write_jsonish(path: Path, payload: object) -> None:
 
 def _forbidden_dirs_absent(root: Path) -> bool:
     return all(not (root / path).exists() for path in FORBIDDEN_OUTPUT_DIRS)
+
+
+def _goal07b_status(root: Path) -> str:
+    path = root / "configs/project/workflow_status.csv"
+    if not path.exists():
+        return "locked_future"
+    rows = {row["workflow_id"]: row for row in read_csv(path)}
+    current = rows.get(GOAL07B_WORKFLOW_ID, {}).get("status", "locked_future")
+    if current == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" in _read(root / "outputs/audits/goal07b0_unlock_gate_report.md"):
+        return "future_review_only"
+    return "locked_future"
 
 
 def _status_from_report(path: Path) -> str:

@@ -2,7 +2,7 @@
 
 Workflow Status Audit: PASS
 
-Rows checked: `38`
+Rows checked: `39`
 Failures: `0`
 Warnings: `0`
 
@@ -18,7 +18,9 @@ GOAL-06D.1 allowed next action: `proceed_to_goal07a_design_only_with_warnings`.
 V2 factor research status: `planned_locked`.
 GOAL-07A status: `implemented_design_only`.
 GOAL-07A.1 status: `implemented_review_only`.
-GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B and downstream stay locked.
+GOAL-07B.0 status: `implemented_review_only`.
+GOAL-07B status: `future_review_only`.
+GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 PASS/PASS_WITH_WARNINGS evidence and must not be implemented.
 GOAL-06C and later are not represented as `implemented_active`.
 Risk overlay calculation, recommendation, dashboard, paper/live trading, production, and DQN/RL remain locked or deleted from active mainline.
 

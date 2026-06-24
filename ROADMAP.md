@@ -32,8 +32,9 @@
   no risk calculation, recommendation, position, dashboard, trading,
   production, factor-mining, or DQN/RL output).
 - GOAL-07A.1 risk overlay design review unlock-readiness gate
-  (`PASS_WITH_WARNINGS`; GOAL-07B remains locked until a separate explicit
-  review-only unlock goal).
+  (`PASS_WITH_WARNINGS`; GOAL-07B ready for explicit review-only unlock).
+- GOAL-07B.0 risk overlay review-only unlock gate (`PASS_WITH_WARNINGS`;
+  GOAL-07B is `future_review_only` eligible but not implemented).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -41,8 +42,11 @@
 ## Next Allowed Work
 
 GOAL-07A has implemented the risk overlay blueprint only as design governance.
-GOAL-07A.1 has completed the GOAL-07B unlock-readiness design review. The next possible step is a future explicit GOAL-07B review-only unlock request; GOAL-07B remains locked until that separate goal is approved.
-No risk overlay calculation, recommendation, position, dashboard,
+GOAL-07A.1 completed the GOAL-07B unlock-readiness design review, and
+GOAL-07B.0 completed the explicit review-only unlock gate. The next possible
+step is a future explicit GOAL-07B review-only calculation prototype request;
+GOAL-07B is eligible but not implemented.
+No risk overlay calculation rows, recommendation, position, dashboard,
 paper/live trading, production DB writes, production model promotion, factor
 mining, or DQN/RL is unlocked.
 
@@ -55,7 +59,7 @@ workflow diagrams before any future block is promoted.
 
 ## Locked Future
 
-- GOAL-07B risk overlay calculation prototype.
+- GOAL-07B risk overlay calculation prototype implementation and execution.
 - Position-band recommendation.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity.

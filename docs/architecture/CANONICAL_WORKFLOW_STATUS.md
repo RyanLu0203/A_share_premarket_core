@@ -52,6 +52,7 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-06D.1 Calibration Stability Warning Repair (`PASS_WITH_WARNINGS`)
 - GOAL-07A.1 Risk Overlay Design Review Unlock Readiness (`PASS_WITH_WARNINGS`)
+- GOAL-07B.0 Risk Overlay Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -59,7 +60,8 @@ Implemented design-only:
 
 Future review-only:
 
-- none currently unlocked beyond GOAL-06D
+- GOAL-07B Risk Overlay Calculation Prototype eligibility only
+  (`future_review_only`; not implemented)
 
 Future design-only:
 
@@ -67,7 +69,6 @@ Future design-only:
 
 Locked future:
 
-- GOAL-07B Risk Overlay Calculation Prototype
 - Position-band Recommendation
 - Signal Backtest
 - Portfolio Backtest
@@ -209,6 +210,24 @@ GOAL-07A.1 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It c
 
 The gate may mark GOAL-07B as ready for a future explicit review-only unlock request. It does not implement GOAL-07B and does not create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.
 
+## GOAL-07B.0 Status
+
+GOAL-07B.0 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
+
+- `configs/risk/goal07b0_review_only_unlock_policy.yaml`
+- `docs/risk/GOAL07B0_RISK_OVERLAY_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal07b0_unlock_gate_report.md`
+- `outputs/audits/goal07b0_unlock_gate_manifest.json`
+- `outputs/audits/goal07b0_unlock_gate_audit_report.md`
+
+The gate uses only prior GOAL-07A and GOAL-07A.1 PASS/PASS_WITH_WARNINGS
+evidence. It moves GOAL-07B only to `future_review_only` eligibility and keeps
+GOAL-07B `implemented_in_repo=false`. It does not calculate risk, create
+symbol-level risk rows, generate recommendations or positions, create
+dashboards, run backtests, write trading or production data, activate factor
+mining, or create DQN/RL outputs.
+
 
 
 ## GOAL-06D Status
@@ -268,5 +287,6 @@ creates risk design artifacts only:
 
 GOAL-07A does not calculate risk values, assign symbol-level risk tags, generate
 recommendations, create positions, create dashboards, write trading or
-production data, activate V2 factor mining, or implement GOAL-07B. GOAL-07B and
-all downstream modules remain `locked_future`.
+production data, activate V2 factor mining, or implement GOAL-07B. GOAL-07B is
+`future_review_only` eligible only; all downstream modules remain
+`locked_future`.

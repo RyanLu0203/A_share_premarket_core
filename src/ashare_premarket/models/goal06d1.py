@@ -987,7 +987,7 @@ def _write_audits(root: Path, outputs: dict[str, object], readiness: dict[str, o
                 "",
                 "Status: `PASS`",
                 f"GOAL-07A remains design-only: `{goal07a_status}`.",
-                "GOAL-07B remains locked.",
+                "GOAL-07B remains not implemented.",
                 "Recommendation remains locked.",
                 "Dashboard remains locked.",
                 "Paper/live trading remains locked.",

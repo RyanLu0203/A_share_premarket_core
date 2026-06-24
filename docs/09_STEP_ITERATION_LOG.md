@@ -1,5 +1,33 @@
 # 09 Step Iteration Log
 
+## 2026-06-24 - GOAL-07B.0 Risk Overlay Review-Only Unlock Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the explicit GOAL-07B.0 review-only unlock gate.
+- Verified GOAL-07A and GOAL-07A.1 prior PASS/PASS_WITH_WARNINGS evidence.
+- Moved GOAL-07B only to `future_review_only` eligibility for a later explicit
+  prototype request.
+- Kept GOAL-07B `implemented_in_repo=false`.
+- Kept recommendation, position, dashboard, paper/live trading, production,
+  backtest, factor-mining, broker, and DQN/RL rows locked or deleted.
+
+Evidence:
+
+- `outputs/audits/goal07b0_unlock_gate_report.md`
+- `outputs/audits/goal07b0_unlock_gate_manifest.json`
+- `outputs/audits/goal07b0_unlock_gate_audit_report.md`
+- `docs/risk/GOAL07B0_RISK_OVERLAY_REVIEW_ONLY_UNLOCK_GATE.md`
+
+Safety:
+
+- No risk calculation was performed.
+- No symbol-level risk overlay rows were created.
+- No recommendation, position, dashboard, trading, production, backtest,
+  factor-mining, broker, or DQN/RL output was created.
+
 ## 2026-06-24 - GOAL-07A.1 Risk Overlay Design Review Unlock Readiness
 
 Status: `PASS_WITH_WARNINGS`.

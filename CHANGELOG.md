@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-24 - GOAL-07B.0 Risk Overlay Review-Only Unlock Gate
+
+- Added a strict GOAL-07B.0 review-only unlock gate based only on prior
+  GOAL-07A and GOAL-07A.1 PASS/PASS_WITH_WARNINGS evidence.
+- Moved GOAL-07B from `locked_future` to `future_review_only` eligibility while
+  keeping `implemented_in_repo=false`.
+- Added the GOAL-07B.0 runner, audit wrapper, policy, report, manifest, docs,
+  workflow-status governance, diagnostics, and focused tests.
+- Created no risk calculation rows, symbol-level risk overlay rows,
+  recommendations, positions, dashboards, trading, production, backtest,
+  factor-mining, broker, or DQN/RL outputs.
+
 ## 2026-06-24 - GOAL-07A.1 Risk Overlay Design Review Unlock Readiness
 
 - Added a review-only GOAL-07A.1 gate that checks GOAL-07A input contracts, future output schema safety, rule convertibility, state machine executability, warning policy, and downstream locks.

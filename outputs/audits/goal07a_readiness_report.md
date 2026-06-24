@@ -3,7 +3,7 @@
 GOAL-07A Risk Overlay Design Readiness: PASS_WITH_WARNINGS
 Allowed next action: `prepare_goal07b_design_review_or_fix_goal07a_warnings`
 GOAL-07A mode: `design_only`
-GOAL-07B status: `locked_future`
+GOAL-07B status: `future_review_only`
 GOAL-07B may proceed only after an explicit future unlock and only as a separate review-only calculation prototype goal.
 GOAL-06C.7 engineering_pilot evidence verified: `true`
 GOAL-06D.1 PASS/PASS_WITH_WARNINGS evidence verified: `true`
