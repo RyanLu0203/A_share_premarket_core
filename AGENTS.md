@@ -46,8 +46,11 @@ This file is long-term project memory for Codex and other coding agents.
 - GOAL-07B is implemented_review_only and currently `PASS_WITH_WARNINGS`. It
   produces deterministic, non-actionable risk diagnostics at
   `trade_date + symbol` grain.
+- GOAL-08A is implemented_design_only and currently `PASS`. It defines a
+  names-only future recommendation contract, warning propagation rules,
+  HIGH-risk actionability blocking, and zero-row schema evidence only.
 - Feature-label merge and leakage audit are active.
-- GOAL-08A, GOAL-08B, recommendation, position output, dashboard, paper/live
+- GOAL-08B, recommendation execution, position output, dashboard, paper/live
   trading, production DB writes, production model promotion, V2 factor mining,
   and DQN/RL remain locked or not implemented.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
@@ -105,6 +108,8 @@ python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py
 python scripts/run_goal07b_risk_overlay_calculation_prototype.py
 python scripts/audit_goal07b_risk_overlay_calculation_prototype.py
+python scripts/run_goal08a_recommendation_contract_design_gate.py
+python scripts/audit_goal08a_recommendation_contract_design_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -164,7 +169,7 @@ dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics and must keep GOAL-08A/GOAL-08B and all recommendation/execution paths locked.
+GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-08B and all recommendation/execution paths remain locked.
 
 
 

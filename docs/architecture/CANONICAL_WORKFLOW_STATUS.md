@@ -58,6 +58,7 @@ Implemented review-only:
 Implemented design-only:
 
 - GOAL-07A Risk Overlay Design (`PASS_WITH_WARNINGS`)
+- GOAL-08A Recommendation Contract Design Gate (`PASS`)
 
 Future review-only:
 
@@ -69,7 +70,6 @@ Future design-only:
 
 Locked future:
 
-- GOAL-08A Recommendation Contract Design Gate
 - GOAL-08B Recommendation Review-Only Prototype
 - Position-band Recommendation
 - Signal Backtest
@@ -246,9 +246,32 @@ creates:
 
 The prototype writes deterministic `trade_date + symbol` risk diagnostics only.
 It is non-actionable, uses prior review evidence and committed sample/pilot
-artifacts, and keeps GOAL-08A/GOAL-08B plus recommendation, position,
+artifacts, and keeps GOAL-08B plus recommendation, position,
 dashboard, paper/live trading, production, backtest, factor-mining, broker, and
 DQN/RL outputs locked.
+
+## GOAL-08A Status
+
+GOAL-08A is `implemented_design_only` and currently `PASS`. It creates:
+
+- `configs/recommendation/goal08a_future_recommendation_input_contract.yaml`
+- `configs/recommendation/goal08a_future_recommendation_schema.yaml`
+- `configs/recommendation/goal08a_warning_propagation_policy.yaml`
+- `configs/recommendation/goal08a_actionability_guardrails.yaml`
+- `configs/recommendation/goal08a_recommendation_state_machine.yaml`
+- `docs/recommendation/GOAL08A_RECOMMENDATION_CONTRACT_DESIGN_GATE.md`
+- `docs/recommendation/GOAL08A_DESIGN_ONLY_BOUNDARY.md`
+- `outputs/audits/goal08a_recommendation_contract_design_report.md`
+- `outputs/audits/goal08a_recommendation_contract_design_manifest.json`
+- `outputs/audits/goal08a_recommendation_contract_design_audit.md`
+
+The gate is names-only design evidence. It requires GOAL-07B
+`trade_date + symbol` diagnostic input grain, propagates GOAL-07B warnings into
+future non-actionable metadata, and defines that HIGH risk severity blocks any
+future actionable recommendation output. The schema sample has row count `0`.
+It does not generate recommendations, positions, dashboards, trading outputs,
+production behavior, backtests, factor-mining outputs, broker outputs, or
+DQN/RL outputs. GOAL-08B remains `locked_future`.
 
 
 

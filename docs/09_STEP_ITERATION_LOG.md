@@ -1,5 +1,39 @@
 # 09 Step Iteration Log
 
+## 2026-06-24 - GOAL-08A Recommendation Contract Design Gate
+
+Status: `PASS`.
+
+What changed:
+
+- Added the GOAL-08A design-only future recommendation contract gate.
+- Defined the future input contract from GOAL-07B review-only diagnostics at
+  required `trade_date + symbol` grain.
+- Added GOAL-07B warning propagation rules and a HIGH-risk actionability block
+  for any future prototype contract.
+- Wrote names-only future schema evidence with row count `0`.
+- Updated workflow status so GOAL-08A is `implemented_design_only` and GOAL-08B
+  remains `locked_future`.
+
+Evidence:
+
+- `configs/recommendation/goal08a_future_recommendation_input_contract.yaml`
+- `configs/recommendation/goal08a_future_recommendation_schema.yaml`
+- `configs/recommendation/goal08a_warning_propagation_policy.yaml`
+- `configs/recommendation/goal08a_actionability_guardrails.yaml`
+- `configs/recommendation/goal08a_recommendation_state_machine.yaml`
+- `outputs/audits/goal08a_recommendation_contract_design_report.md`
+- `outputs/audits/goal08a_recommendation_contract_design_manifest.json`
+- `outputs/audits/goal08a_recommendation_contract_design_audit.md`
+- `docs/recommendation/GOAL08A_RECOMMENDATION_CONTRACT_DESIGN_GATE.md`
+
+Safety:
+
+- No recommendation rows were generated.
+- No buy/sell/hold, target price, position sizing, dashboard, trading,
+  production, backtest, factor-mining, broker, or DQN/RL output was generated.
+- GOAL-08B and all downstream execution paths remain locked.
+
 ## 2026-06-24 - GOAL-07B Risk Overlay Calculation Prototype
 
 Status: `PASS_WITH_WARNINGS`.
@@ -12,7 +46,7 @@ What changed:
   GOAL-07A, GOAL-07A.1, and GOAL-07B.0.
 - Generated 100 non-actionable diagnostic rows at `trade_date + symbol` grain.
 - Updated workflow status so GOAL-07B is `implemented_review_only`.
-- Added GOAL-08A and GOAL-08B as `locked_future` rows.
+- Added GOAL-08A and GOAL-08B future rows for later governed handling.
 
 Evidence:
 

@@ -34,9 +34,10 @@ allowed GOAL-07A only as design-only preparation with warnings. GOAL-07A is now
 `implemented_design_only`; it defines contracts, schemas, rule catalog, state
 machine, upstream-warning mapping, and governance audits only. GOAL-07B.0
 unlocks eligibility only; GOAL-07B now consumes that design evidence as a
-review-only diagnostic prototype. GOAL-08A/GOAL-08B and all recommendation,
-position, dashboard, trading, production, backtest, factor-mining, and DQN/RL
-paths remain locked.
+review-only diagnostic prototype. GOAL-08A is implemented only as a names-only
+future recommendation contract design gate with zero rows. GOAL-08B and all
+recommendation, position, dashboard, trading, production, backtest,
+factor-mining, and DQN/RL paths remain locked.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -91,6 +92,9 @@ Implemented and protected:
   PASS/PASS_WITH_WARNINGS design-review evidence
 - GOAL-07B review-only risk overlay calculation prototype with deterministic
   non-actionable `trade_date + symbol` diagnostics
+- GOAL-08A recommendation contract design-only gate with names-only future
+  schema, warning propagation policy, HIGH-risk actionability block, and zero
+  recommendation rows
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -139,10 +143,11 @@ Implemented design-only:
 
 - GOAL-07A risk overlay design gate (`PASS_WITH_WARNINGS`; contracts, schemas,
   rule catalog, state machine, upstream-warning mapping, and audits only)
+- GOAL-08A recommendation contract design gate (`PASS`; names-only future
+  contract and actionability guardrails only; zero recommendation rows)
 
 Still locked:
 
-- GOAL-08A recommendation contract design gate
 - GOAL-08B recommendation review-only prototype
 - recommendation or position-band output
 - dashboard
@@ -168,6 +173,22 @@ risk diagnostics. It does not generate recommendations, positions,
 dashboards, paper/live trading, production writes, backtests, factor-mining
 outputs, broker outputs, or DQN/RL outputs.
 
+GOAL-08A writes only design evidence:
+
+- `configs/recommendation/goal08a_future_recommendation_input_contract.yaml`
+- `configs/recommendation/goal08a_future_recommendation_schema.yaml`
+- `configs/recommendation/goal08a_warning_propagation_policy.yaml`
+- `configs/recommendation/goal08a_actionability_guardrails.yaml`
+- `configs/recommendation/goal08a_recommendation_state_machine.yaml`
+- `outputs/audits/goal08a_recommendation_contract_design_report.md`
+- `outputs/audits/goal08a_recommendation_contract_design_manifest.json`
+- `outputs/audits/goal08a_recommendation_contract_design_audit.md`
+
+The GOAL-08A schema sample has row count `0`; it defines that future HIGH
+GOAL-07B risk severity blocks actionable recommendation output, but it does not
+generate recommendations, positions, dashboards, trading outputs, production
+behavior, backtests, factor-mining outputs, broker outputs, or DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -183,7 +204,9 @@ The protected regenerated outputs live under:
 - `outputs/models/goal06d/`
 - `outputs/models/goal06d1/`
 - `configs/risk/`
+- `configs/recommendation/`
 - `docs/risk/`
+- `docs/recommendation/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -215,11 +238,11 @@ Canonical status contract:
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
-GOAL-07A.1, GOAL-07B.0, and GOAL-07B are `implemented_review_only`; GOAL-07A is
-`implemented_design_only`. GOAL-07B is diagnostic-only and non-actionable.
-GOAL-08A, GOAL-08B, recommendation, position, dashboard, trading, production,
-V2 factor-mining, and DQN/RL paths remain locked or deleted from active
-mainline.
+GOAL-07A.1, GOAL-07B.0, and GOAL-07B are `implemented_review_only`; GOAL-07A
+and GOAL-08A are `implemented_design_only`. GOAL-07B is diagnostic-only and
+non-actionable. GOAL-08A is names-only design evidence with zero recommendation
+rows. GOAL-08B, recommendation, position, dashboard, trading, production, V2
+factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings
 

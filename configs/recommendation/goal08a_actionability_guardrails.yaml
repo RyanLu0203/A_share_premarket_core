@@ -1,0 +1,37 @@
+{
+  "boundary_flags_required_for_any_future_diagnostic": {
+    "broker_or_order_generated": false,
+    "buy_sell_hold_generated": false,
+    "non_actionable": true,
+    "portfolio_weight_generated": false,
+    "position_sizing_generated": false,
+    "production_signal_generated": false,
+    "target_price_generated": false
+  },
+  "forbidden_action_outputs": [
+    "buy",
+    "sell",
+    "hold",
+    "target_price",
+    "position_size",
+    "portfolio_weight",
+    "order_action",
+    "trade_signal",
+    "broker_instruction",
+    "production_signal",
+    "backtest_return",
+    "factor_alpha",
+    "dqn_policy",
+    "rl_action"
+  ],
+  "goal": "GOAL-08A-RECOMMENDATION-CONTRACT-DESIGN-GATE",
+  "goal08a_generates_actions": false,
+  "high_risk_rule": {
+    "actionable_recommendation_allowed": false,
+    "condition": "source_goal07b_risk_severity == HIGH",
+    "future_block_reason": "HIGH risk severity from GOAL-07B blocks actionable recommendation output"
+  },
+  "high_risk_severity_blocks_actionable_recommendation": true,
+  "mode": "actionability_guardrails_design_only",
+  "recommendation_like_diagnostic_must_be_non_actionable": true
+}

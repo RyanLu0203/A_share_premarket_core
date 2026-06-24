@@ -22,7 +22,7 @@ flowchart TD
     J -. "review-only unlock readiness" .-> J2["GOAL-07A.1 Design Review + Unlock Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J2 -. "explicit review-only unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J3 -. "review-only diagnostics" .-> K["GOAL-07B Risk Overlay Calculation Prototype<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    K -. "locked future design" .-> K2["GOAL-08A Recommendation Contract Design<br/>(locked_future)"]
+    K -. "implemented design-only" .-> K2["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
     K2 -. "locked future prototype" .-> K3["GOAL-08B Recommendation Review-Only Prototype<br/>(locked_future)"]
     K3 -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
@@ -57,7 +57,9 @@ repair layer. GOAL-07A is implemented only as design governance with warnings
 and no risk calculation. GOAL-07A.1 is implemented as review-only design review,
 and GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B
 is implemented only as a review-only, non-actionable risk diagnostic prototype.
-GOAL-08A and GOAL-08B remain `locked_future`. V2 factor research is planned but inactive in V1; no
+GOAL-08A is implemented only as a design-only, names-only future recommendation
+contract gate with zero rows. GOAL-08B remains `locked_future`. V2 factor
+research is planned but inactive in V1; no
 factor mining, IC/RankIC mining, factor library generation, or factor
 integration is active. Recommendation, position, dashboard, paper/live trading,
 production, backtest, factor-mining, and DQN/RL blocks remain locked,

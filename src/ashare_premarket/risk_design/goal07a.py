@@ -135,7 +135,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    "goal08a_recommendation_contract_design_gate",
     "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "dashboard_daily_report",
@@ -593,7 +592,7 @@ def _write_design_docs(root: Path, upstream: dict[str, object], designs: dict[st
                 "GOAL-07A is implemented only as a design gate.",
                 "GOAL-07A itself does not implement GOAL-07B or calculate risk.",
                 "GOAL-07B, when present, may only be a separate review-only diagnostic prototype.",
-                "GOAL-08A/GOAL-08B, recommendation, position, portfolio weight, dashboard, paper/live trading, broker/live trading, production DB writes, production model promotion, factor mining, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-08B, recommendation, position, portfolio weight, dashboard, paper/live trading, broker/live trading, production DB writes, production model promotion, factor mining, and DQN/RL remain locked or deleted from active mainline. GOAL-08A may exist only as a later design-only contract gate.",
                 "V2 factor research remains `planned_locked`, `enabled: false`, and `active_in_v1: false`.",
                 "No full local data bundle or model binary is committed.",
                 "",

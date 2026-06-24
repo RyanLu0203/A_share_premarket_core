@@ -16,3 +16,5 @@ python scripts/run_goal07b0_risk_overlay_review_only_unlock_gate.py,PASS,local_o
 python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py,PASS,local_only,
 python scripts/run_goal07b_risk_overlay_calculation_prototype.py,PASS,local_only,
 python scripts/audit_goal07b_risk_overlay_calculation_prototype.py,PASS,local_only,
+python scripts/run_goal08a_recommendation_contract_design_gate.py,PASS,local_only,
+python scripts/audit_goal08a_recommendation_contract_design_gate.py,PASS,local_only,

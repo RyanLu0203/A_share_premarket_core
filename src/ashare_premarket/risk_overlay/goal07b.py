@@ -207,7 +207,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    "goal08a_recommendation_contract_design_gate",
     "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "dashboard_daily_report",
@@ -351,6 +350,9 @@ def audit_goal07b_risk_overlay_calculation_prototype(root: Path) -> bool:
             failures.append(f"{workflow_id}_not_locked_future")
         if workflow.get(workflow_id, {}).get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+    goal08a = workflow.get("goal08a_recommendation_contract_design_gate", {})
+    if goal08a and not _goal08a_locked_or_design_only_valid(root, goal08a):
+        failures.append("goal08a_not_locked_or_valid_design_only")
     if workflow.get("dqn_rl_mainline", {}).get("status") != "deleted_from_active_mainline":
         failures.append("dqn_rl_mainline_not_deleted")
     if workflow.get("v2_factor_research_upgrade", {}).get("status") != "planned_locked":
@@ -820,7 +822,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             "notes": "Review-only risk overlay diagnostics; non-actionable and not a recommendation, position, dashboard, trading, production, backtest, factor-mining, or DQN/RL output.",
         }
     )
-    _upsert_locked_goal08_rows(rows, by_id)
+    _upsert_locked_goal08_rows(root, rows, by_id)
     by_id = {row["workflow_id"]: row for row in rows}
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
@@ -836,7 +838,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     write_csv(path, rows, fields)
 
 
-def _upsert_locked_goal08_rows(rows: list[dict[str, str]], by_id: dict[str, dict[str, str]]) -> None:
+def _upsert_locked_goal08_rows(root: Path, rows: list[dict[str, str]], by_id: dict[str, dict[str, str]]) -> None:
     goal08a = {
         "workflow_id": "goal08a_recommendation_contract_design_gate",
         "display_name": "GOAL-08A Recommendation Contract Design Gate",
@@ -871,6 +873,10 @@ def _upsert_locked_goal08_rows(rows: list[dict[str, str]], by_id: dict[str, dict
     }
     insert_at = next((index + 1 for index, row in enumerate(rows) if row["workflow_id"] == "goal07b_risk_overlay_calculation"), len(rows))
     for row in [goal08a, goal08b]:
+        if row["workflow_id"] == "goal08a_recommendation_contract_design_gate":
+            existing = by_id.get(row["workflow_id"], {})
+            if _goal08a_locked_or_design_only_valid(root, existing) and existing.get("status") == "implemented_design_only":
+                continue
         if row["workflow_id"] in by_id:
             by_id[row["workflow_id"]].update(row)
         else:
@@ -884,7 +890,8 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         return
     payload = read_json(path)
     payload["goal07b_risk_overlay_calculation"] = "implemented_review_only" if result["status"] != FAIL else "future_review_only"
-    payload["goal08a_recommendation_contract_design_gate"] = False
+    if payload.get("goal08a_recommendation_contract_design_gate") != "implemented_design_only":
+        payload["goal08a_recommendation_contract_design_gate"] = False
     payload["goal08b_recommendation_review_only_prototype"] = False
     for key in [
         "position_band_recommendation",
@@ -899,6 +906,29 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     ]:
         payload[key] = False
     write_json(path, payload)
+
+
+def _goal08a_locked_or_design_only_valid(root: Path, row: dict[str, str]) -> bool:
+    status = row.get("status")
+    if status == "locked_future":
+        return row.get("implemented_in_repo") == "false"
+    if status != "implemented_design_only" or row.get("implemented_in_repo") != "true":
+        return False
+    report = _read(root / "outputs/audits/goal08a_recommendation_contract_design_report.md")
+    audit = _read(root / "outputs/audits/goal08a_recommendation_contract_design_audit.md")
+    manifest = _read(root / "outputs/audits/goal08a_recommendation_contract_design_manifest.json")
+    return (
+        (
+            "GOAL-08A Recommendation Contract Design Gate: PASS" in report
+            or "GOAL-08A Recommendation Contract Design Gate: PASS_WITH_WARNINGS" in report
+        )
+        and "Status: `PASS`" in audit
+        and '"mode": "design_only"' in manifest
+        and '"future_schema_row_count": 0' in manifest
+        and '"recommendation_rows_generated": false' in manifest
+        and '"actionable_outputs_generated": false' in manifest
+        and '"goal08b_status_after_goal08a": "locked_future"' in manifest
+    )
 
 
 def _manifest_template(

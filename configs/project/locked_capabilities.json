@@ -7,7 +7,7 @@
   "goal07a_risk_overlay_design": "implemented_design_only",
   "goal07b0_risk_overlay_review_only_unlock_gate": "implemented_review_only",
   "goal07b_risk_overlay_calculation": "implemented_review_only",
-  "goal08a_recommendation_contract_design_gate": false,
+  "goal08a_recommendation_contract_design_gate": "implemented_design_only",
   "goal08b_recommendation_review_only_prototype": false,
   "paper_trading": false,
   "portfolio_backtest": false,

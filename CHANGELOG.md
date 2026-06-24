@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-24 - GOAL-08A Recommendation Contract Design Gate
+
+- Implemented GOAL-08A only as a design-only future recommendation contract
+  gate.
+- Added the GOAL-08A runner, audit wrapper, design module, configs, docs,
+  manifest, workflow-status governance, diagnostics integration, and focused
+  tests.
+- Defined the GOAL-07B `trade_date + symbol` input contract, required risk and
+  warning fields, warning propagation, and HIGH-risk actionability block.
+- Wrote names-only future schema evidence with zero rows and no recommendation
+  output.
+- Kept GOAL-08B, recommendation execution, position, dashboard, paper/live
+  trading, production, backtest, factor-mining, broker, and DQN/RL outputs
+  locked or absent.
+
 ## 2026-06-24 - GOAL-07B Risk Overlay Calculation Prototype
 
 - Implemented GOAL-07B as a deterministic review-only risk overlay diagnostic

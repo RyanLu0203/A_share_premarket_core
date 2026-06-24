@@ -20,7 +20,8 @@ GOAL-07A status: `implemented_design_only`.
 GOAL-07A.1 status: `implemented_review_only`.
 GOAL-07B.0 status: `implemented_review_only`.
 GOAL-07B status: `implemented_review_only`.
-GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report.
+GOAL-08A status: `implemented_design_only`.
+GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows.
 GOAL-06C and later are not represented as `implemented_active`.
 GOAL-07B risk overlay diagnostics are review-only when implemented; recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, and DQN/RL remain locked or deleted from active mainline.
 

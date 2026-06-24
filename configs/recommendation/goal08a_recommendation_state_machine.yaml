@@ -1,0 +1,47 @@
+{
+  "goal": "GOAL-08A-RECOMMENDATION-CONTRACT-DESIGN-GATE",
+  "goal08a_status_after_pass": "implemented_design_only",
+  "goal08b_status_after_goal08a": "locked_future",
+  "mode": "state_machine_design_only",
+  "states": [
+    "goal08a_design_only",
+    "source_goal07b_contract_verified",
+    "warning_propagation_designed",
+    "high_risk_blocks_actionability",
+    "future_schema_documented_no_rows",
+    "goal08b_locked_future",
+    "downstream_execution_locked"
+  ],
+  "transitions": [
+    {
+      "condition": "GOAL-07B report and audit are PASS or PASS_WITH_WARNINGS",
+      "executes_recommendation": false,
+      "from_state": "source_goal07b_contract_verified",
+      "to_state": "warning_propagation_designed"
+    },
+    {
+      "condition": "GOAL-07B warning codes mapped to future metadata policy",
+      "executes_recommendation": false,
+      "from_state": "warning_propagation_designed",
+      "to_state": "high_risk_blocks_actionability"
+    },
+    {
+      "condition": "HIGH risk severity is configured to block actionable output",
+      "executes_recommendation": false,
+      "from_state": "high_risk_blocks_actionability",
+      "to_state": "future_schema_documented_no_rows"
+    },
+    {
+      "condition": "GOAL-08A writes names-only schema with zero rows",
+      "executes_recommendation": false,
+      "from_state": "future_schema_documented_no_rows",
+      "to_state": "goal08b_locked_future"
+    },
+    {
+      "condition": "GOAL-08B and all execution/downstream rows remain locked_future",
+      "executes_recommendation": false,
+      "from_state": "goal08b_locked_future",
+      "to_state": "downstream_execution_locked"
+    }
+  ]
+}

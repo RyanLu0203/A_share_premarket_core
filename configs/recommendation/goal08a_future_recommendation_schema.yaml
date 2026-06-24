@@ -1,0 +1,63 @@
+{
+  "empty_schema_sample": {
+    "columns": [
+      "trade_date",
+      "symbol",
+      "source_goal07b_risk_state",
+      "source_goal07b_risk_severity",
+      "source_goal07b_risk_confidence",
+      "source_goal07b_triggered_rule_ids",
+      "source_goal07b_warning_propagation",
+      "source_goal07b_risk_rule_trace",
+      "future_recommendation_contract_state",
+      "future_actionability_block_reason",
+      "future_non_actionable_diagnostic_flag",
+      "future_warning_policy_trace",
+      "future_downstream_lock_flags"
+    ],
+    "row_count": 0,
+    "rows": []
+  },
+  "forbidden_future_schema_fields": [
+    "buy",
+    "sell",
+    "hold",
+    "target_price",
+    "position_size",
+    "portfolio_weight",
+    "order_action",
+    "trade_signal",
+    "broker_instruction",
+    "production_signal",
+    "backtest_return",
+    "factor_alpha",
+    "dqn_policy",
+    "rl_action"
+  ],
+  "future_schema_fields": [
+    "trade_date",
+    "symbol",
+    "source_goal07b_risk_state",
+    "source_goal07b_risk_severity",
+    "source_goal07b_risk_confidence",
+    "source_goal07b_triggered_rule_ids",
+    "source_goal07b_warning_propagation",
+    "source_goal07b_risk_rule_trace",
+    "future_recommendation_contract_state",
+    "future_actionability_block_reason",
+    "future_non_actionable_diagnostic_flag",
+    "future_warning_policy_trace",
+    "future_downstream_lock_flags"
+  ],
+  "future_schema_names_only": true,
+  "future_schema_version": "goal08b_review_only_prototype_v1_names_only",
+  "goal": "GOAL-08A-RECOMMENDATION-CONTRACT-DESIGN-GATE",
+  "mode": "future_schema_names_only",
+  "row_generation_policy": {
+    "goal08a_generates_dashboards": false,
+    "goal08a_generates_orders": false,
+    "goal08a_generates_positions": false,
+    "goal08a_generates_recommendations": false,
+    "goal08a_generates_rows": false
+  }
+}

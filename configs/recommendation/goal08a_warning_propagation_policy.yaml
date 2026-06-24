@@ -1,0 +1,64 @@
+{
+  "default_policy": "unrecognized GOAL-07B warnings propagate as non-actionable diagnostic metadata until explicitly classified",
+  "goal": "GOAL-08A-RECOMMENDATION-CONTRACT-DESIGN-GATE",
+  "mode": "warning_policy_design_only",
+  "source_goal": "GOAL-07B",
+  "warning_propagation_rules": [
+    {
+      "actionability_effect": "block_actionability_or_require_future_human_review_design_only",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "calibration_not_reliable_for_thresholding"
+    },
+    {
+      "actionability_effect": "carry_warning_and_keep_future_diagnostic_non_actionable_when_unresolved",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "feature_sign_instability_bounded"
+    },
+    {
+      "actionability_effect": "carry_source_concentration_warning_and_block_actionability_when_risk_severity_HIGH",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "provider_source_concentration_disclosed"
+    },
+    {
+      "actionability_effect": "block_actionability_or_require_future_human_review_design_only",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "selected_score_variant_weak_rank_signal"
+    },
+    {
+      "actionability_effect": "carry_source_concentration_warning_and_block_actionability_when_risk_severity_HIGH",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "single_provider_mode_akshare_direct"
+    },
+    {
+      "actionability_effect": "block_actionability_or_require_future_human_review_design_only",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "target_horizon_calibration_warning"
+    },
+    {
+      "actionability_effect": "block_actionability_or_require_future_human_review_design_only",
+      "future_metadata_field": "future_warning_policy_trace",
+      "goal08a_execution": false,
+      "observed_in_goal07b": true,
+      "propagate_to_future_contract": true,
+      "warning_code": "weak_target_horizon_rank_signal"
+    }
+  ]
+}

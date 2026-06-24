@@ -17,7 +17,6 @@ ALLOWED_STATUSES = {
 }
 
 DOWNSTREAM_LOCKED_IDS = {
-    "goal08a_recommendation_contract_design_gate",
     "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "signal_backtest",
@@ -34,6 +33,8 @@ DOWNSTREAM_LOCKED_IDS = {
 
 GOAL07B_WORKFLOW_ID = "goal07b_risk_overlay_calculation"
 GOAL07B_ALLOWED_STATUSES = {"locked_future", "future_review_only", "implemented_review_only"}
+GOAL08A_WORKFLOW_ID = "goal08a_recommendation_contract_design_gate"
+GOAL08A_ALLOWED_STATUSES = {"locked_future", "implemented_design_only"}
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -206,6 +207,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal07b_report = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_report.md")
     goal07b_manifest = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_manifest.json")
     goal07b_audit = _read(root / "outputs/audits/goal07b_risk_overlay_calculation_audit.md")
+    goal08a = by_id.get(GOAL08A_WORKFLOW_ID, {})
+    goal08a_status = goal08a.get("status")
+    goal08a_report = _read(root / "outputs/audits/goal08a_recommendation_contract_design_report.md")
+    goal08a_manifest = _read(root / "outputs/audits/goal08a_recommendation_contract_design_manifest.json")
+    goal08a_audit = _read(root / "outputs/audits/goal08a_recommendation_contract_design_audit.md")
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -312,6 +318,53 @@ def run_workflow_status_audit(root: Path) -> bool:
     elif goal07b_status == "locked_future" and goal07b.get("implemented_in_repo") == "true":
         failures.append("GOAL-07B locked_future must not be marked implemented")
 
+    if goal08a_status not in GOAL08A_ALLOWED_STATUSES:
+        failures.append("GOAL-08A must be locked_future or implemented_design_only")
+    if goal08a_status == "implemented_design_only":
+        if not _goal08a_readiness_implemented(goal08a_report):
+            failures.append("GOAL-08A implemented_design_only lacks PASS/PASS_WITH_WARNINGS design evidence")
+        if "Status: `PASS`" not in goal08a_audit:
+            failures.append("GOAL-08A design audit report is missing or not PASS")
+        for required_false in [
+            '"recommendation_rows_generated": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"position_sizing_generated": false',
+            '"portfolio_construction_generated": false',
+            '"dashboard_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"backtests_run": false',
+            '"factor_mining_outputs_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"actionable_outputs_generated": false',
+        ]:
+            if required_false not in goal08a_manifest:
+                failures.append(f"GOAL-08A manifest missing false boundary flag: {required_false}")
+        for required_text in [
+            '"mode": "design_only"',
+            '"input_grain": "trade_date + symbol"',
+            '"future_schema_row_count": 0',
+            '"high_risk_severity_blocks_actionable_output": true',
+            '"goal08b_status_after_goal08a": "locked_future"',
+        ]:
+            if required_text not in goal08a_manifest:
+                failures.append(f"GOAL-08A manifest missing required design marker: {required_text}")
+        if goal08a.get("implemented_in_repo") != "true":
+            failures.append("GOAL-08A implemented_design_only must be marked implemented")
+        if goal08a.get("allowed_next_action") not in {
+            "request_explicit_goal08b_review_only_prototype_or_fix_goal08a_warnings",
+            "repair_goal08a_design_gate_blockers",
+        }:
+            failures.append("GOAL-08A implemented design row has invalid allowed_next_action")
+        goal08b = by_id.get("goal08b_recommendation_review_only_prototype", {})
+        if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-08A must keep GOAL-08B locked_future")
+    elif goal08a_status == "locked_future" and goal08a.get("implemented_in_repo") == "true":
+        failures.append("GOAL-08A locked_future must not be marked implemented")
 
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
@@ -354,7 +407,8 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-07A.1 status: `{goal07a1_status or 'missing'}`.",
                 f"GOAL-07B.0 status: `{goal07b0_status or 'missing'}`.",
                 f"GOAL-07B status: `{goal07b_status or 'missing'}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report.",
+                f"GOAL-08A status: `{goal08a_status or 'missing'}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "GOAL-07B risk overlay diagnostics are review-only when implemented; recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -409,6 +463,11 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 failures.append("goal07b_risk_overlay_calculation must be locked_future, future_review_only, or implemented_review_only")
             if row["implemented_in_repo"] == "true" and status != "implemented_review_only":
                 failures.append("goal07b_risk_overlay_calculation must be implemented only when implemented_review_only")
+        if workflow_id == GOAL08A_WORKFLOW_ID:
+            if status not in GOAL08A_ALLOWED_STATUSES:
+                failures.append("goal08a_recommendation_contract_design_gate must be locked_future or implemented_design_only")
+            if row["implemented_in_repo"] == "true" and status != "implemented_design_only":
+                failures.append("goal08a_recommendation_contract_design_gate must be implemented only when implemented_design_only")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -465,11 +524,11 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == "goal07b0_risk_overlay_review_only_unlock_gate":
         next_goal = "GOAL-07B future review-only calculation prototype may be requested separately"
     elif row["workflow_id"] == GOAL07B_WORKFLOW_ID:
-        next_goal = "GOAL-08A recommendation contract design remains locked unless explicitly requested"
+        next_goal = "GOAL-08A design-only contract gate may be maintained; GOAL-08B remains locked"
     elif row["workflow_id"] == "goal08a_recommendation_contract_design_gate":
-        next_goal = "GOAL-08A remains locked; explicit design-only goal required"
+        next_goal = "GOAL-08B remains locked until a separate explicit review-only prototype request"
     elif row["workflow_id"] == "goal08b_recommendation_review_only_prototype":
-        next_goal = "GOAL-08B remains locked until GOAL-08A passes"
+        next_goal = "GOAL-08B remains locked; GOAL-08A does not implement recommendations"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -537,6 +596,13 @@ def _goal07b_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-07B Risk Overlay Calculation Prototype: PASS" in readiness
         or "GOAL-07B Risk Overlay Calculation Prototype: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal08a_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-08A Recommendation Contract Design Gate: PASS" in readiness
+        or "GOAL-08A Recommendation Contract Design Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

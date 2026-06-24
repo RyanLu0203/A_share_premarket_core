@@ -38,6 +38,9 @@
 - GOAL-07B risk overlay calculation prototype (`PASS_WITH_WARNINGS`;
   implemented_review_only non-actionable diagnostics at `trade_date + symbol`
   grain).
+- GOAL-08A recommendation contract design gate (`PASS`; implemented_design_only
+  names-only future schema, warning propagation, HIGH-risk actionability block,
+  and zero recommendation rows).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -47,13 +50,14 @@
 GOAL-07A has implemented the risk overlay blueprint only as design governance.
 GOAL-07A.1 completed the GOAL-07B unlock-readiness design review, and
 GOAL-07B.0 completed the explicit review-only unlock gate. GOAL-07B now
-implements a deterministic review-only risk overlay calculation prototype. The
-exact allowed next action is to prepare a future GOAL-08A recommendation
-contract design gate, or fix GOAL-07B warnings. Do not proceed to GOAL-08A in
-this state without an explicit future request.
-No recommendation, position, dashboard, paper/live trading, production DB
-writes, production model promotion, backtest, factor mining, broker, or DQN/RL
-is unlocked.
+implements a deterministic review-only risk overlay calculation prototype.
+GOAL-08A now implements only a design-only future recommendation contract gate.
+The exact allowed next action is to request a future explicit GOAL-08B
+review-only prototype or fix GOAL-08A / GOAL-07B warnings. Do not proceed to
+GOAL-08B without an explicit future request.
+No recommendation execution, position, dashboard, paper/live trading,
+production DB writes, production model promotion, backtest, factor mining,
+broker, or DQN/RL is unlocked.
 
 V2 factor research is planned but inactive. It remains `planned_locked` until a
 future explicit V2 goal; no factor mining, IC/RankIC mining, factor library
@@ -64,7 +68,6 @@ workflow diagrams before any future block is promoted.
 
 ## Locked Future
 
-- GOAL-08A recommendation contract design gate.
 - GOAL-08B recommendation review-only prototype.
 - Position-band recommendation.
 - Signal and portfolio backtests.

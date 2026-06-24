@@ -53,3 +53,4 @@ goal07a_governance_boundary_v2_lock,GOAL-07A,ashare_premarket.risk_design.goal07
 goal07a1_design_review_unlock_readiness,GOAL-07A.1,ashare_premarket.risk_design.goal07a1,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal07b0_review_only_unlock_gate,GOAL-07B.0,ashare_premarket.risk_design.goal07b0,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal07b_review_only_risk_overlay,GOAL-07B,ashare_premarket.risk_overlay.goal07b,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal08a_contract_design_gate,GOAL-08A,ashare_premarket.contract_design.goal08a,PASS,CLASS_A_REQUIRED_ACTIVE,true

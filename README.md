@@ -116,7 +116,7 @@ flowchart TD
     J -. "design review readiness" .-> J2["GOAL-07A.1 Design Review + Unlock Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J2 -. "explicit review-only unlock gate" .-> J3["GOAL-07B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     J3 -. "review-only diagnostic prototype" .-> K["GOAL-07B Risk Overlay Calculation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    K -. "locked future design" .-> O["GOAL-08A Recommendation Contract Design<br/>(locked_future)"]
+    K -. "implemented design-only" .-> O["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
     O -. "locked future prototype" .-> P["GOAL-08B Recommendation Prototype<br/>(locked_future)"]
 ```
 
@@ -154,7 +154,7 @@ GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
 rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
-GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A and GOAL-08B remain locked_future.
+GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-08B remains locked_future.
 
 ## Required Public Commands
 
@@ -217,6 +217,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal07b0_risk_overlay_review_only_unlock_gate.py`
 - `python scripts/run_goal07b_risk_overlay_calculation_prototype.py`
 - `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`
+- `python scripts/run_goal08a_recommendation_contract_design_gate.py`
+- `python scripts/audit_goal08a_recommendation_contract_design_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -283,6 +285,14 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal07b_risk_overlay_calculation_report.md`
 - `outputs/audits/goal07b_risk_overlay_calculation_manifest.json`
 - `outputs/audits/goal07b_risk_overlay_calculation_audit.md`
+- `configs/recommendation/goal08a_future_recommendation_input_contract.yaml`
+- `configs/recommendation/goal08a_future_recommendation_schema.yaml`
+- `configs/recommendation/goal08a_warning_propagation_policy.yaml`
+- `configs/recommendation/goal08a_actionability_guardrails.yaml`
+- `configs/recommendation/goal08a_recommendation_state_machine.yaml`
+- `outputs/audits/goal08a_recommendation_contract_design_report.md`
+- `outputs/audits/goal08a_recommendation_contract_design_manifest.json`
+- `outputs/audits/goal08a_recommendation_contract_design_audit.md`
 
 ## Lock Boundary
 
@@ -290,7 +300,8 @@ Recommendation, position sizing, dashboard, paper trading, broker/live trading,
 production DB writes, production model promotion, backtests, V2 factor mining,
 and DQN/RL remain locked. GOAL-07A is implemented only as design-only
 governance; GOAL-07B is implemented only as a review-only diagnostic prototype.
-GOAL-08A and GOAL-08B remain locked_future.
+GOAL-08A is implemented only as a design-only names-only contract gate with
+zero recommendation rows. GOAL-08B remains locked_future.
 
 GOAL-06D.1 is the review-only warning repair layer for those GOAL-06D warnings.
 It tests PIT-safe score variants, target horizons, calibration reliability,

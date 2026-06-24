@@ -119,7 +119,9 @@ def test_goal07b_workflow_status_and_downstream_locks() -> None:
     workflow = _workflow()
     assert workflow["goal07b_risk_overlay_calculation"]["status"] == "implemented_review_only"
     assert workflow["goal07b_risk_overlay_calculation"]["implemented_in_repo"] == "true"
-    assert workflow["goal08a_recommendation_contract_design_gate"]["status"] == "locked_future"
+    assert workflow["goal08a_recommendation_contract_design_gate"]["status"] in {"locked_future", "implemented_design_only"}
+    if workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only":
+        assert workflow["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
     for workflow_id in [
         "position_band_recommendation",
