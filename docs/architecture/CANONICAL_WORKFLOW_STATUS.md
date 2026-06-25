@@ -57,6 +57,7 @@ Implemented review-only:
 - GOAL-07B.0 Risk Overlay Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 - GOAL-07B Risk Overlay Calculation Prototype (`PASS_WITH_WARNINGS`)
 - GOAL-08B.0 Recommendation Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
+- GOAL-08B Recommendation Diagnostics Prototype (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -66,11 +67,6 @@ Implemented design-only:
 Implemented infrastructure-only:
 
 - GOAL-STORAGE-01 Local Research Lake Hardening Gate (`PASS`)
-
-Future review-only:
-
-- GOAL-08B Recommendation Review-Only Prototype (`future_review_only`; not
-  implemented)
 
 Future design-only:
 
@@ -255,7 +251,7 @@ The prototype writes deterministic `trade_date + symbol` risk diagnostics only.
 It is non-actionable, uses prior review evidence and committed sample/pilot
 artifacts, and keeps GOAL-08B plus recommendation, position,
 dashboard, paper/live trading, production, backtest, factor-mining, broker, and
-DQN/RL outputs locked.
+DQN/RL execution outputs locked.
 
 ## GOAL-08A Status
 
@@ -312,21 +308,33 @@ creates:
 - `outputs/audits/goal08b0_recommendation_review_only_unlock_audit.md`
 
 The gate uses only prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01
-PASS/PASS_WITH_WARNINGS evidence. It marks GOAL-08B `future_review_only`
-eligible for a later explicit non-actionable diagnostics prototype request. It
-does not implement GOAL-08B, create recommendation diagnostics rows, create
-recommendation rows, produce buy/sell/hold outputs, target prices, positions,
-dashboards, trading paths, production behavior, backtests, factor-mining
-outputs, broker outputs, local lake files, or DQN/RL outputs.
+PASS/PASS_WITH_WARNINGS evidence. It marks GOAL-08B review-only eligibility but
+does not itself create recommendation diagnostics rows, create recommendation
+rows, produce buy/sell/hold outputs, target prices, positions, dashboards,
+trading paths, production behavior, backtests, factor-mining outputs, broker
+outputs, local lake files, or DQN/RL outputs.
 
 ## GOAL-08B Status
 
-GOAL-08B is `future_review_only` eligible and not implemented. It has no
-primary scripts and no generated recommendation diagnostics outputs. A future
-explicit prototype request is still required before any non-actionable GOAL-08B
-diagnostics can be built.
+GOAL-08B is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
 
+- `configs/recommendation/goal08b_review_only_diagnostics_policy.yaml`
+- `docs/recommendation/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md`
+- `outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv`
+- `outputs/audits/goal08b_recommendation_diagnostics_report.md`
+- `outputs/audits/goal08b_recommendation_diagnostics_manifest.json`
+- `outputs/audits/goal08b_recommendation_diagnostics_audit.md`
 
+The prototype consumes only prior GOAL-07B risk overlay diagnostics, GOAL-08A
+contract evidence, GOAL-STORAGE-01 infrastructure evidence, and GOAL-08B.0
+unlock evidence. It writes 100 deterministic non-actionable diagnostic rows at
+`trade_date + symbol` grain. `actionability_status` is always
+`never_actionable`, `actionability_blocked` is always `true`, and no
+actionable recommendation rows, buy/sell/hold outputs, target prices, expected
+returns for action, position sizing, portfolio weights, dashboards, trading
+paths, production behavior, backtests, factor-mining outputs, local lake files,
+broker outputs, or DQN/RL outputs are generated.
 
 ## GOAL-06D Status
 

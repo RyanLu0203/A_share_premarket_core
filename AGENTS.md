@@ -54,12 +54,15 @@ This file is long-term project memory for Codex and other coding agents.
   resolution, directory boundaries, placement rules, manifest/checksum
   requirements, schema registry governance, and GitHub hygiene only.
 - GOAL-08B.0 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
-  It marks GOAL-08B `future_review_only` eligible using only prior GOAL-07B,
+  It marks GOAL-08B review-only eligibility using only prior GOAL-07B,
   GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. It does not
-  implement GOAL-08B or create recommendation diagnostics rows.
+  itself create recommendation diagnostics rows.
+- GOAL-08B is implemented_review_only and currently `PASS_WITH_WARNINGS`. It
+  generates 100 deterministic, non-actionable recommendation diagnostic rows at
+  `trade_date + symbol` grain from GOAL-07B risk diagnostics and GOAL-08A
+  contract rules. `actionability_status` is always `never_actionable`.
 - Feature-label merge and leakage audit are active.
-- GOAL-08B is `future_review_only` eligible but not implemented.
-  Recommendation execution, position output, dashboard, paper/live trading,
+- Actionable recommendation execution, position output, dashboard, paper/live trading,
   production DB writes, production model promotion, V2 factor mining, and
   DQN/RL remain locked or not implemented.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
@@ -123,6 +126,8 @@ python scripts/run_goal_storage01_local_research_lake_hardening_gate.py
 python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py
 python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py
+python scripts/run_goal08b_recommendation_diagnostics_prototype.py
+python scripts/audit_goal08b_recommendation_diagnostics_prototype.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -182,7 +187,7 @@ dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it must not materialize a lake, expand data coverage, create diagnostics, or unlock GOAL-08B by itself. GOAL-08B.0 can mark GOAL-08B `future_review_only` eligible using prior evidence only, but must not implement GOAL-08B or create recommendation diagnostics rows. GOAL-08B remains not implemented and all recommendation/execution paths remain locked.
+GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it must not materialize a lake, expand data coverage, create diagnostics, or unlock GOAL-08B by itself. GOAL-08B.0 can mark GOAL-08B review-only eligible using prior evidence only, but must not itself create recommendation diagnostics rows. GOAL-08B can produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. All actionable recommendation/execution paths remain locked.
 
 
 

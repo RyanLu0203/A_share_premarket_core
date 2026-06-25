@@ -9,6 +9,7 @@ from ashare_premarket.contract_design.goal08b0 import (
     audit_goal08b0_recommendation_review_only_unlock_gate,
     run_goal08b0_recommendation_review_only_unlock_gate,
 )
+from ashare_premarket.review_diagnostics.goal08b import GOAL08B_ALLOWED_NEXT, goal08b_valid_diagnostics_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,20 +32,26 @@ def test_goal08b0_runner_is_unlock_only_and_deterministic() -> None:
     assert audit_goal08b0_recommendation_review_only_unlock_gate(ROOT)
 
 
-def test_goal08b0_sets_goal08b_future_review_only_but_not_implemented() -> None:
+def test_goal08b0_preserves_goal08b_diagnostics_when_valid() -> None:
     assert run_goal08b0_recommendation_review_only_unlock_gate(ROOT)
     workflow = _workflow()
     manifest = _json("outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json")
     assert workflow["goal08b0_recommendation_review_only_unlock_gate"]["status"] == "implemented_review_only"
     assert workflow["goal08b0_recommendation_review_only_unlock_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "future_review_only"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["allowed_next_action"] == GOAL08B0_ALLOWED_NEXT
+    goal08b = workflow["goal08b_recommendation_review_only_prototype"]
+    if goal08b_valid_diagnostics_evidence(ROOT):
+        assert goal08b["status"] == "implemented_review_only"
+        assert goal08b["implemented_in_repo"] == "true"
+        assert goal08b["allowed_next_action"] == GOAL08B_ALLOWED_NEXT
+    else:
+        assert goal08b["status"] == "future_review_only"
+        assert goal08b["implemented_in_repo"] == "false"
+        assert goal08b["allowed_next_action"] == GOAL08B0_ALLOWED_NEXT
     assert manifest["mode"] == "review_only_unlock_gate"
     assert manifest["goal08b0_unlock_status"] == "eligible_for_future_review_only_prototype"
-    assert manifest["goal08b_target_status"] == "future_review_only"
+    assert manifest["goal08b_target_status"] == goal08b["status"]
     assert manifest["goal08b_implemented_by_this_gate"] is False
-    assert manifest["goal08b_implemented_in_repo"] is False
+    assert manifest["goal08b_implemented_in_repo"] is goal08b_valid_diagnostics_evidence(ROOT)
 
 
 def test_goal08b0_uses_prior_evidence_and_preserves_non_actionability() -> None:

@@ -10,6 +10,7 @@ from ashare_premarket.storage.lake_hardening import (
     audit_goal_storage01_local_research_lake_hardening_gate,
     run_goal_storage01_local_research_lake_hardening_gate,
 )
+from ashare_premarket.review_diagnostics.goal08b import goal08b_valid_diagnostics_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,15 +48,20 @@ def test_goal_storage01_contract_defines_root_boundaries_and_future_placement() 
     assert contract["schema_registry_rules"]["committed_registry"] == "configs/storage/table_schema_registry.yaml"
 
 
-def test_goal_storage01_manifest_and_workflow_keep_goal08b_locked() -> None:
+def test_goal_storage01_manifest_and_workflow_preserve_goal08b_boundary() -> None:
     assert run_goal_storage01_local_research_lake_hardening_gate(ROOT)
     manifest = _json("outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json")
     workflow = _workflow()
     assert workflow["goal_storage01_local_research_lake_hardening_gate"]["status"] == "implemented_infrastructure_only"
     assert workflow["goal_storage01_local_research_lake_hardening_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
+    goal08b = workflow["goal08b_recommendation_review_only_prototype"]
+    if goal08b_valid_diagnostics_evidence(ROOT):
+        assert goal08b["status"] == "implemented_review_only"
+        assert goal08b["implemented_in_repo"] == "true"
+    else:
+        assert goal08b["status"] in {"locked_future", "future_review_only"}
+        assert goal08b["implemented_in_repo"] == "false"
     assert manifest["mode"] == "infrastructure_only"
     assert manifest["goal08b_status_after_goal_storage01"] == "locked_future"
     assert manifest["goal08b_implemented_by_this_gate"] is False

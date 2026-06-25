@@ -56,3 +56,4 @@ goal07b_review_only_risk_overlay,GOAL-07B,ashare_premarket.risk_overlay.goal07b,
 goal08a_contract_design_gate,GOAL-08A,ashare_premarket.contract_design.goal08a,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal_storage01_local_research_lake_hardening,GOAL-STORAGE-01,ashare_premarket.storage.lake_hardening,PASS,CLASS_A_REQUIRED_ACTIVE,true
 goal08b0_review_only_unlock_gate,GOAL-08B.0,ashare_premarket.contract_design.goal08b0,PASS,CLASS_A_REQUIRED_ACTIVE,true
+goal08b_review_only_diagnostics,GOAL-08B,ashare_premarket.review_diagnostics.goal08b,PASS,CLASS_A_REQUIRED_ACTIVE,true

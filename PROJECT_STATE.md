@@ -39,10 +39,14 @@ future recommendation contract design gate with zero rows. GOAL-STORAGE-01 is
 implemented as an infrastructure-only local research lake hardening gate
 (`PASS`); it does not unlock GOAL-08B by itself or create local lake data.
 GOAL-08B.0 is implemented as a review-only unlock gate (`PASS_WITH_WARNINGS`).
-It marks GOAL-08B `future_review_only` eligible for a later explicit
-non-actionable diagnostics prototype request, but GOAL-08B is not implemented.
-Recommendation, position, dashboard, trading, production, backtest,
-factor-mining, and DQN/RL paths remain locked.
+GOAL-08B is now implemented only as a review-only non-actionable
+recommendation diagnostics prototype (`PASS_WITH_WARNINGS`): it writes 100
+deterministic `trade_date + symbol` diagnostic rows from GOAL-07B risk
+diagnostics and GOAL-08A contract rules. It does not create actionable
+recommendations, buy/sell/hold outputs, target prices, expected returns for
+action, position sizing, portfolio weights, dashboards, trading paths,
+production behavior, backtests, factor-mining outputs, local lake files, broker
+outputs, or DQN/RL outputs.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -105,6 +109,8 @@ Implemented and protected:
   GitHub hygiene rules
 - GOAL-08B.0 recommendation review-only unlock gate using prior GOAL-07B,
   GOAL-08A, and GOAL-STORAGE-01 evidence only
+- GOAL-08B non-actionable recommendation diagnostics prototype with 100
+  deterministic review-only `trade_date + symbol` diagnostic rows
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -149,8 +155,11 @@ Implemented review-only:
   `implemented_review_only`; 100 review-only diagnostic rows at
   `trade_date + symbol` grain)
 - GOAL-08B.0 recommendation review-only unlock gate (`PASS_WITH_WARNINGS`;
-  `implemented_review_only`; eligibility only, no recommendation diagnostics
-  rows)
+  `implemented_review_only`; unlock-only evidence, no recommendation
+  diagnostics rows created by that gate)
+- GOAL-08B recommendation diagnostics prototype (`PASS_WITH_WARNINGS`;
+  `implemented_review_only`; 100 non-actionable diagnostic rows at
+  `trade_date + symbol` grain)
 
 Implemented design-only:
 
@@ -166,18 +175,13 @@ Implemented infrastructure-only:
 
 Still locked:
 
-- recommendation or position-band output
+- actionable recommendation or position-band output
 - dashboard
 - paper trading
 - broker/live trading
 - production DB writes
 - production model promotion
 - DQN/RL
-
-Future review-only eligible but not implemented:
-
-- GOAL-08B recommendation review-only prototype (`future_review_only`;
-  `implemented_in_repo=false`; no recommendation diagnostics rows)
 
 GOAL-07A has run only as design-only risk overlay governance. GOAL-07A.1 has
 run only as review-only design review governance. GOAL-07B.0 remains an
@@ -243,6 +247,25 @@ positions, portfolio weights, dashboards, trading paths, production behavior,
 backtests, factor-mining outputs, local lake files, broker outputs, or DQN/RL
 outputs.
 
+GOAL-08B writes only non-actionable recommendation diagnostic evidence:
+
+- `configs/recommendation/goal08b_review_only_diagnostics_policy.yaml`
+- `docs/recommendation/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md`
+- `outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv`
+- `outputs/audits/goal08b_recommendation_diagnostics_report.md`
+- `outputs/audits/goal08b_recommendation_diagnostics_manifest.json`
+- `outputs/audits/goal08b_recommendation_diagnostics_audit.md`
+
+GOAL-08B consumes prior GOAL-07B risk overlay diagnostics, GOAL-08A
+design-only contract evidence, GOAL-STORAGE-01 infrastructure evidence, and
+GOAL-08B.0 unlock evidence. Its output grain is `trade_date + symbol`;
+`actionability_status` is always `never_actionable`, and
+`actionability_blocked` is always `true`. It generates no actionable
+recommendation rows, buy/sell/hold outputs, target prices, expected returns for
+action, position sizing, portfolio weights, dashboards, trading paths,
+production behavior, backtests, factor-mining outputs, local lake files, broker
+outputs, or DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -295,12 +318,12 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, and GOAL-08B.0 are
-`implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
+`implemented_review_only`; GOAL-08B is `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
 GOAL-STORAGE-01 is `implemented_infrastructure_only`. GOAL-07B is
 diagnostic-only and non-actionable. GOAL-08A is names-only design evidence with
 zero recommendation rows. STORAGE-01 hardens storage only and does not unlock
-GOAL-08B by itself. GOAL-08B is `future_review_only` eligible but not
-implemented. Recommendation, position, dashboard, trading, production, V2
+GOAL-08B by itself. GOAL-08B is non-actionable diagnostic-only evidence.
+Actionable recommendation, position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings

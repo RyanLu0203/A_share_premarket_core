@@ -3,6 +3,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+from ashare_premarket.review_diagnostics.goal08b import goal08b_valid_diagnostics_evidence
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -21,8 +23,13 @@ def test_goal07a_is_design_only_and_goal07b_remains_locked() -> None:
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] in {"locked_future", "implemented_design_only"}
     if workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only":
         assert workflow["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
+    goal08b = workflow["goal08b_recommendation_review_only_prototype"]
+    if goal08b_valid_diagnostics_evidence(ROOT):
+        assert goal08b["status"] == "implemented_review_only"
+        assert goal08b["implemented_in_repo"] == "true"
+    else:
+        assert goal08b["status"] in {"locked_future", "future_review_only"}
+        assert goal08b["implemented_in_repo"] == "false"
     assert workflow["position_band_recommendation"]["status"] == "locked_future"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
     assert workflow["paper_trading_journal"]["status"] == "locked_future"

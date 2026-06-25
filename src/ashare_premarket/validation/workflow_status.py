@@ -38,8 +38,9 @@ GOAL08A_ALLOWED_STATUSES = {"locked_future", "implemented_design_only"}
 GOAL_STORAGE01_WORKFLOW_ID = "goal_storage01_local_research_lake_hardening_gate"
 GOAL08B0_WORKFLOW_ID = "goal08b0_recommendation_review_only_unlock_gate"
 GOAL08B_WORKFLOW_ID = "goal08b_recommendation_review_only_prototype"
-GOAL08B_ALLOWED_STATUSES = {"locked_future", "future_review_only"}
+GOAL08B_ALLOWED_STATUSES = {"locked_future", "future_review_only", "implemented_review_only"}
 GOAL08B_ALLOWED_NEXT = "await_explicit_goal08b_review_only_recommendation_diagnostics_prototype"
+GOAL08B_IMPLEMENTED_ALLOWED_NEXT = "request_explicit_goal09_position_band_review_only_unlock_or_fix_goal08b_warnings"
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -229,7 +230,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal08b0_audit = _read(root / "outputs/audits/goal08b0_recommendation_review_only_unlock_audit.md")
     goal08b = by_id.get(GOAL08B_WORKFLOW_ID, {})
     goal08b_status = goal08b.get("status")
+    goal08b_report = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_report.md")
+    goal08b_manifest = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_manifest.json")
+    goal08b_audit = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_audit.md")
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
+    goal08b_evidence_ready = bool(goal08b) and goal08b_status == "implemented_review_only" and _goal08b_readiness_implemented(goal08b_report) and "Status: `PASS`" in goal08b_audit
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -378,8 +383,11 @@ def run_workflow_status_audit(root: Path) -> bool:
             "repair_goal08a_design_gate_blockers",
         }:
             failures.append("GOAL-08A implemented design row has invalid allowed_next_action")
-        if goal08b.get("implemented_in_repo") != "false":
-            failures.append("GOAL-08A must not mark GOAL-08B implemented")
+        if goal08b_evidence_ready:
+            if goal08b.get("implemented_in_repo") != "true":
+                failures.append("GOAL-08B implemented diagnostics must be marked implemented")
+        elif goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-08A must not mark GOAL-08B implemented without GOAL-08B evidence")
         elif goal08b0_evidence_ready:
             if goal08b.get("status") != "future_review_only":
                 failures.append("GOAL-08B must be future_review_only after GOAL-08B.0 evidence")
@@ -439,8 +447,11 @@ def run_workflow_status_audit(root: Path) -> bool:
             "repair_storage_hardening_blockers",
         }:
             failures.append("GOAL-STORAGE-01 allowed_next_action is invalid")
-        if goal08b.get("implemented_in_repo") != "false":
-            failures.append("GOAL-STORAGE-01 must not mark GOAL-08B implemented")
+        if goal08b_evidence_ready:
+            if goal08b.get("implemented_in_repo") != "true":
+                failures.append("GOAL-08B implemented diagnostics must be marked implemented")
+        elif goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-STORAGE-01 must not mark GOAL-08B implemented without GOAL-08B evidence")
         elif goal08b0_evidence_ready:
             if goal08b.get("status") != "future_review_only":
                 failures.append("GOAL-08B must be future_review_only after GOAL-08B.0 evidence")
@@ -481,9 +492,7 @@ def run_workflow_status_audit(root: Path) -> bool:
         for required_text in [
             '"mode": "review_only_unlock_gate"',
             '"goal08b0_unlock_status": "eligible_for_future_review_only_prototype"',
-            '"goal08b_target_status": "future_review_only"',
             '"goal08b_implemented_by_this_gate": false',
-            '"goal08b_implemented_in_repo": false',
             '"future_goal08b_input_contract_ready": true',
             '"high_risk_actionability_block_preserved": true',
             '"goal07b_warnings_propagate_to_future_diagnostics": true',
@@ -496,21 +505,62 @@ def run_workflow_status_audit(root: Path) -> bool:
             failures.append("GOAL-08B.0 implemented review-only row must be marked implemented")
         if goal08b0.get("allowed_next_action") not in {
             GOAL08B_ALLOWED_NEXT,
+            GOAL08B_IMPLEMENTED_ALLOWED_NEXT,
             "repair_goal08b0_unlock_blockers",
         }:
             failures.append("GOAL-08B.0 allowed_next_action is invalid")
 
     if goal08b_status not in GOAL08B_ALLOWED_STATUSES:
-        failures.append("GOAL-08B must be locked_future or future_review_only")
-    if goal08b.get("implemented_in_repo") != "false":
-        failures.append("GOAL-08B must not be marked implemented")
+        failures.append("GOAL-08B must be locked_future, future_review_only, or implemented_review_only")
     if goal08b_status == "future_review_only":
+        if goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-08B future_review_only must not be marked implemented")
         if not goal08b0_evidence_ready:
             failures.append("GOAL-08B future_review_only status requires GOAL-08B.0 PASS/PASS_WITH_WARNINGS evidence")
         if goal08b.get("allowed_next_action") != GOAL08B_ALLOWED_NEXT:
             failures.append("GOAL-08B future_review_only allowed_next_action is invalid")
         if goal08b.get("depends_on") != GOAL08B0_WORKFLOW_ID:
             failures.append("GOAL-08B future_review_only must depend on GOAL-08B.0")
+    elif goal08b_status == "implemented_review_only":
+        if not goal08b_evidence_ready:
+            failures.append("GOAL-08B implemented_review_only status requires GOAL-08B PASS/PASS_WITH_WARNINGS evidence")
+        if goal08b.get("implemented_in_repo") != "true":
+            failures.append("GOAL-08B implemented_review_only must be marked implemented")
+        if goal08b.get("allowed_next_action") != GOAL08B_IMPLEMENTED_ALLOWED_NEXT:
+            failures.append("GOAL-08B implemented_review_only allowed_next_action is invalid")
+        if goal08b.get("depends_on") != GOAL08B0_WORKFLOW_ID:
+            failures.append("GOAL-08B implemented_review_only must depend on GOAL-08B.0")
+        for required_text in [
+            '"mode": "review_only"',
+            '"output_grain": "trade_date + symbol"',
+            '"diagnostic_rows_generated": true',
+            '"recommendation_diagnostics_rows_generated": true',
+            '"non_actionable": true',
+            '"actionability_status_values": [',
+            '"never_actionable"',
+            '"actionable_recommendation_rows_generated": false',
+            '"recommendation_rows_generated": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"expected_returns_for_action_generated": false',
+            '"position_sizing_generated": false',
+            '"portfolio_weights_generated": false',
+            '"dashboard_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"signal_backtests_run": false',
+            '"portfolio_backtests_run": false',
+            '"cost_slippage_outputs_created": false',
+            '"factor_mining_outputs_created": false',
+            '"local_lake_files_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"downstream_stages_unlocked_by_this_goal": false',
+        ]:
+            if required_text not in goal08b_manifest:
+                failures.append(f"GOAL-08B manifest missing required diagnostic marker: {required_text}")
     elif goal08b_status == "locked_future" and goal08b0_evidence_ready:
         failures.append("GOAL-08B should be future_review_only after GOAL-08B.0 evidence")
 
@@ -559,9 +609,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-STORAGE-01 status: `{goal_storage01_status or 'missing'}`.",
                 f"GOAL-08B.0 status: `{goal08b0_status or 'missing'}`.",
                 f"GOAL-08B status: `{goal08b_status or 'missing'}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and must not be implemented.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
-                "GOAL-07B risk overlay diagnostics are review-only when implemented; recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-07B risk overlay diagnostics and GOAL-08B recommendation diagnostics are review-only when implemented; position, dashboard, paper/live trading, production, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in failures],
@@ -631,9 +681,12 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 failures.append("goal08b0_recommendation_review_only_unlock_gate must be marked implemented")
         if workflow_id == GOAL08B_WORKFLOW_ID:
             if status not in GOAL08B_ALLOWED_STATUSES:
-                failures.append("goal08b_recommendation_review_only_prototype must be locked_future or future_review_only")
-            if row["implemented_in_repo"] != "false":
-                failures.append("goal08b_recommendation_review_only_prototype must not be implemented by the unlock gate")
+                failures.append("goal08b_recommendation_review_only_prototype must be locked_future, future_review_only, or implemented_review_only")
+            if status == "implemented_review_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal08b_recommendation_review_only_prototype implemented_review_only must be marked implemented")
+            elif row["implemented_in_repo"] != "false":
+                failures.append("goal08b_recommendation_review_only_prototype must not be implemented without GOAL-08B diagnostics evidence")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -706,7 +759,7 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL08B0_WORKFLOW_ID:
         next_goal = "GOAL-08B future non-actionable diagnostics prototype may be requested separately"
     elif row["workflow_id"] == GOAL08B_WORKFLOW_ID:
-        next_goal = "GOAL-08B is eligible only; no recommendation diagnostics are implemented"
+        next_goal = "GOAL-09 position-band review-only unlock may be requested separately only after GOAL-08B diagnostics evidence"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -792,6 +845,13 @@ def _goal08b0_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-08B.0 Recommendation Review-Only Unlock Gate: PASS" in readiness
         or "GOAL-08B.0 Recommendation Review-Only Unlock Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal08b_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-08B Recommendation Diagnostics Prototype: PASS" in readiness
+        or "GOAL-08B Recommendation Diagnostics Prototype: PASS_WITH_WARNINGS" in readiness
     )
 
 

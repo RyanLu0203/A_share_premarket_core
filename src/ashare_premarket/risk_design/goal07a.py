@@ -11,6 +11,12 @@ from ashare_premarket.contract_design.goal08b0 import (
 )
 from ashare_premarket.core.io import read_csv, write_csv, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
+from ashare_premarket.review_diagnostics.goal08b import (
+    DIAGNOSTIC_PATH as GOAL08B_DIAGNOSTIC_PATH,
+    GOAL08B_ALLOWED_NEXT as GOAL08B_IMPLEMENTED_ALLOWED_NEXT,
+    GOAL08B_IMPLEMENTED_STATUS,
+    goal08b_valid_diagnostics_evidence,
+)
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
 
@@ -866,7 +872,23 @@ def _update_workflow_status(root: Path, readiness: dict[str, object]) -> None:
             by_id[workflow_id]["implemented_in_repo"] = "false"
             by_id[workflow_id]["allowed_next_action"] = "remain_locked"
     if "goal08b_recommendation_review_only_prototype" in by_id:
-        if goal08b0_valid_unlock_evidence(root):
+        if goal08b_valid_diagnostics_evidence(root):
+            by_id["goal08b_recommendation_review_only_prototype"].update(
+                {
+                    "status": GOAL08B_IMPLEMENTED_STATUS,
+                    "current_repo_role": "review_only_recommendation_diagnostic_prototype",
+                    "implemented_in_repo": "true",
+                    "allowed_next_action": GOAL08B_IMPLEMENTED_ALLOWED_NEXT,
+                    "depends_on": GOAL08B0_WORKFLOW_ID,
+                    "produces_artifacts": GOAL08B_DIAGNOSTIC_PATH,
+                    "primary_docs": "docs/recommendation/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md;docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md;docs/10_PROGRAM_ROADMAP_AND_ARCHITECTURE.md",
+                    "primary_scripts": "scripts/run_goal08b_recommendation_diagnostics_prototype.py;scripts/audit_goal08b_recommendation_diagnostics_prototype.py",
+                    "primary_outputs": GOAL08B_DIAGNOSTIC_PATH,
+                    "promotion_rule": "implemented_review_only_after_goal08b_diagnostics_pass_with_warnings",
+                    "notes": "Review-only non-actionable recommendation diagnostics; downstream execution remains locked.",
+                }
+            )
+        elif goal08b0_valid_unlock_evidence(root):
             by_id["goal08b_recommendation_review_only_prototype"].update(
                 {
                     "status": GOAL08B_ELIGIBLE_STATUS,
@@ -903,7 +925,10 @@ def _update_locked_capabilities(root: Path) -> None:
     payload = json.loads(path.read_text(encoding="utf-8"))
     payload["goal07a_risk_overlay_design"] = "implemented_design_only"
     payload["goal07b_risk_overlay_calculation"] = _goal07b_status(root)
-    payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
+    if goal08b_valid_diagnostics_evidence(root):
+        payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_IMPLEMENTED_STATUS
+    else:
+        payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
     for key in [
         "position_band_recommendation",
         "signal_backtest",

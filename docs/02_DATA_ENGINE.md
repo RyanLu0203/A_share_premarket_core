@@ -19,7 +19,10 @@ contract defines `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`, and
 registry, placement, and GitHub hygiene rules. It does not fetch data, expand
 coverage, materialize a local lake, or unlock GOAL-08B by itself. GOAL-08B.0
 uses STORAGE-01 only as prior infrastructure evidence for future-review-only
-eligibility and still creates no local lake files.
+eligibility and still creates no local lake files. GOAL-08B writes only a small
+committed non-actionable diagnostic CSV under `outputs/recommendation/`; it
+does not write to `data/lake`, local bundles, raw payload roots, or production
+storage.
 
 ## Active Contracts
 
@@ -58,8 +61,8 @@ eligibility and still creates no local lake files.
 - Do not use ingestion time as publish time.
 - Do not convert post-target labels into premarket features.
 - Do not treat provider availability as symbol approval.
-- Do not unlock recommendation, risk, dashboard, paper/live trading, production
-  writes, model promotion, or DQN/RL.
+- Do not unlock actionable recommendation, risk, dashboard, paper/live trading,
+  production writes, model promotion, or DQN/RL.
 - Do not treat STORAGE-01 as permission to create recommendation diagnostics,
   position diagnostics, backtests, dashboards, local lake files, or production
   DB behavior.

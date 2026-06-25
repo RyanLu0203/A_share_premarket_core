@@ -1,5 +1,39 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-08B Recommendation Diagnostics Prototype
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-08B review-only non-actionable recommendation diagnostics
+  prototype.
+- Consumed only prior GOAL-07B risk overlay diagnostics, GOAL-08A design-only
+  contract evidence, GOAL-STORAGE-01 infrastructure evidence, and GOAL-08B.0
+  unlock evidence.
+- Generated 100 deterministic diagnostic rows at `trade_date + symbol` grain.
+- Updated workflow status so GOAL-08B is `implemented_review_only` while
+  GOAL-09 and all downstream execution stages remain `locked_future`.
+
+Evidence:
+
+- `configs/recommendation/goal08b_review_only_diagnostics_policy.yaml`
+- `docs/recommendation/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md`
+- `outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv`
+- `outputs/audits/goal08b_recommendation_diagnostics_report.md`
+- `outputs/audits/goal08b_recommendation_diagnostics_manifest.json`
+- `outputs/audits/goal08b_recommendation_diagnostics_audit.md`
+
+Safety:
+
+- `actionability_status` is always `never_actionable`.
+- No actionable recommendation rows, buy/sell/hold outputs, target prices,
+  expected returns for action, position sizing, portfolio weights, dashboards,
+  trading, production, backtest, factor-mining, broker, local lake, or DQN/RL
+  output was generated.
+- Remaining warnings are the propagated GOAL-07B calibration, weak-rank,
+  feature-stability, target-horizon, and provider-concentration warnings.
+
 ## 2026-06-25 - GOAL-08B.0 Recommendation Review-Only Unlock Gate
 
 Status: `PASS_WITH_WARNINGS`.

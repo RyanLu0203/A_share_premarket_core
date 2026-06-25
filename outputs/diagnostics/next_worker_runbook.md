@@ -15,6 +15,7 @@
 13. For GOAL-07B, run `python scripts/run_goal07b_risk_overlay_calculation_prototype.py` and `python scripts/audit_goal07b_risk_overlay_calculation_prototype.py`; outputs must remain review-only diagnostics.
 14. For GOAL-08A, run `python scripts/run_goal08a_recommendation_contract_design_gate.py` and `python scripts/audit_goal08a_recommendation_contract_design_gate.py`; schema evidence must stay names-only with zero rows.
 15. For GOAL-STORAGE-01, run `python scripts/run_goal_storage01_local_research_lake_hardening_gate.py` and `python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py`; it is infrastructure-only and does not unlock GOAL-08B by itself.
-16. For GOAL-08B.0, run `python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py` and `python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py`; it may mark GOAL-08B future_review_only eligible but must not implement diagnostics.
-17. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
-18. Do not unlock recommendation execution, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, or DQN/RL.
+16. For GOAL-08B.0, run `python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py` and `python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py`; it may mark GOAL-08B review-only eligible or preserve valid diagnostics but must not itself implement diagnostics.
+17. For GOAL-08B, run `python scripts/run_goal08b_recommendation_diagnostics_prototype.py` and `python scripts/audit_goal08b_recommendation_diagnostics_prototype.py`; outputs must remain review-only and non-actionable.
+18. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
+19. Do not unlock recommendation execution, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, broker, local-lake, or DQN/RL.

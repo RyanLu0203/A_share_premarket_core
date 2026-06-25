@@ -25,8 +25,8 @@ flowchart TD
     K -. "implemented design-only" .-> K2["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
     K2 -. "implemented infrastructure-only" .-> S01["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
     S01 -. "explicit review-only unlock gate" .-> S02["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    S02 -. "future review-only eligible" .-> K3["GOAL-08B Recommendation Review-Only Prototype<br/>(future_review_only; not implemented)"]
-    K3 -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future)"]
+    S02 -. "review-only diagnostics" .-> K3["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    K3 -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future; not implemented)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
     N -. "locked future" .-> O["Cost / Slippage Sensitivity<br/>(locked_future)"]
@@ -63,9 +63,10 @@ GOAL-08A is implemented only as a design-only, names-only future recommendation
 contract gate with zero rows. GOAL-STORAGE-01 is implemented only as an
 infrastructure hardening gate for local research lake governance and GitHub
 hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented only
-as a review-only unlock gate and marks GOAL-08B `future_review_only` eligible
-without implementing it. V2 factor research is planned but inactive in V1; no
-factor mining, IC/RankIC mining, factor library generation, or factor
-integration is active. Recommendation, position, dashboard, paper/live trading,
-production, backtest, factor-mining, and DQN/RL blocks remain locked,
-planned-locked, future-review-only, design-only, or infrastructure-only.
+as a review-only unlock gate. GOAL-08B is implemented only as non-actionable
+review-only diagnostics with 100 `trade_date + symbol` rows and no actionable
+recommendation or execution outputs. V2 factor research is planned but inactive
+in V1; no factor mining, IC/RankIC mining, factor library generation, or
+factor integration is active. Recommendation execution, position, dashboard,
+paper/live trading, production, backtest, factor-mining, and DQN/RL blocks
+remain locked, planned-locked, design-only, or infrastructure-only.

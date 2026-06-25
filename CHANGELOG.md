@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-25 - GOAL-08B Recommendation Diagnostics Prototype
+
+- Implemented GOAL-08B only as a review-only, non-actionable recommendation
+  diagnostics prototype.
+- Generated 100 deterministic diagnostic rows at `trade_date + symbol` grain
+  under `outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv`.
+- Added the GOAL-08B module, runner, audit wrapper, policy, report, manifest,
+  docs, workflow-status governance, diagnostics integration, and focused tests.
+- Kept all rows `never_actionable` and generated no buy/sell/hold outputs,
+  target prices, expected returns for action, positions, portfolio weights,
+  dashboards, trading, production, backtests, factor-mining, local lake files,
+  broker outputs, or DQN/RL outputs.
+- Kept GOAL-09 and all downstream execution stages locked.
+
 ## 2026-06-25 - GOAL-08B.0 Recommendation Review-Only Unlock Gate
 
 - Added a strict GOAL-08B.0 review-only unlock gate based only on prior

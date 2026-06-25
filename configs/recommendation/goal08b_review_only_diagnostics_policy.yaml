@@ -1,0 +1,73 @@
+{
+  "consumes_only": [
+    "outputs/risk_overlay/goal07b_review_only_risk_overlay.csv",
+    "outputs/audits/goal07b_risk_overlay_calculation_report.md",
+    "outputs/audits/goal07b_risk_overlay_calculation_audit.md",
+    "outputs/audits/goal07b_risk_overlay_calculation_manifest.json",
+    "configs/recommendation/goal08a_future_recommendation_input_contract.yaml",
+    "configs/recommendation/goal08a_warning_propagation_policy.yaml",
+    "configs/recommendation/goal08a_actionability_guardrails.yaml",
+    "configs/recommendation/goal08a_recommendation_state_machine.yaml",
+    "outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json",
+    "outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json"
+  ],
+  "contract_version": "goal08b_review_only_diagnostics_v1",
+  "deterministic_rules": {
+    "calibration_warning_label": "blocked_calibration_unreliable",
+    "default_warning_label": "review_only_insufficient_evidence",
+    "high_risk_label": "blocked_high_risk",
+    "no_warning_label": "review_only_monitor_only",
+    "weak_rank_warning_label": "blocked_weak_rank_signal"
+  },
+  "forbidden_execution": {
+    "actionable_recommendation_rows_generated": true,
+    "broker_integration_enabled": true,
+    "buy_sell_hold_outputs_generated": true,
+    "cost_slippage_outputs_created": true,
+    "dashboard_generated": true,
+    "database_writes_created": true,
+    "downstream_stages_unlocked_by_this_goal": true,
+    "dqn_rl_outputs_created": true,
+    "expected_returns_for_action_generated": true,
+    "factor_mining_outputs_created": true,
+    "learned_policy_used": true,
+    "live_trading_enabled": true,
+    "local_lake_files_created": true,
+    "optimization_used": true,
+    "paper_trading_enabled": true,
+    "portfolio_backtests_run": true,
+    "portfolio_construction_generated": true,
+    "portfolio_weights_generated": true,
+    "position_sizing_generated": true,
+    "production_model_behavior_created": true,
+    "recommendation_rows_generated": true,
+    "signal_backtests_run": true,
+    "stochastic_ranking_used": true,
+    "target_prices_generated": true
+  },
+  "goal": "GOAL-08B-NON-ACTIONABLE-RECOMMENDATION-DIAGNOSTICS-PROTOTYPE",
+  "mode": "review_only",
+  "output_field_policy": {
+    "actionability_blocked": true,
+    "actionability_status": "never_actionable",
+    "diagnostic_mode": "review_only",
+    "forbidden_fields": [
+      "buy",
+      "execution",
+      "expected_return",
+      "expected_return_action",
+      "hold",
+      "order",
+      "portfolio_weight",
+      "position_size",
+      "sell",
+      "target_price",
+      "trade_signal",
+      "weight"
+    ],
+    "non_actionable_disclaimer_required": true
+  },
+  "output_grain": "trade_date + symbol",
+  "output_path": "outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv",
+  "status": "PASS_WITH_WARNINGS"
+}

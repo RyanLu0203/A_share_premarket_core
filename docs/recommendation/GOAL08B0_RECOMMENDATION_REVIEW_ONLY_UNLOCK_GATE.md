@@ -2,7 +2,7 @@
 
 Status: `PASS_WITH_WARNINGS`
 
-GOAL-08B.0 is an unlock-only governance gate. It may mark GOAL-08B `future_review_only` eligible for a later explicit non-actionable diagnostics prototype request, but it does not implement GOAL-08B.
+GOAL-08B.0 is an unlock-only governance gate. It may mark GOAL-08B `future_review_only` eligible for a later explicit non-actionable diagnostics prototype request, or preserve a valid later GOAL-08B `implemented_review_only` diagnostic state. It does not implement GOAL-08B by itself.
 
 ## Evidence Basis
 

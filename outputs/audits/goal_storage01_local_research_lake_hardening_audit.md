@@ -3,7 +3,7 @@
 Status: `PASS`
 
 Workflow status: `implemented_infrastructure_only`
-GOAL-08B workflow status: `future_review_only`
+GOAL-08B workflow status: `implemented_review_only`
 GOAL-08B implemented by this gate: `false`
 Local data root materialized by this gate: `false`
 Forbidden committed heavy artifacts found: `0`

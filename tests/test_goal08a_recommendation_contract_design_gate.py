@@ -9,6 +9,7 @@ from ashare_premarket.contract_design.goal08a import (
     audit_goal08a_recommendation_contract_design_gate,
     run_goal08a_recommendation_contract_design_gate,
 )
+from ashare_premarket.review_diagnostics.goal08b import goal08b_valid_diagnostics_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -80,8 +81,13 @@ def test_goal08a_workflow_and_manifest_keep_goal08b_and_downstream_locked() -> N
     manifest = _json("outputs/audits/goal08a_recommendation_contract_design_manifest.json")
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only"
     assert workflow["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
+    goal08b = workflow["goal08b_recommendation_review_only_prototype"]
+    if goal08b_valid_diagnostics_evidence(ROOT):
+        assert goal08b["status"] == "implemented_review_only"
+        assert goal08b["implemented_in_repo"] == "true"
+    else:
+        assert goal08b["status"] in {"locked_future", "future_review_only"}
+        assert goal08b["implemented_in_repo"] == "false"
     assert manifest["mode"] == "design_only"
     assert manifest["future_schema_row_count"] == 0
     assert manifest["high_risk_severity_blocks_actionable_output"] is True

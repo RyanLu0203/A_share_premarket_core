@@ -34,7 +34,8 @@ flowchart TD
     R4 -. "implemented design-only" .-> R5["GOAL-08A Recommendation Contract Design<br/>(implemented_design_only; PASS)"]
     R5 -. "implemented infrastructure-only" .-> R7["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
     R7 -. "explicit review-only unlock gate" .-> R8["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    R8 -. "future review-only eligible" .-> R6["GOAL-08B Recommendation Review-Only Prototype<br/>(future_review_only; not implemented)"]
+    R8 -. "review-only diagnostics" .-> R6["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    R6 -. "locked future explicit unlock required" .-> R9["GOAL-09 Position Band Review-Only Unlock<br/>(locked_future; not implemented)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -64,9 +65,11 @@ implemented only as a review-only, non-actionable risk diagnostic prototype.
 GOAL-08A is implemented only as a design-only names-only contract gate with zero
 recommendation rows. GOAL-STORAGE-01 is implemented only as infrastructure
 hardening for local research lake governance and does not unlock GOAL-08B by
-itself. GOAL-08B.0 is implemented only as a review-only unlock gate and marks
-GOAL-08B `future_review_only` eligible without implementing it. V2 factor research is
-planned but inactive; no V2 factor mining, IC/RankIC mining, factor
+itself. GOAL-08B.0 is implemented only as a review-only unlock gate. GOAL-08B
+is implemented only as non-actionable review-only diagnostics with 100
+`trade_date + symbol` rows and no actionable recommendation or execution
+outputs. GOAL-09 and downstream stages remain locked future work. V2 factor
+research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, infrastructure-only, locked, planned-locked, and
 deleted-from-active-mainline blocks use dotted arrows or side-note references.
