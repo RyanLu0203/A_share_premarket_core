@@ -4,7 +4,7 @@ Status: `PASS_WITH_WARNINGS`
 
 The clean active workflow through GOAL-06B is deterministic and local.
 GOAL-06C review-only validation status: `implemented with warnings`.
-GOAL-06C.5 engineering data foundation status: `implemented with warnings; GOAL-06D blocked`.
+GOAL-06C.5 engineering data foundation status: `engineering panel ready`.
 GOAL-06C.6 source-backed ingestion status: `blocked`.
 GOAL-06C.7 provider ladder status: `provider-ladder engineering_pilot ready`.
 Provider ladder panel tier: `engineering_pilot`.
