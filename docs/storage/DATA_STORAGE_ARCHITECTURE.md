@@ -119,4 +119,6 @@ python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py
 
 STORAGE-01 does not fetch data, create local lake files, generate
 recommendation or position diagnostics, run backtests, create dashboards, write
-production data, activate factor mining, or unlock GOAL-08B.
+production data, activate factor mining, or unlock GOAL-08B by itself.
+GOAL-08B.0 may use STORAGE-01 PASS evidence for eligibility, but still creates
+no lake files and does not implement GOAL-08B.

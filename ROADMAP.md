@@ -43,6 +43,8 @@
   and zero recommendation rows).
 - GOAL-STORAGE-01 local research lake hardening gate (`PASS`;
   implemented_infrastructure_only storage governance and GitHub hygiene only).
+- GOAL-08B.0 recommendation review-only unlock gate (`PASS_WITH_WARNINGS`;
+  implemented_review_only eligibility only, no recommendation diagnostics rows).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -56,9 +58,11 @@ implements a deterministic review-only risk overlay calculation prototype.
 GOAL-08A now implements only a design-only future recommendation contract gate.
 GOAL-STORAGE-01 now implements only an infrastructure hardening gate for the
 local research lake contract and does not unlock GOAL-08B by itself.
-The exact allowed next action is to request a future explicit GOAL-08B
-review-only prototype or fix GOAL-08A / GOAL-07B / STORAGE-01 warnings. Do not
-proceed to GOAL-08B without an explicit future request.
+GOAL-08B.0 completed the explicit review-only unlock gate and marks GOAL-08B
+`future_review_only` eligible without implementing it. The exact allowed next
+action is to request a future explicit GOAL-08B non-actionable diagnostics
+prototype or fix GOAL-08A / GOAL-07B / STORAGE-01 / GOAL-08B.0 warnings. Do not
+implement GOAL-08B without an explicit future request.
 No recommendation execution, position, dashboard, paper/live trading,
 production DB writes, production model promotion, backtest, factor mining,
 broker, or DQN/RL is unlocked.
@@ -70,9 +74,13 @@ generation, or factor integration is active in V1.
 Future goals must also update `configs/project/workflow_status.csv` and the
 workflow diagrams before any future block is promoted.
 
+## Future Review-Only Eligible
+
+- GOAL-08B recommendation review-only prototype; eligible only after GOAL-08B.0
+  and still not implemented.
+
 ## Locked Future
 
-- GOAL-08B recommendation review-only prototype.
 - Position-band recommendation.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity.

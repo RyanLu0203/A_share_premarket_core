@@ -1,5 +1,40 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-08B.0 Recommendation Review-Only Unlock Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-08B.0 review-only unlock gate.
+- Verified prior GOAL-07B `implemented_review_only`, GOAL-08A
+  `implemented_design_only`, and GOAL-STORAGE-01 `implemented_infrastructure_only`
+  evidence.
+- Confirmed future GOAL-08B input contract readiness, HIGH-risk actionability
+  blocking, GOAL-07B warning propagation, and future non-actionable diagnostic
+  requirements.
+- Updated workflow status so GOAL-08B.0 is `implemented_review_only` and
+  GOAL-08B is `future_review_only` eligible while still
+  `implemented_in_repo=false`.
+
+Evidence:
+
+- `configs/recommendation/goal08b0_review_only_unlock_policy.yaml`
+- `docs/recommendation/GOAL08B0_RECOMMENDATION_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal08b0_recommendation_review_only_unlock_report.md`
+- `outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json`
+- `outputs/audits/goal08b0_recommendation_review_only_unlock_audit.md`
+
+Safety:
+
+- No recommendation diagnostics rows or recommendation rows were generated.
+- No buy/sell/hold output, target price, position sizing, dashboard, trading,
+  production, backtest, factor-mining, broker, local lake, or DQN/RL output was
+  generated.
+- GOAL-08B is eligible only for a future explicit non-actionable diagnostics
+  prototype request and is not implemented.
+- All downstream execution paths remain locked.
+
 ## 2026-06-24 - GOAL-STORAGE-01 Local Research Lake Hardening Gate
 
 Status: `PASS`.

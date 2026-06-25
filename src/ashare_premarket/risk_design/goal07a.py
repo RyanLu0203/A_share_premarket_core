@@ -3,6 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal08b0 import (
+    GOAL08B0_ALLOWED_NEXT,
+    GOAL08B0_WORKFLOW_ID,
+    GOAL08B_ELIGIBLE_STATUS,
+    goal08b0_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, write_csv, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -135,7 +141,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -860,6 +865,26 @@ def _update_workflow_status(root: Path, readiness: dict[str, object]) -> None:
             by_id[workflow_id]["status"] = "locked_future"
             by_id[workflow_id]["implemented_in_repo"] = "false"
             by_id[workflow_id]["allowed_next_action"] = "remain_locked"
+    if "goal08b_recommendation_review_only_prototype" in by_id:
+        if goal08b0_valid_unlock_evidence(root):
+            by_id["goal08b_recommendation_review_only_prototype"].update(
+                {
+                    "status": GOAL08B_ELIGIBLE_STATUS,
+                    "current_repo_role": "review_only_eligible_not_implemented",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": GOAL08B0_ALLOWED_NEXT,
+                    "depends_on": GOAL08B0_WORKFLOW_ID,
+                    "notes": "Eligibility only after GOAL-08B.0; GOAL-07A does not implement recommendation diagnostics.",
+                }
+            )
+        else:
+            by_id["goal08b_recommendation_review_only_prototype"].update(
+                {
+                    "status": "locked_future",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": "remain_locked",
+                }
+            )
     if GOAL07B_WORKFLOW_ID in by_id:
         goal07b_status = _goal07b_status(root)
         by_id[GOAL07B_WORKFLOW_ID]["status"] = goal07b_status
@@ -878,6 +903,7 @@ def _update_locked_capabilities(root: Path) -> None:
     payload = json.loads(path.read_text(encoding="utf-8"))
     payload["goal07a_risk_overlay_design"] = "implemented_design_only"
     payload["goal07b_risk_overlay_calculation"] = _goal07b_status(root)
+    payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
     for key in [
         "position_band_recommendation",
         "signal_backtest",

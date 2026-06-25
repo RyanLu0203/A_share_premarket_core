@@ -10,8 +10,9 @@ governance gates, the GOAL-07A design-only risk governance gate, and the
 GOAL-07B.0 review-only unlock gate, and the GOAL-07B review-only risk overlay
 diagnostic prototype, plus the GOAL-08A design-only future recommendation
 contract gate, plus GOAL-STORAGE-01 infrastructure-only local research lake
-hardening. Preserve reproducibility and source governance before any future
-recommendation execution or position work.
+hardening, plus the GOAL-08B.0 review-only unlock eligibility gate. Preserve
+reproducibility and source governance before any future recommendation
+execution or position work.
 
 ## Current Reliable Facts
 
@@ -69,10 +70,15 @@ recommendation execution or position work.
   defines the local research lake contract, `ASHARE_PREMARKET_DATA_ROOT`
   resolution rule, directory boundaries, placement rules, manifest/checksum
   requirements, schema registry governance, and GitHub hygiene checks only.
+- GOAL-08B.0 is implemented_review_only and currently `PASS_WITH_WARNINGS`.
+  It marks GOAL-08B `future_review_only` eligible using only prior GOAL-07B,
+  GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. It creates no
+  recommendation diagnostics rows and does not implement GOAL-08B.
 - Production model promotion is false.
-- GOAL-08B, recommendation execution, position output, dashboard, paper
-  trading, broker/live trading, production DB writes, V2 factor mining, and
-  DQN/RL are locked or not implemented.
+- GOAL-08B is `future_review_only` eligible but not implemented.
+  Recommendation execution, position output, dashboard, paper trading,
+  broker/live trading, production DB writes, V2 factor mining, and DQN/RL are
+  locked or not implemented.
 - Python `>=3.9` is supported for the clean GOAL-06B workflow; Python `3.9.21`
   passed fresh-clone verification.
 - Stable committed reports intentionally use `runtime_seconds=local_only`;
@@ -117,6 +123,8 @@ python scripts/run_goal08a_recommendation_contract_design_gate.py
 python scripts/audit_goal08a_recommendation_contract_design_gate.py
 python scripts/run_goal_storage01_local_research_lake_hardening_gate.py
 python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py
+python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py
+python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -158,11 +166,12 @@ unless a later explicit gate allows it.
 - Do not reintroduce volatile wall-clock timings into committed audit reports.
 - Do not commit raw payloads, DBs, notebooks, caches, dashboards, or private
   logs.
-- Do not proceed to GOAL-08B or create recommendation execution, position,
-  dashboard, paper/live trading, production, backtest, factor-mining, broker,
-  or DQN/RL outputs. GOAL-07B is review-only diagnostics only, and GOAL-08A is
-  names-only design evidence only. GOAL-STORAGE-01 is infrastructure-only and
-  must not materialize a lake, expand data coverage, or unlock GOAL-08B.
+- Do not implement GOAL-08B or create recommendation diagnostics rows,
+  recommendation execution, position, dashboard, paper/live trading,
+  production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B is
+  review-only diagnostics only, GOAL-08A is names-only design evidence only,
+  GOAL-STORAGE-01 is infrastructure-only, and GOAL-08B.0 is unlock-only
+  eligibility evidence.
 
 ## GOAL-06D.1 Agent Note
 
@@ -174,7 +183,7 @@ promotion, or factor-mining outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B. GOAL-08B and all decision/execution paths remain locked.
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 may mark GOAL-08B `future_review_only` eligible using prior evidence only, but it must not implement GOAL-08B or generate recommendation diagnostics rows. GOAL-08B remains not implemented and all decision/execution paths remain locked.
 
 
 

@@ -80,7 +80,7 @@ def test_goal08a_workflow_and_manifest_keep_goal08b_and_downstream_locked() -> N
     manifest = _json("outputs/audits/goal08a_recommendation_contract_design_manifest.json")
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only"
     assert workflow["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
+    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
     assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
     assert manifest["mode"] == "design_only"
     assert manifest["future_schema_row_count"] == 0

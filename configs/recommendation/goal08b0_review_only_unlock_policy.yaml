@@ -1,0 +1,48 @@
+{
+  "allowed_next_action_after_pass": "await_explicit_goal08b_review_only_recommendation_diagnostics_prototype",
+  "evidence_source_policy": "prior_audit_reports_and_manifests_only_no_live_calculation_outputs",
+  "forbidden_execution": {
+    "backtests": true,
+    "broker_integration": true,
+    "buy_sell_hold_outputs": true,
+    "dashboard_outputs": true,
+    "data_coverage_expansion": true,
+    "dqn_rl": true,
+    "factor_mining": true,
+    "local_lake_materialization": true,
+    "paper_or_live_trading": true,
+    "portfolio_construction": true,
+    "position_sizing": true,
+    "production_db_writes": true,
+    "production_model_behavior": true,
+    "recommendation_diagnostics_rows": true,
+    "recommendation_rows": true,
+    "target_prices": true
+  },
+  "forbidden_output_dirs": [
+    "outputs/recommendations",
+    "outputs/positions",
+    "outputs/dashboard",
+    "outputs/paper_trading",
+    "outputs/live_trading",
+    "outputs/backtests",
+    "outputs/factors"
+  ],
+  "future_goal08b_requirements": {
+    "diagnostics_must_be_non_actionable": true,
+    "goal07b_warnings_must_propagate": true,
+    "high_risk_severity_blocks_actionable_output": true,
+    "requires_separate_explicit_prototype_request": true
+  },
+  "goal": "GOAL-08B.0-RECOMMENDATION-REVIEW-ONLY-UNLOCK-GATE",
+  "goal08b_implemented_after_pass": false,
+  "goal08b_status_after_pass": "future_review_only",
+  "mode": "review_only_unlock_gate",
+  "required_prior_evidence": [
+    "GOAL-07B implemented_review_only PASS/PASS_WITH_WARNINGS non-actionable diagnostics",
+    "GOAL-08A implemented_design_only PASS names-only zero-row contract",
+    "GOAL-STORAGE-01 implemented_infrastructure_only PASS storage hardening"
+  ],
+  "status": "PASS_WITH_WARNINGS",
+  "unlocks": "GOAL-08B review-only eligibility only"
+}

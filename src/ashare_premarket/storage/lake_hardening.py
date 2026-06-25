@@ -4,6 +4,12 @@ import hashlib
 import subprocess
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal08b0 import (
+    GOAL08B0_ALLOWED_NEXT,
+    GOAL08B0_WORKFLOW_ID,
+    GOAL08B_ELIGIBLE_STATUS,
+    goal08b0_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -59,7 +65,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    GOAL08B_WORKFLOW_ID,
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -135,6 +140,7 @@ def audit_goal_storage01_local_research_lake_hardening_gate(root: Path) -> bool:
     manifest = _read_json(root / MANIFEST_PATH)
     report = _read(root / REPORT_PATH)
     workflow = _workflow_rows(root)
+    goal08b0_valid = goal08b0_valid_unlock_evidence(root)
     failures: list[str] = []
     warnings: list[str] = []
 
@@ -192,8 +198,13 @@ def audit_goal_storage01_local_research_lake_hardening_gate(root: Path) -> bool:
     if goal08a.get("status") != "implemented_design_only" or goal08a.get("implemented_in_repo") != "true":
         failures.append("goal08a_not_preserved_as_implemented_design_only")
     goal08b = workflow.get(GOAL08B_WORKFLOW_ID, {})
-    if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
-        failures.append("goal08b_not_locked_future")
+    if goal08b.get("implemented_in_repo") != "false":
+        failures.append("goal08b_marked_implemented")
+    elif goal08b0_valid:
+        if goal08b.get("status") != GOAL08B_ELIGIBLE_STATUS:
+            failures.append("goal08b_not_future_review_only_after_goal08b0")
+    elif goal08b.get("status") != "locked_future":
+        failures.append("goal08b_not_locked_future_without_goal08b0")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
         if row.get("status") != "locked_future":
@@ -269,6 +280,7 @@ def evaluate_goal_storage01_hardening_gate(bundle: dict[str, object]) -> dict[st
     schema_registry = bundle.get("schema_registry", {})
     workflow = {row.get("workflow_id", ""): row for row in bundle.get("workflow_rows", []) if isinstance(row, dict)}
     contract = _contract_payload()
+    goal08b0_valid = workflow.get(GOAL08B0_WORKFLOW_ID, {}).get("status") == "implemented_review_only"
 
     if data_paths.get("data_root_env_var") != "ASHARE_PREMARKET_DATA_ROOT":
         failures.append("data_paths_env_var_not_ashare_premarket_data_root")
@@ -293,7 +305,12 @@ def evaluate_goal_storage01_hardening_gate(bundle: dict[str, object]) -> dict[st
     if goal08a.get("status") != "implemented_design_only":
         failures.append("goal08a_workflow_not_implemented_design_only")
     goal08b = workflow.get(GOAL08B_WORKFLOW_ID, {})
-    if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
+    if goal08b.get("implemented_in_repo") != "false":
+        failures.append("goal08b_workflow_marked_implemented")
+    elif goal08b0_valid:
+        if goal08b.get("status") != GOAL08B_ELIGIBLE_STATUS:
+            failures.append("goal08b_workflow_not_future_review_only_after_goal08b0")
+    elif goal08b.get("status") != "locked_future":
         failures.append("goal08b_workflow_not_locked_future")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow.get(workflow_id, {}).get("status") != "locked_future":
@@ -528,7 +545,7 @@ def _write_report(root: Path, review: dict[str, object]) -> None:
                 "This gate hardens the local research data lake contract before any future GOAL-08B review-only prototype request.",
                 "It defines local data-root resolution, directory boundaries, placement rules, bundle versioning, manifests, checksums, schema registry rules, and GitHub hygiene.",
                 "The required heavy-data root is `ASHARE_PREMARKET_DATA_ROOT`; the fallback path is documentation-only and this gate does not materialize it.",
-                "GOAL-08B remains `locked_future`; STORAGE-01 does not implement or unlock GOAL-08B by itself.",
+                "GOAL-08B remains `locked_future` unless a later GOAL-08B.0 unlock gate has passed; STORAGE-01 does not implement or unlock GOAL-08B by itself.",
                 "No data coverage expansion, full-market fetch, recommendation rows, position diagnostics, dashboard outputs, trading paths, production DB writes, backtests, factor-mining outputs, broker integration, or DQN/RL outputs were created.",
                 "",
                 "## Evidence Basis",
@@ -602,7 +619,7 @@ def _write_doc(root: Path, review: dict[str, object]) -> None:
                 "",
                 "GOAL-STORAGE-01 is infrastructure-only. It hardens where future local research data may live, how bundles must be versioned, what manifests and checksums must contain, and what must never be committed to GitHub.",
                 "",
-                "It does not unlock GOAL-08B by itself. GOAL-08B remains `locked_future` until a separate explicit review-only prototype request is made and accepted.",
+                "It does not unlock GOAL-08B by itself. GOAL-08B remains `locked_future` unless the separate GOAL-08B.0 unlock gate has passed, in which case GOAL-08B may be `future_review_only` eligible but still not implemented.",
                 "",
                 "## Root Contract",
                 "",
@@ -645,7 +662,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         "primary_scripts": "scripts/run_goal_storage01_local_research_lake_hardening_gate.py;scripts/audit_goal_storage01_local_research_lake_hardening_gate.py",
         "primary_outputs": f"{REPORT_PATH};{MANIFEST_PATH};{AUDIT_PATH}",
         "promotion_rule": "implemented_infrastructure_only_after_storage01_hardening_pass",
-        "notes": "Infrastructure-only local research lake hardening gate; does not unlock GOAL-08B and creates no recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.",
+        "notes": "Infrastructure-only local research lake hardening gate; does not unlock GOAL-08B by itself and creates no recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs.",
     }
     if WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(row)
@@ -653,16 +670,29 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         insert_at = next((index for index, item in enumerate(rows) if item["workflow_id"] == GOAL08B_WORKFLOW_ID), len(rows))
         rows.insert(insert_at, row)
     by_id = {item["workflow_id"]: item for item in rows}
+    goal08b0_valid = goal08b0_valid_unlock_evidence(root)
     if GOAL08B_WORKFLOW_ID in by_id:
-        by_id[GOAL08B_WORKFLOW_ID].update(
-            {
-                "status": "locked_future",
-                "implemented_in_repo": "false",
-                "allowed_next_action": "remain_locked_until_explicit_goal08b_review_only_request",
-                "depends_on": WORKFLOW_ID,
-                "notes": "GOAL-08B remains locked after STORAGE-01; storage hardening is a prerequisite only and no prototype is implemented.",
-            }
-        )
+        if goal08b0_valid:
+            by_id[GOAL08B_WORKFLOW_ID].update(
+                {
+                    "status": GOAL08B_ELIGIBLE_STATUS,
+                    "current_repo_role": "review_only_eligible_not_implemented",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": GOAL08B0_ALLOWED_NEXT,
+                    "depends_on": GOAL08B0_WORKFLOW_ID,
+                    "notes": "Eligibility only after GOAL-08B.0; storage hardening is a prerequisite only and no prototype is implemented.",
+                }
+            )
+        else:
+            by_id[GOAL08B_WORKFLOW_ID].update(
+                {
+                    "status": "locked_future",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": "remain_locked_until_explicit_goal08b_review_only_request",
+                    "depends_on": WORKFLOW_ID,
+                    "notes": "GOAL-08B remains locked after STORAGE-01; storage hardening is a prerequisite only and no prototype is implemented.",
+                }
+            )
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
             by_id[workflow_id]["status"] = "locked_future"
@@ -684,7 +714,7 @@ def _update_locked_capabilities(root: Path, review: dict[str, object]) -> None:
         return
     payload = read_json(path)
     payload[WORKFLOW_ID] = "implemented_infrastructure_only" if review["status"] == PASS else False
-    payload[GOAL08B_WORKFLOW_ID] = False
+    payload[GOAL08B_WORKFLOW_ID] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
     for key in [
         "position_band_recommendation",
         "signal_backtest",

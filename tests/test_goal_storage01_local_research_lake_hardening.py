@@ -54,7 +54,7 @@ def test_goal_storage01_manifest_and_workflow_keep_goal08b_locked() -> None:
     assert workflow["goal_storage01_local_research_lake_hardening_gate"]["status"] == "implemented_infrastructure_only"
     assert workflow["goal_storage01_local_research_lake_hardening_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
+    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
     assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
     assert manifest["mode"] == "infrastructure_only"
     assert manifest["goal08b_status_after_goal_storage01"] == "locked_future"

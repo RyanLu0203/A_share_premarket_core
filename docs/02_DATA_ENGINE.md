@@ -17,7 +17,9 @@ fallback path is documentation-only for this gate. The local research lake
 contract defines `raw/`, `bundles/`, `lake/`, `metadata/`, `exports/`, and
 `audit_samples/` boundaries plus bundle versioning, manifest, checksum, schema
 registry, placement, and GitHub hygiene rules. It does not fetch data, expand
-coverage, materialize a local lake, or unlock GOAL-08B.
+coverage, materialize a local lake, or unlock GOAL-08B by itself. GOAL-08B.0
+uses STORAGE-01 only as prior infrastructure evidence for future-review-only
+eligibility and still creates no local lake files.
 
 ## Active Contracts
 

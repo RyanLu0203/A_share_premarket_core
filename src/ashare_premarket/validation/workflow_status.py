@@ -18,7 +18,6 @@ ALLOWED_STATUSES = {
 }
 
 DOWNSTREAM_LOCKED_IDS = {
-    "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "signal_backtest",
     "portfolio_backtest",
@@ -37,6 +36,10 @@ GOAL07B_ALLOWED_STATUSES = {"locked_future", "future_review_only", "implemented_
 GOAL08A_WORKFLOW_ID = "goal08a_recommendation_contract_design_gate"
 GOAL08A_ALLOWED_STATUSES = {"locked_future", "implemented_design_only"}
 GOAL_STORAGE01_WORKFLOW_ID = "goal_storage01_local_research_lake_hardening_gate"
+GOAL08B0_WORKFLOW_ID = "goal08b0_recommendation_review_only_unlock_gate"
+GOAL08B_WORKFLOW_ID = "goal08b_recommendation_review_only_prototype"
+GOAL08B_ALLOWED_STATUSES = {"locked_future", "future_review_only"}
+GOAL08B_ALLOWED_NEXT = "await_explicit_goal08b_review_only_recommendation_diagnostics_prototype"
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -219,6 +222,14 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_storage01_report = _read(root / "outputs/audits/goal_storage01_local_research_lake_hardening_report.md")
     goal_storage01_manifest = _read(root / "outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json")
     goal_storage01_audit = _read(root / "outputs/audits/goal_storage01_local_research_lake_hardening_audit.md")
+    goal08b0 = by_id.get(GOAL08B0_WORKFLOW_ID, {})
+    goal08b0_status = goal08b0.get("status")
+    goal08b0_report = _read(root / "outputs/audits/goal08b0_recommendation_review_only_unlock_report.md")
+    goal08b0_manifest = _read(root / "outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json")
+    goal08b0_audit = _read(root / "outputs/audits/goal08b0_recommendation_review_only_unlock_audit.md")
+    goal08b = by_id.get(GOAL08B_WORKFLOW_ID, {})
+    goal08b_status = goal08b.get("status")
+    goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -367,9 +378,13 @@ def run_workflow_status_audit(root: Path) -> bool:
             "repair_goal08a_design_gate_blockers",
         }:
             failures.append("GOAL-08A implemented design row has invalid allowed_next_action")
-        goal08b = by_id.get("goal08b_recommendation_review_only_prototype", {})
-        if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
-            failures.append("GOAL-08A must keep GOAL-08B locked_future")
+        if goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-08A must not mark GOAL-08B implemented")
+        elif goal08b0_evidence_ready:
+            if goal08b.get("status") != "future_review_only":
+                failures.append("GOAL-08B must be future_review_only after GOAL-08B.0 evidence")
+        elif goal08b.get("status") != "locked_future":
+            failures.append("GOAL-08A must keep GOAL-08B locked_future until GOAL-08B.0 passes")
     elif goal08a_status == "locked_future" and goal08a.get("implemented_in_repo") == "true":
         failures.append("GOAL-08A locked_future must not be marked implemented")
 
@@ -424,9 +439,80 @@ def run_workflow_status_audit(root: Path) -> bool:
             "repair_storage_hardening_blockers",
         }:
             failures.append("GOAL-STORAGE-01 allowed_next_action is invalid")
-        goal08b = by_id.get("goal08b_recommendation_review_only_prototype", {})
-        if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
-            failures.append("GOAL-STORAGE-01 must keep GOAL-08B locked_future")
+        if goal08b.get("implemented_in_repo") != "false":
+            failures.append("GOAL-STORAGE-01 must not mark GOAL-08B implemented")
+        elif goal08b0_evidence_ready:
+            if goal08b.get("status") != "future_review_only":
+                failures.append("GOAL-08B must be future_review_only after GOAL-08B.0 evidence")
+        elif goal08b.get("status") != "locked_future":
+            failures.append("GOAL-STORAGE-01 must keep GOAL-08B locked_future until GOAL-08B.0 passes")
+
+    if goal08b0:
+        if goal08b0_status != "implemented_review_only":
+            failures.append("GOAL-08B.0 must be implemented_review_only when present")
+        if not _goal08b0_readiness_implemented(goal08b0_report):
+            failures.append("GOAL-08B.0 lacks PASS/PASS_WITH_WARNINGS unlock evidence")
+        if "Status: `PASS`" not in goal08b0_audit:
+            failures.append("GOAL-08B.0 unlock audit report is missing or not PASS")
+        for required_false in [
+            '"recommendation_diagnostics_rows_generated": false',
+            '"recommendation_rows_generated": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"position_sizing_generated": false',
+            '"portfolio_construction_generated": false',
+            '"dashboard_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"backtests_run": false',
+            '"factor_mining_outputs_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"actionable_outputs_generated": false',
+            '"local_lake_files_created": false',
+            '"data_coverage_expanded": false',
+            '"live_calculation_outputs_used": false',
+            '"downstream_stages_unlocked_by_this_gate": false',
+        ]:
+            if required_false not in goal08b0_manifest:
+                failures.append(f"GOAL-08B.0 manifest missing false boundary flag: {required_false}")
+        for required_text in [
+            '"mode": "review_only_unlock_gate"',
+            '"goal08b0_unlock_status": "eligible_for_future_review_only_prototype"',
+            '"goal08b_target_status": "future_review_only"',
+            '"goal08b_implemented_by_this_gate": false',
+            '"goal08b_implemented_in_repo": false',
+            '"future_goal08b_input_contract_ready": true',
+            '"high_risk_actionability_block_preserved": true',
+            '"goal07b_warnings_propagate_to_future_diagnostics": true',
+            '"future_recommendation_diagnostics_non_actionable_required": true',
+            '"storage_prerequisite_ready": true',
+        ]:
+            if required_text not in goal08b0_manifest:
+                failures.append(f"GOAL-08B.0 manifest missing required unlock marker: {required_text}")
+        if goal08b0.get("implemented_in_repo") != "true":
+            failures.append("GOAL-08B.0 implemented review-only row must be marked implemented")
+        if goal08b0.get("allowed_next_action") not in {
+            GOAL08B_ALLOWED_NEXT,
+            "repair_goal08b0_unlock_blockers",
+        }:
+            failures.append("GOAL-08B.0 allowed_next_action is invalid")
+
+    if goal08b_status not in GOAL08B_ALLOWED_STATUSES:
+        failures.append("GOAL-08B must be locked_future or future_review_only")
+    if goal08b.get("implemented_in_repo") != "false":
+        failures.append("GOAL-08B must not be marked implemented")
+    if goal08b_status == "future_review_only":
+        if not goal08b0_evidence_ready:
+            failures.append("GOAL-08B future_review_only status requires GOAL-08B.0 PASS/PASS_WITH_WARNINGS evidence")
+        if goal08b.get("allowed_next_action") != GOAL08B_ALLOWED_NEXT:
+            failures.append("GOAL-08B future_review_only allowed_next_action is invalid")
+        if goal08b.get("depends_on") != GOAL08B0_WORKFLOW_ID:
+            failures.append("GOAL-08B future_review_only must depend on GOAL-08B.0")
+    elif goal08b_status == "locked_future" and goal08b0_evidence_ready:
+        failures.append("GOAL-08B should be future_review_only after GOAL-08B.0 evidence")
 
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
@@ -471,7 +557,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-07B status: `{goal07b_status or 'missing'}`.",
                 f"GOAL-08A status: `{goal08a_status or 'missing'}`.",
                 f"GOAL-STORAGE-01 status: `{goal_storage01_status or 'missing'}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence and GOAL-08B still locked.",
+                f"GOAL-08B.0 status: `{goal08b0_status or 'missing'}`.",
+                f"GOAL-08B status: `{goal08b_status or 'missing'}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and must not be implemented.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "GOAL-07B risk overlay diagnostics are review-only when implemented; recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -536,6 +624,16 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 failures.append("goal_storage01_local_research_lake_hardening_gate must be implemented_infrastructure_only")
             if row["implemented_in_repo"] != "true":
                 failures.append("goal_storage01_local_research_lake_hardening_gate must be marked implemented")
+        if workflow_id == GOAL08B0_WORKFLOW_ID:
+            if status != "implemented_review_only":
+                failures.append("goal08b0_recommendation_review_only_unlock_gate must be implemented_review_only")
+            if row["implemented_in_repo"] != "true":
+                failures.append("goal08b0_recommendation_review_only_unlock_gate must be marked implemented")
+        if workflow_id == GOAL08B_WORKFLOW_ID:
+            if status not in GOAL08B_ALLOWED_STATUSES:
+                failures.append("goal08b_recommendation_review_only_prototype must be locked_future or future_review_only")
+            if row["implemented_in_repo"] != "false":
+                failures.append("goal08b_recommendation_review_only_prototype must not be implemented by the unlock gate")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -567,6 +665,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "dotted_review_only_eligible"
         can_promote = False
         blocker = "eligible only for a future explicit review-only prototype; not implemented"
+    elif row["workflow_id"] == GOAL08B_WORKFLOW_ID and status == "future_review_only":
+        edge_type = "dotted_review_only_eligible"
+        can_promote = False
+        blocker = "eligible only for a future explicit non-actionable diagnostics prototype; not implemented"
     elif status == "deleted_from_active_mainline":
         edge_type = "dotted_side_note"
         can_promote = False
@@ -596,13 +698,15 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == "goal07b0_risk_overlay_review_only_unlock_gate":
         next_goal = "GOAL-07B future review-only calculation prototype may be requested separately"
     elif row["workflow_id"] == GOAL07B_WORKFLOW_ID:
-        next_goal = "GOAL-08A design-only contract gate may be maintained; GOAL-08B remains locked"
+        next_goal = "GOAL-08A design-only contract gate and GOAL-STORAGE-01 may be maintained before GOAL-08B.0 eligibility"
     elif row["workflow_id"] == "goal08a_recommendation_contract_design_gate":
-        next_goal = "GOAL-STORAGE-01 hardening, then GOAL-08B remains locked until a separate explicit request"
+        next_goal = "GOAL-STORAGE-01 hardening, then GOAL-08B.0 review-only unlock eligibility"
     elif row["workflow_id"] == GOAL_STORAGE01_WORKFLOW_ID:
-        next_goal = "GOAL-08B remains locked; storage hardening does not implement recommendations"
-    elif row["workflow_id"] == "goal08b_recommendation_review_only_prototype":
-        next_goal = "GOAL-08B remains locked; GOAL-08A and STORAGE-01 do not implement recommendations"
+        next_goal = "GOAL-08B.0 can mark eligibility only; storage hardening does not implement recommendations"
+    elif row["workflow_id"] == GOAL08B0_WORKFLOW_ID:
+        next_goal = "GOAL-08B future non-actionable diagnostics prototype may be requested separately"
+    elif row["workflow_id"] == GOAL08B_WORKFLOW_ID:
+        next_goal = "GOAL-08B is eligible only; no recommendation diagnostics are implemented"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -682,6 +786,13 @@ def _goal08a_readiness_implemented(readiness: str) -> bool:
 
 def _goal_storage01_readiness_implemented(readiness: str) -> bool:
     return "GOAL-STORAGE-01 Local Research Lake Hardening Gate: PASS" in readiness
+
+
+def _goal08b0_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-08B.0 Recommendation Review-Only Unlock Gate: PASS" in readiness
+        or "GOAL-08B.0 Recommendation Review-Only Unlock Gate: PASS_WITH_WARNINGS" in readiness
+    )
 
 
 def _first_mermaid_block(text: str) -> str:

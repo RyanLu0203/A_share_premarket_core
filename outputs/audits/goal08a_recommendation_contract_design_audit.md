@@ -4,7 +4,7 @@ Status: `PASS`
 
 GOAL-08A mode: `design_only`
 GOAL-08A workflow status: `implemented_design_only`
-GOAL-08B workflow status: `locked_future`
+GOAL-08B workflow status: `future_review_only`
 Future recommendation schema row count: `0`
 HIGH risk severity blocks actionable recommendation output: `true`
 No recommendation rows were generated.

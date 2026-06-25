@@ -36,6 +36,7 @@ Status: `PASS_WITH_WARNINGS`
 - `goal06c6_provider_failure_classification`: PASS
 - `goal06c6_source_backed_stage6c_panel`: PASS
 - `goal_storage01_local_research_lake_hardening`: PASS
+- `goal08b0_recommendation_review_only_unlock`: PASS
 - `goal06d_blocked_or_review_only_after_engineering_pilot`: PASS
 - `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS

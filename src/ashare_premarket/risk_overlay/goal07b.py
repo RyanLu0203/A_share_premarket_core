@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal08b0 import (
+    GOAL08B0_ALLOWED_NEXT,
+    GOAL08B0_WORKFLOW_ID,
+    GOAL08B_ELIGIBLE_STATUS,
+    goal08b0_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -207,7 +213,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    "goal08b_recommendation_review_only_prototype",
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -871,6 +876,18 @@ def _upsert_locked_goal08_rows(root: Path, rows: list[dict[str, str]], by_id: di
         "promotion_rule": "locked_until_explicit_goal08b_review_only_goal",
         "notes": "Locked future recommendation prototype; not unlocked by GOAL-07B.",
     }
+    if goal08b0_valid_unlock_evidence(root):
+        goal08b.update(
+            {
+                "status": GOAL08B_ELIGIBLE_STATUS,
+                "current_repo_role": "review_only_eligible_not_implemented",
+                "allowed_next_action": GOAL08B0_ALLOWED_NEXT,
+                "depends_on": GOAL08B0_WORKFLOW_ID,
+                "primary_docs": "docs/recommendation/GOAL08B0_RECOMMENDATION_REVIEW_ONLY_UNLOCK_GATE.md;docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md;docs/10_PROGRAM_ROADMAP_AND_ARCHITECTURE.md",
+                "promotion_rule": "eligible_for_future_review_only_prototype_after_goal08b0_unlock_gate",
+                "notes": "Eligibility only after GOAL-08B.0; GOAL-07B does not implement recommendation diagnostics.",
+            }
+        )
     insert_at = next((index + 1 for index, row in enumerate(rows) if row["workflow_id"] == "goal07b_risk_overlay_calculation"), len(rows))
     for row in [goal08a, goal08b]:
         if row["workflow_id"] == "goal08a_recommendation_contract_design_gate":
@@ -892,7 +909,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     payload["goal07b_risk_overlay_calculation"] = "implemented_review_only" if result["status"] != FAIL else "future_review_only"
     if payload.get("goal08a_recommendation_contract_design_gate") != "implemented_design_only":
         payload["goal08a_recommendation_contract_design_gate"] = False
-    payload["goal08b_recommendation_review_only_prototype"] = False
+    payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
     for key in [
         "position_band_recommendation",
         "signal_backtest",

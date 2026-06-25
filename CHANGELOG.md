@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-25 - GOAL-08B.0 Recommendation Review-Only Unlock Gate
+
+- Added a strict GOAL-08B.0 review-only unlock gate based only on prior
+  GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence.
+- Moved GOAL-08B from `locked_future` to `future_review_only` eligibility while
+  keeping `implemented_in_repo=false`.
+- Added the GOAL-08B.0 module, runner, audit wrapper, policy, report, manifest,
+  docs, workflow-status governance, diagnostics integration, and focused tests.
+- Created no recommendation diagnostics rows, recommendation rows,
+  buy/sell/hold outputs, target prices, positions, dashboards, trading,
+  production, backtest, factor-mining, local lake files, broker, or DQN/RL
+  outputs.
+
 ## 2026-06-24 - GOAL-STORAGE-01 Local Research Lake Hardening Gate
 
 - Implemented GOAL-STORAGE-01 as an infrastructure-only local research lake

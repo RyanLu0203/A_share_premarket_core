@@ -3,6 +3,12 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal08b0 import (
+    GOAL08B0_ALLOWED_NEXT,
+    GOAL08B0_WORKFLOW_ID,
+    GOAL08B_ELIGIBLE_STATUS,
+    goal08b0_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -125,7 +131,6 @@ FORBIDDEN_OUTPUT_DIRS = [
 ]
 
 DOWNSTREAM_LOCKED_IDS = [
-    GOAL08B_WORKFLOW_ID,
     "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
@@ -173,6 +178,7 @@ def audit_goal08a_recommendation_contract_design_gate(root: Path) -> bool:
     actionability = _read_json(root / ACTIONABILITY_PATH)
     state_machine = _read_json(root / STATE_MACHINE_PATH)
     workflow = _workflow_rows(root)
+    goal08b0_valid = goal08b0_valid_unlock_evidence(root)
     failures: list[str] = []
     warnings: list[str] = []
 
@@ -255,8 +261,13 @@ def audit_goal08a_recommendation_contract_design_gate(root: Path) -> bool:
     if goal08a.get("implemented_in_repo") != "true":
         failures.append("goal08a_workflow_not_marked_implemented")
     goal08b = workflow.get(GOAL08B_WORKFLOW_ID, {})
-    if goal08b.get("status") != "locked_future" or goal08b.get("implemented_in_repo") != "false":
-        failures.append("goal08b_not_locked_future")
+    if goal08b.get("implemented_in_repo") != "false":
+        failures.append("goal08b_marked_implemented")
+    elif goal08b0_valid:
+        if goal08b.get("status") != GOAL08B_ELIGIBLE_STATUS:
+            failures.append("goal08b_not_future_review_only_after_goal08b0")
+    elif goal08b.get("status") != "locked_future":
+        failures.append("goal08b_not_locked_future_without_goal08b0")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
         if row.get("status") != "locked_future":
@@ -328,6 +339,7 @@ def evaluate_goal08a_design_gate(bundle: dict[str, object]) -> dict[str, object]
     overlay_rows = bundle.get("goal07b_overlay_rows", [])
     diagnostic_rows = bundle.get("goal07b_diagnostic_rows", [])
     workflow = {row.get("workflow_id", ""): row for row in bundle.get("workflow_rows", []) if isinstance(row, dict)}
+    goal08b0_valid = workflow.get(GOAL08B0_WORKFLOW_ID, {}).get("status") == "implemented_review_only"
 
     if not _report_pass_or_warn(goal07b_report, "GOAL-07B Risk Overlay Calculation Prototype:"):
         failures.append("goal07b_report_not_pass_or_warn")
@@ -406,10 +418,16 @@ def evaluate_goal08a_design_gate(bundle: dict[str, object]) -> dict[str, object]
         failures.append("dqn_rl_not_deleted_from_active_mainline")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
-        if workflow_id == GOAL08B_WORKFLOW_ID and row.get("status") != "locked_future":
-            failures.append("goal08b_not_locked_before_goal08a")
-        elif workflow_id != GOAL08B_WORKFLOW_ID and row.get("status") != "locked_future":
+        if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_before_goal08a")
+    goal08b = workflow.get(GOAL08B_WORKFLOW_ID, {})
+    if goal08b.get("implemented_in_repo") != "false":
+        failures.append("goal08b_marked_implemented_before_goal08a")
+    elif goal08b0_valid:
+        if goal08b.get("status") != GOAL08B_ELIGIBLE_STATUS:
+            failures.append("goal08b_not_future_review_only_after_goal08b0")
+    elif goal08b.get("status") != "locked_future":
+        failures.append("goal08b_not_locked_before_goal08a")
 
     if bundle.get("forbidden_output_dirs"):
         failures.append("forbidden_output_dirs_present:" + ";".join(str(path) for path in bundle["forbidden_output_dirs"]))
@@ -759,7 +777,7 @@ def _write_docs(root: Path, review: dict[str, object]) -> None:
                 "Status: `PASS`",
                 "",
                 "GOAL-08A is implemented as a design-only gate. It does not implement GOAL-08B.",
-                "GOAL-08B remains `locked_future` until a separate explicit future request.",
+                "GOAL-08B remains `locked_future` unless a separate GOAL-08B.0 unlock gate has passed, in which case it may be `future_review_only` eligible but still not implemented.",
                 "Recommendation output, position sizing, portfolio construction, dashboard, paper/live trading, broker integration, production DB writes, production model promotion, backtests, factor mining, and DQN/RL remain locked or deleted from active mainline.",
                 "No recommendation rows or downstream output directories are created.",
                 "",
@@ -806,16 +824,29 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         insert_at = next((index + 1 for index, item in enumerate(rows) if item["workflow_id"] == "goal07b_risk_overlay_calculation"), len(rows))
         rows.insert(insert_at, row)
     by_id = {item["workflow_id"]: item for item in rows}
+    goal08b0_valid = goal08b0_valid_unlock_evidence(root)
     if GOAL08B_WORKFLOW_ID in by_id:
-        by_id[GOAL08B_WORKFLOW_ID].update(
-            {
-                "status": "locked_future",
-                "implemented_in_repo": "false",
-                "allowed_next_action": "remain_locked_until_explicit_goal08b_review_only_request",
-                "depends_on": GOAL08A_WORKFLOW_ID,
-                "notes": "GOAL-08B remains locked after GOAL-08A; no recommendation prototype is implemented.",
-            }
-        )
+        if goal08b0_valid:
+            by_id[GOAL08B_WORKFLOW_ID].update(
+                {
+                    "status": GOAL08B_ELIGIBLE_STATUS,
+                    "current_repo_role": "review_only_eligible_not_implemented",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": GOAL08B0_ALLOWED_NEXT,
+                    "depends_on": GOAL08B0_WORKFLOW_ID,
+                    "notes": "Eligibility only after GOAL-08B.0; no recommendation diagnostics prototype is implemented.",
+                }
+            )
+        else:
+            by_id[GOAL08B_WORKFLOW_ID].update(
+                {
+                    "status": "locked_future",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": "remain_locked_until_explicit_goal08b_review_only_request",
+                    "depends_on": GOAL08A_WORKFLOW_ID,
+                    "notes": "GOAL-08B remains locked after GOAL-08A; no recommendation prototype is implemented.",
+                }
+            )
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
             by_id[workflow_id]["status"] = "locked_future"
@@ -837,7 +868,7 @@ def _update_locked_capabilities(root: Path, review: dict[str, object]) -> None:
         return
     payload = read_json(path)
     payload[GOAL08A_WORKFLOW_ID] = "implemented_design_only" if review["status"] != BLOCKED else False
-    payload[GOAL08B_WORKFLOW_ID] = False
+    payload[GOAL08B_WORKFLOW_ID] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
     for key in [
         "position_band_recommendation",
         "signal_backtest",

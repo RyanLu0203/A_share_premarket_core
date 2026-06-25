@@ -4,7 +4,7 @@ Status: `PASS`
 
 GOAL-STORAGE-01 is infrastructure-only. It hardens where future local research data may live, how bundles must be versioned, what manifests and checksums must contain, and what must never be committed to GitHub.
 
-It does not unlock GOAL-08B by itself. GOAL-08B remains `locked_future` until a separate explicit review-only prototype request is made and accepted.
+It does not unlock GOAL-08B by itself. GOAL-08B remains `locked_future` unless the separate GOAL-08B.0 unlock gate has passed, in which case GOAL-08B may be `future_review_only` eligible but still not implemented.
 
 ## Root Contract
 

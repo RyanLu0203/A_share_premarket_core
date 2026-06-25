@@ -21,7 +21,8 @@ def test_goal07a_is_design_only_and_goal07b_remains_locked() -> None:
     assert workflow["goal08a_recommendation_contract_design_gate"]["status"] in {"locked_future", "implemented_design_only"}
     if workflow["goal08a_recommendation_contract_design_gate"]["status"] == "implemented_design_only":
         assert workflow["goal08a_recommendation_contract_design_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "locked_future"
+    assert workflow["goal08b_recommendation_review_only_prototype"]["status"] in {"locked_future", "future_review_only"}
+    assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "false"
     assert workflow["position_band_recommendation"]["status"] == "locked_future"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
     assert workflow["paper_trading_journal"]["status"] == "locked_future"

@@ -58,11 +58,16 @@ GOAL-08A future schema rows generated: `0`.
 GOAL-STORAGE-01 hardening status: `PASS`.
 GOAL-STORAGE-01 audit status: `PASS`.
 GOAL-STORAGE-01 forbidden tracked artifacts: `0`.
+GOAL-08B.0 unlock gate status: `PASS_WITH_WARNINGS`.
+GOAL-08B.0 audit status: `PASS`.
+GOAL-08B.0 unlock result: `eligible_for_future_review_only_prototype`.
+GOAL-08B target status: `future_review_only`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
 GOAL-STORAGE-01 workflow status: `implemented_infrastructure_only`.
-GOAL-08B workflow status: `locked_future`.
+GOAL-08B.0 workflow status: `implemented_review_only`.
+GOAL-08B workflow status: `future_review_only`.
 Recommendation lock status: `locked_future`.
 Position lock status: `locked_future`.
 Dashboard lock status: `locked_future`.
@@ -74,7 +79,7 @@ Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
 GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
-GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible, GOAL-07B may produce review-only non-actionable diagnostics after an explicit prototype request, GOAL-08A may define names-only design contracts with zero recommendation rows, and GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B.
+GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible, GOAL-07B may produce review-only non-actionable diagnostics after an explicit prototype request, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, and GOAL-08B.0 may mark GOAL-08B future_review_only eligible without implementing diagnostics.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -140,3 +145,5 @@ Protected regression commands:
 - `python scripts/audit_goal08a_recommendation_contract_design_gate.py`
 - `python scripts/run_goal_storage01_local_research_lake_hardening_gate.py`
 - `python scripts/audit_goal_storage01_local_research_lake_hardening_gate.py`
+- `python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py`
+- `python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py`
