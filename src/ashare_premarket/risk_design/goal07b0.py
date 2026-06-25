@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal090 import (
+    GOAL09_ELIGIBLE_STATUS,
+    GOAL09_WORKFLOW_ID,
+    goal09_eligible_workflow_patch,
+    goal090_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -96,14 +102,20 @@ def audit_goal07b0_risk_overlay_review_only_unlock_gate(root: Path) -> bool:
             failures.append("goal07b_future_review_only_marked_implemented")
     else:
         failures.append("goal07b_workflow_not_future_or_implemented_review_only")
+    goal090_valid = goal090_valid_unlock_evidence(root)
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
-        if workflow.get(workflow_id, {}).get("status") != GOAL07B_LOCKED_STATUS:
+        row = workflow.get(workflow_id, {})
+        if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+            if row.get("status") != GOAL09_ELIGIBLE_STATUS or row.get("implemented_in_repo") != "false":
+                failures.append(f"{workflow_id}_not_future_review_only_after_goal090")
+            continue
+        if row.get("status") != GOAL07B_LOCKED_STATUS:
             failures.append(f"{workflow_id}_not_locked_future")
     if workflow.get("dqn_rl_mainline", {}).get("status") != "deleted_from_active_mainline":
         failures.append("dqn_rl_not_deleted_from_active_mainline")
     if _forbidden_output_dirs_present(root):
         failures.append("forbidden_output_dirs_present")
-    if _risk_calculation_csv_outputs(root, allow_goal07b_outputs=_goal07b_review_only_outputs_valid(root)):
+    if _risk_calculation_csv_outputs(root, allow_goal07b_outputs=_goal07b_review_only_outputs_allowed(root)):
         failures.append("risk_calculation_csv_outputs_present")
 
     status = PASS if not failures else BLOCKED
@@ -140,7 +152,8 @@ def load_goal07b0_unlock_bundle(root: Path) -> dict[str, object]:
         "goal07a1_manifest": _read_json(root / f"{AUDIT_DIR}/goal07a1_unlock_readiness_manifest.json"),
         "workflow_rows": read_csv(root / "configs/project/workflow_status.csv"),
         "forbidden_output_dirs_present": _forbidden_output_dirs_present(root),
-        "risk_calculation_csv_outputs": _risk_calculation_csv_outputs(root, allow_goal07b_outputs=_goal07b_review_only_outputs_valid(root)),
+        "risk_calculation_csv_outputs": _risk_calculation_csv_outputs(root, allow_goal07b_outputs=_goal07b_review_only_outputs_allowed(root)),
+        "goal090_valid_evidence": goal090_valid_unlock_evidence(root),
     }
 
 
@@ -186,8 +199,12 @@ def evaluate_goal07b0_unlock_gate(bundle: dict[str, object]) -> dict[str, object
         failures.append("goal07b_status_not_locked_eligible_or_implemented_review_only")
     if goal07b.get("implemented_in_repo") == "true" and not goal07b_implemented_valid:
         failures.append("goal07b_marked_implemented_before_unlock")
+    goal090_valid = bool(bundle.get("goal090_valid_evidence"))
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
-        if workflow.get(workflow_id, {}).get("status") != GOAL07B_LOCKED_STATUS:
+        row = workflow.get(workflow_id, {})
+        if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+            continue
+        if row.get("status") != GOAL07B_LOCKED_STATUS:
             failures.append(f"{workflow_id}_not_locked_future")
     if workflow.get("dqn_rl_mainline", {}).get("status") != "deleted_from_active_mainline":
         failures.append("dqn_rl_not_deleted_from_active_mainline")
@@ -370,6 +387,9 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         goal07b["implemented_in_repo"] = "true"
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
+            if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid_unlock_evidence(root):
+                by_id[workflow_id].update(goal09_eligible_workflow_patch())
+                continue
             by_id[workflow_id]["status"] = GOAL07B_LOCKED_STATUS
             by_id[workflow_id]["implemented_in_repo"] = "false"
             by_id[workflow_id]["allowed_next_action"] = "remain_locked"
@@ -389,8 +409,8 @@ def _update_locked_capabilities(root: Path, review: dict[str, object]) -> None:
     payload = read_json(path)
     payload["goal07b0_risk_overlay_review_only_unlock_gate"] = "implemented_review_only" if review["status"] != BLOCKED else "future_review_only"
     payload["goal07b_risk_overlay_calculation"] = review["goal07b_target_status"]
+    payload[GOAL09_WORKFLOW_ID] = GOAL09_ELIGIBLE_STATUS if goal090_valid_unlock_evidence(root) else False
     for key in [
-        "position_band_recommendation",
         "signal_backtest",
         "portfolio_backtest",
         "dashboard",
@@ -445,6 +465,28 @@ def _goal07b_review_only_outputs_valid(root: Path) -> bool:
         and '"position_generated": false' in manifest
         and '"trading_generated": false' in manifest
         and '"production_generated": false' in manifest
+    )
+
+
+def _goal07b_review_only_outputs_allowed(root: Path) -> bool:
+    return _goal07b_review_only_outputs_valid(root) or _goal07b_review_only_manifest_non_actionable(root)
+
+
+def _goal07b_review_only_manifest_non_actionable(root: Path) -> bool:
+    manifest = _read_json(root / "outputs/audits/goal07b_risk_overlay_calculation_manifest.json")
+    return (
+        manifest.get("mode") == "review_only"
+        and manifest.get("risk_overlay_output_path") == "outputs/risk_overlay/goal07b_review_only_risk_overlay.csv"
+        and manifest.get("diagnostic_output_path") == "outputs/diagnostics/goal07b_risk_overlay_diagnostics.csv"
+        and manifest.get("recommendation_generated") is False
+        and manifest.get("position_generated") is False
+        and manifest.get("dashboard_generated") is False
+        and manifest.get("paper_live_trading_generated") is False
+        and manifest.get("trading_generated") is False
+        and manifest.get("production_generated") is False
+        and manifest.get("backtest_generated") is False
+        and manifest.get("factor_mining_generated") is False
+        and manifest.get("dqn_rl_generated") is False
     )
 
 

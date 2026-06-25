@@ -9,6 +9,12 @@ from ashare_premarket.contract_design.goal08b0 import (
     GOAL08B_ELIGIBLE_STATUS,
     goal08b0_valid_unlock_evidence,
 )
+from ashare_premarket.contract_design.goal090 import (
+    GOAL09_ELIGIBLE_STATUS,
+    GOAL09_WORKFLOW_ID,
+    goal09_eligible_workflow_patch,
+    goal090_valid_unlock_evidence,
+)
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.review_diagnostics.goal08b import (
@@ -287,8 +293,15 @@ def audit_goal08a_recommendation_contract_design_gate(root: Path) -> bool:
             failures.append("goal08b_not_future_review_only_after_goal08b0")
     elif goal08b.get("status") != "locked_future":
         failures.append("goal08b_not_locked_future_without_goal08b0")
+    goal090_valid = goal090_valid_unlock_evidence(root)
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
+        if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+            if row.get("status") != GOAL09_ELIGIBLE_STATUS:
+                failures.append("goal09_not_future_review_only_after_goal090")
+            if row.get("implemented_in_repo") != "false":
+                failures.append("goal09_marked_implemented_after_goal090")
+            continue
         if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
         if row.get("implemented_in_repo") != "false":
@@ -347,6 +360,7 @@ def load_goal08a_design_bundle(root: Path) -> dict[str, object]:
         "forbidden_row_outputs": _forbidden_recommendation_row_outputs(root),
         "forbidden_imports": _forbidden_active_imports(root),
         "goal08b_valid_diagnostics_evidence": goal08b_valid_diagnostics_evidence(root),
+        "goal090_valid_evidence": goal090_valid_unlock_evidence(root),
     }
 
 
@@ -361,6 +375,7 @@ def evaluate_goal08a_design_gate(bundle: dict[str, object]) -> dict[str, object]
     workflow = {row.get("workflow_id", ""): row for row in bundle.get("workflow_rows", []) if isinstance(row, dict)}
     goal08b0_valid = workflow.get(GOAL08B0_WORKFLOW_ID, {}).get("status") == "implemented_review_only"
     goal08b_valid = bool(bundle.get("goal08b_valid_diagnostics_evidence"))
+    goal090_valid = bool(bundle.get("goal090_valid_evidence"))
 
     if not _report_pass_or_warn(goal07b_report, "GOAL-07B Risk Overlay Calculation Prototype:"):
         failures.append("goal07b_report_not_pass_or_warn")
@@ -439,6 +454,8 @@ def evaluate_goal08a_design_gate(bundle: dict[str, object]) -> dict[str, object]
         failures.append("dqn_rl_not_deleted_from_active_mainline")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
+        if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+            continue
         if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_before_goal08a")
     goal08b = workflow.get(GOAL08B_WORKFLOW_ID, {})
@@ -850,6 +867,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
     by_id = {item["workflow_id"]: item for item in rows}
     goal08b0_valid = goal08b0_valid_unlock_evidence(root)
     goal08b_valid = goal08b_valid_diagnostics_evidence(root)
+    goal090_valid = goal090_valid_unlock_evidence(root)
     if GOAL08B_WORKFLOW_ID in by_id:
         if goal08b_valid:
             by_id[GOAL08B_WORKFLOW_ID].update(
@@ -890,6 +908,9 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
             )
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
+            if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+                by_id[workflow_id].update(goal09_eligible_workflow_patch())
+                continue
             by_id[workflow_id]["status"] = "locked_future"
             by_id[workflow_id]["implemented_in_repo"] = "false"
             if workflow_id != GOAL08B_WORKFLOW_ID:
@@ -913,8 +934,8 @@ def _update_locked_capabilities(root: Path, review: dict[str, object]) -> None:
         payload[GOAL08B_WORKFLOW_ID] = GOAL08B_IMPLEMENTED_STATUS
     else:
         payload[GOAL08B_WORKFLOW_ID] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
+    payload[GOAL09_WORKFLOW_ID] = GOAL09_ELIGIBLE_STATUS if goal090_valid_unlock_evidence(root) else False
     for key in [
-        "position_band_recommendation",
         "signal_backtest",
         "portfolio_backtest",
         "dashboard",

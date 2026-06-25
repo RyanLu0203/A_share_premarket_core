@@ -10,6 +10,7 @@ from ashare_premarket.core.constants import PUBLIC_COMMANDS, REQUIRED_OUTPUTS, R
 from ashare_premarket.core.io import read_json, write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
 from ashare_premarket.contract_design.goal08b0 import audit_goal08b0_recommendation_review_only_unlock_gate, run_goal08b0_recommendation_review_only_unlock_gate
+from ashare_premarket.contract_design.goal090 import audit_goal090_position_band_review_only_unlock_gate, run_goal090_position_band_review_only_unlock_gate
 from ashare_premarket.data.coverage import audit_data_source_coverage
 from ashare_premarket.datasets.feature_label_merge import audit_feature_label_leakage, build_model_ready_candidate_dataset
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
@@ -141,6 +142,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_storage01_local_research_lake_hardening", run_goal_storage01_local_research_lake_hardening_gate(root) and audit_goal_storage01_local_research_lake_hardening_gate(root)),
         ("goal08b0_recommendation_review_only_unlock", run_goal08b0_recommendation_review_only_unlock_gate(root) and audit_goal08b0_recommendation_review_only_unlock_gate(root)),
         ("goal08b_recommendation_diagnostics_review_only", run_goal08b_recommendation_diagnostics_prototype(root) and audit_goal08b_recommendation_diagnostics_prototype(root)),
+        ("goal090_position_band_review_only_unlock", run_goal090_position_band_review_only_unlock_gate(root) and audit_goal090_position_band_review_only_unlock_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -227,6 +229,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py"]),
         ("python scripts/run_goal08b_recommendation_diagnostics_prototype.py", [sys.executable, "scripts/run_goal08b_recommendation_diagnostics_prototype.py"]),
         ("python scripts/audit_goal08b_recommendation_diagnostics_prototype.py", [sys.executable, "scripts/audit_goal08b_recommendation_diagnostics_prototype.py"]),
+        ("python scripts/run_goal090_position_band_review_only_unlock_gate.py", [sys.executable, "scripts/run_goal090_position_band_review_only_unlock_gate.py"]),
+        ("python scripts/audit_goal090_position_band_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal090_position_band_review_only_unlock_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -240,6 +244,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py"]),
         ("python scripts/run_goal08b_recommendation_diagnostics_prototype.py", [sys.executable, "scripts/run_goal08b_recommendation_diagnostics_prototype.py"]),
         ("python scripts/audit_goal08b_recommendation_diagnostics_prototype.py", [sys.executable, "scripts/audit_goal08b_recommendation_diagnostics_prototype.py"]),
+        ("python scripts/run_goal090_position_band_review_only_unlock_gate.py", [sys.executable, "scripts/run_goal090_position_band_review_only_unlock_gate.py"]),
+        ("python scripts/audit_goal090_position_band_review_only_unlock_gate.py", [sys.executable, "scripts/audit_goal090_position_band_review_only_unlock_gate.py"]),
     ]
     rows = []
     runtime_rows = []
@@ -295,7 +301,7 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
                 "Warnings are limited to documented source coverage limitations and the `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` source-evidence gap for missing historical GOAL-05/GOAL-06 docs.",
                 "The Class D gap is manifest/documentation only and does not block Class A active workflow through GOAL-06B.",
                 "Committed validation reports use deterministic stable summaries; volatile runtime timing is stored in local-only ignored diagnostics.",
-                "GOAL-07B risk overlay diagnostics and GOAL-08B recommendation diagnostics are separate review-only evidence. GOAL-08A is design-only contract evidence with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening and does not unlock GOAL-08B by itself. GOAL-08B.0 marks GOAL-08B review-only eligible; GOAL-08B may produce only non-actionable recommendation diagnostic rows. Recommendation execution, position, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked.",
+                "GOAL-07B risk overlay diagnostics and GOAL-08B recommendation diagnostics are separate review-only evidence. GOAL-08A is design-only contract evidence with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening and does not unlock GOAL-08B by itself. GOAL-08B.0 marks GOAL-08B review-only eligible; GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09.0 marks GOAL-09 position-band diagnostics eligible only for a future explicit non-actionable prototype and does not implement GOAL-09. Recommendation execution, position rows, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked.",
                 "",
                 f"GOAL-06B Clean Repo Bootstrap Readiness: {readiness}",
             ]

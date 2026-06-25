@@ -1,5 +1,36 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-09.0 Position-Band Review-Only Unlock Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-09.0 review-only unlock gate.
+- Used only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
+  GOAL-08B PASS/PASS_WITH_WARNINGS evidence.
+- Updated workflow status so GOAL-09 position-band diagnostics are
+  `future_review_only` eligible while GOAL-09 remains not implemented.
+- Kept dashboard, paper/live trading, production, backtest, factor-mining,
+  broker, local-lake, and DQN/RL stages locked.
+
+Evidence:
+
+- `configs/position/goal090_position_band_review_only_unlock_policy.yaml`
+- `docs/position/GOAL090_POSITION_BAND_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_report.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_manifest.json`
+- `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
+
+Safety:
+
+- No position-band diagnostic rows, position rows, position sizing, portfolio
+  weights, buy/sell/hold outputs, target prices, expected returns for action,
+  dashboards, trading, production, backtest, factor-mining, broker, local lake,
+  or DQN/RL output was generated.
+- GOAL-09 remains eligible only for a later explicit non-actionable
+  review-only prototype request.
+
 ## 2026-06-25 - GOAL-08B Recommendation Diagnostics Prototype
 
 Status: `PASS_WITH_WARNINGS`.

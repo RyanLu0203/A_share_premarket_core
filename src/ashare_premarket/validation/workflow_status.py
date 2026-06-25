@@ -18,7 +18,6 @@ ALLOWED_STATUSES = {
 }
 
 DOWNSTREAM_LOCKED_IDS = {
-    "position_band_recommendation",
     "signal_backtest",
     "portfolio_backtest",
     "cost_slippage_sensitivity",
@@ -41,6 +40,10 @@ GOAL08B_WORKFLOW_ID = "goal08b_recommendation_review_only_prototype"
 GOAL08B_ALLOWED_STATUSES = {"locked_future", "future_review_only", "implemented_review_only"}
 GOAL08B_ALLOWED_NEXT = "await_explicit_goal08b_review_only_recommendation_diagnostics_prototype"
 GOAL08B_IMPLEMENTED_ALLOWED_NEXT = "request_explicit_goal09_position_band_review_only_unlock_or_fix_goal08b_warnings"
+GOAL090_WORKFLOW_ID = "goal090_position_band_review_only_unlock_gate"
+GOAL09_WORKFLOW_ID = "position_band_recommendation"
+GOAL09_ALLOWED_STATUSES = {"locked_future", "future_review_only"}
+GOAL09_ALLOWED_NEXT = "await_explicit_goal09_position_band_diagnostics_prototype"
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -85,8 +88,8 @@ def run_workflow_status_audit(root: Path) -> bool:
     active_mermaid = _first_mermaid_block(active_doc)
     if "GOAL-06C" in active_mermaid:
         failures.append("active workflow doc shows GOAL-06C in active workflow")
-    if "Position-Band Recommendation" not in full_roadmap or "locked_future" not in full_roadmap:
-        failures.append("full roadmap does not label position-band recommendation as locked_future")
+    if "GOAL-09 Position-Band Diagnostics" not in full_roadmap or "future_review_only" not in full_roadmap:
+        failures.append("full roadmap does not label GOAL-09 position-band diagnostics as future_review_only eligible")
     if "DQN/RL Optional Research Benchmark" not in full_roadmap or "deleted_from_active_mainline" not in full_roadmap:
         failures.append("full roadmap does not label DQN/RL as deleted_from_active_mainline")
 
@@ -233,8 +236,16 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal08b_report = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_report.md")
     goal08b_manifest = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_manifest.json")
     goal08b_audit = _read(root / "outputs/audits/goal08b_recommendation_diagnostics_audit.md")
+    goal090 = by_id.get(GOAL090_WORKFLOW_ID, {})
+    goal090_status = goal090.get("status")
+    goal090_report = _read(root / "outputs/audits/goal090_position_band_review_only_unlock_report.md")
+    goal090_manifest = _read(root / "outputs/audits/goal090_position_band_review_only_unlock_manifest.json")
+    goal090_audit = _read(root / "outputs/audits/goal090_position_band_review_only_unlock_audit.md")
+    goal09 = by_id.get(GOAL09_WORKFLOW_ID, {})
+    goal09_status = goal09.get("status")
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
     goal08b_evidence_ready = bool(goal08b) and goal08b_status == "implemented_review_only" and _goal08b_readiness_implemented(goal08b_report) and "Status: `PASS`" in goal08b_audit
+    goal090_evidence_ready = bool(goal090) and goal090_status == "implemented_review_only" and _goal090_readiness_implemented(goal090_report) and "Status: `PASS`" in goal090_audit
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -564,6 +575,76 @@ def run_workflow_status_audit(root: Path) -> bool:
     elif goal08b_status == "locked_future" and goal08b0_evidence_ready:
         failures.append("GOAL-08B should be future_review_only after GOAL-08B.0 evidence")
 
+    if goal090:
+        if goal090_status != "implemented_review_only":
+            failures.append("GOAL-09.0 must be implemented_review_only when present")
+        if not _goal090_readiness_implemented(goal090_report):
+            failures.append("GOAL-09.0 lacks PASS/PASS_WITH_WARNINGS unlock evidence")
+        if "Status: `PASS`" not in goal090_audit:
+            failures.append("GOAL-09.0 unlock audit report is missing or not PASS")
+        for required_false in [
+            '"position_band_diagnostics_rows_generated": false',
+            '"position_rows_generated": false',
+            '"position_sizing_generated": false',
+            '"portfolio_construction_generated": false',
+            '"portfolio_weights_generated": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"expected_returns_for_action_generated": false',
+            '"dashboard_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"signal_backtests_run": false',
+            '"portfolio_backtests_run": false',
+            '"cost_slippage_outputs_created": false',
+            '"factor_mining_outputs_created": false',
+            '"local_lake_files_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"data_coverage_expanded": false',
+            '"live_calculation_outputs_used": false',
+            '"downstream_stages_unlocked_by_this_gate": false',
+        ]:
+            if required_false not in goal090_manifest:
+                failures.append(f"GOAL-09.0 manifest missing false boundary flag: {required_false}")
+        for required_text in [
+            '"mode": "review_only_unlock_gate"',
+            '"goal090_unlock_status": "eligible_for_future_review_only_prototype"',
+            '"goal09_target_status": "future_review_only"',
+            '"goal09_implemented_by_this_gate": false',
+            '"goal09_implemented_in_repo": false',
+            '"future_position_band_diagnostics_non_actionable_required": true',
+            '"goal08b_diagnostics_valid": true',
+            '"goal08b_non_actionable_preserved": true',
+            '"goal08b_actionability_status_never_actionable": true',
+            '"high_risk_actionability_block_preserved": true',
+        ]:
+            if required_text not in goal090_manifest:
+                failures.append(f"GOAL-09.0 manifest missing required unlock marker: {required_text}")
+        if goal090.get("implemented_in_repo") != "true":
+            failures.append("GOAL-09.0 implemented review-only row must be marked implemented")
+        if goal090.get("allowed_next_action") not in {GOAL09_ALLOWED_NEXT, "repair_goal090_unlock_blockers"}:
+            failures.append("GOAL-09.0 allowed_next_action is invalid")
+
+    if goal09_status not in GOAL09_ALLOWED_STATUSES:
+        failures.append("GOAL-09 position-band diagnostics must be locked_future or future_review_only")
+    if goal09_status == "future_review_only":
+        if goal09.get("implemented_in_repo") != "false":
+            failures.append("GOAL-09 future_review_only must not be marked implemented")
+        if not goal090_evidence_ready:
+            failures.append("GOAL-09 future_review_only status requires GOAL-09.0 PASS/PASS_WITH_WARNINGS evidence")
+        if goal09.get("allowed_next_action") != GOAL09_ALLOWED_NEXT:
+            failures.append("GOAL-09 future_review_only allowed_next_action is invalid")
+        if goal09.get("depends_on") != GOAL090_WORKFLOW_ID:
+            failures.append("GOAL-09 future_review_only must depend on GOAL-09.0")
+    elif goal09_status == "locked_future":
+        if goal09.get("implemented_in_repo") == "true":
+            failures.append("GOAL-09 locked_future must not be marked implemented")
+        if goal090_evidence_ready:
+            failures.append("GOAL-09 should be future_review_only after GOAL-09.0 evidence")
+
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
     write_csv(
@@ -609,7 +690,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-STORAGE-01 status: `{goal_storage01_status or 'missing'}`.",
                 f"GOAL-08B.0 status: `{goal08b0_status or 'missing'}`.",
                 f"GOAL-08B status: `{goal08b_status or 'missing'}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report.",
+                f"GOAL-09.0 status: `{goal090_status or 'missing'}`.",
+                f"GOAL-09 status: `{goal09_status or 'missing'}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only readiness evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and must not be marked implemented.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "GOAL-07B risk overlay diagnostics and GOAL-08B recommendation diagnostics are review-only when implemented; position, dashboard, paper/live trading, production, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -687,6 +770,16 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                     failures.append("goal08b_recommendation_review_only_prototype implemented_review_only must be marked implemented")
             elif row["implemented_in_repo"] != "false":
                 failures.append("goal08b_recommendation_review_only_prototype must not be implemented without GOAL-08B diagnostics evidence")
+        if workflow_id == GOAL090_WORKFLOW_ID:
+            if status != "implemented_review_only":
+                failures.append("goal090_position_band_review_only_unlock_gate must be implemented_review_only")
+            if row["implemented_in_repo"] != "true":
+                failures.append("goal090_position_band_review_only_unlock_gate must be marked implemented")
+        if workflow_id == GOAL09_WORKFLOW_ID:
+            if status not in GOAL09_ALLOWED_STATUSES:
+                failures.append("position_band_recommendation must be locked_future or future_review_only")
+            if row["implemented_in_repo"] != "false":
+                failures.append("position_band_recommendation must not be implemented by GOAL-09.0")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -722,6 +815,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "dotted_review_only_eligible"
         can_promote = False
         blocker = "eligible only for a future explicit non-actionable diagnostics prototype; not implemented"
+    elif row["workflow_id"] == GOAL09_WORKFLOW_ID and status == "future_review_only":
+        edge_type = "dotted_review_only_eligible"
+        can_promote = False
+        blocker = "eligible only for a future explicit non-actionable position-band diagnostics prototype; not implemented"
     elif status == "deleted_from_active_mainline":
         edge_type = "dotted_side_note"
         can_promote = False
@@ -760,6 +857,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         next_goal = "GOAL-08B future non-actionable diagnostics prototype may be requested separately"
     elif row["workflow_id"] == GOAL08B_WORKFLOW_ID:
         next_goal = "GOAL-09 position-band review-only unlock may be requested separately only after GOAL-08B diagnostics evidence"
+    elif row["workflow_id"] == GOAL090_WORKFLOW_ID:
+        next_goal = "GOAL-09 future non-actionable position-band diagnostics prototype may be requested separately"
+    elif row["workflow_id"] == GOAL09_WORKFLOW_ID:
+        next_goal = "GOAL-09 diagnostics require a separate explicit prototype request; no position rows exist"
     elif row["workflow_id"] == "v2_factor_research_upgrade":
         next_goal = "No action until V1 complete and explicit V2 goal is approved"
     else:
@@ -852,6 +953,13 @@ def _goal08b_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-08B Recommendation Diagnostics Prototype: PASS" in readiness
         or "GOAL-08B Recommendation Diagnostics Prototype: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal090_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-09.0 Position-Band Review-Only Unlock Gate: PASS" in readiness
+        or "GOAL-09.0 Position-Band Review-Only Unlock Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

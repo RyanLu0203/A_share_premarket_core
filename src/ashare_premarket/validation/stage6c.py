@@ -374,8 +374,12 @@ def audit_stage6c_leakage_and_boundary(root: Path) -> bool:
         failures.append("goal07b_risk_overlay_calculation is not locked_future, future_review_only, or implemented_review_only")
     if goal07b["implemented_in_repo"] == "true" and goal07b["status"] != "implemented_review_only":
         failures.append("goal07b_risk_overlay_calculation is marked implemented outside implemented_review_only")
+    goal09 = workflow_rows["position_band_recommendation"]
+    if goal09["status"] not in {"locked_future", "future_review_only"}:
+        failures.append("position_band_recommendation is not locked_future or future_review_only")
+    if goal09["implemented_in_repo"] != "false":
+        failures.append("position_band_recommendation is marked implemented")
     for workflow_id in [
-        "position_band_recommendation",
         "dashboard_daily_report",
         "paper_trading_journal",
         "broker_live_trading",

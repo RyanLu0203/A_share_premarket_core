@@ -7,7 +7,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 LOCKED_ROWS = {
-    "position_band_recommendation",
     "dashboard_daily_report",
     "paper_trading_journal",
     "broker_live_trading",
@@ -29,6 +28,8 @@ def test_goal06d1_keeps_goal07a_design_only_and_downstream_locked() -> None:
     goal07b = workflow["goal07b_risk_overlay_calculation"]
     assert goal07b["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
     assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
+    assert workflow["position_band_recommendation"]["status"] in {"locked_future", "future_review_only"}
+    assert workflow["position_band_recommendation"]["implemented_in_repo"] == "false"
     for workflow_id in LOCKED_ROWS:
         assert workflow[workflow_id]["status"] == "locked_future"
     assert workflow["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"

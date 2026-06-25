@@ -18,8 +18,9 @@ def test_goal06d_and_downstream_remain_locked() -> None:
     goal07b = rows["goal07b_risk_overlay_calculation"]
     assert goal07b["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
     assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
+    assert rows["position_band_recommendation"]["status"] in {"locked_future", "future_review_only"}
+    assert rows["position_band_recommendation"]["implemented_in_repo"] == "false"
     for workflow_id in [
-        "position_band_recommendation",
         "dashboard_daily_report",
         "paper_trading_journal",
         "broker_live_trading",

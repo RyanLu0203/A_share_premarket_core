@@ -61,10 +61,14 @@ This file is long-term project memory for Codex and other coding agents.
   generates 100 deterministic, non-actionable recommendation diagnostic rows at
   `trade_date + symbol` grain from GOAL-07B risk diagnostics and GOAL-08A
   contract rules. `actionability_status` is always `never_actionable`.
+- GOAL-09.0 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It
+  marks GOAL-09 position-band diagnostics `future_review_only` eligible only
+  for a future explicit non-actionable prototype request.
+- GOAL-09 is future_review_only eligible but not implemented.
 - Feature-label merge and leakage audit are active.
-- Actionable recommendation execution, position output, dashboard, paper/live trading,
-  production DB writes, production model promotion, V2 factor mining, and
-  DQN/RL remain locked or not implemented.
+- Actionable recommendation execution, position output, position sizing,
+  dashboard, paper/live trading, production DB writes, production model
+  promotion, V2 factor mining, and DQN/RL remain locked or not implemented.
 - The default GOAL-06C.6/GOAL-06C.6A provider ingestion gate uses direct
   AKShare/local-import paths. The explicit CloakBrowser reference probe is
   separate, opt-in, tag-only, sanitized, and does not unlock GOAL-06D or any
@@ -128,6 +132,8 @@ python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/run_goal08b_recommendation_diagnostics_prototype.py
 python scripts/audit_goal08b_recommendation_diagnostics_prototype.py
+python scripts/run_goal090_position_band_review_only_unlock_gate.py
+python scripts/audit_goal090_position_band_review_only_unlock_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -187,7 +193,7 @@ dashboard, paper/live trading, production, factor-mining, or DQN/RL outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it must not materialize a lake, expand data coverage, create diagnostics, or unlock GOAL-08B by itself. GOAL-08B.0 can mark GOAL-08B review-only eligible using prior evidence only, but must not itself create recommendation diagnostics rows. GOAL-08B can produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. All actionable recommendation/execution paths remain locked.
+GOAL-07A.1 is review-only/design-review-only. It can maintain readiness reports, warning classifications, and unlock-readiness manifests, but must not itself implement GOAL-07B or create risk calculation, recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 can mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS design-review evidence only; it must not create any calculation or downstream output. GOAL-07B can produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it must not materialize a lake, expand data coverage, create diagnostics, or unlock GOAL-08B by itself. GOAL-08B.0 can mark GOAL-08B review-only eligible using prior evidence only, but must not itself create recommendation diagnostics rows. GOAL-08B can produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. GOAL-09.0 can mark GOAL-09 position-band diagnostics future_review_only eligible using prior evidence only, but must not itself implement GOAL-09 or create position-band, position sizing, portfolio weight, dashboard, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs. All actionable recommendation/execution paths remain locked.
 
 
 

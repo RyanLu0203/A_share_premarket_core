@@ -47,6 +47,12 @@ recommendations, buy/sell/hold outputs, target prices, expected returns for
 action, position sizing, portfolio weights, dashboards, trading paths,
 production behavior, backtests, factor-mining outputs, local lake files, broker
 outputs, or DQN/RL outputs.
+GOAL-09.0 is implemented as a review-only unlock gate (`PASS_WITH_WARNINGS`).
+It uses only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
+GOAL-08B PASS/PASS_WITH_WARNINGS evidence. GOAL-09 position-band diagnostics
+are now `future_review_only` eligible for a later explicit non-actionable
+prototype request, but GOAL-09 is not implemented and no position-band rows or
+downstream outputs exist.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -111,6 +117,8 @@ Implemented and protected:
   GOAL-08A, and GOAL-STORAGE-01 evidence only
 - GOAL-08B non-actionable recommendation diagnostics prototype with 100
   deterministic review-only `trade_date + symbol` diagnostic rows
+- GOAL-09.0 position-band review-only unlock gate using prior GOAL-08B
+  non-actionable diagnostics evidence only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -160,6 +168,8 @@ Implemented review-only:
 - GOAL-08B recommendation diagnostics prototype (`PASS_WITH_WARNINGS`;
   `implemented_review_only`; 100 non-actionable diagnostic rows at
   `trade_date + symbol` grain)
+- GOAL-09.0 position-band review-only unlock gate (`PASS_WITH_WARNINGS`;
+  `implemented_review_only`; unlock-only evidence, no position-band rows)
 
 Implemented design-only:
 
@@ -173,9 +183,14 @@ Implemented infrastructure-only:
 - GOAL-STORAGE-01 local research lake hardening gate (`PASS`; storage contract,
   hygiene audit, and workflow lock preservation only)
 
+Future-review-only eligible but not implemented:
+
+- GOAL-09 position-band diagnostics prototype
+
 Still locked:
 
 - actionable recommendation or position-band output
+- position sizing and portfolio weights
 - dashboard
 - paper trading
 - broker/live trading
@@ -266,6 +281,21 @@ action, position sizing, portfolio weights, dashboards, trading paths,
 production behavior, backtests, factor-mining outputs, local lake files, broker
 outputs, or DQN/RL outputs.
 
+GOAL-09.0 writes only unlock-governance evidence:
+
+- `configs/position/goal090_position_band_review_only_unlock_policy.yaml`
+- `docs/position/GOAL090_POSITION_BAND_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_report.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_manifest.json`
+- `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
+
+GOAL-09.0 uses prior PASS/PASS_WITH_WARNINGS review-only, design-only, and
+infrastructure-only evidence only. It generated no position-band diagnostic
+rows, position rows, position sizing, portfolio weights, buy/sell/hold outputs,
+target prices, expected returns for action, dashboards, trading paths,
+production behavior, backtests, factor-mining outputs, local lake files, broker
+outputs, or DQN/RL outputs. GOAL-09 remains not implemented.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -282,6 +312,7 @@ The protected regenerated outputs live under:
 - `outputs/models/goal06d1/`
 - `configs/risk/`
 - `configs/recommendation/`
+- `configs/position/`
 - `configs/storage/`
 - `docs/risk/`
 - `docs/recommendation/`
@@ -317,13 +348,14 @@ Canonical status contract:
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
-GOAL-07A.1, GOAL-07B.0, GOAL-07B, and GOAL-08B.0 are
-`implemented_review_only`; GOAL-08B is `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
+GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, and GOAL-09.0 are
+`implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
 GOAL-STORAGE-01 is `implemented_infrastructure_only`. GOAL-07B is
 diagnostic-only and non-actionable. GOAL-08A is names-only design evidence with
 zero recommendation rows. STORAGE-01 hardens storage only and does not unlock
 GOAL-08B by itself. GOAL-08B is non-actionable diagnostic-only evidence.
-Actionable recommendation, position, dashboard, trading, production, V2
+GOAL-09.0 is unlock-only evidence; GOAL-09 is only `future_review_only`
+eligible and not implemented. Actionable recommendation, position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings

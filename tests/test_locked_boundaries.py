@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_locked_capabilities_remain_false() -> None:
     locked = json.loads((ROOT / "configs/project/locked_capabilities.json").read_text(encoding="utf-8"))
+    assert locked["position_band_recommendation"] in {False, "future_review_only"}
     for key in [
-        "position_band_recommendation",
         "signal_backtest",
         "portfolio_backtest",
         "dashboard",

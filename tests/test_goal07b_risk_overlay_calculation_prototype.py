@@ -130,8 +130,9 @@ def test_goal07b_workflow_status_and_downstream_locks() -> None:
     else:
         assert goal08b["status"] in {"locked_future", "future_review_only"}
         assert goal08b["implemented_in_repo"] == "false"
+    assert workflow["position_band_recommendation"]["status"] in {"locked_future", "future_review_only"}
+    assert workflow["position_band_recommendation"]["implemented_in_repo"] == "false"
     for workflow_id in [
-        "position_band_recommendation",
         "dashboard_daily_report",
         "paper_trading_journal",
         "broker_live_trading",

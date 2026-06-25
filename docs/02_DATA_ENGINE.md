@@ -22,7 +22,9 @@ uses STORAGE-01 only as prior infrastructure evidence for future-review-only
 eligibility and still creates no local lake files. GOAL-08B writes only a small
 committed non-actionable diagnostic CSV under `outputs/recommendation/`; it
 does not write to `data/lake`, local bundles, raw payload roots, or production
-storage.
+storage. GOAL-09.0 writes only unlock-governance evidence under
+`outputs/audits/` and `configs/position/`; it does not create position-band
+diagnostics, position rows, local lake files, or production storage writes.
 
 ## Active Contracts
 
@@ -38,6 +40,8 @@ storage.
   panel readiness audits.
 - Provider failure classification and source-backed bundle manifest summaries.
 - GOAL-STORAGE-01 local research lake hardening contract and hygiene audit.
+- GOAL-09.0 position-band review-only unlock audit evidence with no local data
+  writes.
 
 ## Source Evidence Warnings
 
@@ -61,8 +65,10 @@ storage.
 - Do not use ingestion time as publish time.
 - Do not convert post-target labels into premarket features.
 - Do not treat provider availability as symbol approval.
-- Do not unlock actionable recommendation, risk, dashboard, paper/live trading,
-  production writes, model promotion, or DQN/RL.
+- Do not unlock actionable recommendation, risk, position sizing, dashboard,
+  paper/live trading, production writes, model promotion, or DQN/RL.
 - Do not treat STORAGE-01 as permission to create recommendation diagnostics,
   position diagnostics, backtests, dashboards, local lake files, or production
   DB behavior.
+- Do not treat GOAL-09.0 as permission to create GOAL-09 position-band rows;
+  it grants only future-review-only eligibility for a later explicit prototype.

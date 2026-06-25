@@ -14,7 +14,8 @@ the GOAL-07B.0 review-only unlock eligibility gate, the GOAL-07B review-only
 risk overlay diagnostic prototype, the GOAL-08A design-only contract gate,
 GOAL-STORAGE-01 infrastructure-only local research lake hardening, and the
 GOAL-08B.0 review-only unlock eligibility gate, and the GOAL-08B non-actionable
-recommendation diagnostics prototype.
+recommendation diagnostics prototype, plus the GOAL-09.0 position-band
+review-only unlock eligibility gate.
 
 ## Repository Roles
 
@@ -79,6 +80,8 @@ python scripts/run_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py
 python scripts/run_goal08b_recommendation_diagnostics_prototype.py
 python scripts/audit_goal08b_recommendation_diagnostics_prototype.py
+python scripts/run_goal090_position_band_review_only_unlock_gate.py
+python scripts/audit_goal090_position_band_review_only_unlock_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -131,7 +134,8 @@ flowchart TD
     O -. "implemented infrastructure-only" .-> S["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
     S -. "explicit review-only unlock gate" .-> S2["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     S2 -. "review-only diagnostics" .-> P["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P -. "locked future explicit unlock required" .-> Q["GOAL-09 Position Band Review-Only Unlock<br/>(locked_future; not implemented)"]
+    P -. "explicit review-only unlock gate" .-> Q0["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    Q0 -. "future review-only diagnostics eligibility" .-> Q["GOAL-09 Position-Band Diagnostics<br/>(future_review_only; not implemented)"]
 ```
 
 GOAL-06C ranks are audit artifacts only. They are not recommendations, buy/sell
@@ -168,7 +172,7 @@ GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
 rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
-GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented as an unlock-only review gate based on prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. GOAL-08B is now implemented only as a review-only non-actionable recommendation diagnostics prototype: it writes 100 deterministic `trade_date + symbol` diagnostic rows, all with `actionability_status=never_actionable`, and it does not create actionable recommendations, buy/sell/hold outputs, target prices, expected returns for action, position sizing, portfolio weights, dashboards, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs.
+GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented as an unlock-only review gate based on prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. GOAL-08B is now implemented only as a review-only non-actionable recommendation diagnostics prototype: it writes 100 deterministic `trade_date + symbol` diagnostic rows, all with `actionability_status=never_actionable`, and it does not create actionable recommendations, buy/sell/hold outputs, target prices, expected returns for action, position sizing, portfolio weights, dashboards, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.0 is implemented as an unlock-only review gate based on prior GOAL-08B and upstream PASS/PASS_WITH_WARNINGS evidence. It makes GOAL-09 position-band diagnostics `future_review_only` eligible for a later explicit prototype request but does not implement GOAL-09 or create position-band rows.
 
 ## Required Public Commands
 
@@ -239,6 +243,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal08b0_recommendation_review_only_unlock_gate.py`
 - `python scripts/run_goal08b_recommendation_diagnostics_prototype.py`
 - `python scripts/audit_goal08b_recommendation_diagnostics_prototype.py`
+- `python scripts/run_goal090_position_band_review_only_unlock_gate.py`
+- `python scripts/audit_goal090_position_band_review_only_unlock_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -329,6 +335,11 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal08b_recommendation_diagnostics_report.md`
 - `outputs/audits/goal08b_recommendation_diagnostics_manifest.json`
 - `outputs/audits/goal08b_recommendation_diagnostics_audit.md`
+- `configs/position/goal090_position_band_review_only_unlock_policy.yaml`
+- `docs/position/GOAL090_POSITION_BAND_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_report.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_manifest.json`
+- `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
 
 ## Lock Boundary
 
@@ -340,9 +351,11 @@ GOAL-08A is implemented only as a design-only names-only contract gate with
 zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only storage
 hardening and does not materialize a data lake, fetch broader data, or unlock
 GOAL-08B by itself. GOAL-08B.0 is unlock-only evidence. GOAL-08B is
-implemented only as non-actionable review-only diagnostics; actionable
-recommendations, position sizing, dashboards, trading, production, backtests,
-factor-mining, broker integration, local-lake writes, and DQN/RL remain locked.
+implemented only as non-actionable review-only diagnostics. GOAL-09.0 is
+unlock-only evidence; GOAL-09 is only `future_review_only` eligible and not
+implemented. Actionable recommendations, position rows, position sizing,
+dashboards, trading, production, backtests, factor-mining, broker integration,
+local-lake writes, and DQN/RL remain locked.
 
 GOAL-06D.1 is the review-only warning repair layer for those GOAL-06D warnings.
 It tests PIT-safe score variants, target horizons, calibration reliability,

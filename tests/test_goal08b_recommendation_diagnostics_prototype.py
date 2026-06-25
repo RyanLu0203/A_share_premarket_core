@@ -125,8 +125,9 @@ def test_goal08b_manifest_and_workflow_keep_downstream_locked() -> None:
         assert manifest[key] is False
     assert workflow["goal08b_recommendation_review_only_prototype"]["status"] == "implemented_review_only"
     assert workflow["goal08b_recommendation_review_only_prototype"]["implemented_in_repo"] == "true"
+    assert workflow["position_band_recommendation"]["status"] in {"locked_future", "future_review_only"}
+    assert workflow["position_band_recommendation"]["implemented_in_repo"] == "false"
     for workflow_id in [
-        "position_band_recommendation",
         "dashboard_daily_report",
         "paper_trading_journal",
         "broker_live_trading",

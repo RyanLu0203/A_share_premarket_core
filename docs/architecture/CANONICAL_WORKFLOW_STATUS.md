@@ -58,6 +58,7 @@ Implemented review-only:
 - GOAL-07B Risk Overlay Calculation Prototype (`PASS_WITH_WARNINGS`)
 - GOAL-08B.0 Recommendation Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 - GOAL-08B Recommendation Diagnostics Prototype (`PASS_WITH_WARNINGS`)
+- GOAL-09.0 Position-Band Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -336,6 +337,32 @@ returns for action, position sizing, portfolio weights, dashboards, trading
 paths, production behavior, backtests, factor-mining outputs, local lake files,
 broker outputs, or DQN/RL outputs are generated.
 
+## GOAL-09.0 Status
+
+GOAL-09.0 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
+
+- `configs/position/goal090_position_band_review_only_unlock_policy.yaml`
+- `docs/position/GOAL090_POSITION_BAND_REVIEW_ONLY_UNLOCK_GATE.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_report.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_manifest.json`
+- `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
+
+The gate uses only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
+GOAL-08B PASS/PASS_WITH_WARNINGS evidence. It marks GOAL-09 position-band
+diagnostics `future_review_only` eligible for a later explicit non-actionable
+prototype request. It does not implement GOAL-09, create position-band
+diagnostic rows, create position rows, produce position sizing, portfolio
+weights, buy/sell/hold outputs, target prices, expected returns for action,
+dashboards, trading paths, production behavior, backtests, factor-mining
+outputs, broker outputs, local lake files, or DQN/RL outputs.
+
+## GOAL-09 Status
+
+GOAL-09 position-band diagnostics are `future_review_only` eligible but not
+implemented. The workflow row remains `implemented_in_repo=false`, has no
+primary outputs, and requires a separate explicit future prototype request.
+
 ## GOAL-06D Status
 
 GOAL-06D is `implemented_review_only` and currently
@@ -394,5 +421,5 @@ creates risk design artifacts only:
 GOAL-07A does not calculate risk values, assign symbol-level risk tags, generate
 recommendations, create positions, create dashboards, write trading or
 production data, activate V2 factor mining, or implement GOAL-07B. GOAL-07B is
-implemented only by its own review-only diagnostic prototype; all downstream
-modules remain `locked_future`.
+implemented only by its own review-only diagnostic prototype; downstream
+execution modules remain `locked_future`.

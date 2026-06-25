@@ -26,7 +26,8 @@ flowchart TD
     K2 -. "implemented infrastructure-only" .-> S01["GOAL-STORAGE-01 Local Research Lake Hardening<br/>(implemented_infrastructure_only; PASS)"]
     S01 -. "explicit review-only unlock gate" .-> S02["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     S02 -. "review-only diagnostics" .-> K3["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    K3 -. "locked downstream" .-> L["Position-Band Recommendation<br/>(locked_future; not implemented)"]
+    K3 -. "explicit review-only unlock gate" .-> L0["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    L0 -. "future review-only diagnostics eligibility" .-> L["GOAL-09 Position-Band Diagnostics<br/>(future_review_only; not implemented)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
     N -. "locked future" .-> O["Cost / Slippage Sensitivity<br/>(locked_future)"]
@@ -65,7 +66,10 @@ infrastructure hardening gate for local research lake governance and GitHub
 hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented only
 as a review-only unlock gate. GOAL-08B is implemented only as non-actionable
 review-only diagnostics with 100 `trade_date + symbol` rows and no actionable
-recommendation or execution outputs. V2 factor research is planned but inactive
+recommendation or execution outputs. GOAL-09.0 is implemented only as a
+review-only unlock gate. GOAL-09 position-band diagnostics are
+future_review_only eligible but not implemented, and no position-band rows
+exist. V2 factor research is planned but inactive
 in V1; no factor mining, IC/RankIC mining, factor library generation, or
 factor integration is active. Recommendation execution, position, dashboard,
 paper/live trading, production, backtest, factor-mining, and DQN/RL blocks

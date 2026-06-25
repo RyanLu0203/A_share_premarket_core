@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ashare_premarket.contract_design.goal090 import GOAL09_ELIGIBLE_STATUS, GOAL09_WORKFLOW_ID, goal090_valid_unlock_evidence
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.risk_design.goal07a import (
@@ -156,6 +157,7 @@ def load_goal07a1_design_bundle(root: Path) -> dict[str, object]:
         "goal06d_readiness": _read(root / f"{AUDIT_DIR}/goal06d_readiness_report.md"),
         "goal06d1_readiness": _read(root / f"{AUDIT_DIR}/goal06d1_readiness_report.md"),
         "forbidden_output_dirs_present": [path for path in FORBIDDEN_OUTPUT_DIRS if (root / path).exists()],
+        "goal090_valid_evidence": goal090_valid_unlock_evidence(root),
     }
 
 
@@ -165,7 +167,12 @@ def evaluate_goal07a1_design_review(bundle: dict[str, object]) -> dict[str, obje
     rule_review = review_goal07a1_rule_catalog(bundle["rule_catalog"])
     state_review = review_goal07a1_state_machine(bundle["state_machine"])
     warning_rows = classify_goal07a1_upstream_warnings(bundle.get("goal06c7_readiness", ""), bundle.get("goal06d_readiness", ""), bundle.get("goal06d1_readiness", ""))
-    boundary_review = review_goal07a1_boundaries(bundle.get("workflow_rows", []), bundle.get("forbidden_output_dirs_present", []), str(bundle.get("goal07b0_unlock_report", "")))
+    boundary_review = review_goal07a1_boundaries(
+        bundle.get("workflow_rows", []),
+        bundle.get("forbidden_output_dirs_present", []),
+        str(bundle.get("goal07b0_unlock_report", "")),
+        bool(bundle.get("goal090_valid_evidence")),
+    )
     goal07b_status = _goal07b_status_from_rows(bundle.get("workflow_rows", []), str(bundle.get("goal07b0_unlock_report", "")))
     reviews = {
         "input_contract": input_review,
@@ -338,7 +345,12 @@ def classify_goal07a1_upstream_warnings(goal06c7_readiness: str, goal06d_readine
     return rows
 
 
-def review_goal07a1_boundaries(workflow_rows: list[dict[str, str]], forbidden_output_dirs_present: list[str], goal07b0_unlock_report: str = "") -> dict[str, object]:
+def review_goal07a1_boundaries(
+    workflow_rows: list[dict[str, str]],
+    forbidden_output_dirs_present: list[str],
+    goal07b0_unlock_report: str = "",
+    goal090_valid: bool = False,
+) -> dict[str, object]:
     failures: list[str] = []
     warnings: list[str] = []
     rows = {row.get("workflow_id", ""): row for row in workflow_rows}
@@ -352,7 +364,12 @@ def review_goal07a1_boundaries(workflow_rows: list[dict[str, str]], forbidden_ou
     if goal07b.get("status") == "future_review_only" and "GOAL-07B.0 Risk Overlay Review-Only Unlock Gate:" not in goal07b0_unlock_report:
         failures.append("goal07b_future_review_only_without_goal07b0_evidence")
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
-        if rows.get(workflow_id, {}).get("status") != "locked_future":
+        row = rows.get(workflow_id, {})
+        if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
+            if row.get("status") != GOAL09_ELIGIBLE_STATUS or row.get("implemented_in_repo") != "false":
+                failures.append(f"{workflow_id}_not_future_review_only_after_goal090")
+            continue
+        if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
     if rows.get("dqn_rl_mainline", {}).get("status") != "deleted_from_active_mainline":
         failures.append("dqn_rl_not_deleted_from_active_mainline")

@@ -49,6 +49,8 @@
 - GOAL-08B non-actionable recommendation diagnostics prototype
   (`PASS_WITH_WARNINGS`; implemented_review_only diagnostics at
   `trade_date + symbol` grain).
+- GOAL-09.0 position-band review-only unlock gate (`PASS_WITH_WARNINGS`;
+  implemented_review_only unlock-only evidence, no position-band rows).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -64,9 +66,10 @@ GOAL-STORAGE-01 now implements only an infrastructure hardening gate for the
 local research lake contract and does not unlock GOAL-08B by itself.
 GOAL-08B.0 completed the explicit review-only unlock gate. GOAL-08B now
 implements only a deterministic non-actionable recommendation diagnostics
-prototype with 100 `trade_date + symbol` rows. The exact allowed next action is
-to request a future explicit GOAL-09 position-band review-only unlock or fix
-GOAL-08B warnings.
+prototype with 100 `trade_date + symbol` rows. GOAL-09.0 completed the
+explicit position-band review-only unlock gate. GOAL-09 position-band
+diagnostics are now `future_review_only` eligible for a later explicit
+non-actionable prototype request, but GOAL-09 is not implemented.
 No actionable recommendation execution, position, dashboard, paper/live trading,
 production DB writes, production model promotion, backtest, factor mining,
 broker, or DQN/RL is unlocked.
@@ -80,8 +83,8 @@ workflow diagrams before any future block is promoted.
 
 ## Locked Future
 
-- GOAL-09 position-band review-only unlock and any position-band
-  recommendation.
+- GOAL-09 position-band diagnostics implementation and any position-band
+  recommendation, sizing, or portfolio-weight output.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity.
 - Paper trading journal.
