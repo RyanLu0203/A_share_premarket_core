@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-25 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
+
+- Implemented GOAL-V1-INTEGRITY-01 only as an infrastructure artifact-lineage
+  and structure integrity gate.
+- Added the V1 integrity module, runner, audit wrapper, contract artifact, report,
+  manifest, documentation, workflow-status governance, diagnostics integration,
+  and focused tests.
+- Verified the canonical review-only V1 chain from GOAL-07B risk diagnostics to
+  GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, and
+  GOAL-09.1 dashboard-readiness evidence.
+- Allowed only a future explicit GOAL-DASHBOARD-00 design/contract gate request
+  while keeping Dashboard / Daily Report UI `locked_future`.
+- Created no dashboard outputs, HTML, Streamlit, frontend code, visual reports,
+  new risk rows, new recommendation rows, new position rows, actual position
+  sizing, weights, orders, buy/sell/hold actions, target prices, trading,
+  production, backtest, factor-mining, local lake files, broker, or DQN/RL
+  outputs.
+
 ## 2026-06-25 - GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate
 
 - Implemented GOAL-09.1 only as a review/readiness warning classification and

@@ -29,13 +29,14 @@ flowchart TD
     K3 -. "explicit review-only unlock gate" .-> L0["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     L0 -. "review-only diagnostics" .-> L["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     L -. "warning review / dashboard readiness" .-> L1["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    L1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
     N -. "locked future" .-> O["Cost / Slippage Sensitivity<br/>(locked_future)"]
     O -. "locked future" .-> P["Paper Trading Journal<br/>(locked_future)"]
     P -. "locked future" .-> Q["Failure Attribution<br/>(locked_future)"]
     Q -. "locked future" .-> R["Dashboard / Daily Report<br/>(locked_future)"]
-    L1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> R
+    V1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> R
     R -. "locked future" .-> S["Production Hardening<br/>(locked_future)"]
     S -. "locked future" .-> T["Broker / Live Trading<br/>(locked_future)"]
     S -. "locked future" .-> U["Production DB Writes<br/>(locked_future)"]
@@ -72,11 +73,14 @@ recommendation or execution outputs. GOAL-09.0 is implemented only as a
 review-only unlock gate. GOAL-09 is implemented only as non-actionable
 review-only position-band diagnostics with no actual position rows, sizing,
 portfolio weights, orders, or execution outputs. GOAL-09.1 is implemented only
-as warning-review and dashboard-readiness evidence. It classifies the remaining
-GOAL-09 warnings for future dashboard contract display, allows only a future
-explicit GOAL-DASHBOARD-00 design/contract gate request, and creates no
-dashboard output, HTML, Streamlit, frontend code, visual report, new
-recommendation row, or new position row. V2 factor research is planned but
+as warning-review and dashboard-readiness evidence. GOAL-V1-INTEGRITY-01 is
+implemented only as infrastructure artifact-lineage/structure evidence over the
+canonical GOAL-07B -> GOAL-08B -> GOAL-09 -> GOAL-09.1 chain. GOAL-09.1
+classifies the remaining GOAL-09 warnings for future dashboard contract display;
+GOAL-V1-INTEGRITY-01 allows only a future explicit GOAL-DASHBOARD-00
+design/contract gate request and creates no dashboard output, HTML, Streamlit,
+frontend code, visual report, new risk row, new recommendation row, or new
+position row. V2 factor research is planned but
 inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,
 paper/live trading, production, backtest, factor-mining, and DQN/RL blocks

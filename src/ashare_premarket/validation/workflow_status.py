@@ -47,6 +47,8 @@ GOAL09_ALLOWED_NEXT = "await_explicit_goal09_position_band_diagnostics_prototype
 GOAL09_IMPLEMENTED_ALLOWED_NEXT = "fix_goal09_position_band_warnings_before_any_downstream_request"
 GOAL091_WORKFLOW_ID = "goal091_position_band_warning_dashboard_readiness_gate"
 GOAL091_ALLOWED_NEXT = "request_explicit_goal_dashboard00_contract_design_gate"
+GOAL_V1_INTEGRITY01_WORKFLOW_ID = "goal_v1_integrity01_artifact_lineage_structure_gate"
+GOAL_V1_INTEGRITY01_ALLOWED_NEXT = "request_explicit_goal_dashboard00_contract_design_gate"
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -254,11 +256,22 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal091_report = _read(root / "outputs/audits/goal091_dashboard_readiness_report.md")
     goal091_manifest = _read(root / "outputs/audits/goal091_dashboard_readiness_manifest.json")
     goal091_audit = _read(root / "outputs/audits/goal091_dashboard_readiness_audit.md")
+    goal_v1_integrity01 = by_id.get(GOAL_V1_INTEGRITY01_WORKFLOW_ID, {})
+    goal_v1_integrity01_status = goal_v1_integrity01.get("status")
+    goal_v1_integrity01_report = _read(root / "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_report.md")
+    goal_v1_integrity01_manifest = _read(root / "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_manifest.json")
+    goal_v1_integrity01_audit = _read(root / "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_audit.md")
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
     goal08b_evidence_ready = bool(goal08b) and goal08b_status == "implemented_review_only" and _goal08b_readiness_implemented(goal08b_report) and "Status: `PASS`" in goal08b_audit
     goal090_evidence_ready = bool(goal090) and goal090_status == "implemented_review_only" and _goal090_readiness_implemented(goal090_report) and "Status: `PASS`" in goal090_audit
     goal09_evidence_ready = bool(goal09) and goal09_status == "implemented_review_only" and _goal09_readiness_implemented(goal09_report) and "Status: `PASS`" in goal09_audit
     goal091_evidence_ready = bool(goal091) and goal091_status == "implemented_review_only" and _goal091_readiness_implemented(goal091_report) and "Status: `PASS`" in goal091_audit
+    goal_v1_integrity01_evidence_ready = (
+        bool(goal_v1_integrity01)
+        and goal_v1_integrity01_status == "implemented_infrastructure_only"
+        and _goal_v1_integrity01_readiness_implemented(goal_v1_integrity01_report)
+        and "Status: `PASS`" in goal_v1_integrity01_audit
+    )
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -798,6 +811,79 @@ def run_workflow_status_audit(root: Path) -> bool:
         if dashboard.get("status") != "locked_future" or dashboard.get("implemented_in_repo") != "false":
             failures.append("Dashboard / Daily Report UI must remain locked_future after GOAL-09.1")
 
+    if goal_v1_integrity01:
+        if goal_v1_integrity01_status != "implemented_infrastructure_only":
+            failures.append("GOAL-V1-INTEGRITY-01 must be implemented_infrastructure_only when present")
+        if not _goal_v1_integrity01_readiness_implemented(goal_v1_integrity01_report):
+            failures.append("GOAL-V1-INTEGRITY-01 lacks PASS/PASS_WITH_WARNINGS artifact-lineage evidence")
+        if "Status: `PASS`" not in goal_v1_integrity01_audit:
+            failures.append("GOAL-V1-INTEGRITY-01 artifact-lineage audit report is missing or not PASS")
+        if not goal091_evidence_ready:
+            failures.append("GOAL-V1-INTEGRITY-01 requires GOAL-09.1 implemented_review_only evidence")
+        if goal_v1_integrity01.get("implemented_in_repo") != "true":
+            failures.append("GOAL-V1-INTEGRITY-01 infrastructure row must be marked implemented")
+        if goal_v1_integrity01.get("allowed_next_action") != GOAL_V1_INTEGRITY01_ALLOWED_NEXT:
+            failures.append("GOAL-V1-INTEGRITY-01 allowed_next_action is invalid")
+        if goal_v1_integrity01.get("depends_on") != GOAL091_WORKFLOW_ID:
+            failures.append("GOAL-V1-INTEGRITY-01 must depend on GOAL-09.1")
+        for required_text in [
+            '"mode": "infrastructure_integrity_only"',
+            '"canonical_artifact_lineage_verified": true',
+            '"source_of_truth_docs_synchronized": true',
+            '"workflow_status_synchronized": true',
+            '"future_dashboard_may_read_only_canonical_outputs_and_audit_metadata": true',
+            '"future_dashboard_forbidden_source_inputs_blocked": true',
+            '"forbidden_field_names_absent_from_diagnostic_outputs": true',
+            '"forbidden_field_names_absent_from_future_dashboard_required_fields": true',
+            '"goal08b_rows_never_actionable": true',
+            '"goal09_rows_never_actionable": true',
+            '"goal091_warning_classifications_available": true',
+            '"dashboard_daily_report_locked_future": true',
+            '"dashboard_daily_report_status_after_goal_v1_integrity01": "locked_future"',
+            '"goal_dashboard00_request_status": "eligible_for_explicit_design_only_contract_gate"',
+        ]:
+            if required_text not in goal_v1_integrity01_manifest:
+                failures.append(f"GOAL-V1-INTEGRITY-01 manifest missing required marker: {required_text}")
+        for required_false in [
+            '"dashboard_outputs_generated": false',
+            '"dashboard_files_generated": false',
+            '"html_generated": false',
+            '"streamlit_generated": false',
+            '"frontend_code_generated": false',
+            '"visual_reports_generated": false',
+            '"new_risk_rows_generated": false',
+            '"new_recommendation_rows_generated": false',
+            '"new_position_rows_generated": false',
+            '"diagnostic_output_schemas_changed": false',
+            '"actual_position_sizing_generated": false',
+            '"portfolio_construction_generated": false',
+            '"portfolio_weights_generated": false',
+            '"target_weights_generated": false',
+            '"order_quantities_generated": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"signal_backtests_run": false',
+            '"portfolio_backtests_run": false',
+            '"cost_slippage_outputs_created": false',
+            '"factor_mining_outputs_created": false',
+            '"local_lake_files_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"large_refactor_performed": false',
+            '"downstream_execution_unlocked_by_this_goal": false',
+        ]:
+            if required_false not in goal_v1_integrity01_manifest:
+                failures.append(f"GOAL-V1-INTEGRITY-01 manifest missing false boundary flag: {required_false}")
+        dashboard = by_id.get("dashboard_daily_report", {})
+        if dashboard.get("status") != "locked_future" or dashboard.get("implemented_in_repo") != "false":
+            failures.append("Dashboard / Daily Report UI must remain locked_future after GOAL-V1-INTEGRITY-01")
+        if dashboard.get("depends_on") != GOAL_V1_INTEGRITY01_WORKFLOW_ID:
+            failures.append("Dashboard / Daily Report UI must depend on GOAL-V1-INTEGRITY-01 after the integrity gate exists")
+
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
     write_csv(
@@ -846,9 +932,10 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-09.0 status: `{goal090_status or 'missing'}`.",
                 f"GOAL-09 status: `{goal09_status or 'missing'}`.",
                 f"GOAL-09.1 status: `{goal091_status or 'missing'}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence.",
+                f"GOAL-V1-INTEGRITY-01 status: `{goal_v1_integrity01_status or 'missing'}`.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
-                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, and GOAL-09.1 dashboard-readiness warning review are review-only when implemented; actual positions, dashboard output, paper/live trading, production, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, and GOAL-09.1 dashboard-readiness warning review are review-only when implemented; GOAL-V1-INTEGRITY-01 is infrastructure-only artifact-lineage governance. Actual positions, dashboard output, paper/live trading, production, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in failures],
@@ -944,6 +1031,15 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 failures.append("goal091_position_band_warning_dashboard_readiness_gate must be marked implemented")
             if row["allowed_next_action"] != GOAL091_ALLOWED_NEXT:
                 failures.append("goal091_position_band_warning_dashboard_readiness_gate allowed_next_action is invalid")
+        if workflow_id == GOAL_V1_INTEGRITY01_WORKFLOW_ID:
+            if status != "implemented_infrastructure_only":
+                failures.append("goal_v1_integrity01_artifact_lineage_structure_gate must be implemented_infrastructure_only")
+            if row["implemented_in_repo"] != "true":
+                failures.append("goal_v1_integrity01_artifact_lineage_structure_gate must be marked implemented")
+            if row["allowed_next_action"] != GOAL_V1_INTEGRITY01_ALLOWED_NEXT:
+                failures.append("goal_v1_integrity01_artifact_lineage_structure_gate allowed_next_action is invalid")
+            if row["depends_on"] != GOAL091_WORKFLOW_ID:
+                failures.append("goal_v1_integrity01_artifact_lineage_structure_gate must depend on GOAL-09.1")
         if workflow_id in DOWNSTREAM_LOCKED_IDS and status != "locked_future":
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
@@ -1026,6 +1122,8 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL09_WORKFLOW_ID:
         next_goal = "Fix GOAL-09 review-only warnings before any future downstream unlock request; actual positions remain locked"
     elif row["workflow_id"] == GOAL091_WORKFLOW_ID:
+        next_goal = "GOAL-V1-INTEGRITY-01 artifact-lineage integrity gate before any future dashboard design contract request"
+    elif row["workflow_id"] == GOAL_V1_INTEGRITY01_WORKFLOW_ID:
         next_goal = "GOAL-DASHBOARD-00 may be explicitly requested only as a future design-only contract/layout gate; dashboard output remains locked"
     elif row["workflow_id"] == "dashboard_daily_report":
         next_goal = "Remain locked until an explicit GOAL-DASHBOARD-00 design-only contract/layout gate is requested and passes"
@@ -1142,6 +1240,13 @@ def _goal091_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate: PASS" in readiness
         or "GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_v1_integrity01_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate: PASS" in readiness
+        or "GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

@@ -60,3 +60,4 @@ goal08b_review_only_diagnostics,GOAL-08B review-only non-actionable recommendati
 goal090_position_band_review_only_unlock,GOAL-09.0 review-only unlock gate for future GOAL-09 position-band diagnostics eligibility,GOAL-09.0,PASS,ashare_premarket.contract_design.goal090,Keep active
 goal09_position_band_review_only_diagnostics,GOAL-09 review-only non-actionable position-band diagnostics,GOAL-09,PASS,ashare_premarket.review_diagnostics.goal09,Keep active
 goal091_position_band_warning_dashboard_readiness,GOAL-09.1 review-only warning classification and future dashboard contract readiness,GOAL-09.1,PASS,ashare_premarket.contract_design.goal091,Keep active
+goal_v1_integrity01_artifact_lineage_structure,GOAL-V1-INTEGRITY-01 infrastructure-only artifact lineage and structure gate,GOAL-V1-INTEGRITY-01,PASS,ashare_premarket.validation.goal_v1_integrity01,Keep active

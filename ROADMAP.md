@@ -57,6 +57,9 @@
 - GOAL-09.1 position-band warning review and dashboard-readiness gate
   (`PASS_WITH_WARNINGS`; implemented_review_only warning classification and
   future dashboard contract constraints only, no dashboard outputs).
+- GOAL-V1-INTEGRITY-01 artifact-lineage and structure gate
+  (`PASS_WITH_WARNINGS`; implemented_infrastructure_only canonical V1 chain
+  integrity only, no dashboard or new diagnostic rows).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -76,7 +79,9 @@ prototype with 100 `trade_date + symbol` rows. GOAL-09.0 completed the
 explicit position-band review-only unlock gate. GOAL-09 now implements only a
 deterministic non-actionable position-band diagnostics prototype at
 `trade_date + symbol` grain. GOAL-09.1 now implements only warning
-classification and dashboard-readiness evidence. It allows a future
+classification and dashboard-readiness evidence. GOAL-V1-INTEGRITY-01 now
+implements only artifact-lineage and structure integrity over GOAL-07B,
+GOAL-08B, GOAL-09, and GOAL-09.1 evidence. It allows a future
 GOAL-DASHBOARD-00 contract/layout design gate to be explicitly requested, but
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,

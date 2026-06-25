@@ -38,7 +38,8 @@ flowchart TD
     R6 -. "explicit review-only unlock gate" .-> R9A["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R9A -. "review-only diagnostics" .-> R9["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R9 -. "warning review / dashboard readiness" .-> R91["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    R91 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
+    R91 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
+    V1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -75,9 +76,11 @@ outputs. GOAL-09.0 is implemented only as a review-only unlock gate. GOAL-09
 is implemented only as non-actionable review-only position-band diagnostics and
 does not create actual positions, sizing, weights, orders, or execution output.
 GOAL-09.1 is implemented only as warning-review and dashboard-readiness
-evidence. It allows a future explicit GOAL-DASHBOARD-00 design/contract gate
-request, but it does not implement dashboard files, visual reports, frontend, or
-any UI output. Dashboard / Daily Report UI and downstream execution stages
+evidence. GOAL-V1-INTEGRITY-01 is implemented only as infrastructure
+artifact-lineage/structure evidence over the canonical GOAL-07B -> GOAL-08B ->
+GOAL-09 -> GOAL-09.1 chain. It allows a future explicit GOAL-DASHBOARD-00
+design/contract gate request, but it does not implement dashboard files, visual
+reports, frontend, or any UI output. Dashboard / Daily Report UI and downstream execution stages
 remain locked future work. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

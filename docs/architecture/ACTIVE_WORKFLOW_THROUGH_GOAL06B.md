@@ -48,6 +48,8 @@ flowchart TD
     M -. "explicit review-only unlock gate" .-> N0["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     N0 -. "review-only diagnostics" .-> N["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     N -. "warning review / dashboard readiness" .-> N1["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    N1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
+    V1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/`,
@@ -68,9 +70,11 @@ and GOAL-08B is implemented only as non-actionable review-only diagnostics.
 GOAL-09.0 is implemented only as a review-only unlock gate. GOAL-09 is
 implemented only as non-actionable review-only position-band diagnostics, and
 GOAL-09.1 is implemented only as warning-review and dashboard-readiness
-evidence. It creates no dashboard output and only permits a future explicit
-GOAL-DASHBOARD-00 design/contract gate request; Dashboard / Daily Report UI and
-downstream trading/production workflow remain locked.
+evidence. GOAL-V1-INTEGRITY-01 is implemented only as artifact-lineage and
+structure integrity evidence over the canonical V1 chain. It creates no
+dashboard output and only permits a future explicit GOAL-DASHBOARD-00
+design/contract gate request; Dashboard / Daily Report UI and downstream
+trading/production workflow remain locked.
 
 ## Module Dependency Structure
 

@@ -17,6 +17,7 @@ GOAL_NAME = "GOAL-09.1-POSITION-BAND-WARNING-REVIEW-AND-DASHBOARD-READINESS-GATE
 MODE = "review_readiness_only"
 WORKFLOW_ID = "goal091_position_band_warning_dashboard_readiness_gate"
 GOAL09_WORKFLOW_ID = "position_band_recommendation"
+GOAL_V1_INTEGRITY01_WORKFLOW_ID = "goal_v1_integrity01_artifact_lineage_structure_gate"
 DASHBOARD_WORKFLOW_ID = "dashboard_daily_report"
 DASHBOARD00_ALLOWED_NEXT = "request_explicit_goal_dashboard00_contract_design_gate"
 DASHBOARD_LOCKED_NEXT = "remain_locked_until_explicit_goal_dashboard00_contract_design_gate"
@@ -836,6 +837,11 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         insert_at = next((index + 1 for index, item in enumerate(rows) if item["workflow_id"] == GOAL09_WORKFLOW_ID), len(rows))
         rows.insert(insert_at, {"workflow_id": WORKFLOW_ID, **patch})
         by_id = {row["workflow_id"]: row for row in rows}
+    dashboard_depends_on = WORKFLOW_ID
+    dashboard_notes = "Locked dashboard workflow; GOAL-09.1 allows only a future explicit design-only contract/layout gate request and creates no dashboard outputs."
+    if by_id.get(GOAL_V1_INTEGRITY01_WORKFLOW_ID, {}).get("status") == "implemented_infrastructure_only":
+        dashboard_depends_on = GOAL_V1_INTEGRITY01_WORKFLOW_ID
+        dashboard_notes = "Locked dashboard workflow; GOAL-V1-INTEGRITY-01 now verifies lineage before any future explicit design-only contract/layout gate request and creates no dashboard outputs."
     if DASHBOARD_WORKFLOW_ID in by_id:
         by_id[DASHBOARD_WORKFLOW_ID].update(
             {
@@ -843,9 +849,9 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
                 "current_repo_role": "locked_downstream_boundary",
                 "implemented_in_repo": "false",
                 "allowed_next_action": DASHBOARD_LOCKED_NEXT if result["status"] != BLOCKED else "remain_locked",
-                "depends_on": WORKFLOW_ID,
+                "depends_on": dashboard_depends_on,
                 "promotion_rule": "locked_until_explicit_goal_dashboard00_contract_design_gate",
-                "notes": "Locked dashboard workflow; GOAL-09.1 allows only a future explicit design-only contract/layout gate request and creates no dashboard outputs.",
+                "notes": dashboard_notes,
             }
         )
     for workflow_id in DOWNSTREAM_LOCKED_IDS:

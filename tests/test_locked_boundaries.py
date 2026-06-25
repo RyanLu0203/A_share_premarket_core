@@ -11,6 +11,7 @@ def test_locked_capabilities_remain_false() -> None:
     locked = json.loads((ROOT / "configs/project/locked_capabilities.json").read_text(encoding="utf-8"))
     assert locked["position_band_recommendation"] in {False, "future_review_only", "implemented_review_only"}
     assert locked["goal091_position_band_warning_dashboard_readiness_gate"] == "implemented_review_only"
+    assert locked["goal_v1_integrity01_artifact_lineage_structure_gate"] == "implemented_infrastructure_only"
     for key in [
         "signal_backtest",
         "portfolio_backtest",

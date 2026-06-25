@@ -48,8 +48,12 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["position_band_recommendation"]["implemented_in_repo"] == "true"
     assert rows["goal091_position_band_warning_dashboard_readiness_gate"]["status"] == "implemented_review_only"
     assert rows["goal091_position_band_warning_dashboard_readiness_gate"]["implemented_in_repo"] == "true"
+    assert rows["goal_v1_integrity01_artifact_lineage_structure_gate"]["status"] == "implemented_infrastructure_only"
+    assert rows["goal_v1_integrity01_artifact_lineage_structure_gate"]["implemented_in_repo"] == "true"
+    assert rows["goal_v1_integrity01_artifact_lineage_structure_gate"]["depends_on"] == "goal091_position_band_warning_dashboard_readiness_gate"
     assert rows["dashboard_daily_report"]["status"] == "locked_future"
     assert rows["dashboard_daily_report"]["implemented_in_repo"] == "false"
+    assert rows["dashboard_daily_report"]["depends_on"] == "goal_v1_integrity01_artifact_lineage_structure_gate"
     assert rows["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"
 
 

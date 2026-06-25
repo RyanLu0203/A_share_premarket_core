@@ -32,6 +32,7 @@ from ashare_premarket.storage.policy import audit_data_bundle_manifest, audit_st
 from ashare_premarket.training.supervised_baseline import audit_supervised_baseline_training, run_supervised_baseline_training
 from ashare_premarket.universe.governance import validate_symbol_governance
 from ashare_premarket.validation.engineering_panel import rebuild_stage6c_from_engineering_panel
+from ashare_premarket.validation.goal_v1_integrity01 import audit_goal_v1_integrity01_artifact_lineage_structure_gate, run_goal_v1_integrity01_artifact_lineage_structure_gate
 from ashare_premarket.validation.stage6c import run_goal06c_expanded_validation
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -147,6 +148,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal090_position_band_review_only_unlock", run_goal090_position_band_review_only_unlock_gate(root) and audit_goal090_position_band_review_only_unlock_gate(root)),
         ("goal09_position_band_diagnostics_review_only", run_goal09_position_band_diagnostics_prototype(root) and audit_goal09_position_band_diagnostics_prototype(root)),
         ("goal091_position_band_warning_dashboard_readiness", run_goal091_position_band_warning_dashboard_readiness_gate(root) and audit_goal091_position_band_warning_dashboard_readiness_gate(root)),
+        ("goal_v1_integrity01_artifact_lineage_structure", run_goal_v1_integrity01_artifact_lineage_structure_gate(root) and audit_goal_v1_integrity01_artifact_lineage_structure_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -239,6 +241,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal09_position_band_diagnostics_prototype.py", [sys.executable, "scripts/audit_goal09_position_band_diagnostics_prototype.py"]),
         ("python scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py"]),
         ("python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py"]),
+        ("python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
+        ("python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -258,6 +262,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal09_position_band_diagnostics_prototype.py", [sys.executable, "scripts/audit_goal09_position_band_diagnostics_prototype.py"]),
         ("python scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py"]),
         ("python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py"]),
+        ("python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
+        ("python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
     ]
     rows = []
     runtime_rows = []
@@ -313,7 +319,7 @@ def write_readiness_report(root: Path, validation_status: str) -> None:
                 "Warnings are limited to documented source coverage limitations and the `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` source-evidence gap for missing historical GOAL-05/GOAL-06 docs.",
                 "The Class D gap is manifest/documentation only and does not block Class A active workflow through GOAL-06B.",
                 "Committed validation reports use deterministic stable summaries; volatile runtime timing is stored in local-only ignored diagnostics.",
-                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, and GOAL-09 position-band diagnostics are separate review-only evidence. GOAL-09.1 classifies GOAL-09 warnings for future dashboard contract-readiness only and creates no dashboard output. GOAL-08A is design-only contract evidence with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening and does not unlock GOAL-08B by itself. GOAL-08B.0 marks GOAL-08B review-only eligible; GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09.0 marks GOAL-09 position-band diagnostics eligible; GOAL-09 may produce only non-actionable position-band diagnostic rows. Recommendation execution, actual position rows, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked.",
+                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, and GOAL-09 position-band diagnostics are separate review-only evidence. GOAL-09.1 classifies GOAL-09 warnings for future dashboard contract-readiness only and creates no dashboard output. GOAL-V1-INTEGRITY-01 verifies artifact-lineage and structure only before any future GOAL-DASHBOARD-00 design contract request. GOAL-08A is design-only contract evidence with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening and does not unlock GOAL-08B by itself. GOAL-08B.0 marks GOAL-08B review-only eligible; GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09.0 marks GOAL-09 position-band diagnostics eligible; GOAL-09 may produce only non-actionable position-band diagnostic rows. Recommendation execution, actual position rows, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, backtest, factor-mining, broker, local-lake, and DQN/RL remain locked.",
                 "",
                 f"GOAL-06B Clean Repo Bootstrap Readiness: {readiness}",
             ]

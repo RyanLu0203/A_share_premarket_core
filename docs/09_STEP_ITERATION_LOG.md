@@ -1,5 +1,41 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-V1-INTEGRITY-01 infrastructure-only artifact-lineage and
+  structure integrity gate.
+- Verified the canonical review-only chain from GOAL-07B risk diagnostics through
+  GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, and
+  GOAL-09.1 dashboard-readiness evidence.
+- Confirmed the risk/recommendation/position diagnostic outputs remain at 100
+  `trade_date + symbol` rows and remain non-actionable.
+- Updated workflow status so GOAL-V1-INTEGRITY-01 is
+  `implemented_infrastructure_only` and Dashboard / Daily Report UI remains
+  `locked_future`.
+
+Evidence:
+
+- `configs/validation/goal_v1_integrity01_artifact_lineage_contract.yaml`
+- `docs/validation/GOAL_V1_INTEGRITY01_ARTIFACT_LINEAGE_STRUCTURE_GATE.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_report.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_manifest.json`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_audit.md`
+
+Safety:
+
+- No dashboard output, HTML, Streamlit, frontend code, visual report, new risk
+  row, new recommendation row, new position row, actual position sizing,
+  portfolio weight, target weight, order quantity, buy/sell/hold action, target
+  price, trading, production, backtest, factor-mining, broker, local lake, or
+  DQN/RL output was generated.
+- Future dashboard contracts may read only canonical diagnostics and audit
+  metadata, and still require a separate explicit GOAL-DASHBOARD-00
+  design/contract gate.
+
 ## 2026-06-25 - GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate
 
 Status: `PASS_WITH_WARNINGS`.

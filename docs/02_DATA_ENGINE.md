@@ -31,6 +31,11 @@ documentation, manifest, report, and audit evidence under `configs/dashboard/`,
 `docs/dashboard/`, and `outputs/audits/`; it does not create dashboard outputs,
 HTML, Streamlit, frontend code, visual reports, new recommendation rows, new
 position rows, local lake files, raw payload roots, or production storage.
+GOAL-V1-INTEGRITY-01 writes only artifact-lineage structure contract,
+documentation, manifest, report, and audit evidence under `configs/validation/`,
+`docs/validation/`, and `outputs/audits/`; it does not create dashboard outputs,
+new risk rows, new recommendation rows, new position rows, local lake files, raw
+payload roots, cache inputs, notebooks, or production storage.
 
 ## Active Contracts
 
@@ -52,6 +57,8 @@ position rows, local lake files, raw payload roots, or production storage.
   `outputs/position/` only.
 - GOAL-09.1 warning-review and dashboard-readiness evidence under
   `configs/dashboard/`, `docs/dashboard/`, and `outputs/audits/` only.
+- GOAL-V1-INTEGRITY-01 artifact-lineage and structure evidence under
+  `configs/validation/`, `docs/validation/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -86,3 +93,6 @@ position rows, local lake files, raw payload roots, or production storage.
 - Do not treat GOAL-09.1 dashboard-readiness evidence as permission to create
   dashboard files, dashboard outputs, HTML, Streamlit, frontend code, visual
   reports, new recommendation rows, new position rows, or local lake files.
+- Do not treat GOAL-V1-INTEGRITY-01 artifact-lineage evidence as permission to
+  create dashboard files, new diagnostic rows, local lake files, raw provider
+  payloads, cache-backed inputs, notebooks, or production storage.

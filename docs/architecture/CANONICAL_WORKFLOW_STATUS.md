@@ -71,10 +71,12 @@ Implemented design-only:
 Implemented infrastructure-only:
 
 - GOAL-STORAGE-01 Local Research Lake Hardening Gate (`PASS`)
+- GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
+  (`PASS_WITH_WARNINGS`)
 
 Future design-only:
 
-- none currently implemented; GOAL-09.1 allows only a future explicit
+- none currently implemented; GOAL-V1-INTEGRITY-01 allows only a future explicit
   GOAL-DASHBOARD-00 contract/layout design gate request
 
 Locked future:
@@ -414,6 +416,30 @@ not create dashboard output, HTML, Streamlit, frontend code, visual reports,
 new recommendation rows, new position rows, actual position sizing, weights,
 orders, trading paths, production behavior, backtests, factor-mining outputs,
 broker outputs, local lake files, or DQN/RL outputs.
+
+## GOAL-V1-INTEGRITY-01 Status
+
+GOAL-V1-INTEGRITY-01 is `implemented_infrastructure_only` and currently
+`PASS_WITH_WARNINGS`. It creates:
+
+- `configs/validation/goal_v1_integrity01_artifact_lineage_contract.yaml`
+- `docs/validation/GOAL_V1_INTEGRITY01_ARTIFACT_LINEAGE_STRUCTURE_GATE.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_report.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_manifest.json`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_audit.md`
+
+The gate consumes only prior GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1
+PASS/PASS_WITH_WARNINGS review-only evidence. It verifies canonical artifact
+lineage, `trade_date + symbol` row-key consistency, non-actionable row status,
+warning classification availability, source-of-truth docs, and workflow status.
+
+GOAL-V1-INTEGRITY-01 allows only a future explicit GOAL-DASHBOARD-00
+design/contract gate request. Dashboard / Daily Report UI remains
+`locked_future`. GOAL-V1-INTEGRITY-01 does not create dashboard output, HTML,
+Streamlit, frontend code, visual reports, new risk rows, new recommendation
+rows, new position rows, actual position sizing, weights, orders, trading paths,
+production behavior, backtests, factor-mining outputs, broker outputs, local
+lake files, or DQN/RL outputs.
 
 ## GOAL-06D Status
 

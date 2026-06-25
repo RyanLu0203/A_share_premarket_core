@@ -65,6 +65,16 @@ Daily Report UI `locked_future`. It creates no dashboard output, HTML,
 Streamlit, frontend code, visual reports, new recommendation rows, new position
 rows, trading paths, production behavior, backtests, factor-mining outputs,
 local lake files, broker outputs, or DQN/RL outputs.
+GOAL-V1-INTEGRITY-01 is implemented as an infrastructure-only artifact-lineage
+and structure gate (`PASS_WITH_WARNINGS`). It verifies the review-only V1 chain
+from GOAL-07B risk diagnostics through GOAL-08B recommendation diagnostics,
+GOAL-09 position-band diagnostics, and GOAL-09.1 dashboard-readiness evidence.
+It creates no new risk rows, recommendation rows, position rows, dashboard
+outputs, HTML, Streamlit, frontend code, visual reports, local lake files,
+trading paths, production behavior, backtests, factor-mining outputs, broker
+outputs, or DQN/RL outputs. Dashboard / Daily Report UI remains `locked_future`;
+only a future explicit GOAL-DASHBOARD-00 design/contract gate request is now
+eligible.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -135,6 +145,8 @@ Implemented and protected:
   deterministic review-only `trade_date + symbol` diagnostic rows
 - GOAL-09.1 position-band warning review and dashboard-readiness gate with
   future dashboard contract constraints only
+- GOAL-V1-INTEGRITY-01 artifact-lineage and structure integrity gate over the
+  GOAL-07B -> GOAL-08B -> GOAL-09 -> GOAL-09.1 review-only chain
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -203,6 +215,8 @@ Implemented infrastructure-only:
 
 - GOAL-STORAGE-01 local research lake hardening gate (`PASS`; storage contract,
   hygiene audit, and workflow lock preservation only)
+- GOAL-V1-INTEGRITY-01 artifact-lineage and structure gate
+  (`PASS_WITH_WARNINGS`; canonical review-only V1 chain integrity evidence only)
 
 Still locked:
 
@@ -349,6 +363,22 @@ position rows, position sizing, weights, orders, trading paths, production
 behavior, backtests, factor-mining outputs, local lake files, broker outputs,
 or DQN/RL outputs.
 
+GOAL-V1-INTEGRITY-01 writes only artifact-lineage and structure evidence:
+
+- `configs/validation/goal_v1_integrity01_artifact_lineage_contract.yaml`
+- `docs/validation/GOAL_V1_INTEGRITY01_ARTIFACT_LINEAGE_STRUCTURE_GATE.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_report.md`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_manifest.json`
+- `outputs/audits/goal_v1_integrity01_artifact_lineage_structure_audit.md`
+
+GOAL-V1-INTEGRITY-01 verifies only prior GOAL-07B, GOAL-08B, GOAL-09, and
+GOAL-09.1 PASS/PASS_WITH_WARNINGS evidence, confirms canonical row lineage and
+non-actionability, and records that future dashboard contracts may read only
+canonical diagnostics and audit metadata. It creates no dashboard output, HTML,
+Streamlit, frontend code, visual reports, new risk rows, new recommendation
+rows, new position rows, local lake files, trading paths, production behavior,
+backtests, factor-mining outputs, broker outputs, or DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -367,9 +397,11 @@ The protected regenerated outputs live under:
 - `configs/recommendation/`
 - `configs/position/`
 - `configs/storage/`
+- `configs/validation/`
 - `docs/risk/`
 - `docs/recommendation/`
 - `docs/storage/`
+- `docs/validation/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -403,13 +435,15 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
 GOAL-09, and GOAL-09.1 are `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
-GOAL-STORAGE-01 is `implemented_infrastructure_only`. GOAL-07B is
+GOAL-STORAGE-01 and GOAL-V1-INTEGRITY-01 are
+`implemented_infrastructure_only`. GOAL-07B is
 diagnostic-only and non-actionable. GOAL-08A is names-only design evidence with
 zero recommendation rows. STORAGE-01 hardens storage only and does not unlock
 GOAL-08B by itself. GOAL-08B is non-actionable diagnostic-only evidence.
 GOAL-09.0 is unlock-only evidence. GOAL-09 is non-actionable review-only
 position-band diagnostics only. GOAL-09.1 is warning-review/dashboard-readiness
-evidence only; Dashboard / Daily Report UI remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
+evidence only. GOAL-V1-INTEGRITY-01 is artifact-lineage/structure evidence only;
+Dashboard / Daily Report UI remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings
