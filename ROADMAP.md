@@ -54,6 +54,9 @@
 - GOAL-09 position-band diagnostics prototype (`PASS_WITH_WARNINGS`;
   implemented_review_only non-actionable diagnostics at `trade_date + symbol`
   grain).
+- GOAL-09.1 position-band warning review and dashboard-readiness gate
+  (`PASS_WITH_WARNINGS`; implemented_review_only warning classification and
+  future dashboard contract constraints only, no dashboard outputs).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -72,10 +75,13 @@ implements only a deterministic non-actionable recommendation diagnostics
 prototype with 100 `trade_date + symbol` rows. GOAL-09.0 completed the
 explicit position-band review-only unlock gate. GOAL-09 now implements only a
 deterministic non-actionable position-band diagnostics prototype at
-`trade_date + symbol` grain.
-No actionable recommendation execution, position, dashboard, paper/live trading,
-production DB writes, production model promotion, backtest, factor mining,
-broker, or DQN/RL is unlocked.
+`trade_date + symbol` grain. GOAL-09.1 now implements only warning
+classification and dashboard-readiness evidence. It allows a future
+GOAL-DASHBOARD-00 contract/layout design gate to be explicitly requested, but
+Dashboard / Daily Report UI remains `locked_future`.
+No actionable recommendation execution, actual position output, dashboard,
+paper/live trading, production DB writes, production model promotion, backtest,
+factor mining, broker, local lake, or DQN/RL is unlocked.
 
 V2 factor research is planned but inactive. It remains `planned_locked` until a
 future explicit V2 goal; no factor mining, IC/RankIC mining, factor library

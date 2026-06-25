@@ -1,0 +1,308 @@
+{
+  "actual_position_sizing_generated": false,
+  "allowed_next_action": "request_explicit_goal_dashboard00_contract_design_gate",
+  "broker_integration_enabled": false,
+  "buy_sell_hold_outputs_generated": false,
+  "capital_allocation_amounts_generated": false,
+  "cost_slippage_outputs_created": false,
+  "dashboard_blocking_banner_warning_codes": [
+    "calibration_not_reliable_for_thresholding",
+    "selected_score_variant_weak_rank_signal",
+    "target_horizon_calibration_warning",
+    "weak_target_horizon_rank_signal"
+  ],
+  "dashboard_daily_report_status_after_goal091": "locked_future",
+  "dashboard_design_only_eligibility_only": true,
+  "dashboard_files_generated": false,
+  "dashboard_implemented_by_this_goal": false,
+  "dashboard_outputs_generated": false,
+  "database_writes_created": false,
+  "downstream_execution_unlocked_by_this_goal": false,
+  "dqn_rl_outputs_created": false,
+  "expected_returns_for_action_generated": false,
+  "factor_mining_outputs_created": false,
+  "failures": [],
+  "frontend_code_generated": false,
+  "future_dashboard_actionable_language_blocked": true,
+  "future_dashboard_buy_candidate_display_blocked": true,
+  "future_dashboard_contract_design_gate_may_be_requested": true,
+  "future_dashboard_forbidden_fields": [
+    "buy",
+    "buy_sell_hold",
+    "capital_allocation",
+    "execution_action",
+    "expected_return_action",
+    "expected_return_for_action",
+    "hold",
+    "order_quantity",
+    "portfolio_weight",
+    "position_size",
+    "position_weight",
+    "sell",
+    "target_price",
+    "target_weight",
+    "trade_action"
+  ],
+  "future_dashboard_forbidden_fields_blocked": true,
+  "future_dashboard_global_and_row_level_disclaimers_required": true,
+  "future_dashboard_may_use_only_audited_goal07b_goal08b_goal09_diagnostics": true,
+  "future_dashboard_never_actionable_required": true,
+  "future_dashboard_non_actionable_disclaimers_required": true,
+  "future_dashboard_position_candidate_display_blocked": true,
+  "future_dashboard_required_input_contracts": {
+    "actionability_flags": {
+      "display_requirement": "global_and_row_level_non_actionable_disclaimers_required",
+      "required_values": {
+        "actionability_status": "never_actionable",
+        "diagnostic_mode": "review_only",
+        "position_actionability_status": "never_actionable"
+      }
+    },
+    "audit_metadata": {
+      "display_requirement": "show_source_goal_lineage_manifest_status_and_audit_timestamps_when_available",
+      "required_sources": [
+        "outputs/audits/goal07b_risk_overlay_calculation_manifest.json",
+        "outputs/audits/goal08b_recommendation_diagnostics_manifest.json",
+        "outputs/audits/goal09_position_band_diagnostics_manifest.json",
+        "outputs/audits/goal091_dashboard_readiness_manifest.json"
+      ]
+    },
+    "position_band_diagnostics": {
+      "grain": "trade_date + symbol",
+      "path": "outputs/position/goal09_review_only_position_band_diagnostics.csv",
+      "required_fields": [
+        "trade_date",
+        "symbol",
+        "position_band_diagnostic_label",
+        "position_band_status",
+        "position_actionability_status",
+        "position_actionability_blocked",
+        "propagated_warning_codes",
+        "diagnostic_mode",
+        "non_actionable_disclaimer"
+      ],
+      "source_goal": "GOAL-09"
+    },
+    "recommendation_diagnostics": {
+      "grain": "trade_date + symbol",
+      "path": "outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv",
+      "required_fields": [
+        "trade_date",
+        "symbol",
+        "recommendation_diagnostic_label",
+        "actionability_status",
+        "actionability_blocked",
+        "warning_propagation_codes",
+        "diagnostic_mode",
+        "non_actionable_disclaimer"
+      ],
+      "source_goal": "GOAL-08B"
+    },
+    "risk_overlay_diagnostics": {
+      "grain": "trade_date + symbol",
+      "path": "outputs/risk_overlay/goal07b_review_only_risk_overlay.csv",
+      "required_fields": [
+        "trade_date",
+        "symbol",
+        "mode",
+        "risk_severity",
+        "risk_state",
+        "risk_tag",
+        "warning_propagation",
+        "non_actionable"
+      ],
+      "source_goal": "GOAL-07B"
+    },
+    "warning_propagation": {
+      "display_requirement": "show_all_propagated_warning_codes_at_summary_and_row_level",
+      "required_fields": [
+        "risk_warning_codes",
+        "propagated_warning_codes",
+        "blocked_reason_codes"
+      ]
+    }
+  },
+  "future_dashboard_review_only_required": true,
+  "future_dashboard_top_n_candidate_display_blocked": true,
+  "goal": "GOAL-09.1-POSITION-BAND-WARNING-REVIEW-AND-DASHBOARD-READINESS-GATE",
+  "goal09_non_actionable_confirmed": true,
+  "goal09_output_grain": "trade_date + symbol",
+  "goal09_row_count": 100,
+  "goal09_status_confirmed": true,
+  "goal_dashboard00_request_status": "eligible_for_explicit_design_only_contract_gate",
+  "goal_id": "GOAL-09.1",
+  "html_generated": false,
+  "input_artifacts": [
+    "outputs/audits/goal07b_risk_overlay_calculation_report.md",
+    "outputs/audits/goal07b_risk_overlay_calculation_audit.md",
+    "outputs/audits/goal07b_risk_overlay_calculation_manifest.json",
+    "outputs/risk_overlay/goal07b_review_only_risk_overlay.csv",
+    "outputs/audits/goal08a_recommendation_contract_design_report.md",
+    "outputs/audits/goal08a_recommendation_contract_design_audit.md",
+    "outputs/audits/goal08a_recommendation_contract_design_manifest.json",
+    "outputs/audits/goal_storage01_local_research_lake_hardening_report.md",
+    "outputs/audits/goal_storage01_local_research_lake_hardening_audit.md",
+    "outputs/audits/goal_storage01_local_research_lake_hardening_manifest.json",
+    "outputs/audits/goal08b0_recommendation_review_only_unlock_report.md",
+    "outputs/audits/goal08b0_recommendation_review_only_unlock_audit.md",
+    "outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json",
+    "outputs/audits/goal08b_recommendation_diagnostics_report.md",
+    "outputs/audits/goal08b_recommendation_diagnostics_audit.md",
+    "outputs/audits/goal08b_recommendation_diagnostics_manifest.json",
+    "outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv",
+    "outputs/audits/goal090_position_band_review_only_unlock_report.md",
+    "outputs/audits/goal090_position_band_review_only_unlock_audit.md",
+    "outputs/audits/goal090_position_band_review_only_unlock_manifest.json",
+    "outputs/audits/goal09_position_band_diagnostics_report.md",
+    "outputs/audits/goal09_position_band_diagnostics_audit.md",
+    "outputs/audits/goal09_position_band_diagnostics_manifest.json",
+    "outputs/position/goal09_review_only_position_band_diagnostics.csv"
+  ],
+  "learned_policy_used": false,
+  "live_trading_enabled": false,
+  "local_lake_files_created": false,
+  "mode": "review_readiness_only",
+  "new_position_rows_generated": false,
+  "new_recommendation_rows_generated": false,
+  "optimization_used": false,
+  "order_quantities_generated": false,
+  "paper_trading_enabled": false,
+  "portfolio_backtests_run": false,
+  "portfolio_construction_generated": false,
+  "portfolio_weights_generated": false,
+  "position_actionability_status_values": [
+    "never_actionable"
+  ],
+  "production_model_behavior_created": false,
+  "provider_concentration_banner_warning_codes": [
+    "provider_source_concentration_disclosed",
+    "single_provider_mode_akshare_direct"
+  ],
+  "row_level_and_summary_warning_codes": [
+    "feature_sign_instability_bounded"
+  ],
+  "row_level_warning_codes_required": [
+    "calibration_not_reliable_for_thresholding",
+    "feature_sign_instability_bounded",
+    "provider_source_concentration_disclosed",
+    "selected_score_variant_weak_rank_signal",
+    "single_provider_mode_akshare_direct",
+    "target_horizon_calibration_warning",
+    "weak_target_horizon_rank_signal"
+  ],
+  "signal_backtests_run": false,
+  "source_goal09_required": true,
+  "status": "PASS_WITH_WARNINGS",
+  "streamlit_generated": false,
+  "target_prices_generated": false,
+  "target_weights_generated": false,
+  "visual_reports_generated": false,
+  "warning_classification": {
+    "calibration_not_reliable_for_thresholding": "dashboard_blocking_banner",
+    "feature_sign_instability_bounded": "row_level_and_summary_warning",
+    "provider_source_concentration_disclosed": "provider_concentration_banner",
+    "selected_score_variant_weak_rank_signal": "dashboard_blocking_banner",
+    "single_provider_mode_akshare_direct": "provider_concentration_banner",
+    "target_horizon_calibration_warning": "dashboard_blocking_banner",
+    "weak_target_horizon_rank_signal": "dashboard_blocking_banner"
+  },
+  "warning_classification_rows": [
+    {
+      "dashboard_display_group": "dashboard_blocking_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "calibration_not_reliable_for_thresholding: show as a blocking review-only banner; do not show ranked candidates or action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "calibration_not_reliable_for_thresholding"
+    },
+    {
+      "dashboard_display_group": "row_level_and_summary_warning",
+      "global_banner_required": false,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "feature_sign_instability_bounded: show at row level and in summary warning inventory; keep all rows non-actionable.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "feature_sign_instability_bounded"
+    },
+    {
+      "dashboard_display_group": "provider_concentration_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "provider_source_concentration_disclosed: show provider concentration banner and row-level warning; do not show action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "provider_source_concentration_disclosed"
+    },
+    {
+      "dashboard_display_group": "dashboard_blocking_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "selected_score_variant_weak_rank_signal: show as a blocking review-only banner; do not show ranked candidates or action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "selected_score_variant_weak_rank_signal"
+    },
+    {
+      "dashboard_display_group": "provider_concentration_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "single_provider_mode_akshare_direct: show provider concentration banner and row-level warning; do not show action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "single_provider_mode_akshare_direct"
+    },
+    {
+      "dashboard_display_group": "dashboard_blocking_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "target_horizon_calibration_warning: show as a blocking review-only banner; do not show ranked candidates or action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "target_horizon_calibration_warning"
+    },
+    {
+      "dashboard_display_group": "dashboard_blocking_banner",
+      "global_banner_required": true,
+      "prevents_buy_position_action_display": true,
+      "prevents_ranked_top_n_candidate_display": true,
+      "required_dashboard_copy": "weak_target_horizon_rank_signal: show as a blocking review-only banner; do not show ranked candidates or action-oriented lists.",
+      "row_level_display_required": true,
+      "summary_display_required": true,
+      "warning_code": "weak_target_horizon_rank_signal"
+    }
+  ],
+  "warning_codes_preventing_action_oriented_display": [
+    "calibration_not_reliable_for_thresholding",
+    "feature_sign_instability_bounded",
+    "provider_source_concentration_disclosed",
+    "selected_score_variant_weak_rank_signal",
+    "single_provider_mode_akshare_direct",
+    "target_horizon_calibration_warning",
+    "weak_target_horizon_rank_signal"
+  ],
+  "warning_codes_reviewed": [
+    "calibration_not_reliable_for_thresholding",
+    "feature_sign_instability_bounded",
+    "provider_source_concentration_disclosed",
+    "selected_score_variant_weak_rank_signal",
+    "single_provider_mode_akshare_direct",
+    "target_horizon_calibration_warning",
+    "weak_target_horizon_rank_signal"
+  ],
+  "warnings": [
+    "calibration_not_reliable_for_thresholding",
+    "feature_sign_instability_bounded",
+    "provider_source_concentration_disclosed",
+    "selected_score_variant_weak_rank_signal",
+    "single_provider_mode_akshare_direct",
+    "target_horizon_calibration_warning",
+    "weak_target_horizon_rank_signal"
+  ]
+}

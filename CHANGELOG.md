@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-25 - GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate
+
+- Implemented GOAL-09.1 only as a review/readiness warning classification and
+  dashboard-readiness gate.
+- Added the GOAL-09.1 module, runner, audit wrapper, warning policy, report,
+  manifest, dashboard-readiness doc, workflow-status governance, diagnostics
+  integration, and focused tests.
+- Classified all remaining GOAL-09 warnings into future dashboard display
+  severity groups and required future dashboard contracts to preserve
+  `review_only`, `never_actionable`, and non-actionable disclaimers.
+- Allowed only a future explicit GOAL-DASHBOARD-00 design/contract gate request
+  while keeping Dashboard / Daily Report UI `locked_future`.
+- Created no dashboard outputs, HTML, Streamlit, frontend code, visual reports,
+  new recommendation rows, new position rows, actual position sizing, weights,
+  orders, buy/sell/hold actions, target prices, trading, production, backtest,
+  factor-mining, local lake files, broker, or DQN/RL outputs.
+
 ## 2026-06-25 - GOAL-09 Position-Band Diagnostics Prototype
 
 - Implemented GOAL-09 only as a review-only, non-actionable position-band

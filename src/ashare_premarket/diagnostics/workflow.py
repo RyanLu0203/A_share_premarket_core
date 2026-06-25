@@ -124,6 +124,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal09_status = _goal09_status(root)
     goal09_manifest = _goal09_manifest(root)
     goal09_audit_status = _audit_status(root / "outputs/audits/goal09_position_band_diagnostics_audit.md")
+    goal091_status = _goal091_status(root)
+    goal091_manifest = _goal091_manifest(root)
+    goal091_audit_status = _audit_status(root / "outputs/audits/goal091_dashboard_readiness_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -209,6 +212,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-09 diagnostic prototype status: `{goal09_status}`.",
                 f"GOAL-09 diagnostic audit status: `{goal09_audit_status}`.",
                 f"GOAL-09 position-band diagnostic rows: `{goal09_manifest.get('position_band_diagnostic_row_count', 0)}`.",
+                f"GOAL-09.1 warning/dashboard readiness status: `{goal091_status}`.",
+                f"GOAL-09.1 readiness audit status: `{goal091_audit_status}`.",
+                f"GOAL-DASHBOARD-00 request eligibility: `{goal091_manifest.get('goal_dashboard00_request_status', 'not yet reviewed')}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -217,16 +223,17 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-08B workflow status: `{downstream_status.get('goal08b_recommendation_review_only_prototype', 'missing')}`.",
                 f"GOAL-09.0 workflow status: `{downstream_status.get('goal090_position_band_review_only_unlock_gate', 'missing')}`.",
                 f"GOAL-09 position-band diagnostics workflow status: `{downstream_status.get('position_band_recommendation', 'missing')}`.",
+                f"GOAL-09.1 dashboard-readiness workflow status: `{downstream_status.get('goal091_position_band_warning_dashboard_readiness_gate', 'missing')}`.",
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, and GOAL-09.1 may produce warning/readiness evidence only.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
                 "Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.",
                 "GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.",
-                "GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, and GOAL-09 may produce only non-actionable review-only position-band diagnostic rows.",
+                "GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, GOAL-09 may produce only non-actionable review-only position-band diagnostic rows, and GOAL-09.1 may classify warnings for future dashboard design readiness only.",
                 "",
                 "Protected regression commands:",
                 *[f"- `{command}`" for command in REGRESSION_COMMANDS],
@@ -288,6 +295,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal090_position_band_review_only_unlock_gate.py`",
                 "- `python scripts/run_goal09_position_band_diagnostics_prototype.py`",
                 "- `python scripts/audit_goal09_position_band_diagnostics_prototype.py`",
+                "- `python scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py`",
+                "- `python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py`",
                 "",
             ]
         ),
@@ -308,7 +317,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
                 "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
-                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. Recommendation execution, actual positions, position sizing, dashboards, trading, production, backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
+                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. Recommendation execution, actual positions, position sizing, dashboards, trading, production, backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
                 "- These warnings do not unlock recommendation, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
@@ -340,8 +349,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "17. For GOAL-08B, run `python scripts/run_goal08b_recommendation_diagnostics_prototype.py` and `python scripts/audit_goal08b_recommendation_diagnostics_prototype.py`; outputs must remain review-only and non-actionable.",
                 "18. For GOAL-09.0, run `python scripts/run_goal090_position_band_review_only_unlock_gate.py` and `python scripts/audit_goal090_position_band_review_only_unlock_gate.py`; it may mark GOAL-09 future_review_only eligible or preserve valid GOAL-09 diagnostics but must not itself create position-band rows.",
                 "19. For GOAL-09, run `python scripts/run_goal09_position_band_diagnostics_prototype.py` and `python scripts/audit_goal09_position_band_diagnostics_prototype.py`; outputs must remain review-only and non-actionable.",
-                "20. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "21. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, broker, local-lake, or DQN/RL.",
+                "20. For GOAL-09.1, run `python scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py` and `python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py`; it may allow only a future explicit GOAL-DASHBOARD-00 design-only contract request and must not create dashboard outputs.",
+                "21. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "22. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -667,6 +677,30 @@ def _goal09_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal091_status(root: Path) -> str:
+    report = root / "outputs/audits/goal091_dashboard_readiness_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal091_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal091_dashboard_readiness_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -711,6 +745,7 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal08b_recommendation_review_only_prototype",
             "goal090_position_band_review_only_unlock_gate",
             "position_band_recommendation",
+            "goal091_position_band_warning_dashboard_readiness_gate",
             "dashboard_daily_report",
             "paper_trading_journal",
             "broker_live_trading",

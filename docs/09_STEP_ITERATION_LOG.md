@@ -1,5 +1,42 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-09.1 review/readiness-only warning classification and
+  dashboard-readiness gate.
+- Read prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, GOAL-08B,
+  GOAL-09.0, and GOAL-09 PASS/PASS_WITH_WARNINGS evidence.
+- Confirmed GOAL-09 remains `implemented_review_only`, uses
+  `trade_date + symbol` grain, has 100 diagnostic rows, and keeps
+  `position_actionability_status=never_actionable`.
+- Classified the remaining GOAL-09 warnings for future dashboard contract
+  display rules and allowed only a future explicit GOAL-DASHBOARD-00
+  design/contract gate request.
+- Kept Dashboard / Daily Report UI and all downstream execution stages locked.
+
+Evidence:
+
+- `configs/dashboard/goal091_dashboard_readiness_warning_policy.yaml`
+- `docs/dashboard/GOAL091_POSITION_BAND_WARNING_REVIEW_AND_DASHBOARD_READINESS.md`
+- `outputs/audits/goal091_dashboard_readiness_report.md`
+- `outputs/audits/goal091_dashboard_readiness_manifest.json`
+- `outputs/audits/goal091_dashboard_readiness_audit.md`
+
+Safety:
+
+- No dashboard output, HTML, Streamlit, frontend code, visual report, new
+  recommendation row, new position row, actual position sizing, portfolio
+  weight, target weight, order quantity, buy/sell/hold action, target price,
+  trading, production, backtest, factor-mining, broker, local lake, or DQN/RL
+  output was generated.
+- Future dashboard contracts must preserve `review_only`, `never_actionable`,
+  and non-actionable disclaimers, show all propagated warnings, and block
+  ranked Top-N, buy-candidate, position-candidate, and action-oriented display.
+
 ## 2026-06-25 - GOAL-09 Position-Band Diagnostics Prototype
 
 Status: `PASS_WITH_WARNINGS`.

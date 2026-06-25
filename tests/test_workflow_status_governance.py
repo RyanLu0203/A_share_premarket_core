@@ -46,6 +46,10 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal090_position_band_review_only_unlock_gate"]["implemented_in_repo"] == "true"
     assert rows["position_band_recommendation"]["status"] == "implemented_review_only"
     assert rows["position_band_recommendation"]["implemented_in_repo"] == "true"
+    assert rows["goal091_position_band_warning_dashboard_readiness_gate"]["status"] == "implemented_review_only"
+    assert rows["goal091_position_band_warning_dashboard_readiness_gate"]["implemented_in_repo"] == "true"
+    assert rows["dashboard_daily_report"]["status"] == "locked_future"
+    assert rows["dashboard_daily_report"]["implemented_in_repo"] == "false"
     assert rows["dqn_rl_mainline"]["status"] == "deleted_from_active_mainline"
 
 

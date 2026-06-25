@@ -26,7 +26,11 @@ storage. GOAL-09.0 writes only unlock-governance evidence under
 `outputs/audits/` and `configs/position/`. GOAL-09 writes only a small
 committed non-actionable position-band diagnostic CSV under `outputs/position/`;
 it does not write actual position rows, local lake files, raw payload roots, or
-production storage.
+production storage. GOAL-09.1 writes only dashboard-readiness warning policy,
+documentation, manifest, report, and audit evidence under `configs/dashboard/`,
+`docs/dashboard/`, and `outputs/audits/`; it does not create dashboard outputs,
+HTML, Streamlit, frontend code, visual reports, new recommendation rows, new
+position rows, local lake files, raw payload roots, or production storage.
 
 ## Active Contracts
 
@@ -46,6 +50,8 @@ production storage.
   writes.
 - GOAL-09 review-only position-band diagnostic evidence under
   `outputs/position/` only.
+- GOAL-09.1 warning-review and dashboard-readiness evidence under
+  `configs/dashboard/`, `docs/dashboard/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -77,3 +83,6 @@ production storage.
 - Do not treat GOAL-09 diagnostic rows as actual position rows, position
   sizing, portfolio weights, target weights, order quantities, or trading
   instructions.
+- Do not treat GOAL-09.1 dashboard-readiness evidence as permission to create
+  dashboard files, dashboard outputs, HTML, Streamlit, frontend code, visual
+  reports, new recommendation rows, new position rows, or local lake files.

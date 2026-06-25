@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_locked_capabilities_remain_false() -> None:
     locked = json.loads((ROOT / "configs/project/locked_capabilities.json").read_text(encoding="utf-8"))
     assert locked["position_band_recommendation"] in {False, "future_review_only", "implemented_review_only"}
+    assert locked["goal091_position_band_warning_dashboard_readiness_gate"] == "implemented_review_only"
     for key in [
         "signal_backtest",
         "portfolio_backtest",

@@ -60,6 +60,8 @@ Implemented review-only:
 - GOAL-08B Recommendation Diagnostics Prototype (`PASS_WITH_WARNINGS`)
 - GOAL-09.0 Position-Band Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 - GOAL-09 Position-Band Diagnostics Prototype (`PASS_WITH_WARNINGS`)
+- GOAL-09.1 Position-Band Warning Review and Dashboard Readiness Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -72,11 +74,13 @@ Implemented infrastructure-only:
 
 Future design-only:
 
-- none currently unlocked
+- none currently implemented; GOAL-09.1 allows only a future explicit
+  GOAL-DASHBOARD-00 contract/layout design gate request
 
 Locked future:
 
-- Position-band Recommendation
+- Actual position recommendations, position sizing, portfolio weights, and
+  order quantities
 - Signal Backtest
 - Portfolio Backtest
 - Cost / Slippage Sensitivity
@@ -378,6 +382,38 @@ position rows, position sizing, portfolio weights, target weights, order
 quantities, buy/sell/hold outputs, target prices, expected returns for action,
 dashboards, trading paths, production behavior, backtests, factor-mining
 outputs, broker outputs, local lake files, or DQN/RL outputs.
+
+## GOAL-09.1 Status
+
+GOAL-09.1 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
+
+- `configs/dashboard/goal091_dashboard_readiness_warning_policy.yaml`
+- `docs/dashboard/GOAL091_POSITION_BAND_WARNING_REVIEW_AND_DASHBOARD_READINESS.md`
+- `outputs/audits/goal091_dashboard_readiness_report.md`
+- `outputs/audits/goal091_dashboard_readiness_manifest.json`
+- `outputs/audits/goal091_dashboard_readiness_audit.md`
+
+The gate consumes only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0,
+GOAL-08B, GOAL-09.0, and GOAL-09 PASS/PASS_WITH_WARNINGS review, design, or
+infrastructure evidence. It confirms GOAL-09 remains non-actionable at
+`trade_date + symbol` grain with `position_actionability_status=never_actionable`.
+
+GOAL-09.1 classifies the remaining GOAL-09 warnings into
+`dashboard_blocking_banner`, `provider_concentration_banner`, and
+`row_level_and_summary_warning` groups. It defines that any future dashboard
+contract must preserve `review_only`, `never_actionable`, and non-actionable
+disclaimers, show all propagated warning codes, block ranked Top-N,
+buy-candidate, position-candidate, and action-oriented displays, and forbid
+buy/sell/hold, target price, expected return for action, position size,
+portfolio weight, target weight, order quantity, and execution fields.
+
+GOAL-09.1 allows only a future explicit GOAL-DASHBOARD-00 design/contract gate
+request. Dashboard / Daily Report UI remains `locked_future`. GOAL-09.1 does
+not create dashboard output, HTML, Streamlit, frontend code, visual reports,
+new recommendation rows, new position rows, actual position sizing, weights,
+orders, trading paths, production behavior, backtests, factor-mining outputs,
+broker outputs, local lake files, or DQN/RL outputs.
 
 ## GOAL-06D Status
 

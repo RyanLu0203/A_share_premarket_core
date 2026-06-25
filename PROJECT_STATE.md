@@ -57,6 +57,14 @@ and creates no actual position rows, position sizing, portfolio weights, target
 weights, order quantities, buy/sell/hold outputs, target prices, dashboards,
 trading paths, production behavior, backtests, factor-mining outputs, local
 lake files, broker outputs, or DQN/RL outputs.
+GOAL-09.1 is implemented as a review/readiness-only warning classification and
+dashboard-readiness gate (`PASS_WITH_WARNINGS`). It classifies the remaining
+GOAL-09 warnings for future dashboard display contracts, allows only a future
+explicit GOAL-DASHBOARD-00 design/contract gate request, and keeps Dashboard /
+Daily Report UI `locked_future`. It creates no dashboard output, HTML,
+Streamlit, frontend code, visual reports, new recommendation rows, new position
+rows, trading paths, production behavior, backtests, factor-mining outputs,
+local lake files, broker outputs, or DQN/RL outputs.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -125,6 +133,8 @@ Implemented and protected:
   non-actionable diagnostics evidence only
 - GOAL-09 non-actionable position-band diagnostics prototype with
   deterministic review-only `trade_date + symbol` diagnostic rows
+- GOAL-09.1 position-band warning review and dashboard-readiness gate with
+  future dashboard contract constraints only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -179,6 +189,8 @@ Implemented review-only:
 - GOAL-09 position-band diagnostics prototype (`PASS_WITH_WARNINGS`;
   `implemented_review_only`; non-actionable diagnostic rows at
   `trade_date + symbol` grain)
+- GOAL-09.1 position-band warning review and dashboard-readiness gate
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; no dashboard outputs)
 
 Implemented design-only:
 
@@ -318,6 +330,25 @@ quantities, buy/sell/hold outputs, target prices, expected returns for action,
 dashboards, trading paths, production behavior, backtests, factor-mining
 outputs, local lake files, broker outputs, or DQN/RL outputs.
 
+GOAL-09.1 writes only warning-review and dashboard-readiness evidence:
+
+- `configs/dashboard/goal091_dashboard_readiness_warning_policy.yaml`
+- `docs/dashboard/GOAL091_POSITION_BAND_WARNING_REVIEW_AND_DASHBOARD_READINESS.md`
+- `outputs/audits/goal091_dashboard_readiness_report.md`
+- `outputs/audits/goal091_dashboard_readiness_manifest.json`
+- `outputs/audits/goal091_dashboard_readiness_audit.md`
+
+GOAL-09.1 classifies the remaining GOAL-09 warnings into
+`dashboard_blocking_banner`, `provider_concentration_banner`, and
+`row_level_and_summary_warning` groups. It defines that future dashboard
+contracts must preserve `review_only`, `never_actionable`, and non-actionable
+disclaimers, must show all propagated warnings, and must not display ranked
+Top-N, buy-candidate, position-candidate, or action-oriented fields. It does
+not create `outputs/dashboard`, dashboard files, new recommendation rows, new
+position rows, position sizing, weights, orders, trading paths, production
+behavior, backtests, factor-mining outputs, local lake files, broker outputs,
+or DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -370,14 +401,15 @@ Canonical status contract:
 Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
-GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0, and
-GOAL-09 are `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
+GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
+GOAL-09, and GOAL-09.1 are `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
 GOAL-STORAGE-01 is `implemented_infrastructure_only`. GOAL-07B is
 diagnostic-only and non-actionable. GOAL-08A is names-only design evidence with
 zero recommendation rows. STORAGE-01 hardens storage only and does not unlock
 GOAL-08B by itself. GOAL-08B is non-actionable diagnostic-only evidence.
 GOAL-09.0 is unlock-only evidence. GOAL-09 is non-actionable review-only
-position-band diagnostics only. Actionable recommendation, actual position, dashboard, trading, production, V2
+position-band diagnostics only. GOAL-09.1 is warning-review/dashboard-readiness
+evidence only; Dashboard / Daily Report UI remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings
