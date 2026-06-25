@@ -508,7 +508,10 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
         else:
             by_id[GOAL07B_WORKFLOW_ID]["allowed_next_action"] = "await_explicit_goal07b_review_only_calculation_prototype" if goal07b_status == "future_review_only" else "remain_locked"
         by_id[GOAL07B_WORKFLOW_ID]["depends_on"] = "goal07b0_risk_overlay_review_only_unlock_gate" if goal07b_status in {"future_review_only", "implemented_review_only"} else "goal07a1_risk_overlay_design_review_unlock_readiness"
-        by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B may be implemented_review_only only by its own diagnostic-only prototype; future_review_only eligibility requires GOAL-07B.0 evidence."
+        if goal07b_status == "implemented_review_only":
+            by_id[GOAL07B_WORKFLOW_ID]["notes"] = "Review-only risk overlay diagnostics; non-actionable and not a recommendation, position, dashboard, trading, production, backtest, factor-mining, or DQN/RL output."
+        else:
+            by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B may be implemented_review_only only by its own diagnostic-only prototype; future_review_only eligibility requires GOAL-07B.0 evidence."
     write_csv(path, rows, list(rows[0].keys()))
 
 

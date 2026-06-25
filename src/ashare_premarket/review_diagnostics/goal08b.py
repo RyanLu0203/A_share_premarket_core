@@ -27,6 +27,11 @@ DOC_PATH = f"{DOC_DIR}/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md"
 REPORT_PATH = f"{AUDIT_DIR}/goal08b_recommendation_diagnostics_report.md"
 MANIFEST_PATH = f"{AUDIT_DIR}/goal08b_recommendation_diagnostics_manifest.json"
 AUDIT_PATH = f"{AUDIT_DIR}/goal08b_recommendation_diagnostics_audit.md"
+WORKFLOW_PRODUCES_ARTIFACTS = ";".join([POLICY_PATH, DIAGNOSTIC_PATH, DOC_PATH, REPORT_PATH, MANIFEST_PATH, AUDIT_PATH])
+WORKFLOW_PRIMARY_DOCS = f"{DOC_PATH};docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md;docs/10_PROGRAM_ROADMAP_AND_ARCHITECTURE.md"
+WORKFLOW_PRIMARY_SCRIPTS = "scripts/run_goal08b_recommendation_diagnostics_prototype.py;scripts/audit_goal08b_recommendation_diagnostics_prototype.py"
+WORKFLOW_PRIMARY_OUTPUTS = f"{DIAGNOSTIC_PATH};{REPORT_PATH};{MANIFEST_PATH};{AUDIT_PATH}"
+WORKFLOW_NOTES = "Review-only non-actionable recommendation diagnostics; not buy/sell/hold, target price, position, dashboard, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL output."
 
 GOAL07B_OVERLAY_PATH = "outputs/risk_overlay/goal07b_review_only_risk_overlay.csv"
 GOAL07B_REPORT_PATH = "outputs/audits/goal07b_risk_overlay_calculation_report.md"
@@ -869,12 +874,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         "implemented_in_repo": "true" if result["status"] != BLOCKED else "false",
         "allowed_next_action": GOAL08B_ALLOWED_NEXT if result["status"] != BLOCKED else "repair_goal08b_diagnostic_blockers",
         "depends_on": GOAL08B0_WORKFLOW_ID,
-        "produces_artifacts": ";".join([POLICY_PATH, DIAGNOSTIC_PATH, DOC_PATH, REPORT_PATH, MANIFEST_PATH, AUDIT_PATH]),
-        "primary_docs": f"{DOC_PATH};docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md;docs/10_PROGRAM_ROADMAP_AND_ARCHITECTURE.md",
-        "primary_scripts": "scripts/run_goal08b_recommendation_diagnostics_prototype.py;scripts/audit_goal08b_recommendation_diagnostics_prototype.py",
-        "primary_outputs": f"{DIAGNOSTIC_PATH};{REPORT_PATH};{MANIFEST_PATH};{AUDIT_PATH}",
+        "produces_artifacts": WORKFLOW_PRODUCES_ARTIFACTS,
+        "primary_docs": WORKFLOW_PRIMARY_DOCS,
+        "primary_scripts": WORKFLOW_PRIMARY_SCRIPTS,
+        "primary_outputs": WORKFLOW_PRIMARY_OUTPUTS,
         "promotion_rule": "implemented_review_only_after_goal08b_diagnostics_pass_with_warnings",
-        "notes": "Review-only non-actionable recommendation diagnostics; not buy/sell/hold, target price, position, dashboard, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL output.",
+        "notes": WORKFLOW_NOTES,
     }
     if GOAL08B_WORKFLOW_ID in by_id:
         by_id[GOAL08B_WORKFLOW_ID].update(row)

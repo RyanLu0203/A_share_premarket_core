@@ -14,6 +14,11 @@ from ashare_premarket.review_diagnostics.goal08b import (
     DIAGNOSTIC_PATH as GOAL08B_DIAGNOSTIC_PATH,
     GOAL08B_ALLOWED_NEXT as GOAL08B_IMPLEMENTED_ALLOWED_NEXT,
     GOAL08B_IMPLEMENTED_STATUS,
+    WORKFLOW_NOTES as GOAL08B_WORKFLOW_NOTES,
+    WORKFLOW_PRIMARY_DOCS as GOAL08B_WORKFLOW_PRIMARY_DOCS,
+    WORKFLOW_PRIMARY_OUTPUTS as GOAL08B_WORKFLOW_PRIMARY_OUTPUTS,
+    WORKFLOW_PRIMARY_SCRIPTS as GOAL08B_WORKFLOW_PRIMARY_SCRIPTS,
+    WORKFLOW_PRODUCES_ARTIFACTS as GOAL08B_WORKFLOW_PRODUCES_ARTIFACTS,
     goal08b_valid_diagnostics_evidence,
 )
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
@@ -890,12 +895,12 @@ def _upsert_locked_goal08_rows(root: Path, rows: list[dict[str, str]], by_id: di
                 "implemented_in_repo": "true",
                 "allowed_next_action": GOAL08B_IMPLEMENTED_ALLOWED_NEXT,
                 "depends_on": GOAL08B0_WORKFLOW_ID,
-                "produces_artifacts": GOAL08B_DIAGNOSTIC_PATH,
-                "primary_docs": "docs/recommendation/GOAL08B_REVIEW_ONLY_RECOMMENDATION_DIAGNOSTICS.md;docs/architecture/FULL_PROGRAM_ROADMAP_AFTER_CLEAN_BOOTSTRAP.md;docs/10_PROGRAM_ROADMAP_AND_ARCHITECTURE.md",
-                "primary_scripts": "scripts/run_goal08b_recommendation_diagnostics_prototype.py;scripts/audit_goal08b_recommendation_diagnostics_prototype.py",
-                "primary_outputs": GOAL08B_DIAGNOSTIC_PATH,
+                "produces_artifacts": GOAL08B_WORKFLOW_PRODUCES_ARTIFACTS,
+                "primary_docs": GOAL08B_WORKFLOW_PRIMARY_DOCS,
+                "primary_scripts": GOAL08B_WORKFLOW_PRIMARY_SCRIPTS,
+                "primary_outputs": GOAL08B_WORKFLOW_PRIMARY_OUTPUTS,
                 "promotion_rule": "implemented_review_only_after_goal08b_diagnostics_pass_with_warnings",
-                "notes": "Review-only non-actionable recommendation diagnostics; downstream execution remains locked.",
+                "notes": GOAL08B_WORKFLOW_NOTES,
             }
         )
     elif goal08b0_valid_unlock_evidence(root):
