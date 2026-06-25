@@ -59,6 +59,7 @@ Implemented review-only:
 - GOAL-08B.0 Recommendation Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
 - GOAL-08B Recommendation Diagnostics Prototype (`PASS_WITH_WARNINGS`)
 - GOAL-09.0 Position-Band Review-Only Unlock Gate (`PASS_WITH_WARNINGS`)
+- GOAL-09 Position-Band Diagnostics Prototype (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -349,9 +350,9 @@ creates:
 - `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
 
 The gate uses only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
-GOAL-08B PASS/PASS_WITH_WARNINGS evidence. It marks GOAL-09 position-band
-diagnostics `future_review_only` eligible for a later explicit non-actionable
-prototype request. It does not implement GOAL-09, create position-band
+GOAL-08B PASS/PASS_WITH_WARNINGS evidence. It may mark GOAL-09 position-band
+diagnostics `future_review_only` eligible or preserve a later separately
+implemented GOAL-09 review-only diagnostic state. It does not implement GOAL-09, create position-band
 diagnostic rows, create position rows, produce position sizing, portfolio
 weights, buy/sell/hold outputs, target prices, expected returns for action,
 dashboards, trading paths, production behavior, backtests, factor-mining
@@ -359,9 +360,24 @@ outputs, broker outputs, local lake files, or DQN/RL outputs.
 
 ## GOAL-09 Status
 
-GOAL-09 position-band diagnostics are `future_review_only` eligible but not
-implemented. The workflow row remains `implemented_in_repo=false`, has no
-primary outputs, and requires a separate explicit future prototype request.
+GOAL-09 is `implemented_review_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
+
+- `configs/position/goal09_review_only_position_band_diagnostics_policy.yaml`
+- `docs/position/GOAL09_REVIEW_ONLY_POSITION_BAND_DIAGNOSTICS.md`
+- `outputs/position/goal09_review_only_position_band_diagnostics.csv`
+- `outputs/audits/goal09_position_band_diagnostics_report.md`
+- `outputs/audits/goal09_position_band_diagnostics_manifest.json`
+- `outputs/audits/goal09_position_band_diagnostics_audit.md`
+
+The prototype consumes GOAL-08B non-actionable recommendation diagnostics and
+GOAL-07B risk overlay diagnostics at `trade_date + symbol` grain. Its rows are
+position-band diagnostics only, with
+`position_actionability_status=never_actionable`. It does not create actual
+position rows, position sizing, portfolio weights, target weights, order
+quantities, buy/sell/hold outputs, target prices, expected returns for action,
+dashboards, trading paths, production behavior, backtests, factor-mining
+outputs, broker outputs, local lake files, or DQN/RL outputs.
 
 ## GOAL-06D Status
 

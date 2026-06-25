@@ -29,8 +29,9 @@ def test_goal06d_keeps_goal07a_design_only_and_downstream_locked() -> None:
     goal07b = workflow["goal07b_risk_overlay_calculation"]
     assert goal07b["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
     assert goal07b["implemented_in_repo"] == ("true" if goal07b["status"] == "implemented_review_only" else "false")
-    assert workflow["position_band_recommendation"]["status"] in {"locked_future", "future_review_only"}
-    assert workflow["position_band_recommendation"]["implemented_in_repo"] == "false"
+    goal09 = workflow["position_band_recommendation"]
+    assert goal09["status"] in {"locked_future", "future_review_only", "implemented_review_only"}
+    assert goal09["implemented_in_repo"] == ("true" if goal09["status"] == "implemented_review_only" else "false")
     assert {workflow[workflow_id]["status"] for workflow_id in LOCKED_IDS} == {"locked_future"}
 
 

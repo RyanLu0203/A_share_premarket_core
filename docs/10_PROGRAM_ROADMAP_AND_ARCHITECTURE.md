@@ -36,7 +36,7 @@ flowchart TD
     R7 -. "explicit review-only unlock gate" .-> R8["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R8 -. "review-only diagnostics" .-> R6["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R6 -. "explicit review-only unlock gate" .-> R9A["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    R9A -. "future review-only diagnostics eligibility" .-> R9["GOAL-09 Position-Band Diagnostics<br/>(future_review_only; not implemented)"]
+    R9A -. "review-only diagnostics" .-> R9["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
 ```
 
@@ -69,8 +69,9 @@ hardening for local research lake governance and does not unlock GOAL-08B by
 itself. GOAL-08B.0 is implemented only as a review-only unlock gate. GOAL-08B
 is implemented only as non-actionable review-only diagnostics with 100
 `trade_date + symbol` rows and no actionable recommendation or execution
-outputs. GOAL-09.0 is implemented only as a review-only unlock gate; GOAL-09
-position-band diagnostics are future_review_only eligible but not implemented.
+outputs. GOAL-09.0 is implemented only as a review-only unlock gate. GOAL-09
+is implemented only as non-actionable review-only position-band diagnostics and
+does not create actual positions, sizing, weights, orders, or execution output.
 Downstream execution stages remain locked future work. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

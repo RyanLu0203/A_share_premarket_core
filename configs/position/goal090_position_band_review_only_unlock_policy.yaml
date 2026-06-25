@@ -55,8 +55,9 @@
   },
   "goal": "GOAL-09.0-POSITION-BAND-REVIEW-ONLY-UNLOCK-GATE",
   "goal09_implemented_by_this_gate": false,
+  "goal09_implemented_in_repo": true,
   "mode": "review_only_unlock_gate",
   "status": "PASS_WITH_WARNINGS",
-  "target_status_after_pass": "future_review_only",
+  "target_status_after_pass": "implemented_review_only",
   "target_workflow_id": "position_band_recommendation"
 }

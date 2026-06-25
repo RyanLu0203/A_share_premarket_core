@@ -3,8 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from ashare_premarket.contract_design.goal090 import GOAL09_ELIGIBLE_STATUS, GOAL09_WORKFLOW_ID, goal090_valid_unlock_evidence
+from ashare_premarket.contract_design.goal090 import GOAL09_WORKFLOW_ID, goal09_eligible_workflow_patch, goal090_valid_unlock_evidence
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import preserve_later_review_only_workflow_states
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.risk_design.goal07a import (
     DOWNSTREAM_LOCKED_IDS,
@@ -158,6 +159,7 @@ def load_goal07a1_design_bundle(root: Path) -> dict[str, object]:
         "goal06d1_readiness": _read(root / f"{AUDIT_DIR}/goal06d1_readiness_report.md"),
         "forbidden_output_dirs_present": [path for path in FORBIDDEN_OUTPUT_DIRS if (root / path).exists()],
         "goal090_valid_evidence": goal090_valid_unlock_evidence(root),
+        "goal09_expected_workflow_patch": goal09_eligible_workflow_patch(root),
     }
 
 
@@ -172,6 +174,7 @@ def evaluate_goal07a1_design_review(bundle: dict[str, object]) -> dict[str, obje
         bundle.get("forbidden_output_dirs_present", []),
         str(bundle.get("goal07b0_unlock_report", "")),
         bool(bundle.get("goal090_valid_evidence")),
+        bundle.get("goal09_expected_workflow_patch", {}),
     )
     goal07b_status = _goal07b_status_from_rows(bundle.get("workflow_rows", []), str(bundle.get("goal07b0_unlock_report", "")))
     reviews = {
@@ -350,6 +353,7 @@ def review_goal07a1_boundaries(
     forbidden_output_dirs_present: list[str],
     goal07b0_unlock_report: str = "",
     goal090_valid: bool = False,
+    goal09_expected: object = None,
 ) -> dict[str, object]:
     failures: list[str] = []
     warnings: list[str] = []
@@ -366,8 +370,9 @@ def review_goal07a1_boundaries(
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = rows.get(workflow_id, {})
         if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
-            if row.get("status") != GOAL09_ELIGIBLE_STATUS or row.get("implemented_in_repo") != "false":
-                failures.append(f"{workflow_id}_not_future_review_only_after_goal090")
+            expected = goal09_expected if isinstance(goal09_expected, dict) else {}
+            if row.get("status") != expected.get("status") or row.get("implemented_in_repo") != expected.get("implemented_in_repo"):
+                failures.append(f"{workflow_id}_not_preserved_after_goal090")
             continue
         if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
@@ -529,6 +534,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
             by_id[GOAL07B_WORKFLOW_ID]["notes"] = "Review-only risk overlay diagnostics; non-actionable and not a recommendation, position, dashboard, trading, production, backtest, factor-mining, or DQN/RL output."
         else:
             by_id[GOAL07B_WORKFLOW_ID]["notes"] = "GOAL-07B may be implemented_review_only only by its own diagnostic-only prototype; future_review_only eligibility requires GOAL-07B.0 evidence."
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, list(rows[0].keys()))
 
 

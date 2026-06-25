@@ -14,7 +14,7 @@
   "goal_storage01_local_research_lake_hardening_gate": "implemented_infrastructure_only",
   "paper_trading": false,
   "portfolio_backtest": false,
-  "position_band_recommendation": "future_review_only",
+  "position_band_recommendation": "implemented_review_only",
   "production_db_writes": false,
   "production_model_promotion": false,
   "signal_backtest": false

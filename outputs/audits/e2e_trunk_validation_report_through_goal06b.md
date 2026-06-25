@@ -39,6 +39,7 @@ Status: `PASS_WITH_WARNINGS`
 - `goal08b0_recommendation_review_only_unlock`: PASS
 - `goal08b_recommendation_diagnostics_review_only`: PASS
 - `goal090_position_band_review_only_unlock`: PASS
+- `goal09_position_band_diagnostics_review_only`: PASS
 - `goal06d_blocked_or_review_only_after_engineering_pilot`: PASS
 - `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS

@@ -1,5 +1,40 @@
 # 09 Step Iteration Log
 
+## 2026-06-25 - GOAL-09 Position-Band Diagnostics Prototype
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-09 review-only non-actionable position-band diagnostics
+  prototype.
+- Consumed only prior GOAL-08B recommendation diagnostics and GOAL-07B risk
+  overlay diagnostics, with GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
+  GOAL-09.0 governance evidence.
+- Generated deterministic diagnostic rows at `trade_date + symbol` grain.
+- Updated workflow status so GOAL-09 is `implemented_review_only` while all
+  downstream execution stages remain locked or deleted from active mainline.
+
+Evidence:
+
+- `configs/position/goal09_review_only_position_band_diagnostics_policy.yaml`
+- `docs/position/GOAL09_REVIEW_ONLY_POSITION_BAND_DIAGNOSTICS.md`
+- `outputs/position/goal09_review_only_position_band_diagnostics.csv`
+- `outputs/audits/goal09_position_band_diagnostics_report.md`
+- `outputs/audits/goal09_position_band_diagnostics_manifest.json`
+- `outputs/audits/goal09_position_band_diagnostics_audit.md`
+
+Safety:
+
+- Every GOAL-09 row is non-actionable and has
+  `position_actionability_status=never_actionable`.
+- No actual position rows, position sizing, portfolio weights, target weights,
+  order quantities, buy/sell/hold outputs, target prices, expected returns for
+  action, dashboards, trading, production, backtest, factor-mining, broker,
+  local lake, or DQN/RL output was generated.
+- Remaining warnings are inherited review-only calibration, weak-rank, target
+  horizon, and provider-concentration warnings.
+
 ## 2026-06-25 - GOAL-09.0 Position-Band Review-Only Unlock Gate
 
 Status: `PASS_WITH_WARNINGS`.
@@ -9,8 +44,9 @@ What changed:
 - Added the GOAL-09.0 review-only unlock gate.
 - Used only prior GOAL-07B, GOAL-08A, GOAL-STORAGE-01, GOAL-08B.0, and
   GOAL-08B PASS/PASS_WITH_WARNINGS evidence.
-- Updated workflow status so GOAL-09 position-band diagnostics are
-  `future_review_only` eligible while GOAL-09 remains not implemented.
+- Updated workflow status at the GOAL-09.0 gate stage so GOAL-09 position-band
+  diagnostics became `future_review_only` eligible while GOAL-09.0 itself did
+  not implement GOAL-09.
 - Kept dashboard, paper/live trading, production, backtest, factor-mining,
   broker, local-lake, and DQN/RL stages locked.
 
@@ -28,8 +64,8 @@ Safety:
   weights, buy/sell/hold outputs, target prices, expected returns for action,
   dashboards, trading, production, backtest, factor-mining, broker, local lake,
   or DQN/RL output was generated.
-- GOAL-09 remains eligible only for a later explicit non-actionable
-  review-only prototype request.
+- GOAL-09.0 was eligible-only; the later GOAL-09 prototype requires separate
+  non-actionable review-only diagnostic evidence.
 
 ## 2026-06-25 - GOAL-08B Recommendation Diagnostics Prototype
 

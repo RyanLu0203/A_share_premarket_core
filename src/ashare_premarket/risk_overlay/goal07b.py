@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from ashare_premarket.contract_design.goal090 import (
-    GOAL09_ELIGIBLE_STATUS,
     GOAL09_WORKFLOW_ID,
     goal09_eligible_workflow_patch,
     goal090_valid_unlock_evidence,
@@ -15,6 +14,7 @@ from ashare_premarket.contract_design.goal08b0 import (
     goal08b0_valid_unlock_evidence,
 )
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import preserve_later_review_only_capabilities, preserve_later_review_only_workflow_states
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.review_diagnostics.goal08b import (
     DIAGNOSTIC_PATH as GOAL08B_DIAGNOSTIC_PATH,
@@ -368,11 +368,12 @@ def audit_goal07b_risk_overlay_calculation_prototype(root: Path) -> bool:
     if goal07b.get("implemented_in_repo") != "true":
         failures.append("goal07b_workflow_not_marked_implemented")
     goal090_valid = goal090_valid_unlock_evidence(root)
+    goal09_expected = goal09_eligible_workflow_patch(root) if goal090_valid else {}
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         row = workflow.get(workflow_id, {})
         if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid:
-            if row.get("status") != GOAL09_ELIGIBLE_STATUS or row.get("implemented_in_repo") != "false":
-                failures.append(f"{workflow_id}_not_future_review_only_after_goal090")
+            if row.get("status") != goal09_expected.get("status") or row.get("implemented_in_repo") != goal09_expected.get("implemented_in_repo"):
+                failures.append(f"{workflow_id}_not_preserved_after_goal090")
             continue
         if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
@@ -855,7 +856,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     for workflow_id in DOWNSTREAM_LOCKED_IDS:
         if workflow_id in by_id:
             if workflow_id == GOAL09_WORKFLOW_ID and goal090_valid_unlock_evidence(root):
-                by_id[workflow_id].update(goal09_eligible_workflow_patch())
+                by_id[workflow_id].update(goal09_eligible_workflow_patch(root))
                 continue
             by_id[workflow_id]["status"] = "locked_future"
             by_id[workflow_id]["implemented_in_repo"] = "false"
@@ -866,6 +867,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     if "v2_factor_research_upgrade" in by_id:
         by_id["v2_factor_research_upgrade"]["status"] = "planned_locked"
         by_id["v2_factor_research_upgrade"]["implemented_in_repo"] = "false"
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -955,7 +957,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_IMPLEMENTED_STATUS
     else:
         payload["goal08b_recommendation_review_only_prototype"] = GOAL08B_ELIGIBLE_STATUS if goal08b0_valid_unlock_evidence(root) else False
-    payload[GOAL09_WORKFLOW_ID] = GOAL09_ELIGIBLE_STATUS if goal090_valid_unlock_evidence(root) else False
+    payload[GOAL09_WORKFLOW_ID] = goal09_eligible_workflow_patch(root)["status"] if goal090_valid_unlock_evidence(root) else False
     for key in [
         "signal_backtest",
         "portfolio_backtest",
@@ -967,6 +969,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         "dqn_rl",
     ]:
         payload[key] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

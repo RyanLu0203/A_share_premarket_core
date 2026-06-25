@@ -46,7 +46,7 @@ flowchart TD
     S01 -. "explicit review-only unlock gate" .-> S02["GOAL-08B.0 Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     S02 -. "review-only diagnostics" .-> M["GOAL-08B Recommendation Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     M -. "explicit review-only unlock gate" .-> N0["GOAL-09.0 Position-Band Unlock Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    N0 -. "future review-only diagnostics eligibility" .-> N["GOAL-09 Position-Band Diagnostics<br/>(future_review_only; not implemented)"]
+    N0 -. "review-only diagnostics" .-> N["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/`,
@@ -65,8 +65,8 @@ infrastructure hardening for local storage governance and does not unlock
 GOAL-08B by itself. GOAL-08B.0 is implemented only as a review-only unlock gate
 and GOAL-08B is implemented only as non-actionable review-only diagnostics.
 GOAL-09.0 is implemented only as a review-only unlock gate. GOAL-09 is
-future_review_only eligible but not implemented, and downstream
-trading/production workflow remains locked.
+implemented only as non-actionable review-only position-band diagnostics, and
+downstream trading/production workflow remains locked.
 
 ## Module Dependency Structure
 

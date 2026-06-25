@@ -23,8 +23,10 @@ eligibility and still creates no local lake files. GOAL-08B writes only a small
 committed non-actionable diagnostic CSV under `outputs/recommendation/`; it
 does not write to `data/lake`, local bundles, raw payload roots, or production
 storage. GOAL-09.0 writes only unlock-governance evidence under
-`outputs/audits/` and `configs/position/`; it does not create position-band
-diagnostics, position rows, local lake files, or production storage writes.
+`outputs/audits/` and `configs/position/`. GOAL-09 writes only a small
+committed non-actionable position-band diagnostic CSV under `outputs/position/`;
+it does not write actual position rows, local lake files, raw payload roots, or
+production storage.
 
 ## Active Contracts
 
@@ -42,6 +44,8 @@ diagnostics, position rows, local lake files, or production storage writes.
 - GOAL-STORAGE-01 local research lake hardening contract and hygiene audit.
 - GOAL-09.0 position-band review-only unlock audit evidence with no local data
   writes.
+- GOAL-09 review-only position-band diagnostic evidence under
+  `outputs/position/` only.
 
 ## Source Evidence Warnings
 
@@ -70,5 +74,6 @@ diagnostics, position rows, local lake files, or production storage writes.
 - Do not treat STORAGE-01 as permission to create recommendation diagnostics,
   position diagnostics, backtests, dashboards, local lake files, or production
   DB behavior.
-- Do not treat GOAL-09.0 as permission to create GOAL-09 position-band rows;
-  it grants only future-review-only eligibility for a later explicit prototype.
+- Do not treat GOAL-09 diagnostic rows as actual position rows, position
+  sizing, portfolio weights, target weights, order quantities, or trading
+  instructions.

@@ -1,16 +1,16 @@
-# GOAL-09.0 Position-Band Review-Only Unlock Gate
+# GOAL-09 Position-Band Diagnostics Prototype
 
-GOAL-09.0 Position-Band Review-Only Unlock Gate: PASS_WITH_WARNINGS
-GOAL-09.0 mode: `review_only_unlock_gate`
-GOAL-09 target status after pass: `implemented_review_only`
-GOAL-09 implemented by this gate: `false`
-GOAL-09 implemented in repo: `true`
-GOAL-08B diagnostic rows reviewed: `100`
-Evidence basis: prior PASS/PASS_WITH_WARNINGS review-only, design-only, and infrastructure-only artifacts only.
-No position-band diagnostic rows, position rows, position sizing, portfolio weights, dashboards, paper/live trading paths, broker outputs, production behavior, backtests, factor-mining outputs, local lake files, or DQN/RL outputs were created.
+GOAL-09 Position-Band Diagnostics Prototype: PASS_WITH_WARNINGS
+GOAL-09 mode: `review_only`
+Position-band diagnostic rows generated: `100`
+Output grain: `trade_date + symbol`
+Position actionability status: `never_actionable`
+Outputs are non-actionable diagnostics only and are not position recommendations.
+No actual position sizes, portfolio weights, target weights, order quantities, buy/sell/hold actions, target prices, expected returns for action, dashboards, paper/live trading paths, broker outputs, production behavior, backtests, factor-mining outputs, local lake files, or DQN/RL outputs were created.
 Allowed next action: `fix_goal09_position_band_warnings_before_any_downstream_request`
 
 ## Evidence Inputs
+- `outputs/risk_overlay/goal07b_review_only_risk_overlay.csv`
 - `outputs/audits/goal07b_risk_overlay_calculation_report.md`
 - `outputs/audits/goal07b_risk_overlay_calculation_audit.md`
 - `outputs/audits/goal07b_risk_overlay_calculation_manifest.json`
@@ -27,8 +27,14 @@ Allowed next action: `fix_goal09_position_band_warnings_before_any_downstream_re
 - `outputs/audits/goal08b_recommendation_diagnostics_report.md`
 - `outputs/audits/goal08b_recommendation_diagnostics_audit.md`
 - `outputs/audits/goal08b_recommendation_diagnostics_manifest.json`
+- `outputs/audits/goal090_position_band_review_only_unlock_report.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_audit.md`
+- `outputs/audits/goal090_position_band_review_only_unlock_manifest.json`
 
-## Warning Codes To Propagate
+## Position-Band Diagnostic Labels Used
+- `blocked_high_risk`
+
+## Remaining Warnings
 - `calibration_not_reliable_for_thresholding`
 - `feature_sign_instability_bounded`
 - `provider_source_concentration_disclosed`

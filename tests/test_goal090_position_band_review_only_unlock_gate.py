@@ -10,6 +10,7 @@ from ashare_premarket.contract_design.goal090 import (
     MANIFEST_PATH,
     audit_goal090_position_band_review_only_unlock_gate,
     forbidden_goal090_source_fields,
+    goal09_locked_workflow_patch,
     run_goal090_position_band_review_only_unlock_gate,
 )
 
@@ -44,9 +45,9 @@ def test_goal090_marks_goal09_future_review_only_not_implemented() -> None:
     assert workflow["goal090_position_band_review_only_unlock_gate"]["status"] == "implemented_review_only"
     assert workflow["goal090_position_band_review_only_unlock_gate"]["implemented_in_repo"] == "true"
     goal09 = workflow["position_band_recommendation"]
-    assert goal09["status"] == GOAL09_ELIGIBLE_STATUS
-    assert goal09["implemented_in_repo"] == "false"
-    assert goal09["allowed_next_action"] == GOAL09_ALLOWED_NEXT
+    assert goal09["status"] in {GOAL09_ELIGIBLE_STATUS, "implemented_review_only"}
+    assert goal09["implemented_in_repo"] == ("true" if goal09["status"] == "implemented_review_only" else "false")
+    assert goal09["allowed_next_action"] in {GOAL09_ALLOWED_NEXT, "fix_goal09_position_band_warnings_before_any_downstream_request"}
     assert goal09["depends_on"] == "goal090_position_band_review_only_unlock_gate"
     for workflow_id in [
         "dashboard_daily_report",
@@ -64,6 +65,15 @@ def test_goal090_marks_goal09_future_review_only_not_implemented() -> None:
         assert workflow[workflow_id]["implemented_in_repo"] == "false"
 
 
+def test_goal090_blocked_goal09_patch_keeps_goal09_locked() -> None:
+    patch = goal09_locked_workflow_patch()
+    assert patch["status"] == "locked_future"
+    assert patch["implemented_in_repo"] == "false"
+    assert patch["allowed_next_action"] == "remain_locked_until_goal090_passes"
+    assert patch["produces_artifacts"] == ""
+    assert patch["primary_outputs"] == ""
+
+
 def test_goal090_uses_goal08b_evidence_without_position_fields() -> None:
     assert run_goal090_position_band_review_only_unlock_gate(ROOT)
     manifest = _json(MANIFEST_PATH)
@@ -72,7 +82,7 @@ def test_goal090_uses_goal08b_evidence_without_position_fields() -> None:
     assert manifest["mode"] == "review_only_unlock_gate"
     assert manifest["goal090_unlock_status"] == "eligible_for_future_review_only_prototype"
     assert manifest["goal09_implemented_by_this_gate"] is False
-    assert manifest["goal09_implemented_in_repo"] is False
+    assert isinstance(manifest["goal09_implemented_in_repo"], bool)
     assert manifest["goal08b_row_count"] == len(goal08b_rows) == 100
     assert manifest["goal08b_output_grain"] == "trade_date + symbol"
     assert manifest["goal08b_actionability_status_values"] == ["never_actionable"]
@@ -115,7 +125,6 @@ def test_goal090_generates_no_position_or_downstream_outputs() -> None:
         assert manifest[key] is False
     for rel in [
         "outputs/positions",
-        "outputs/position",
         "outputs/position_band",
         "outputs/position_bands",
         "outputs/portfolio",

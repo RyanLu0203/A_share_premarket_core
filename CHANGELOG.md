@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-25 - GOAL-09 Position-Band Diagnostics Prototype
+
+- Implemented GOAL-09 only as a review-only, non-actionable position-band
+  diagnostics prototype.
+- Generated deterministic diagnostic rows at `trade_date + symbol` grain under
+  `outputs/position/goal09_review_only_position_band_diagnostics.csv`.
+- Added the GOAL-09 module, runner, audit wrapper, policy, report, manifest,
+  docs, workflow-status governance, diagnostics integration, and focused tests.
+- Kept all rows `never_actionable` and generated no actual position rows,
+  position sizing, portfolio weights, target weights, order quantities,
+  buy/sell/hold outputs, target prices, dashboards, trading, production,
+  backtests, factor-mining, local lake files, broker outputs, or DQN/RL
+  outputs.
+- Kept dashboard, paper/live trading, production, backtest, factor-mining,
+  broker, local-lake, and DQN/RL stages locked.
+
 ## 2026-06-25 - GOAL-09.0 Position-Band Review-Only Unlock Gate
 
 - Added a strict GOAL-09.0 review-only unlock gate based only on prior
