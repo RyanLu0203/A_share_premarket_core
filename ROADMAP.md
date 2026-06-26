@@ -63,6 +63,9 @@
 - GOAL-10A backtest contract design gate (`PASS_WITH_WARNINGS`;
   implemented_design_only future review-only validation contract only, no
   backtest execution or performance rows).
+- GOAL-10B recommendation diagnostics backtest review-only prototype
+  (`PASS_WITH_WARNINGS`; implemented_review_only non-actionable grouped
+  forward-return diagnostics and IC/RankIC availability evidence only).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -88,6 +91,10 @@ GOAL-08B, GOAL-09, and GOAL-09.1 evidence. GOAL-10A now implements only a
 design-only future backtest contract gate from GOAL-08B and GOAL-09
 diagnostics; it defines input, date alignment, T+1/no-lookahead, metrics,
 grouping, benchmark, cost/slippage, and tradability rules but runs no backtest.
+GOAL-10B now implements only a deterministic review-only recommendation
+diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return
+labels. It writes grouped diagnostics and IC/RankIC availability evidence only;
+GOAL-10C and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -106,7 +113,6 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
-- GOAL-10B review-only backtest validation.
 - GOAL-10C cost/slippage sensitivity.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.

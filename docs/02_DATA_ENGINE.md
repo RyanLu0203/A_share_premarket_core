@@ -43,6 +43,12 @@ GOAL-V1-INTEGRITY-01 audit metadata as prior evidence. It does not fetch prices,
 expand the data panel, write local lake files, create backtest rows, create
 equity curves, create portfolio returns, create dashboard outputs, or write
 production storage.
+GOAL-10B writes only small review-only recommendation diagnostic backtest
+evidence under `outputs/backtest/`, `docs/backtest/`, and `outputs/audits/`.
+It reads GOAL-08B diagnostics and existing PIT-safe label samples only. It does
+not fetch data, expand the panel, write local lake files, create portfolio
+returns, create equity curves, create dashboard outputs, or write production
+storage.
 
 ## Active Contracts
 
@@ -68,6 +74,8 @@ production storage.
   `configs/validation/`, `docs/validation/`, and `outputs/audits/` only.
 - GOAL-10A future backtest contract evidence under `configs/backtest/`,
   `docs/backtest/`, and `outputs/audits/` only.
+- GOAL-10B recommendation diagnostic backtest evidence under
+  `outputs/backtest/`, `docs/backtest/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -109,3 +117,7 @@ production storage.
   backtest, generate performance rows, fetch price data, create equity curves,
   create portfolio returns, write local lake data, create dashboards, or write
   production storage.
+- Do not treat GOAL-10B review-only diagnostic evidence as permission to create
+  BUY/SELL/HOLD actions, target prices, position sizing, portfolio weights,
+  portfolio returns, equity curves, dashboards, local lake data, trading,
+  production, broker, factor-mining, or DQN/RL outputs.

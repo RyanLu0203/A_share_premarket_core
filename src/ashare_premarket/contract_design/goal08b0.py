@@ -68,6 +68,13 @@ GOAL08B0_READY = "eligible_for_future_review_only_prototype"
 GOAL08B0_BLOCKED = "blocked_until_prior_review_evidence_passes"
 GOAL08B0_ALLOWED_NEXT = "await_explicit_goal08b_review_only_recommendation_diagnostics_prototype"
 GOAL08B0_BLOCKED_NEXT = "repair_goal08b0_unlock_blockers"
+GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS = {
+    "outputs/backtest/goal10b_recommendation_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b_risk_severity_group_metrics.csv",
+    "outputs/backtest/goal10b_warning_group_metrics.csv",
+    "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
+}
 
 FORBIDDEN_OUTPUT_DIRS = [
     "outputs/recommendations",
@@ -817,6 +824,8 @@ def _forbidden_recommendation_row_outputs(root: Path) -> list[str]:
         if lower.startswith("outputs/audits/"):
             continue
         if rel == GOAL08B_DIAGNOSTIC_PATH:
+            continue
+        if rel in GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS:
             continue
         if lower.startswith("outputs/diagnostics/") and not any(token in lower for token in ["goal08b", "recommendation"]):
             continue

@@ -1,0 +1,2 @@
+diagnostic_score_field,valid_row_count,unique_score_count,IC_1d,IC_5d,IC_20d,Rank_IC_1d,Rank_IC_5d,Rank_IC_20d,status,warning_code
+recommendation_eligibility_order,99,1,,,,,,,not_computed,insufficient_ranking_variation

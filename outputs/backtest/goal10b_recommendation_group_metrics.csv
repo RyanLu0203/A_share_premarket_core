@@ -1,0 +1,2 @@
+recommendation_eligibility,actionability_status,row_count,unique_symbols,unique_trade_dates,mean_forward_return_1d,median_forward_return_1d,mean_forward_return_5d,median_forward_return_5d,mean_forward_return_20d,median_forward_return_20d,hit_rate_1d,hit_rate_5d,hit_rate_20d,benchmark_excess_return_1d,benchmark_excess_return_5d,benchmark_excess_return_20d
+blocked_high_risk,never_actionable,99,1,99,0.0021984444,0,0.0125824545,0.004541,,,0.4949494949,0.5252525253,,0.0008871818,0.004207697,

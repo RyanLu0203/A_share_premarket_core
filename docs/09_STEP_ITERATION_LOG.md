@@ -1,5 +1,44 @@
 # 09 Step Iteration Log
 
+## 2026-06-26 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-10B review-only recommendation diagnostics backtest prototype.
+- Joined GOAL-08B non-actionable recommendation diagnostics to existing
+  PIT-safe forward-return labels using GOAL-10A T+1 alignment rules.
+- Wrote grouped diagnostic metrics by recommendation eligibility/actionability,
+  risk severity, and warning category.
+- Wrote IC/RankIC availability evidence and explicitly marked it
+  `not_computed` because the current GOAL-08B diagnostic sample has one
+  recommendation bucket and one risk-severity bucket.
+
+Evidence:
+
+- `outputs/backtest/goal10b_recommendation_backtest_input_snapshot.csv`
+- `outputs/backtest/goal10b_recommendation_group_metrics.csv`
+- `outputs/backtest/goal10b_risk_severity_group_metrics.csv`
+- `outputs/backtest/goal10b_warning_group_metrics.csv`
+- `outputs/backtest/goal10b_ic_rank_ic_summary.csv`
+- `docs/backtest/GOAL10B_RECOMMENDATION_BACKTEST_REVIEW_ONLY.md`
+- `outputs/audits/goal10b_recommendation_backtest_report.md`
+- `outputs/audits/goal10b_recommendation_backtest_manifest.json`
+- `outputs/audits/goal10b_recommendation_backtest_audit.md`
+
+Safety:
+
+- Outputs are review-only and non-actionable.
+- No BUY/SELL/HOLD actions, target prices, position sizing, order quantities,
+  target weights, portfolio weights, portfolio returns, equity curves,
+  portfolio construction, dashboard files, HTML, Streamlit, frontend code,
+  trading, production, broker, factor-mining, local-lake, or DQN/RL output was
+  generated.
+- GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion,
+  portfolio backtest, paper/live trading, broker, production, factor-mining,
+  local-lake, and DQN/RL remain locked.
+
 ## 2026-06-26 - GOAL-10A Backtest Contract Design Gate
 
 Status: `PASS_WITH_WARNINGS`.
@@ -12,9 +51,10 @@ What changed:
 - Defined signal_date, trade_date, execution_date, target_horizon, benchmark
   alignment, T+1, no-lookahead, future metric, grouping, cost/slippage,
   benchmark leakage, and suspended/limit/missing-price policies.
-- Updated workflow status so GOAL-10A is `implemented_design_only` and
-  GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live
-  trading, broker, production, factor-mining, and DQN/RL remain locked.
+- Updated workflow status so GOAL-10A is `implemented_design_only`; GOAL-10B
+  required its own later review-only diagnostic gate, and GOAL-10C, GOAL-10D,
+  Dashboard / Daily Report UI, paper/live trading, broker, production,
+  factor-mining, and DQN/RL remained locked.
 
 Evidence:
 
@@ -34,8 +74,8 @@ Safety:
   outputs, dashboard files, HTML, Streamlit, frontend code, buy/sell/hold
   actions, target prices, position sizing, order quantities, local-lake data,
   trading, production, broker, factor-mining, or DQN/RL output was generated.
-- GOAL-10A is contract-only; GOAL-10B remains the earliest possible future
-  explicit review-only validation request and is still `locked_future`.
+- GOAL-10A is contract-only; GOAL-10B can be implemented only by its own
+  review-only diagnostic gate.
 
 ## 2026-06-25 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
 

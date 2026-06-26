@@ -1,0 +1,8 @@
+warning_flag,row_count,mean_forward_return_1d,mean_forward_return_5d,mean_forward_return_20d,hit_rate,excess_return
+calibration_not_reliable_for_thresholding,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+feature_sign_instability_bounded,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+provider_source_concentration_disclosed,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+selected_score_variant_weak_rank_signal,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+single_provider_mode_akshare_direct,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+target_horizon_calibration_warning,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818
+weak_target_horizon_rank_signal,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818

@@ -1,0 +1,2 @@
+risk_severity,row_count,mean_forward_return_1d,mean_forward_return_5d,mean_forward_return_20d,hit_rate,excess_return
+HIGH,99,0.0021984444,0.0125824545,,0.4949494949,0.0008871818

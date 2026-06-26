@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import preserve_later_review_only_capabilities, preserve_later_review_only_workflow_states
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -739,6 +740,7 @@ def _update_workflow_status(root: Path, review: dict[str, object]) -> None:
     if "v2_factor_research_upgrade" in by_id:
         by_id["v2_factor_research_upgrade"]["status"] = "planned_locked"
         by_id["v2_factor_research_upgrade"]["implemented_in_repo"] = "false"
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -760,6 +762,7 @@ def _update_locked_capabilities(root: Path, review: dict[str, object]) -> None:
         "dqn_rl",
     ]:
         payload[key] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

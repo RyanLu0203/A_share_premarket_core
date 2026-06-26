@@ -106,7 +106,74 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
         if "position_band_recommendation" in by_id:
             from ashare_premarket.contract_design.goal090 import goal09_eligible_workflow_patch
 
-            by_id["position_band_recommendation"].update(goal09_eligible_workflow_patch(root))
+            if by_id["position_band_recommendation"].get("status") != "implemented_review_only":
+                by_id["position_band_recommendation"].update(goal09_eligible_workflow_patch(root))
+    if _goal09_valid(root) and "position_band_recommendation" in by_id:
+        from ashare_premarket.review_diagnostics.goal09 import goal09_implemented_workflow_patch
+
+        by_id["position_band_recommendation"].update(goal09_implemented_workflow_patch())
+    if _goal091_valid(root) and "goal091_position_band_warning_dashboard_readiness_gate" in by_id:
+        from ashare_premarket.contract_design.goal091 import goal091_implemented_workflow_patch
+
+        by_id["goal091_position_band_warning_dashboard_readiness_gate"].update(goal091_implemented_workflow_patch())
+    if _goal_v1_integrity01_valid(root) and "goal_v1_integrity01_artifact_lineage_structure_gate" in by_id:
+        from ashare_premarket.validation.goal_v1_integrity01 import goal_v1_integrity01_implemented_workflow_patch
+
+        by_id["goal_v1_integrity01_artifact_lineage_structure_gate"].update(goal_v1_integrity01_implemented_workflow_patch())
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"].update(
+                {
+                    "status": "locked_future",
+                    "current_repo_role": "locked_downstream_boundary",
+                    "implemented_in_repo": "false",
+                    "allowed_next_action": "request_explicit_goal_dashboard00_contract_design_gate",
+                    "depends_on": "goal_v1_integrity01_artifact_lineage_structure_gate",
+                    "promotion_rule": "locked_until_explicit_goal_dashboard00_contract_design_gate",
+                    "notes": "Locked dashboard workflow; GOAL-V1-INTEGRITY-01 verifies lineage before any future explicit design-only contract/layout gate request and creates no dashboard outputs.",
+                }
+            )
+    goal10a_valid = _goal10a_valid(root)
+    if goal10a_valid and "goal10a_backtest_contract_design_gate" in by_id:
+        from ashare_premarket.contract_design.goal10a import goal10a_implemented_workflow_patch
+
+        by_id["goal10a_backtest_contract_design_gate"].update(goal10a_implemented_workflow_patch())
+    goal10b_valid = _goal10b_valid(root)
+    if goal10b_valid:
+        from ashare_premarket.backtest.goal10b import (
+            goal10b_implemented_workflow_patch,
+            locked_goal10c_patch,
+            locked_goal10d_patch,
+        )
+
+        if "goal10b_backtest_review_only_validation_gate" in by_id:
+            by_id["goal10b_backtest_review_only_validation_gate"].update(goal10b_implemented_workflow_patch())
+        if "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id:
+            by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(locked_goal10c_patch())
+        if "goal10d_backtest_failure_attribution_gate" in by_id:
+            by_id["goal10d_backtest_failure_attribution_gate"].update(locked_goal10d_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal10b"
+        if "signal_backtest" in by_id:
+            by_id["signal_backtest"]["allowed_next_action"] = "remain_locked_review_only_diagnostics_represented_by_goal10b_only"
+            by_id["signal_backtest"]["notes"] = (
+                "Locked production signal backtest workflow. GOAL-10B represents only "
+                "non-actionable review-only recommendation diagnostic forward-return metrics."
+            )
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -122,7 +189,18 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         from ashare_premarket.contract_design.goal090 import goal09_eligible_workflow_patch
 
         payload["goal090_position_band_review_only_unlock_gate"] = "implemented_review_only"
-        payload["position_band_recommendation"] = goal09_eligible_workflow_patch(root)["status"]
+        if payload.get("position_band_recommendation") != "implemented_review_only":
+            payload["position_band_recommendation"] = goal09_eligible_workflow_patch(root)["status"]
+    if _goal09_valid(root):
+        payload["position_band_recommendation"] = "implemented_review_only"
+    if _goal091_valid(root):
+        payload["goal091_position_band_warning_dashboard_readiness_gate"] = "implemented_review_only"
+    if _goal_v1_integrity01_valid(root):
+        payload["goal_v1_integrity01_artifact_lineage_structure_gate"] = "implemented_infrastructure_only"
+    if _goal10a_valid(root):
+        payload["goal10a_backtest_contract_design_gate"] = "implemented_design_only"
+    if _goal10b_valid(root):
+        payload["goal10b_backtest_review_only_validation_gate"] = "implemented_review_only"
 
 
 def _goal08a_valid(root: Path) -> bool:
@@ -173,6 +251,51 @@ def _goal090_valid(root: Path) -> bool:
         from ashare_premarket.contract_design.goal090 import goal090_valid_unlock_evidence
 
         return goal090_valid_unlock_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal09_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.review_diagnostics.goal09 import goal09_valid_position_band_diagnostics_evidence
+
+        return goal09_valid_position_band_diagnostics_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal091_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.contract_design.goal091 import goal091_valid_dashboard_readiness_evidence
+
+        return goal091_valid_dashboard_readiness_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_v1_integrity01_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.validation.goal_v1_integrity01 import goal_v1_integrity01_valid_evidence
+
+        return goal_v1_integrity01_valid_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10a_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.contract_design.goal10a import goal10a_valid_design_evidence
+
+        return goal10a_valid_design_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10b_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b import goal10b_valid_review_only_evidence
+
+        return goal10b_valid_review_only_evidence(root)
     except Exception:
         return False
 

@@ -38,4 +38,4 @@ All source rows must stay at `trade_date + symbol` grain and must remain `never_
 
 ## Locked Boundary
 
-GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper trading, live trading, broker integration, production writes, factor-mining, and DQN/RL remain `locked_future` or deleted from active mainline as applicable.
+GOAL-10B can be implemented only by its own review-only diagnostics gate; GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper trading, live trading, broker integration, production writes, factor-mining, and DQN/RL remain `locked_future` or deleted from active mainline as applicable.

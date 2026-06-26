@@ -40,7 +40,7 @@ flowchart TD
     R9 -. "warning review / dashboard readiness" .-> R91["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     R91 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
     V1 -. "implemented design-only" .-> T10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
-    T10A -. "locked future" .-> T10B["GOAL-10B Review-Only Backtest Validation<br/>(locked_future)"]
+    T10A -. "review-only diagnostics" .-> T10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
@@ -85,11 +85,13 @@ artifact-lineage/structure evidence over the canonical GOAL-07B -> GOAL-08B ->
 GOAL-09 -> GOAL-09.1 chain. GOAL-10A is implemented only as design-only future
 backtest contract evidence over GOAL-08B/GOAL-09 diagnostics; it defines
 input, date alignment, T+1/no-lookahead, metrics, grouping, benchmark,
-cost/slippage, and tradability rules but runs no backtest. GOAL-10B, GOAL-10C,
-GOAL-10D, Dashboard / Daily Report UI, and downstream execution stages remain
-locked future work. The only allowed future unlock after GOAL-10A is an
-explicit GOAL-10B review-only validation request; no dashboard files, visual
-reports, frontend, or UI output exist. V2 factor
+cost/slippage, and tradability rules but runs no backtest. GOAL-10B is
+implemented only as a review-only, non-actionable recommendation diagnostics
+backtest over GOAL-08B rows and existing PIT-safe forward-return labels; it
+creates grouped diagnostic metrics and IC/RankIC availability evidence only.
+GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, and downstream execution
+stages remain locked future work; no dashboard files, visual reports, frontend,
+or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, infrastructure-only, locked, planned-locked, and

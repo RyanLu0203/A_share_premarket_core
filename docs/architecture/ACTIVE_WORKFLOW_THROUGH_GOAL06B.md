@@ -50,7 +50,7 @@ flowchart TD
     N -. "warning review / dashboard readiness" .-> N1["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     N1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
     V1 -. "design-only backtest contract" .-> T10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
-    T10A -. "locked future" .-> T10B["GOAL-10B Review-Only Backtest Validation<br/>(locked_future)"]
+    T10A -. "review-only diagnostics" .-> T10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
@@ -78,10 +78,11 @@ evidence. GOAL-V1-INTEGRITY-01 is implemented only as artifact-lineage and
 structure integrity evidence over the canonical V1 chain. It creates no
 dashboard output. GOAL-10A is implemented only as design-only future backtest
 contract evidence; it runs no backtest and creates no performance rows, equity
-curves, portfolio returns, or cost/slippage outputs. The only allowed future
-unlock after GOAL-10A is an explicit GOAL-10B review-only validation request.
-GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, and downstream
-trading/production workflow remain locked.
+curves, portfolio returns, or cost/slippage outputs. GOAL-10B is implemented
+only as a review-only, non-actionable recommendation diagnostics backtest over
+GOAL-08B rows and existing PIT-safe forward-return labels. GOAL-10C, GOAL-10D,
+Dashboard / Daily Report UI, and downstream trading/production workflow remain
+locked.
 
 ## Module Dependency Structure
 

@@ -62,6 +62,13 @@ GOAL07B_MANIFEST_PATH = "outputs/audits/goal07b_risk_overlay_calculation_manifes
 GOAL08A_WORKFLOW_ID = "goal08a_recommendation_contract_design_gate"
 GOAL08B_WORKFLOW_ID = "goal08b_recommendation_review_only_prototype"
 GOAL08A_ALLOWED_NEXT = "request_explicit_goal08b_review_only_prototype_or_fix_goal08a_warnings"
+GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS = {
+    "outputs/backtest/goal10b_recommendation_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b_risk_severity_group_metrics.csv",
+    "outputs/backtest/goal10b_warning_group_metrics.csv",
+    "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
+}
 
 REQUIRED_GOAL07B_FIELDS = [
     "goal_id",
@@ -993,6 +1000,8 @@ def _forbidden_recommendation_row_outputs(root: Path) -> list[str]:
         if lower.startswith("outputs/audits/") or lower.startswith("outputs/diagnostics/"):
             continue
         if rel == GOAL08B_DIAGNOSTIC_PATH:
+            continue
+        if rel in GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS:
             continue
         if any(token in lower for token in ["recommendation", "position_size", "portfolio_weight", "target_price", "buy_sell_hold"]):
             matches.append(rel)

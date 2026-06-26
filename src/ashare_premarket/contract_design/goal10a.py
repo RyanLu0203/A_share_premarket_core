@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import preserve_later_review_only_capabilities, preserve_later_review_only_workflow_states
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -44,6 +45,9 @@ GOAL09_AUDIT_PATH = "outputs/audits/goal09_position_band_diagnostics_audit.md"
 GOAL_V1_REPORT_PATH = "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_report.md"
 GOAL_V1_MANIFEST_PATH = "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_manifest.json"
 GOAL_V1_AUDIT_PATH = "outputs/audits/goal_v1_integrity01_artifact_lineage_structure_audit.md"
+GOAL10B_REPORT_PATH = "outputs/audits/goal10b_recommendation_backtest_report.md"
+GOAL10B_MANIFEST_PATH = "outputs/audits/goal10b_recommendation_backtest_manifest.json"
+GOAL10B_AUDIT_PATH = "outputs/audits/goal10b_recommendation_backtest_audit.md"
 
 WORKFLOW_PRODUCES_ARTIFACTS = ";".join(
     [
@@ -152,7 +156,6 @@ FALSE_BOUNDARY_KEYS = [
 
 FORBIDDEN_OUTPUT_DIRS = [
     "outputs/backtests",
-    "outputs/backtest",
     "outputs/equity_curves",
     "outputs/portfolio_returns",
     "outputs/dashboard",
@@ -178,6 +181,14 @@ FORBIDDEN_OUTPUT_DIRS = [
     "data/lake",
     "data/exports",
 ]
+
+ALLOWED_GOAL10B_BACKTEST_OUTPUTS = {
+    "outputs/backtest/goal10b_recommendation_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b_risk_severity_group_metrics.csv",
+    "outputs/backtest/goal10b_warning_group_metrics.csv",
+    "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
+}
 
 
 def run_goal10a_backtest_contract_design_gate(root: Path) -> bool:
@@ -290,13 +301,28 @@ def audit_goal10a_backtest_contract_design_gate(root: Path) -> bool:
         failures.append("goal10a_depends_on_invalid")
     if gate_row.get("allowed_next_action") != GOAL10A_ALLOWED_NEXT:
         failures.append("goal10a_allowed_next_invalid")
-    for workflow_id in [GOAL10B_WORKFLOW_ID, GOAL10C_WORKFLOW_ID, GOAL10D_WORKFLOW_ID]:
+    goal10b_ready = _goal10b_review_only_evidence_ready(root)
+    goal10b_row = workflow.get(GOAL10B_WORKFLOW_ID, {})
+    if goal10b_ready:
+        if goal10b_row.get("status") != "implemented_review_only":
+            failures.append("goal10b_workflow_not_implemented_review_only")
+        if goal10b_row.get("implemented_in_repo") != "true":
+            failures.append("goal10b_workflow_not_marked_implemented")
+        if goal10b_row.get("depends_on") != WORKFLOW_ID:
+            failures.append("goal10b_depends_on_invalid")
+    else:
+        if goal10b_row.get("status") != "locked_future":
+            failures.append(f"{GOAL10B_WORKFLOW_ID}_not_locked_future")
+        if goal10b_row.get("implemented_in_repo") != "false":
+            failures.append(f"{GOAL10B_WORKFLOW_ID}_marked_implemented")
+    for workflow_id in [GOAL10C_WORKFLOW_ID, GOAL10D_WORKFLOW_ID]:
         row = workflow.get(workflow_id, {})
         if row.get("status") != "locked_future":
             failures.append(f"{workflow_id}_not_locked_future")
         if row.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
     failures.extend(f"forbidden_output_dir_present:{path}" for path in _forbidden_output_dirs_present(root))
+    failures.extend(f"unexpected_backtest_output:{path}" for path in _unexpected_backtest_outputs(root))
 
     status = PASS if not failures else BLOCKED
     write_text(
@@ -343,6 +369,7 @@ def evaluate_goal10a_backtest_contract_design_gate(root: Path) -> dict[str, obje
     if len(goal08b_rows) != len(goal09_rows):
         failures.append("goal08b_goal09_row_count_mismatch")
     failures.extend(f"forbidden_output_dir_present:{path}" for path in _forbidden_output_dirs_present(root))
+    failures.extend(f"unexpected_backtest_output:{path}" for path in _unexpected_backtest_outputs(root))
 
     observed_warnings = sorted(_warning_codes(goal08b_rows) | _warning_codes(goal09_rows))
     warnings.extend(code for code in observed_warnings if code)
@@ -640,7 +667,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "## Safety",
                 "- No backtest was run.",
                 "- No backtest performance rows, equity curves, portfolio returns, dashboard files, HTML, Streamlit, frontend code, buy/sell/hold actions, target prices, position sizes, order quantities, local-lake data, trading, production, broker, factor-mining, or DQN/RL outputs were generated.",
-                "- GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live trading, broker, production, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-10B can be implemented only by its own review-only diagnostics gate; GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live trading, broker, production, factor-mining, and DQN/RL remain locked.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in result["failures"]],
@@ -698,7 +725,7 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "## Locked Boundary",
                 "",
-                "GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper trading, live trading, broker integration, production writes, factor-mining, and DQN/RL remain `locked_future` or deleted from active mainline as applicable.",
+                "GOAL-10B can be implemented only by its own review-only diagnostics gate; GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper trading, live trading, broker integration, production writes, factor-mining, and DQN/RL remain `locked_future` or deleted from active mainline as applicable.",
                 "",
             ]
         ),
@@ -726,7 +753,14 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             }
         )
     _upsert_workflow_row(rows, by_id, WORKFLOW_ID, patch, after=GOAL_V1_WORKFLOW_ID)
-    _upsert_workflow_row(rows, by_id, GOAL10B_WORKFLOW_ID, _locked_goal10b_patch(), after=WORKFLOW_ID)
+    goal10b_row = by_id.get(GOAL10B_WORKFLOW_ID, {})
+    goal10b_already_implemented = (
+        _goal10b_review_only_evidence_ready(root)
+        and goal10b_row.get("status") == "implemented_review_only"
+        and goal10b_row.get("implemented_in_repo") == "true"
+    )
+    if not goal10b_already_implemented:
+        _upsert_workflow_row(rows, by_id, GOAL10B_WORKFLOW_ID, _locked_goal10b_patch(), after=WORKFLOW_ID)
     _upsert_workflow_row(rows, by_id, GOAL10C_WORKFLOW_ID, _locked_goal10c_patch(), after=GOAL10B_WORKFLOW_ID)
     _upsert_workflow_row(rows, by_id, GOAL10D_WORKFLOW_ID, _locked_goal10d_patch(), after=GOAL10C_WORKFLOW_ID)
     for workflow_id in [
@@ -761,6 +795,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     if "v2_factor_research_upgrade" in by_id:
         by_id["v2_factor_research_upgrade"]["status"] = "planned_locked"
         by_id["v2_factor_research_upgrade"]["implemented_in_repo"] = "false"
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -841,7 +876,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         return
     payload = read_json(path)
     payload[WORKFLOW_ID] = "implemented_design_only" if result["status"] != BLOCKED else False
-    payload[GOAL10B_WORKFLOW_ID] = False
+    payload[GOAL10B_WORKFLOW_ID] = "implemented_review_only" if _goal10b_review_only_evidence_ready(root) else False
     payload[GOAL10C_WORKFLOW_ID] = False
     payload[GOAL10D_WORKFLOW_ID] = False
     for key in [
@@ -855,6 +890,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         "dqn_rl",
     ]:
         payload[key] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 
@@ -936,6 +972,34 @@ def _warning_codes(rows: list[dict[str, str]]) -> set[str]:
 
 def _forbidden_output_dirs_present(root: Path) -> list[str]:
     return [path for path in FORBIDDEN_OUTPUT_DIRS if (root / path).exists()]
+
+
+def _unexpected_backtest_outputs(root: Path) -> list[str]:
+    path = root / "outputs/backtest"
+    if not path.exists():
+        return []
+    return [
+        str(item.relative_to(root))
+        for item in sorted(path.glob("*"))
+        if str(item.relative_to(root)) not in ALLOWED_GOAL10B_BACKTEST_OUTPUTS
+    ]
+
+
+def _goal10b_review_only_evidence_ready(root: Path) -> bool:
+    report = _read(root / GOAL10B_REPORT_PATH)
+    audit = _read(root / GOAL10B_AUDIT_PATH)
+    manifest = _read_json(root / GOAL10B_MANIFEST_PATH)
+    return (
+        _report_pass_or_warn(report, "GOAL-10B Recommendation Diagnostics Backtest Review-Only:")
+        and "Status: `PASS`" in audit
+        and manifest.get("goal_id") == "GOAL-10B"
+        and manifest.get("mode") == "review_only"
+        and manifest.get("review_only_backtest_diagnostics_generated") is True
+        and manifest.get("goal10c_locked_future") is True
+        and manifest.get("goal10d_locked_future") is True
+        and manifest.get("portfolio_returns_generated") is False
+        and manifest.get("equity_curves_generated") is False
+    )
 
 
 def _report_pass_or_warn(text: str, prefix: str) -> bool:

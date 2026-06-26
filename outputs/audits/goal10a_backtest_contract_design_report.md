@@ -18,7 +18,7 @@ Mode: `design_only`
 ## Safety
 - No backtest was run.
 - No backtest performance rows, equity curves, portfolio returns, dashboard files, HTML, Streamlit, frontend code, buy/sell/hold actions, target prices, position sizes, order quantities, local-lake data, trading, production, broker, factor-mining, or DQN/RL outputs were generated.
-- GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live trading, broker, production, factor-mining, and DQN/RL remain locked.
+- GOAL-10B can be implemented only by its own review-only diagnostics gate; GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live trading, broker, production, factor-mining, and DQN/RL remain locked.
 
 ## Failures
 

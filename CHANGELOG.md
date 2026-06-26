@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-26 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
+
+- Implemented GOAL-10B only as a review-only, non-actionable recommendation
+  diagnostics backtest over GOAL-08B rows and existing PIT-safe labels.
+- Added the GOAL-10B module, runner, audit wrapper, documentation, output CSVs,
+  manifest, workflow-status governance, diagnostics integration, and focused
+  tests.
+- Wrote grouped forward-return diagnostics by recommendation eligibility,
+  actionability status, risk severity, and warning category.
+- Marked IC/RankIC as `not_computed` with explicit warnings for insufficient
+  ranking variation; 20d forward returns remain unavailable in the bounded
+  label sample.
+- Kept GOAL-10C, GOAL-10D, dashboard, signal/portfolio backtest promotion,
+  paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL
+  locked.
+
 ## 2026-06-26 - GOAL-10A Backtest Contract Design Gate
 
 - Implemented GOAL-10A only as a design-only future backtest contract gate.
@@ -9,8 +25,9 @@
 - Defined future signal_date, trade_date, execution_date, target_horizon,
   benchmark alignment, T+1, no-lookahead, cost/slippage, benchmark leakage, and
   suspended/limit/missing-price handling policies.
-- Kept GOAL-10B, GOAL-10C, GOAL-10D, dashboard, paper/live trading, broker,
-  production, factor-mining, local-lake, and DQN/RL locked.
+- Kept GOAL-10C, GOAL-10D, dashboard, paper/live trading, broker, production,
+  factor-mining, local-lake, and DQN/RL locked; GOAL-10B required its own later
+  review-only diagnostic gate.
 - Created no backtest rows, performance tables, equity curves, portfolio
   returns, cost/slippage outputs, HTML, Streamlit, frontend files, buy/sell/hold
   outputs, target prices, position sizes, order quantities, trading paths, or
