@@ -28,6 +28,10 @@ It does not fetch data, expand the panel, create new recommendation diagnostics,
 
 GOAL-10B.1 does not write repaired snapshots or repaired group metrics because doing so would fabricate variation or coverage that is absent from the current contract-valid artifacts.
 
+## Follow-on Label Coverage Step
+
+GOAL-DATA-LABEL-01 follows this gate only as review-only label coverage expansion from existing committed OHLCV and benchmark samples. It may add 20d forward-return label coverage where future bars exist, but it does not create new GOAL-08B or GOAL-09 diagnostics and does not run GOAL-10B.2 or GOAL-10C backtests.
+
 ## Locked Boundary
 
-GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.

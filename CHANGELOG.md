@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-26 - GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion
+
+- Implemented GOAL-DATA-LABEL-01 only as a review-only label coverage gate over
+  existing committed OHLCV and benchmark samples.
+- Generated 100 deterministic forward-return label rows with 1d, 3d, 5d, and
+  20d stock, benchmark, and excess-return fields where future bars exist; 80
+  rows are 20d-label-ready.
+- Recorded warnings that the expanded label sample is still single-symbol, does
+  not yet overlap GOAL-08B/GOAL-09 diagnostics, and the current local
+  engineering bundle is empty or stale.
+- Added locked future workflow rows for GOAL-V1-DIAGNOSTIC-COVERAGE-02 and
+  GOAL-10B.2 before GOAL-10C.
+- Created no new diagnostics, repaired metrics, data fetches, panel expansion,
+  backtest performance rows, portfolio returns, equity curves, dashboards,
+  trading, production, factor-mining, local-lake, broker, or DQN/RL outputs.
+
 ## 2026-06-26 - GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate
 
 - Implemented GOAL-10B.1 only as a review-only coverage repair diagnostic gate

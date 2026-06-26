@@ -1,5 +1,43 @@
 # 09 Step Iteration Log
 
+## 2026-06-26 - GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-DATA-LABEL-01 review-only forward-return label coverage gate.
+- Derived 100 deterministic label rows from existing committed OHLCV and
+  benchmark samples only.
+- Added 1d, 3d, 5d, and 20d stock, benchmark, and excess-return labels where
+  future bars exist; 80 rows are 20d-label-ready.
+- Recorded that current expanded labels remain single-symbol and do not yet
+  overlap GOAL-08B/GOAL-09 diagnostics by `trade_date + symbol`.
+- Inserted locked future workflow rows for GOAL-V1-DIAGNOSTIC-COVERAGE-02 and
+  GOAL-10B.2 before GOAL-10C.
+
+Evidence:
+
+- `outputs/labels/goal_data_label01_forward_return_label_coverage_sample.csv`
+- `outputs/labels/goal_data_label01_forward_return_label_coverage_summary.csv`
+- `docs/labels/GOAL_DATA_LABEL01_FORWARD_RETURN_LABEL_COVERAGE_EXPANSION.md`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_report.md`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_manifest.json`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_audit.md`
+
+Safety:
+
+- No new data fetch, provider change, local bundle commit, local-lake file,
+  GOAL-07B row, GOAL-08B row, GOAL-09 row, recommendation row, position row,
+  BUY/SELL/HOLD output, target price, position sizing, portfolio weight,
+  portfolio return, equity curve, backtest performance row, dashboard, HTML,
+  Streamlit, frontend, trading, production, broker, factor-mining, or DQN/RL
+  output was generated.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard /
+  Daily Report UI, signal backtest promotion, portfolio backtest,
+  cost/slippage sensitivity, paper/live trading, broker, production,
+  factor-mining, local-lake, and DQN/RL remain locked.
+
 ## 2026-06-26 - GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate
 
 Status: `PASS_WITH_WARNINGS`.

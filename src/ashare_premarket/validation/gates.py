@@ -20,6 +20,7 @@ from ashare_premarket.datasets.feature_label_merge import audit_feature_label_le
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.features.panel_expansion import audit_engineering_pit_signal_panel, build_engineering_pit_signal_panel
 from ashare_premarket.features.pit_signal_store import audit_pit_signal_snapshot, build_pit_signal_snapshot
+from ashare_premarket.labels.goal_data_label01 import audit_goal_data_label01_forward_return_label_coverage_expansion, run_goal_data_label01_forward_return_label_coverage_expansion
 from ashare_premarket.labels.panel_expansion import audit_engineering_label_panel, build_engineering_label_panel
 from ashare_premarket.labels.label_builder import audit_label_snapshot, build_label_snapshot
 from ashare_premarket.ops.adapter_audit import run_adapter_audit
@@ -155,6 +156,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal10a_backtest_contract_design_gate", run_goal10a_backtest_contract_design_gate(root) and audit_goal10a_backtest_contract_design_gate(root)),
         ("goal10b_recommendation_backtest_review_only", run_goal10b_recommendation_backtest_review_only(root) and audit_goal10b_recommendation_backtest_review_only(root)),
         ("goal10b1_backtest_coverage_repair_gate", run_goal10b1_backtest_coverage_repair_gate(root) and audit_goal10b1_backtest_coverage_repair_gate(root)),
+        ("goal_data_label01_forward_return_label_coverage_expansion", run_goal_data_label01_forward_return_label_coverage_expansion(root) and audit_goal_data_label01_forward_return_label_coverage_expansion(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -255,6 +257,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal10b_recommendation_backtest_review_only.py", [sys.executable, "scripts/audit_goal10b_recommendation_backtest_review_only.py"]),
         ("python scripts/run_goal10b1_backtest_coverage_repair_gate.py", [sys.executable, "scripts/run_goal10b1_backtest_coverage_repair_gate.py"]),
         ("python scripts/audit_goal10b1_backtest_coverage_repair_gate.py", [sys.executable, "scripts/audit_goal10b1_backtest_coverage_repair_gate.py"]),
+        ("python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py", [sys.executable, "scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py"]),
+        ("python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py", [sys.executable, "scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -282,6 +286,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal10b_recommendation_backtest_review_only.py", [sys.executable, "scripts/audit_goal10b_recommendation_backtest_review_only.py"]),
         ("python scripts/run_goal10b1_backtest_coverage_repair_gate.py", [sys.executable, "scripts/run_goal10b1_backtest_coverage_repair_gate.py"]),
         ("python scripts/audit_goal10b1_backtest_coverage_repair_gate.py", [sys.executable, "scripts/audit_goal10b1_backtest_coverage_repair_gate.py"]),
+        ("python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py", [sys.executable, "scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py"]),
+        ("python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py", [sys.executable, "scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py"]),
     ]
     rows = []
     runtime_rows = []

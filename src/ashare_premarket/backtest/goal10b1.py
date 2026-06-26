@@ -15,6 +15,10 @@ from ashare_premarket.backtest.goal10b import (
     goal10b_valid_review_only_evidence,
 )
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import (
+    preserve_later_review_only_capabilities,
+    preserve_later_review_only_workflow_states,
+)
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -23,6 +27,7 @@ GOAL_NAME = "GOAL-10B.1-BACKTEST-COVERAGE-AND-GROUP-VARIATION-REPAIR-GATE"
 MODE = "review_only"
 WORKFLOW_ID = "goal10b1_backtest_coverage_repair_gate"
 GOAL10B_WORKFLOW_ID = "goal10b_backtest_review_only_validation_gate"
+GOAL10B2_WORKFLOW_ID = "goal10b2_recommendation_backtest_revalidation"
 GOAL10B1_ALLOWED_NEXT = "request_future_data_label_coverage_expansion_gate_or_fix_goal10b1_warnings"
 
 PASS = "PASS"
@@ -292,8 +297,8 @@ def audit_goal10b1_backtest_coverage_repair_gate(root: Path) -> bool:
         failures.append("goal10b1_allowed_next_invalid")
     if workflow.get(GOAL10C_WORKFLOW_ID, {}).get("status") != "locked_future":
         failures.append("goal10c_not_locked_future")
-    if workflow.get(GOAL10C_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
-        failures.append("goal10c_must_depend_on_goal10b1")
+    if workflow.get(GOAL10C_WORKFLOW_ID, {}).get("depends_on") not in {WORKFLOW_ID, GOAL10B2_WORKFLOW_ID}:
+        failures.append("goal10c_dependency_invalid_after_goal10b1")
     if workflow.get(GOAL10D_WORKFLOW_ID, {}).get("status") != "locked_future":
         failures.append("goal10d_not_locked_future")
     for workflow_id in [
@@ -501,7 +506,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "## Boundary",
                 "- GOAL-10B.1 is review-only diagnostics over existing committed artifacts.",
                 "- No new data fetch, panel expansion, provider change, GOAL-08B row, GOAL-09 row, BUY/SELL/HOLD output, target price, position sizing, portfolio return, equity curve, dashboard, trading, production, broker, local-lake, factor-mining, or DQN/RL output was created.",
-                "- GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked.",
+                "- GOAL-DATA-LABEL-01 may follow only as review-only label coverage expansion; GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked unless their own explicit gates pass.",
                 "",
                 "## Recommended Next Gate",
                 "- `future_data_label_coverage_expansion_gate` should be requested before attempting GOAL-10C or any broader backtest diagnostics.",
@@ -553,9 +558,13 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "GOAL-10B.1 does not write repaired snapshots or repaired group metrics because doing so would fabricate variation or coverage that is absent from the current contract-valid artifacts.",
                 "",
+                "## Follow-on Label Coverage Step",
+                "",
+                "GOAL-DATA-LABEL-01 follows this gate only as review-only label coverage expansion from existing committed OHLCV and benchmark samples. It may add 20d forward-return label coverage where future bars exist, but it does not create new GOAL-08B or GOAL-09 diagnostics and does not run GOAL-10B.2 or GOAL-10C backtests.",
+                "",
                 "## Locked Boundary",
                 "",
-                "GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.",
                 "",
             ]
         ),
@@ -935,6 +944,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     if "v2_factor_research_upgrade" in by_id:
         by_id["v2_factor_research_upgrade"]["status"] = "planned_locked"
         by_id["v2_factor_research_upgrade"]["implemented_in_repo"] = "false"
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -976,6 +986,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         "local_lake",
     ]:
         payload[key] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

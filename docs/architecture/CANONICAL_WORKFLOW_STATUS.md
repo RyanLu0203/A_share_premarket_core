@@ -65,6 +65,8 @@ Implemented review-only:
 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
   (`PASS_WITH_WARNINGS`)
 - GOAL-10B.1 Backtest Coverage Repair Gate (`PASS_WITH_WARNINGS`)
+- GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -89,6 +91,8 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion
+- GOAL-10B.2 Recommendation Backtest Revalidation
 - GOAL-10C Cost / Slippage Sensitivity
 - GOAL-10D Failure Attribution
 - Signal Backtest
@@ -479,7 +483,10 @@ production behavior, factor-mining outputs, broker outputs, or DQN/RL outputs.
 GOAL-10B is implemented only as review-only recommendation diagnostics
 backtest evidence. GOAL-10B.1 is implemented only as review-only coverage
 repair diagnostics over existing artifacts and records that repair is not
-possible with current artifacts. GOAL-10C and GOAL-10D remain `locked_future`.
+possible with current artifacts. GOAL-DATA-LABEL-01 is implemented only as
+review-only label coverage evidence from committed OHLCV and benchmark samples.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, and GOAL-10D remain
+`locked_future`.
 
 ## GOAL-06D Status
 

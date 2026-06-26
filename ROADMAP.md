@@ -69,6 +69,9 @@
 - GOAL-10B.1 backtest coverage and group-variation repair gate
   (`PASS_WITH_WARNINGS`; implemented_review_only coverage diagnostics over
   existing artifacts only; repair not possible with current artifacts).
+- GOAL-DATA-LABEL-01 forward-return label coverage expansion
+  (`PASS_WITH_WARNINGS`; implemented_review_only label coverage from committed
+  OHLCV and benchmark samples only; no diagnostics or backtests).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -99,7 +102,11 @@ diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return
 labels. It writes grouped diagnostics and IC/RankIC availability evidence only;
 GOAL-10B.1 now implements only review-only coverage repair diagnostics over
 current artifacts, records `coverage_repair_not_possible_with_current_artifacts`,
-and writes no repaired rows or metrics. GOAL-10C and GOAL-10D remain locked.
+and writes no repaired rows or metrics. GOAL-DATA-LABEL-01 now implements only
+review-only forward-return label coverage expansion from committed samples; it
+writes 100 label rows, 80 with 20d labels, but current GOAL-08B/GOAL-09
+diagnostics are not yet aligned to those labels. GOAL-V1-DIAGNOSTIC-COVERAGE-02,
+GOAL-10B.2, GOAL-10C, and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -118,6 +125,8 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics expansion.
+- GOAL-10B.2 recommendation backtest revalidation.
 - GOAL-10C cost/slippage sensitivity.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.

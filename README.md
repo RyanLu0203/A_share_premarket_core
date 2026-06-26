@@ -20,7 +20,8 @@ diagnostics prototype, plus the GOAL-09.1 warning review/dashboard-readiness
 gate, GOAL-V1-INTEGRITY-01 infrastructure-only artifact-lineage structure
 gate, the GOAL-10A design-only future backtest contract gate, the GOAL-10B
 review-only recommendation diagnostics backtest, and the GOAL-10B.1
-review-only coverage repair diagnostic gate.
+review-only coverage repair diagnostic gate, plus GOAL-DATA-LABEL-01
+review-only forward-return label coverage expansion.
 
 ## Repository Roles
 
@@ -99,6 +100,8 @@ python scripts/run_goal10b_recommendation_backtest_review_only.py
 python scripts/audit_goal10b_recommendation_backtest_review_only.py
 python scripts/run_goal10b1_backtest_coverage_repair_gate.py
 python scripts/audit_goal10b1_backtest_coverage_repair_gate.py
+python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py
+python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -158,7 +161,10 @@ flowchart TD
     V1 -. "design-only backtest contract" .-> B10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     B10A -. "review-only diagnostics" .-> B10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B -. "coverage repair diagnostics" .-> B10B1["GOAL-10B.1 Coverage Repair Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    B10B1 -. "locked future" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    B10B1 -. "label coverage expansion" .-> DL01["GOAL-DATA-LABEL-01 Forward-Return Label Coverage<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    DL01 -. "locked future" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(locked_future)"]
+    DC02 -. "locked future" .-> B10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(locked_future)"]
+    B10B2 -. "locked future" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -204,6 +210,15 @@ records that current artifacts cannot repair GOAL-10B coverage/group variation,
 writes no repaired snapshots or repaired metrics, and keeps GOAL-10C,
 GOAL-10D, Dashboard / Daily Report UI, portfolio backtests, trading,
 production, factor-mining, local-lake, broker, and DQN/RL locked.
+
+GOAL-DATA-LABEL-01 is implemented only as review-only forward-return label
+coverage expansion from existing committed OHLCV and benchmark samples. It
+writes 100 deterministic label rows with 1d, 3d, 5d, and 20d stock,
+benchmark, and excess-return fields where future bars exist; 80 rows are
+20d-label-ready. The current expanded labels remain single-symbol and do not
+yet overlap GOAL-08B/GOAL-09 diagnostics, so GOAL-V1-DIAGNOSTIC-COVERAGE-02,
+GOAL-10B.2, GOAL-10C, GOAL-10D, dashboard, trading, production, local-lake,
+factor-mining, broker, and DQN/RL remain locked.
 
 ## Required Public Commands
 
@@ -288,6 +303,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal10b_recommendation_backtest_review_only.py`
 - `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`
 - `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`
+- `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py`
+- `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -447,7 +464,11 @@ it does not generate actions, portfolios, equity curves, dashboards, trading,
 production, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-10B.1
 is review-only coverage repair diagnostics; it records that current artifacts
 cannot repair coverage/group variation and creates no repaired rows or metrics.
-GOAL-10C, GOAL-10D, and GOAL-DASHBOARD-00 remain `locked_future`.
+GOAL-DATA-LABEL-01 is review-only label coverage expansion from committed
+samples only; it creates no new diagnostics, backtests, portfolios, dashboards,
+local-lake data, trading, production, broker, factor-mining, or DQN/RL outputs.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, and
+GOAL-DASHBOARD-00 remain `locked_future`.
 Dashboard / Daily Report UI remains `locked_future`. Actionable recommendations, actual
 position rows, position sizing,
 dashboards, trading, production, portfolio backtests, factor-mining, broker integration,

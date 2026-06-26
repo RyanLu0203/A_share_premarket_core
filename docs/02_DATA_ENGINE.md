@@ -56,6 +56,14 @@ repair is not possible with current artifacts, and does not fetch data, expand
 the panel, create repaired rows or metrics, write local lake files, create
 portfolio returns, create equity curves, create dashboard outputs, or write
 production storage.
+GOAL-DATA-LABEL-01 writes only small review-only forward-return label coverage
+evidence under `outputs/labels/`, `docs/labels/`, and `outputs/audits/`. It
+reads existing committed OHLCV and benchmark samples only, adds 1d, 3d, 5d,
+and 20d stock, benchmark, and excess-return label fields where future bars
+exist, and does not fetch data, expand provider coverage, create or overwrite
+GOAL-07B/GOAL-08B/GOAL-09 diagnostics, run backtests, write local lake files,
+create portfolio returns, create equity curves, create dashboard outputs, or
+write production storage.
 
 ## Active Contracts
 
@@ -85,6 +93,8 @@ production storage.
   `outputs/backtest/`, `docs/backtest/`, and `outputs/audits/` only.
 - GOAL-10B.1 coverage repair diagnostic evidence under `outputs/backtest/`,
   `docs/backtest/`, and `outputs/audits/` only.
+- GOAL-DATA-LABEL-01 forward-return label coverage evidence under
+  `outputs/labels/`, `docs/labels/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -134,3 +144,7 @@ production storage.
   expand panels, create repaired rows or metrics without contract-valid support,
   create new recommendation or position rows, run portfolio backtests, create
   dashboards, or unlock GOAL-10C.
+- Do not treat GOAL-DATA-LABEL-01 label coverage evidence as permission to
+  create or overwrite diagnostics, run GOAL-10B.2/GOAL-10C backtests, create
+  portfolio outputs, write local-lake data, create dashboards, or unlock
+  trading, production, broker, factor-mining, or DQN/RL paths.

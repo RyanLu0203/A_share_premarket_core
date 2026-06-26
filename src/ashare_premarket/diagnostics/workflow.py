@@ -139,6 +139,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal10b1_status = _goal10b1_status(root)
     goal10b1_manifest = _goal10b1_manifest(root)
     goal10b1_audit_status = _audit_status(root / "outputs/audits/goal10b1_backtest_coverage_repair_audit.md")
+    goal_data_label01_status = _goal_data_label01_status(root)
+    goal_data_label01_manifest = _goal_data_label01_manifest(root)
+    goal_data_label01_audit_status = _audit_status(root / "outputs/audits/goal_data_label01_forward_return_label_coverage_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -243,6 +246,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-10B.1 coverage repair status: `{goal10b1_status}`.",
                 f"GOAL-10B.1 audit status: `{goal10b1_audit_status}`.",
                 f"GOAL-10B.1 repair decision: `{goal10b1_manifest.get('repair_decision', 'not yet generated')}`.",
+                f"GOAL-DATA-LABEL-01 forward-return label coverage status: `{goal_data_label01_status}`.",
+                f"GOAL-DATA-LABEL-01 audit status: `{goal_data_label01_audit_status}`.",
+                f"GOAL-DATA-LABEL-01 20d label-ready rows: `{goal_data_label01_manifest.get('label_ready_20d_rows', 0)}`.",
+                f"GOAL-DATA-LABEL-01 diagnostic join ready: `{str(goal_data_label01_manifest.get('diagnostic_join_ready', False)).lower()}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -256,12 +263,15 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-10A workflow status: `{downstream_status.get('goal10a_backtest_contract_design_gate', 'missing')}`.",
                 f"GOAL-10B workflow status: `{downstream_status.get('goal10b_backtest_review_only_validation_gate', 'missing')}`.",
                 f"GOAL-10B.1 workflow status: `{downstream_status.get('goal10b1_backtest_coverage_repair_gate', 'missing')}`.",
+                f"GOAL-DATA-LABEL-01 workflow status: `{downstream_status.get('goal_data_label01_forward_return_label_coverage_expansion', 'missing')}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 workflow status: `{downstream_status.get('goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion', 'missing')}`.",
+                f"GOAL-10B.2 workflow status: `{downstream_status.get('goal10b2_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-10C workflow status: `{downstream_status.get('goal10c_backtest_cost_slippage_sensitivity_gate', 'missing')}`.",
                 f"GOAL-10D workflow status: `{downstream_status.get('goal10d_backtest_failure_attribution_gate', 'missing')}`.",
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, and GOAL-10B.1 may produce only review-only coverage repair diagnostics.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, and GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
@@ -339,6 +349,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal10b_recommendation_backtest_review_only.py`",
                 "- `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`",
                 "- `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`",
+                "- `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py`",
+                "- `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`",
                 "",
             ]
         ),
@@ -842,6 +854,30 @@ def _goal10b1_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal_data_label01_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_data_label01_forward_return_label_coverage_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal_data_label01_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_data_label01_forward_return_label_coverage_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -891,6 +927,9 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal10a_backtest_contract_design_gate",
             "goal10b_backtest_review_only_validation_gate",
             "goal10b1_backtest_coverage_repair_gate",
+            "goal_data_label01_forward_return_label_coverage_expansion",
+            "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion",
+            "goal10b2_recommendation_backtest_revalidation",
             "goal10c_backtest_cost_slippage_sensitivity_gate",
             "goal10d_backtest_failure_attribution_gate",
             "dashboard_daily_report",

@@ -91,6 +91,10 @@ GOAL-10B IC/Rank IC status: `not_computed`.
 GOAL-10B.1 coverage repair status: `PASS_WITH_WARNINGS`.
 GOAL-10B.1 audit status: `PASS`.
 GOAL-10B.1 repair decision: `coverage_repair_not_possible_with_current_artifacts`.
+GOAL-DATA-LABEL-01 forward-return label coverage status: `PASS_WITH_WARNINGS`.
+GOAL-DATA-LABEL-01 audit status: `PASS`.
+GOAL-DATA-LABEL-01 20d label-ready rows: `80`.
+GOAL-DATA-LABEL-01 diagnostic join ready: `false`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -104,12 +108,15 @@ GOAL-V1-INTEGRITY-01 workflow status: `implemented_infrastructure_only`.
 GOAL-10A workflow status: `implemented_design_only`.
 GOAL-10B workflow status: `implemented_review_only`.
 GOAL-10B.1 workflow status: `implemented_review_only`.
+GOAL-DATA-LABEL-01 workflow status: `implemented_review_only`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 workflow status: `locked_future`.
+GOAL-10B.2 workflow status: `locked_future`.
 GOAL-10C workflow status: `locked_future`.
 GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, and GOAL-10B.1 may produce only review-only coverage repair diagnostics.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, and GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
@@ -199,3 +206,5 @@ Protected regression commands:
 - `python scripts/audit_goal10b_recommendation_backtest_review_only.py`
 - `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`
 - `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`
+- `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py`
+- `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`
