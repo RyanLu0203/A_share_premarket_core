@@ -14,6 +14,7 @@
   "goal090_position_band_review_only_unlock_gate": "implemented_review_only",
   "goal091_position_band_warning_dashboard_readiness_gate": "implemented_review_only",
   "goal10a_backtest_contract_design_gate": "implemented_design_only",
+  "goal10b1_backtest_coverage_repair_gate": "implemented_review_only",
   "goal10b_backtest_review_only_validation_gate": "implemented_review_only",
   "goal10c_backtest_cost_slippage_sensitivity_gate": false,
   "goal10d_backtest_failure_attribution_gate": false,

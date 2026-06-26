@@ -72,6 +72,11 @@
   "non_actionable": true,
   "order_quantities_generated": false,
   "output_artifacts": [
+    "outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv",
+    "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
+    "outputs/backtest/goal10b1_recommendation_distribution_audit.csv",
+    "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
     "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
     "outputs/backtest/goal10b_recommendation_backtest_input_snapshot.csv",
     "outputs/backtest/goal10b_recommendation_group_metrics.csv",

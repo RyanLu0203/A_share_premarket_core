@@ -97,6 +97,14 @@ trading path, production behavior, broker output, factor-mining output, local
 lake file, or DQN/RL output. GOAL-10C, GOAL-10D, Dashboard / Daily Report UI,
 paper/live trading, broker, production, factor-mining, and DQN/RL remain
 locked.
+GOAL-10B.1 is implemented as a review-only coverage and group-variation repair
+gate (`PASS_WITH_WARNINGS`). It audits existing label, Stage6C, GOAL-08B, and
+GOAL-10B artifacts only, determines that repair is not possible with current
+artifacts, and records `coverage_repair_not_possible_with_current_artifacts`.
+It creates no repaired backtest snapshot, repaired group metrics, new
+recommendation rows, new position rows, data fetch, panel expansion, portfolio
+returns, equity curves, dashboard output, trading path, production behavior,
+broker output, factor-mining output, local lake file, or DQN/RL output.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -174,6 +182,8 @@ Implemented and protected:
 - GOAL-10B recommendation diagnostics backtest review-only prototype with
   grouped non-actionable forward-return diagnostics and IC/RankIC availability
   evidence only
+- GOAL-10B.1 backtest coverage repair gate with existing-artifact coverage,
+  distribution, and label-source diagnostics only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -451,6 +461,23 @@ actionable, create portfolio returns or equity curves, run portfolio
 construction, create dashboards, write local lake/trading/production data,
 activate factor mining, integrate a broker, or create DQN/RL outputs.
 
+GOAL-10B.1 writes only review-only coverage repair diagnostic evidence:
+
+- `outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv`
+- `outputs/backtest/goal10b1_recommendation_distribution_audit.csv`
+- `outputs/backtest/goal10b1_label_source_coverage_audit.csv`
+- `docs/backtest/GOAL10B1_BACKTEST_COVERAGE_REPAIR_GATE.md`
+- `outputs/audits/goal10b1_backtest_coverage_repair_report.md`
+- `outputs/audits/goal10b1_backtest_coverage_repair_manifest.json`
+- `outputs/audits/goal10b1_backtest_coverage_repair_audit.md`
+
+GOAL-10B.1 uses existing committed artifacts only. It does not fetch data,
+expand the panel, alter provider behavior, create new GOAL-08B/GOAL-09 rows,
+write repaired snapshots or repaired metrics when repair is unsupported, create
+portfolio returns or equity curves, create dashboards, write local
+lake/trading/production data, activate factor mining, integrate a broker, or
+create DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -509,7 +536,7 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
-GOAL-09, GOAL-09.1, and GOAL-10B are `implemented_review_only`; GOAL-07A, GOAL-08A, and
+GOAL-09, GOAL-09.1, GOAL-10B, and GOAL-10B.1 are `implemented_review_only`; GOAL-07A, GOAL-08A, and
 GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
 GOAL-V1-INTEGRITY-01 are
 `implemented_infrastructure_only`. GOAL-07B is

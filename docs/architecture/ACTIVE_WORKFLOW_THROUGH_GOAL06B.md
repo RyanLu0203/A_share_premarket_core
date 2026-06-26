@@ -51,7 +51,8 @@ flowchart TD
     N1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
     V1 -. "design-only backtest contract" .-> T10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     T10A -. "review-only diagnostics" .-> T10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    T10B -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    T10B -. "coverage repair diagnostics" .-> T10B1["GOAL-10B.1 Coverage Repair Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    T10B1 -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -80,7 +81,9 @@ dashboard output. GOAL-10A is implemented only as design-only future backtest
 contract evidence; it runs no backtest and creates no performance rows, equity
 curves, portfolio returns, or cost/slippage outputs. GOAL-10B is implemented
 only as a review-only, non-actionable recommendation diagnostics backtest over
-GOAL-08B rows and existing PIT-safe forward-return labels. GOAL-10C, GOAL-10D,
+GOAL-08B rows and existing PIT-safe forward-return labels. GOAL-10B.1 is
+implemented only as review-only coverage repair diagnostics and records that
+current artifacts cannot repair coverage/group variation. GOAL-10C, GOAL-10D,
 Dashboard / Daily Report UI, and downstream trading/production workflow remain
 locked.
 

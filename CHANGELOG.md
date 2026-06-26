@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-26 - GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate
+
+- Implemented GOAL-10B.1 only as a review-only coverage repair diagnostic gate
+  over existing committed artifacts.
+- Audited GOAL-10B label source coverage, alternate label/Stage6C artifacts,
+  GOAL-08B recommendation distribution, risk-severity distribution, warning
+  distribution, and ranking variation availability.
+- Classified the current state as
+  `coverage_repair_not_possible_with_current_artifacts`: GOAL-08B has one
+  symbol, one recommendation group, one actionability status, and one
+  risk-severity group; existing labels do not provide 20d returns or a broader
+  same-symbol T+1 repair candidate.
+- Created no repaired backtest snapshot, repaired group metrics, new
+  recommendation rows, new position rows, data fetches, panel expansion,
+  portfolio returns, equity curves, dashboards, trading, production,
+  factor-mining, local-lake, broker, or DQN/RL outputs.
+- Kept GOAL-10C, GOAL-10D, dashboard, signal/portfolio backtest promotion,
+  paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL
+  locked.
+
 ## 2026-06-26 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
 
 - Implemented GOAL-10B only as a review-only, non-actionable recommendation

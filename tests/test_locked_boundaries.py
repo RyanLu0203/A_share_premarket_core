@@ -14,6 +14,7 @@ def test_locked_capabilities_remain_false() -> None:
     assert locked["goal_v1_integrity01_artifact_lineage_structure_gate"] == "implemented_infrastructure_only"
     assert locked["goal10a_backtest_contract_design_gate"] == "implemented_design_only"
     assert locked["goal10b_backtest_review_only_validation_gate"] == "implemented_review_only"
+    assert locked["goal10b1_backtest_coverage_repair_gate"] == "implemented_review_only"
     assert locked["goal10c_backtest_cost_slippage_sensitivity_gate"] is False
     assert locked["goal10d_backtest_failure_attribution_gate"] is False
     for key in [

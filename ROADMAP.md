@@ -66,6 +66,9 @@
 - GOAL-10B recommendation diagnostics backtest review-only prototype
   (`PASS_WITH_WARNINGS`; implemented_review_only non-actionable grouped
   forward-return diagnostics and IC/RankIC availability evidence only).
+- GOAL-10B.1 backtest coverage and group-variation repair gate
+  (`PASS_WITH_WARNINGS`; implemented_review_only coverage diagnostics over
+  existing artifacts only; repair not possible with current artifacts).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -94,7 +97,9 @@ grouping, benchmark, cost/slippage, and tradability rules but runs no backtest.
 GOAL-10B now implements only a deterministic review-only recommendation
 diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return
 labels. It writes grouped diagnostics and IC/RankIC availability evidence only;
-GOAL-10C and GOAL-10D remain locked.
+GOAL-10B.1 now implements only review-only coverage repair diagnostics over
+current artifacts, records `coverage_repair_not_possible_with_current_artifacts`,
+and writes no repaired rows or metrics. GOAL-10C and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,

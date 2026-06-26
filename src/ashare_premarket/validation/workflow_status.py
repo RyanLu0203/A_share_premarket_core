@@ -55,6 +55,8 @@ GOAL10A_WORKFLOW_ID = "goal10a_backtest_contract_design_gate"
 GOAL10A_ALLOWED_NEXT = "request_explicit_goal10b_review_only_backtest_validation_gate_or_fix_goal10a_warnings"
 GOAL10B_WORKFLOW_ID = "goal10b_backtest_review_only_validation_gate"
 GOAL10B_ALLOWED_NEXT = "fix_goal10b_backtest_warnings_before_goal10c_request"
+GOAL10B1_WORKFLOW_ID = "goal10b1_backtest_coverage_repair_gate"
+GOAL10B1_ALLOWED_NEXT = "request_future_data_label_coverage_expansion_gate_or_fix_goal10b1_warnings"
 GOAL10C_WORKFLOW_ID = "goal10c_backtest_cost_slippage_sensitivity_gate"
 GOAL10D_WORKFLOW_ID = "goal10d_backtest_failure_attribution_gate"
 
@@ -107,6 +109,8 @@ def run_workflow_status_audit(root: Path) -> bool:
         failures.append("full roadmap does not label GOAL-10A backtest contract design as implemented_design_only")
     if "GOAL-10B Recommendation Diagnostics Backtest" not in full_roadmap or "implemented_review_only" not in full_roadmap:
         failures.append("full roadmap does not label GOAL-10B recommendation diagnostics backtest as implemented_review_only")
+    if "GOAL-10B.1 Coverage Repair Gate" not in full_roadmap or "implemented_review_only" not in full_roadmap:
+        failures.append("full roadmap does not label GOAL-10B.1 coverage repair gate as implemented_review_only")
     if "DQN/RL Optional Research Benchmark" not in full_roadmap or "deleted_from_active_mainline" not in full_roadmap:
         failures.append("full roadmap does not label DQN/RL as deleted_from_active_mainline")
 
@@ -283,6 +287,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal10b_report = _read(root / "outputs/audits/goal10b_recommendation_backtest_report.md")
     goal10b_manifest = _read(root / "outputs/audits/goal10b_recommendation_backtest_manifest.json")
     goal10b_audit = _read(root / "outputs/audits/goal10b_recommendation_backtest_audit.md")
+    goal10b1 = by_id.get(GOAL10B1_WORKFLOW_ID, {})
+    goal10b1_status = goal10b1.get("status")
+    goal10b1_report = _read(root / "outputs/audits/goal10b1_backtest_coverage_repair_report.md")
+    goal10b1_manifest = _read(root / "outputs/audits/goal10b1_backtest_coverage_repair_manifest.json")
+    goal10b1_audit = _read(root / "outputs/audits/goal10b1_backtest_coverage_repair_audit.md")
     goal10c = by_id.get(GOAL10C_WORKFLOW_ID, {})
     goal10d = by_id.get(GOAL10D_WORKFLOW_ID, {})
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
@@ -302,6 +311,13 @@ def run_workflow_status_audit(root: Path) -> bool:
         and _goal10b_readiness_implemented(goal10b_report)
         and "Status: `PASS`" in goal10b_audit
     )
+    goal10b1_evidence_ready = (
+        bool(goal10b1)
+        and goal10b1_status == "implemented_review_only"
+        and _goal10b1_readiness_implemented(goal10b1_report)
+        and "Status: `PASS`" in goal10b1_audit
+    )
+    goal10c_expected_dependency = GOAL10B1_WORKFLOW_ID if goal10b1_evidence_ready else GOAL10B_WORKFLOW_ID
     if goal07a_status == "future_design_only":
         if goal07a.get("allowed_next_action") not in {
             "prepare_design_only_after_goal06d1_warning_repair",
@@ -994,7 +1010,7 @@ def run_workflow_status_audit(root: Path) -> bool:
             if goal10b.get("depends_on") != GOAL10A_WORKFLOW_ID:
                 failures.append("GOAL-10B dependency is invalid")
         for workflow_id, row, dependency in [
-            (GOAL10C_WORKFLOW_ID, goal10c, GOAL10B_WORKFLOW_ID),
+            (GOAL10C_WORKFLOW_ID, goal10c, goal10c_expected_dependency),
             (GOAL10D_WORKFLOW_ID, goal10d, GOAL10C_WORKFLOW_ID),
         ]:
             if row.get("status") != "locked_future":
@@ -1101,6 +1117,100 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"{workflow_id} must not be implemented after GOAL-10B")
         failures.extend(f"Unexpected GOAL-10B backtest output path exists: {path}" for path in _unexpected_goal10b_backtest_outputs(root))
 
+    if goal10b1:
+        if goal10b1_status != "implemented_review_only":
+            failures.append("GOAL-10B.1 must be implemented_review_only when present after its explicit request")
+        if not _goal10b1_readiness_implemented(goal10b1_report):
+            failures.append("GOAL-10B.1 lacks PASS/PASS_WITH_WARNINGS coverage repair evidence")
+        if "Status: `PASS`" not in goal10b1_audit:
+            failures.append("GOAL-10B.1 coverage repair audit report is missing or not PASS")
+        if not _goal10b_readiness_implemented(goal10b_report):
+            failures.append("GOAL-10B.1 requires GOAL-10B implemented_review_only evidence")
+        if goal10b1.get("implemented_in_repo") != "true":
+            failures.append("GOAL-10B.1 review-only row must be marked implemented")
+        if goal10b1.get("allowed_next_action") != GOAL10B1_ALLOWED_NEXT:
+            failures.append("GOAL-10B.1 allowed_next_action is invalid")
+        if goal10b1.get("depends_on") != GOAL10B_WORKFLOW_ID:
+            failures.append("GOAL-10B.1 must depend on GOAL-10B")
+        for required_text in [
+            '"mode": "review_only"',
+            '"repair_decision": "coverage_repair_not_possible_with_current_artifacts"',
+            '"review_only_coverage_repair_diagnostics_generated": true',
+            '"label_source_coverage_audited": true',
+            '"recommendation_distribution_audited": true',
+            '"used_existing_artifacts_only": true',
+            '"repaired_snapshot_generated": false',
+            '"repaired_group_metrics_generated": false',
+            '"goal10b1_workflow_status_after_goal10b1": "implemented_review_only"',
+            '"goal10c_status_after_goal10b1": "locked_future"',
+            '"goal10d_status_after_goal10b1": "locked_future"',
+            '"dashboard_daily_report_status_after_goal10b1": "locked_future"',
+            '"signal_backtest_status_after_goal10b1": "locked_future"',
+            '"portfolio_backtest_status_after_goal10b1": "locked_future"',
+            '"cost_slippage_sensitivity_status_after_goal10b1": "locked_future"',
+        ]:
+            if required_text not in goal10b1_manifest:
+                failures.append(f"GOAL-10B.1 manifest missing required marker: {required_text}")
+        for required_false in [
+            '"new_data_fetched": false',
+            '"data_panel_expanded": false',
+            '"provider_ingestion_modified": false',
+            '"goal08b_rows_created": false',
+            '"goal08b_rows_overwritten": false',
+            '"goal09_rows_created": false',
+            '"goal09_rows_overwritten": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"position_sizing_generated": false',
+            '"actual_position_sizing_generated": false',
+            '"portfolio_weights_generated": false',
+            '"portfolio_returns_generated": false',
+            '"equity_curves_generated": false',
+            '"portfolio_construction_generated": false',
+            '"dashboard_outputs_generated": false',
+            '"dashboard_files_generated": false',
+            '"html_generated": false',
+            '"streamlit_generated": false',
+            '"frontend_code_generated": false',
+            '"visual_reports_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_model_behavior_created": false',
+            '"database_writes_created": false',
+            '"backtests_run": false',
+            '"backtest_execution_run": false',
+            '"backtest_performance_rows_generated": false',
+            '"signal_backtests_run": false',
+            '"portfolio_backtests_run": false',
+            '"cost_slippage_outputs_created": false',
+            '"local_lake_files_created": false',
+            '"factor_mining_outputs_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"downstream_execution_unlocked_by_this_goal": false',
+        ]:
+            if required_false not in goal10b1_manifest:
+                failures.append(f"GOAL-10B.1 manifest missing false boundary flag: {required_false}")
+        for workflow_id, row in [
+            (GOAL10C_WORKFLOW_ID, goal10c),
+            (GOAL10D_WORKFLOW_ID, goal10d),
+            ("dashboard_daily_report", by_id.get("dashboard_daily_report", {})),
+            ("signal_backtest", by_id.get("signal_backtest", {})),
+            ("portfolio_backtest", by_id.get("portfolio_backtest", {})),
+            ("cost_slippage_sensitivity", by_id.get("cost_slippage_sensitivity", {})),
+            ("paper_trading_journal", by_id.get("paper_trading_journal", {})),
+            ("broker_live_trading", by_id.get("broker_live_trading", {})),
+            ("production_db_writes", by_id.get("production_db_writes", {})),
+            ("production_model_promotion", by_id.get("production_model_promotion", {})),
+        ]:
+            if row.get("status") != "locked_future":
+                failures.append(f"{workflow_id} must remain locked_future after GOAL-10B.1")
+            if row.get("implemented_in_repo") != "false":
+                failures.append(f"{workflow_id} must not be implemented after GOAL-10B.1")
+        if goal10c.get("depends_on") != GOAL10B1_WORKFLOW_ID:
+            failures.append("GOAL-10C must depend on GOAL-10B.1 after GOAL-10B.1")
+        failures.extend(f"Unexpected GOAL-10B.1 backtest output path exists: {path}" for path in _unexpected_goal10b_backtest_outputs(root))
+
     status = "PASS" if not failures else "BLOCKED"
     table_rows = [_status_table_row(row) for row in rows]
     write_csv(
@@ -1152,11 +1262,12 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-V1-INTEGRITY-01 status: `{goal_v1_integrity01_status or 'missing'}`.",
                 f"GOAL-10A status: `{goal10a_status or 'missing'}`.",
                 f"GOAL-10B status: `{goal10b_status or 'missing'}`.",
+                f"GOAL-10B.1 status: `{goal10b1_status or 'missing'}`.",
                 f"GOAL-10C status: `{goal10c.get('status', 'missing')}`.",
                 f"GOAL-10D status: `{goal10d.get('status', 'missing')}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence; GOAL-10B.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS coverage repair diagnostic evidence.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
-                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, GOAL-09.1 dashboard-readiness warning review, and GOAL-10B recommendation diagnostics backtest are review-only when implemented; GOAL-V1-INTEGRITY-01 is infrastructure-only artifact-lineage governance; GOAL-10A is design-only backtest contract governance. Actual positions, dashboard output, paper/live trading, production, portfolio backtests, performance rows, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, GOAL-09.1 dashboard-readiness warning review, GOAL-10B recommendation diagnostics backtest, and GOAL-10B.1 coverage repair diagnostics are review-only when implemented; GOAL-V1-INTEGRITY-01 is infrastructure-only artifact-lineage governance; GOAL-10A is design-only backtest contract governance. Actual positions, dashboard output, paper/live trading, production, portfolio backtests, performance rows, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in failures],
@@ -1279,13 +1390,23 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 failures.append("goal10b_backtest_review_only_validation_gate allowed_next_action is invalid")
             if row["depends_on"] != GOAL10A_WORKFLOW_ID:
                 failures.append("goal10b_backtest_review_only_validation_gate must depend on GOAL-10A")
+        if workflow_id == GOAL10B1_WORKFLOW_ID:
+            if status != "implemented_review_only":
+                failures.append("goal10b1_backtest_coverage_repair_gate must be implemented_review_only")
+            if row["implemented_in_repo"] != "true":
+                failures.append("goal10b1_backtest_coverage_repair_gate must be marked implemented")
+            if row["allowed_next_action"] != GOAL10B1_ALLOWED_NEXT:
+                failures.append("goal10b1_backtest_coverage_repair_gate allowed_next_action is invalid")
+            if row["depends_on"] != GOAL10B_WORKFLOW_ID:
+                failures.append("goal10b1_backtest_coverage_repair_gate must depend on GOAL-10B")
         if workflow_id == GOAL10C_WORKFLOW_ID:
             if status != "locked_future":
                 failures.append("goal10c_backtest_cost_slippage_sensitivity_gate must remain locked_future")
             if row["implemented_in_repo"] != "false":
                 failures.append("goal10c_backtest_cost_slippage_sensitivity_gate must not be marked implemented")
-            if row["depends_on"] != GOAL10B_WORKFLOW_ID:
-                failures.append("goal10c_backtest_cost_slippage_sensitivity_gate must depend on GOAL-10B")
+            expected_dependency = GOAL10B1_WORKFLOW_ID if GOAL10B1_WORKFLOW_ID in by_id else GOAL10B_WORKFLOW_ID
+            if row["depends_on"] != expected_dependency:
+                failures.append("goal10c_backtest_cost_slippage_sensitivity_gate dependency is invalid")
         if workflow_id == GOAL10D_WORKFLOW_ID:
             if status != "locked_future":
                 failures.append("goal10d_backtest_failure_attribution_gate must remain locked_future")
@@ -1381,7 +1502,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL10A_WORKFLOW_ID:
         next_goal = "GOAL-10B review-only recommendation diagnostics backtest is the only implemented successor; production backtests remain locked"
     elif row["workflow_id"] == GOAL10B_WORKFLOW_ID:
-        next_goal = "Fix GOAL-10B warnings before any explicit future GOAL-10C cost/slippage request"
+        next_goal = "GOAL-10B.1 coverage and group-variation repair gate diagnoses current GOAL-10B warnings before any future GOAL-10C request"
+    elif row["workflow_id"] == GOAL10B1_WORKFLOW_ID:
+        next_goal = "Future data/label coverage expansion is required before any explicit GOAL-10C cost/slippage request"
     elif row["workflow_id"] == GOAL10C_WORKFLOW_ID:
         next_goal = "Remain locked until an explicit GOAL-10C cost/slippage sensitivity gate is requested"
     elif row["workflow_id"] == GOAL10D_WORKFLOW_ID:
@@ -1525,6 +1648,13 @@ def _goal10b_readiness_implemented(readiness: str) -> bool:
     )
 
 
+def _goal10b1_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate: PASS" in readiness
+        or "GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
 def _unexpected_goal10b_backtest_outputs(root: Path) -> list[str]:
     path = root / "outputs/backtest"
     if not path.exists():
@@ -1535,6 +1665,11 @@ def _unexpected_goal10b_backtest_outputs(root: Path) -> list[str]:
         "outputs/backtest/goal10b_risk_severity_group_metrics.csv",
         "outputs/backtest/goal10b_warning_group_metrics.csv",
         "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
+        "outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv",
+        "outputs/backtest/goal10b1_recommendation_distribution_audit.csv",
+        "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
+        "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
+        "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
     }
     return [
         str(item.relative_to(root))

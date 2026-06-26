@@ -110,6 +110,10 @@ recommendation execution, position work, or dashboard work.
 - GOAL-10B is implemented_review_only and currently `PASS_WITH_WARNINGS`. It
   computes non-actionable recommendation diagnostic forward-return metrics and
   IC/RankIC availability checks from GOAL-08B plus existing PIT-safe labels.
+- GOAL-10B.1 is implemented_review_only and currently `PASS_WITH_WARNINGS`. It
+  audits GOAL-10B coverage and group variation using existing artifacts only,
+  records `coverage_repair_not_possible_with_current_artifacts`, and writes no
+  repaired rows or repaired metrics.
 - GOAL-10C and GOAL-10D remain `locked_future`.
 - Production model promotion is false.
 - Actionable recommendation execution, position output, dashboard, paper trading,
@@ -175,6 +179,8 @@ python scripts/run_goal10a_backtest_contract_design_gate.py
 python scripts/audit_goal10a_backtest_contract_design_gate.py
 python scripts/run_goal10b_recommendation_backtest_review_only.py
 python scripts/audit_goal10b_recommendation_backtest_review_only.py
+python scripts/run_goal10b1_backtest_coverage_repair_gate.py
+python scripts/audit_goal10b1_backtest_coverage_repair_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -231,7 +237,9 @@ unless a later explicit gate allows it.
   request. GOAL-10A is design-only backtest contract evidence only; it runs no
   backtest and creates no performance rows, equity curves, portfolio returns, or
   cost/slippage outputs. GOAL-10B is review-only recommendation diagnostics
-  backtest evidence only; GOAL-10C and GOAL-10D remain locked.
+  backtest evidence only. GOAL-10B.1 is review-only coverage repair diagnostic
+  evidence only and writes no repaired rows or metrics; GOAL-10C and GOAL-10D
+  remain locked.
   Actual positions, dashboards, and execution remain locked.
 
 ## GOAL-06D.1 Agent Note

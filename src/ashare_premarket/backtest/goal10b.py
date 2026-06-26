@@ -250,6 +250,11 @@ ALLOWED_BACKTEST_OUTPUTS = {
     RISK_SEVERITY_GROUP_METRICS_PATH,
     WARNING_GROUP_METRICS_PATH,
     IC_RANK_IC_SUMMARY_PATH,
+    "outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv",
+    "outputs/backtest/goal10b1_recommendation_distribution_audit.csv",
+    "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
+    "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
 }
 
 

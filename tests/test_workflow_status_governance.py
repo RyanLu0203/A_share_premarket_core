@@ -57,6 +57,10 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal10b_backtest_review_only_validation_gate"]["status"] == "implemented_review_only"
     assert rows["goal10b_backtest_review_only_validation_gate"]["implemented_in_repo"] == "true"
     assert rows["goal10b_backtest_review_only_validation_gate"]["depends_on"] == "goal10a_backtest_contract_design_gate"
+    assert rows["goal10b1_backtest_coverage_repair_gate"]["status"] == "implemented_review_only"
+    assert rows["goal10b1_backtest_coverage_repair_gate"]["implemented_in_repo"] == "true"
+    assert rows["goal10b1_backtest_coverage_repair_gate"]["depends_on"] == "goal10b_backtest_review_only_validation_gate"
+    assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["depends_on"] == "goal10b1_backtest_coverage_repair_gate"
     for workflow_id in [
         "goal10c_backtest_cost_slippage_sensitivity_gate",
         "goal10d_backtest_failure_attribution_gate",

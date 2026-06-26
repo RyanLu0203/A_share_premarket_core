@@ -64,6 +64,7 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
   (`PASS_WITH_WARNINGS`)
+- GOAL-10B.1 Backtest Coverage Repair Gate (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -476,7 +477,9 @@ prices, position sizes, order quantities, local lake files, trading paths,
 production behavior, factor-mining outputs, broker outputs, or DQN/RL outputs.
 
 GOAL-10B is implemented only as review-only recommendation diagnostics
-backtest evidence. GOAL-10C and GOAL-10D remain `locked_future`.
+backtest evidence. GOAL-10B.1 is implemented only as review-only coverage
+repair diagnostics over existing artifacts and records that repair is not
+possible with current artifacts. GOAL-10C and GOAL-10D remain `locked_future`.
 
 ## GOAL-06D Status
 

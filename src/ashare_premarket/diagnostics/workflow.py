@@ -136,6 +136,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal10b_status = _goal10b_status(root)
     goal10b_manifest = _goal10b_manifest(root)
     goal10b_audit_status = _audit_status(root / "outputs/audits/goal10b_recommendation_backtest_audit.md")
+    goal10b1_status = _goal10b1_status(root)
+    goal10b1_manifest = _goal10b1_manifest(root)
+    goal10b1_audit_status = _audit_status(root / "outputs/audits/goal10b1_backtest_coverage_repair_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -237,6 +240,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-10B input snapshot rows: `{goal10b_manifest.get('input_snapshot_row_count', 0)}`.",
                 f"GOAL-10B evaluable rows: `{goal10b_manifest.get('evaluable_row_count', 0)}`.",
                 f"GOAL-10B IC/Rank IC status: `{goal10b_manifest.get('ic_rank_ic_status', 'not yet generated')}`.",
+                f"GOAL-10B.1 coverage repair status: `{goal10b1_status}`.",
+                f"GOAL-10B.1 audit status: `{goal10b1_audit_status}`.",
+                f"GOAL-10B.1 repair decision: `{goal10b1_manifest.get('repair_decision', 'not yet generated')}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -249,12 +255,13 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-V1-INTEGRITY-01 workflow status: `{downstream_status.get('goal_v1_integrity01_artifact_lineage_structure_gate', 'missing')}`.",
                 f"GOAL-10A workflow status: `{downstream_status.get('goal10a_backtest_contract_design_gate', 'missing')}`.",
                 f"GOAL-10B workflow status: `{downstream_status.get('goal10b_backtest_review_only_validation_gate', 'missing')}`.",
+                f"GOAL-10B.1 workflow status: `{downstream_status.get('goal10b1_backtest_coverage_repair_gate', 'missing')}`.",
                 f"GOAL-10C workflow status: `{downstream_status.get('goal10c_backtest_cost_slippage_sensitivity_gate', 'missing')}`.",
                 f"GOAL-10D workflow status: `{downstream_status.get('goal10d_backtest_failure_attribution_gate', 'missing')}`.",
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, and GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, and GOAL-10B.1 may produce only review-only coverage repair diagnostics.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
@@ -330,6 +337,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal10a_backtest_contract_design_gate.py`",
                 "- `python scripts/run_goal10b_recommendation_backtest_review_only.py`",
                 "- `python scripts/audit_goal10b_recommendation_backtest_review_only.py`",
+                "- `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`",
+                "- `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`",
                 "",
             ]
         ),
@@ -809,6 +818,30 @@ def _goal10b_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal10b1_status(root: Path) -> str:
+    report = root / "outputs/audits/goal10b1_backtest_coverage_repair_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal10b1_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal10b1_backtest_coverage_repair_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -857,6 +890,7 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal_v1_integrity01_artifact_lineage_structure_gate",
             "goal10a_backtest_contract_design_gate",
             "goal10b_backtest_review_only_validation_gate",
+            "goal10b1_backtest_coverage_repair_gate",
             "goal10c_backtest_cost_slippage_sensitivity_gate",
             "goal10d_backtest_failure_attribution_gate",
             "dashboard_daily_report",

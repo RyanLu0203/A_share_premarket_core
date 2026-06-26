@@ -188,6 +188,11 @@ ALLOWED_GOAL10B_BACKTEST_OUTPUTS = {
     "outputs/backtest/goal10b_risk_severity_group_metrics.csv",
     "outputs/backtest/goal10b_warning_group_metrics.csv",
     "outputs/backtest/goal10b_ic_rank_ic_summary.csv",
+    "outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv",
+    "outputs/backtest/goal10b1_recommendation_distribution_audit.csv",
+    "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
+    "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
+    "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
 }
 
 

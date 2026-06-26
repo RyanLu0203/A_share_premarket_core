@@ -88,6 +88,9 @@ GOAL-10B audit status: `PASS`.
 GOAL-10B input snapshot rows: `100`.
 GOAL-10B evaluable rows: `99`.
 GOAL-10B IC/Rank IC status: `not_computed`.
+GOAL-10B.1 coverage repair status: `PASS_WITH_WARNINGS`.
+GOAL-10B.1 audit status: `PASS`.
+GOAL-10B.1 repair decision: `coverage_repair_not_possible_with_current_artifacts`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -100,12 +103,13 @@ GOAL-09.1 dashboard-readiness workflow status: `implemented_review_only`.
 GOAL-V1-INTEGRITY-01 workflow status: `implemented_infrastructure_only`.
 GOAL-10A workflow status: `implemented_design_only`.
 GOAL-10B workflow status: `implemented_review_only`.
+GOAL-10B.1 workflow status: `implemented_review_only`.
 GOAL-10C workflow status: `locked_future`.
 GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, and GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, and GOAL-10B.1 may produce only review-only coverage repair diagnostics.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
@@ -193,3 +197,5 @@ Protected regression commands:
 - `python scripts/audit_goal10a_backtest_contract_design_gate.py`
 - `python scripts/run_goal10b_recommendation_backtest_review_only.py`
 - `python scripts/audit_goal10b_recommendation_backtest_review_only.py`
+- `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`
+- `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`

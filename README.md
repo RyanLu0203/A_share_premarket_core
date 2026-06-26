@@ -18,8 +18,9 @@ recommendation diagnostics prototype, the GOAL-09.0 position-band review-only
 unlock eligibility gate, and the GOAL-09 non-actionable position-band
 diagnostics prototype, plus the GOAL-09.1 warning review/dashboard-readiness
 gate, GOAL-V1-INTEGRITY-01 infrastructure-only artifact-lineage structure
-gate, the GOAL-10A design-only future backtest contract gate, and the GOAL-10B
-review-only recommendation diagnostics backtest.
+gate, the GOAL-10A design-only future backtest contract gate, the GOAL-10B
+review-only recommendation diagnostics backtest, and the GOAL-10B.1
+review-only coverage repair diagnostic gate.
 
 ## Repository Roles
 
@@ -96,6 +97,8 @@ python scripts/run_goal10a_backtest_contract_design_gate.py
 python scripts/audit_goal10a_backtest_contract_design_gate.py
 python scripts/run_goal10b_recommendation_backtest_review_only.py
 python scripts/audit_goal10b_recommendation_backtest_review_only.py
+python scripts/run_goal10b1_backtest_coverage_repair_gate.py
+python scripts/audit_goal10b1_backtest_coverage_repair_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -154,7 +157,8 @@ flowchart TD
     Q1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
     V1 -. "design-only backtest contract" .-> B10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
     B10A -. "review-only diagnostics" .-> B10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    B10B -. "locked future" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    B10B -. "coverage repair diagnostics" .-> B10B1["GOAL-10B.1 Coverage Repair Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    B10B1 -. "locked future" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -194,6 +198,12 @@ rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
 GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented as an unlock-only review gate based on prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. GOAL-08B is now implemented only as a review-only non-actionable recommendation diagnostics prototype: it writes 100 deterministic `trade_date + symbol` diagnostic rows, all with `actionability_status=never_actionable`, and it does not create actionable recommendations, buy/sell/hold outputs, target prices, expected returns for action, position sizing, portfolio weights, dashboards, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.0 is implemented as an unlock-only review gate based on prior GOAL-08B and upstream PASS/PASS_WITH_WARNINGS evidence. GOAL-09 is now implemented only as a review-only non-actionable position-band diagnostics prototype: it writes deterministic `trade_date + symbol` diagnostic rows, keeps `position_actionability_status=never_actionable`, and does not create actual position rows, position sizing, portfolio weights, target weights, order quantities, buy/sell/hold outputs, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 is implemented only as a review/readiness warning-classification gate for future dashboard contract design. GOAL-V1-INTEGRITY-01 is implemented only as an infrastructure artifact-lineage and structure gate over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence. GOAL-10A is implemented only as a design-only future backtest contract gate from GOAL-08B and GOAL-09 diagnostics; it defines inputs, date alignment, T+1/no-lookahead rules, future metrics, grouping, cost/slippage sensitivity, benchmark leakage blockers, and suspended/limit/missing-price policy, but runs no backtest and creates no backtest rows. GOAL-10B is implemented only as a review-only, non-actionable recommendation diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return labels; it writes grouped diagnostic metrics and IC/RankIC availability evidence only. Dashboard / Daily Report UI remains `locked_future`.
+
+GOAL-10B.1 is implemented only as review-only coverage repair diagnostics. It
+records that current artifacts cannot repair GOAL-10B coverage/group variation,
+writes no repaired snapshots or repaired metrics, and keeps GOAL-10C,
+GOAL-10D, Dashboard / Daily Report UI, portfolio backtests, trading,
+production, factor-mining, local-lake, broker, and DQN/RL locked.
 
 ## Required Public Commands
 
@@ -276,6 +286,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal10a_backtest_contract_design_gate.py`
 - `python scripts/run_goal10b_recommendation_backtest_review_only.py`
 - `python scripts/audit_goal10b_recommendation_backtest_review_only.py`
+- `python scripts/run_goal10b1_backtest_coverage_repair_gate.py`
+- `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -404,6 +416,13 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal10b_recommendation_backtest_report.md`
 - `outputs/audits/goal10b_recommendation_backtest_manifest.json`
 - `outputs/audits/goal10b_recommendation_backtest_audit.md`
+- `docs/backtest/GOAL10B1_BACKTEST_COVERAGE_REPAIR_GATE.md`
+- `outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv`
+- `outputs/backtest/goal10b1_recommendation_distribution_audit.csv`
+- `outputs/backtest/goal10b1_label_source_coverage_audit.csv`
+- `outputs/audits/goal10b1_backtest_coverage_repair_report.md`
+- `outputs/audits/goal10b1_backtest_coverage_repair_manifest.json`
+- `outputs/audits/goal10b1_backtest_coverage_repair_audit.md`
 
 ## Lock Boundary
 
@@ -425,8 +444,10 @@ validation; it runs no backtest and generates no performance rows, equity
 curves, portfolio returns, or cost/slippage outputs. GOAL-10B is review-only
 diagnostic evidence over GOAL-08B and existing PIT-safe forward-return labels;
 it does not generate actions, portfolios, equity curves, dashboards, trading,
-production, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-10C,
-GOAL-10D, and GOAL-DASHBOARD-00 remain `locked_future`.
+production, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-10B.1
+is review-only coverage repair diagnostics; it records that current artifacts
+cannot repair coverage/group variation and creates no repaired rows or metrics.
+GOAL-10C, GOAL-10D, and GOAL-DASHBOARD-00 remain `locked_future`.
 Dashboard / Daily Report UI remains `locked_future`. Actionable recommendations, actual
 position rows, position sizing,
 dashboards, trading, production, portfolio backtests, factor-mining, broker integration,

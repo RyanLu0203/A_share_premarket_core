@@ -1,0 +1,12 @@
+dimension,value,row_count,unique_symbols,unique_trade_dates,share_of_rows,variation_status
+recommendation_eligibility,blocked_high_risk,100,1,100,1.000000,single_value
+actionability_status,never_actionable,100,1,100,1.000000,single_value
+risk_severity,HIGH,100,1,100,1.000000,single_value
+symbol,000001.SZ,100,1,100,1.000000,single_value
+warning_flag,calibration_not_reliable_for_thresholding,100,1,100,1.000000,multi_value
+warning_flag,feature_sign_instability_bounded,100,1,100,1.000000,multi_value
+warning_flag,provider_source_concentration_disclosed,100,1,100,1.000000,multi_value
+warning_flag,selected_score_variant_weak_rank_signal,100,1,100,1.000000,multi_value
+warning_flag,single_provider_mode_akshare_direct,100,1,100,1.000000,multi_value
+warning_flag,target_horizon_calibration_warning,100,1,100,1.000000,multi_value
+warning_flag,weak_target_horizon_rank_signal,100,1,100,1.000000,multi_value

@@ -1,5 +1,40 @@
 # 09 Step Iteration Log
 
+## 2026-06-26 - GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-10B.1 review-only coverage and group-variation repair gate.
+- Audited why GOAL-10B used
+  `outputs/samples/stage6c_source_backed_engineering_panel_sample.csv` as its
+  label source.
+- Audited existing committed label, Stage6C, GOAL-08B, and GOAL-10B artifacts
+  for broader contract-valid coverage.
+- Classified repair as `coverage_repair_not_possible_with_current_artifacts`.
+
+Evidence:
+
+- `outputs/backtest/goal10b1_coverage_repair_diagnostic_summary.csv`
+- `outputs/backtest/goal10b1_recommendation_distribution_audit.csv`
+- `outputs/backtest/goal10b1_label_source_coverage_audit.csv`
+- `docs/backtest/GOAL10B1_BACKTEST_COVERAGE_REPAIR_GATE.md`
+- `outputs/audits/goal10b1_backtest_coverage_repair_report.md`
+- `outputs/audits/goal10b1_backtest_coverage_repair_manifest.json`
+- `outputs/audits/goal10b1_backtest_coverage_repair_audit.md`
+
+Safety:
+
+- No new data fetch, panel expansion, provider change, GOAL-08B row, GOAL-09
+  row, repaired backtest snapshot, repaired group metric, BUY/SELL/HOLD output,
+  target price, position sizing, portfolio weight, portfolio return, equity
+  curve, dashboard, HTML, Streamlit, frontend, trading, production, broker,
+  local-lake, factor-mining, or DQN/RL output was generated.
+- GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion,
+  portfolio backtest, cost/slippage sensitivity, paper/live trading, broker,
+  production, factor-mining, local-lake, and DQN/RL remain locked.
+
 ## 2026-06-26 - GOAL-10B Recommendation Diagnostics Backtest Review-Only
 
 Status: `PASS_WITH_WARNINGS`.

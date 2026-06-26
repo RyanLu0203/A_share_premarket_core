@@ -49,6 +49,13 @@ It reads GOAL-08B diagnostics and existing PIT-safe label samples only. It does
 not fetch data, expand the panel, write local lake files, create portfolio
 returns, create equity curves, create dashboard outputs, or write production
 storage.
+GOAL-10B.1 writes only small review-only coverage repair diagnostic evidence
+under `outputs/backtest/`, `docs/backtest/`, and `outputs/audits/`. It reads
+existing GOAL-10B, GOAL-08B, label, and Stage6C artifacts only, records that
+repair is not possible with current artifacts, and does not fetch data, expand
+the panel, create repaired rows or metrics, write local lake files, create
+portfolio returns, create equity curves, create dashboard outputs, or write
+production storage.
 
 ## Active Contracts
 
@@ -76,6 +83,8 @@ storage.
   `docs/backtest/`, and `outputs/audits/` only.
 - GOAL-10B recommendation diagnostic backtest evidence under
   `outputs/backtest/`, `docs/backtest/`, and `outputs/audits/` only.
+- GOAL-10B.1 coverage repair diagnostic evidence under `outputs/backtest/`,
+  `docs/backtest/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -121,3 +130,7 @@ storage.
   BUY/SELL/HOLD actions, target prices, position sizing, portfolio weights,
   portfolio returns, equity curves, dashboards, local lake data, trading,
   production, broker, factor-mining, or DQN/RL outputs.
+- Do not treat GOAL-10B.1 coverage repair evidence as permission to fetch data,
+  expand panels, create repaired rows or metrics without contract-valid support,
+  create new recommendation or position rows, run portfolio backtests, create
+  dashboards, or unlock GOAL-10C.
