@@ -12,6 +12,10 @@ def test_locked_capabilities_remain_false() -> None:
     assert locked["position_band_recommendation"] in {False, "future_review_only", "implemented_review_only"}
     assert locked["goal091_position_band_warning_dashboard_readiness_gate"] == "implemented_review_only"
     assert locked["goal_v1_integrity01_artifact_lineage_structure_gate"] == "implemented_infrastructure_only"
+    assert locked["goal10a_backtest_contract_design_gate"] == "implemented_design_only"
+    assert locked["goal10b_backtest_review_only_validation_gate"] is False
+    assert locked["goal10c_backtest_cost_slippage_sensitivity_gate"] is False
+    assert locked["goal10d_backtest_failure_attribution_gate"] is False
     for key in [
         "signal_backtest",
         "portfolio_backtest",

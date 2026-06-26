@@ -1,0 +1,62 @@
+{
+  "benchmark_contract": {
+    "allowed_future_benchmark_ids": [
+      "000300.SH",
+      "000905.SH",
+      "000001.SH"
+    ],
+    "benchmark_id_must_be_declared_before_evaluation": true,
+    "benchmark_return_window_matches_row_window": true,
+    "forbidden_leakage_rules": [
+      "Do not choose benchmarks using ex-post performance.",
+      "Do not use future benchmark constituents or target-window returns to change input eligibility.",
+      "Do not compare a row against a benchmark window different from its execution_date and target_horizon."
+    ]
+  },
+  "cost_slippage_sensitivity": {
+    "components": [
+      "commission_bps",
+      "stamp_duty_bps",
+      "slippage_bps",
+      "execution_delay_days"
+    ],
+    "defined_for_future_use": true,
+    "goal10a_runs_sensitivity": false,
+    "output_policy": "No sensitivity rows, tables, or charts may be produced by GOAL-10A.",
+    "scenario_names": [
+      "zero_cost",
+      "low_cost",
+      "base_cost",
+      "high_cost"
+    ]
+  },
+  "date_alignment": {
+    "benchmark_alignment": "Benchmark return windows must use the same execution_date and target_horizon as the evaluated diagnostic row.",
+    "execution_date": "The first eligible A-share trading session strictly after signal_date, normally T+1.",
+    "signal_date": "The PIT-safe date on which the diagnostic is considered available; for GOAL-08B/GOAL-09 inputs it equals trade_date.",
+    "target_horizon": [
+      "1d",
+      "5d",
+      "20d"
+    ],
+    "trade_date": "The upstream diagnostic grain date; it is not an execution date in future evaluation."
+  },
+  "goal": "GOAL-10A-BACKTEST-CONTRACT-DESIGN-GATE",
+  "mode": "design_only",
+  "no_lookahead_constraints": {
+    "benchmark_future_returns_may_not_select_or_filter_inputs": true,
+    "execution_price_may_not_be_used_before_execution_date": true,
+    "future_returns_may_not_select_or_filter_inputs": true,
+    "input_membership_frozen_at_signal_date": true,
+    "target_window_prices_may_not_be_used_before_window_close": true
+  },
+  "same_day_execution_allowed": false,
+  "t_plus_1_execution_required": true,
+  "tradability_policy": {
+    "future_evaluation_must_report_evaluable_count": true,
+    "limit_down_at_exit": "mark_exit_constrained_and disclose separately in future diagnostics",
+    "limit_up_at_entry": "mark_unevaluable_or_no_entry_fill_no_chase_assumption",
+    "missing_price": "mark_missing_price_excluded_from_metric_denominator_no_imputation",
+    "suspended_at_execution": "mark_unevaluable_with_reason_no_fill_assumed"
+  }
+}

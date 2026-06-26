@@ -36,6 +36,13 @@ documentation, manifest, report, and audit evidence under `configs/validation/`,
 `docs/validation/`, and `outputs/audits/`; it does not create dashboard outputs,
 new risk rows, new recommendation rows, new position rows, local lake files, raw
 payload roots, cache inputs, notebooks, or production storage.
+GOAL-10A writes only design-only future backtest contract evidence under
+`configs/backtest/`, `docs/backtest/`, and `outputs/audits/`. It reads only
+GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, and
+GOAL-V1-INTEGRITY-01 audit metadata as prior evidence. It does not fetch prices,
+expand the data panel, write local lake files, create backtest rows, create
+equity curves, create portfolio returns, create dashboard outputs, or write
+production storage.
 
 ## Active Contracts
 
@@ -59,6 +66,8 @@ payload roots, cache inputs, notebooks, or production storage.
   `configs/dashboard/`, `docs/dashboard/`, and `outputs/audits/` only.
 - GOAL-V1-INTEGRITY-01 artifact-lineage and structure evidence under
   `configs/validation/`, `docs/validation/`, and `outputs/audits/` only.
+- GOAL-10A future backtest contract evidence under `configs/backtest/`,
+  `docs/backtest/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -96,3 +105,7 @@ payload roots, cache inputs, notebooks, or production storage.
 - Do not treat GOAL-V1-INTEGRITY-01 artifact-lineage evidence as permission to
   create dashboard files, new diagnostic rows, local lake files, raw provider
   payloads, cache-backed inputs, notebooks, or production storage.
+- Do not treat GOAL-10A backtest contract evidence as permission to run a
+  backtest, generate performance rows, fetch price data, create equity curves,
+  create portfolio returns, write local lake data, create dashboards, or write
+  production storage.

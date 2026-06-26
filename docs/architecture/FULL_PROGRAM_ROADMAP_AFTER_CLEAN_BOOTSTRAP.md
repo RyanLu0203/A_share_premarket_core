@@ -30,13 +30,17 @@ flowchart TD
     L0 -. "review-only diagnostics" .-> L["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     L -. "warning review / dashboard readiness" .-> L1["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     L1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
+    V1 -. "design-only contract" .-> T10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
+    T10A -. "locked future" .-> T10B["GOAL-10B Review-Only Backtest Validation<br/>(locked_future)"]
+    T10B -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
     N -. "locked future" .-> O["Cost / Slippage Sensitivity<br/>(locked_future)"]
     O -. "locked future" .-> P["Paper Trading Journal<br/>(locked_future)"]
     P -. "locked future" .-> Q["Failure Attribution<br/>(locked_future)"]
     Q -. "locked future" .-> R["Dashboard / Daily Report<br/>(locked_future)"]
-    V1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> R
+    V1 -. "dashboard UI locked" .-> R
     R -. "locked future" .-> S["Production Hardening<br/>(locked_future)"]
     S -. "locked future" .-> T["Broker / Live Trading<br/>(locked_future)"]
     S -. "locked future" .-> U["Production DB Writes<br/>(locked_future)"]
@@ -80,8 +84,12 @@ classifies the remaining GOAL-09 warnings for future dashboard contract display;
 GOAL-V1-INTEGRITY-01 allows only a future explicit GOAL-DASHBOARD-00
 design/contract gate request and creates no dashboard output, HTML, Streamlit,
 frontend code, visual report, new risk row, new recommendation row, or new
-position row. V2 factor research is planned but
+position row. GOAL-10A is implemented only as a design-only future backtest
+contract gate; it defines contracts for future review-only validation and
+creates no backtest performance rows, equity curves, portfolio returns, or
+cost/slippage outputs. GOAL-10B, GOAL-10C, and GOAL-10D remain locked_future.
+V2 factor research is planned but
 inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,
-paper/live trading, production, backtest, factor-mining, and DQN/RL blocks
+paper/live trading, production, backtest execution, factor-mining, and DQN/RL blocks
 remain locked, planned-locked, design-only, or infrastructure-only.

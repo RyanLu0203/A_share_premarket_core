@@ -49,7 +49,11 @@ flowchart TD
     N0 -. "review-only diagnostics" .-> N["GOAL-09 Position-Band Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     N -. "warning review / dashboard readiness" .-> N1["GOAL-09.1 Dashboard Readiness<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     N1 -. "artifact-lineage integrity only" .-> V1["GOAL-V1-INTEGRITY-01 Structure Gate<br/>(implemented_infrastructure_only; PASS_WITH_WARNINGS)"]
-    V1 -. "GOAL-DASHBOARD-00 may be requested; UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
+    V1 -. "design-only backtest contract" .-> T10A["GOAL-10A Backtest Contract Design<br/>(implemented_design_only; PASS_WITH_WARNINGS)"]
+    T10A -. "locked future" .-> T10B["GOAL-10B Review-Only Backtest Validation<br/>(locked_future)"]
+    T10B -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
+    V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
 
 The extension writes review-only evidence under `outputs/stage6c/`,
@@ -72,8 +76,11 @@ implemented only as non-actionable review-only position-band diagnostics, and
 GOAL-09.1 is implemented only as warning-review and dashboard-readiness
 evidence. GOAL-V1-INTEGRITY-01 is implemented only as artifact-lineage and
 structure integrity evidence over the canonical V1 chain. It creates no
-dashboard output and only permits a future explicit GOAL-DASHBOARD-00
-design/contract gate request; Dashboard / Daily Report UI and downstream
+dashboard output. GOAL-10A is implemented only as design-only future backtest
+contract evidence; it runs no backtest and creates no performance rows, equity
+curves, portfolio returns, or cost/slippage outputs. The only allowed future
+unlock after GOAL-10A is an explicit GOAL-10B review-only validation request.
+GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, and downstream
 trading/production workflow remain locked.
 
 ## Module Dependency Structure

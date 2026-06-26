@@ -60,6 +60,9 @@
 - GOAL-V1-INTEGRITY-01 artifact-lineage and structure gate
   (`PASS_WITH_WARNINGS`; implemented_infrastructure_only canonical V1 chain
   integrity only, no dashboard or new diagnostic rows).
+- GOAL-10A backtest contract design gate (`PASS_WITH_WARNINGS`;
+  implemented_design_only future review-only validation contract only, no
+  backtest execution or performance rows).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -81,12 +84,16 @@ deterministic non-actionable position-band diagnostics prototype at
 `trade_date + symbol` grain. GOAL-09.1 now implements only warning
 classification and dashboard-readiness evidence. GOAL-V1-INTEGRITY-01 now
 implements only artifact-lineage and structure integrity over GOAL-07B,
-GOAL-08B, GOAL-09, and GOAL-09.1 evidence. It allows a future
-GOAL-DASHBOARD-00 contract/layout design gate to be explicitly requested, but
+GOAL-08B, GOAL-09, and GOAL-09.1 evidence. GOAL-10A now implements only a
+design-only future backtest contract gate from GOAL-08B and GOAL-09
+diagnostics; it defines input, date alignment, T+1/no-lookahead, metrics,
+grouping, benchmark, cost/slippage, and tradability rules but runs no backtest.
+GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
-paper/live trading, production DB writes, production model promotion, backtest,
-factor mining, broker, local lake, or DQN/RL is unlocked.
+paper/live trading, production DB writes, production model promotion, backtest
+execution, backtest rows, factor mining, broker, local lake, or DQN/RL is
+unlocked.
 
 V2 factor research is planned but inactive. It remains `planned_locked` until a
 future explicit V2 goal; no factor mining, IC/RankIC mining, factor library
@@ -99,8 +106,11 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
+- GOAL-10B review-only backtest validation.
+- GOAL-10C cost/slippage sensitivity.
+- GOAL-10D failure attribution.
 - Signal and portfolio backtests.
-- Cost/slippage sensitivity.
+- Cost/slippage sensitivity execution.
 - Paper trading journal.
 - Failure attribution.
 - Dashboard / daily report.

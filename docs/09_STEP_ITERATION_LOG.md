@@ -1,5 +1,42 @@
 # 09 Step Iteration Log
 
+## 2026-06-26 - GOAL-10A Backtest Contract Design Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-10A design-only future backtest contract gate.
+- Defined input contracts for GOAL-08B recommendation diagnostics and GOAL-09
+  position-band diagnostics at `trade_date + symbol` grain.
+- Defined signal_date, trade_date, execution_date, target_horizon, benchmark
+  alignment, T+1, no-lookahead, future metric, grouping, cost/slippage,
+  benchmark leakage, and suspended/limit/missing-price policies.
+- Updated workflow status so GOAL-10A is `implemented_design_only` and
+  GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, paper/live
+  trading, broker, production, factor-mining, and DQN/RL remain locked.
+
+Evidence:
+
+- `configs/backtest/goal10a_backtest_input_contract.yaml`
+- `configs/backtest/goal10a_backtest_metric_contract.yaml`
+- `configs/backtest/goal10a_backtest_grouping_contract.yaml`
+- `configs/backtest/goal10a_execution_alignment_policy.yaml`
+- `docs/backtest/GOAL10A_BACKTEST_CONTRACT_DESIGN_GATE.md`
+- `outputs/audits/goal10a_backtest_contract_design_report.md`
+- `outputs/audits/goal10a_backtest_contract_design_manifest.json`
+- `outputs/audits/goal10a_backtest_contract_design_audit.md`
+
+Safety:
+
+- No backtest was run.
+- No backtest performance rows, equity curves, portfolio returns, cost/slippage
+  outputs, dashboard files, HTML, Streamlit, frontend code, buy/sell/hold
+  actions, target prices, position sizing, order quantities, local-lake data,
+  trading, production, broker, factor-mining, or DQN/RL output was generated.
+- GOAL-10A is contract-only; GOAL-10B remains the earliest possible future
+  explicit review-only validation request and is still `locked_future`.
+
 ## 2026-06-25 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
 
 Status: `PASS_WITH_WARNINGS`.

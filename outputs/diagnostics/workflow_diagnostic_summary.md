@@ -79,6 +79,10 @@ GOAL-V1-INTEGRITY-01 artifact-lineage status: `PASS_WITH_WARNINGS`.
 GOAL-V1-INTEGRITY-01 audit status: `PASS`.
 GOAL-V1-INTEGRITY-01 canonical lineage verified: `true`.
 GOAL-DASHBOARD-00 request eligibility after V1 integrity: `eligible_for_explicit_design_only_contract_gate`.
+GOAL-10A backtest contract design status: `PASS_WITH_WARNINGS`.
+GOAL-10A audit status: `PASS`.
+GOAL-10A source keys match: `true`.
+GOAL-10A backtests run: `false`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -89,16 +93,20 @@ GOAL-09.0 workflow status: `implemented_review_only`.
 GOAL-09 position-band diagnostics workflow status: `implemented_review_only`.
 GOAL-09.1 dashboard-readiness workflow status: `implemented_review_only`.
 GOAL-V1-INTEGRITY-01 workflow status: `implemented_infrastructure_only`.
+GOAL-10A workflow status: `implemented_design_only`.
+GOAL-10B workflow status: `locked_future`.
+GOAL-10C workflow status: `locked_future`.
+GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, and GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, and GOAL-10A may define only future backtest contracts without running a backtest.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
 GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
-GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, GOAL-09 may produce only non-actionable review-only position-band diagnostic rows, GOAL-09.1 may classify warnings for future dashboard design readiness only, and GOAL-V1-INTEGRITY-01 may verify lineage/structure only before any explicit GOAL-DASHBOARD-00 design contract request.
+GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, GOAL-09 may produce only non-actionable review-only position-band diagnostic rows, GOAL-09.1 may classify warnings for future dashboard design readiness only, GOAL-V1-INTEGRITY-01 may verify lineage/structure only before any explicit GOAL-DASHBOARD-00 design contract request, and GOAL-10A may define future backtest contracts only without performance rows.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`
@@ -176,3 +184,5 @@ Protected regression commands:
 - `python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py`
 - `python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py`
 - `python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py`
+- `python scripts/run_goal10a_backtest_contract_design_gate.py`
+- `python scripts/audit_goal10a_backtest_contract_design_gate.py`

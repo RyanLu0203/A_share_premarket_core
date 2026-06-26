@@ -67,6 +67,7 @@ Implemented design-only:
 
 - GOAL-07A Risk Overlay Design (`PASS_WITH_WARNINGS`)
 - GOAL-08A Recommendation Contract Design Gate (`PASS`)
+- GOAL-10A Backtest Contract Design Gate (`PASS_WITH_WARNINGS`)
 
 Implemented infrastructure-only:
 
@@ -76,13 +77,18 @@ Implemented infrastructure-only:
 
 Future design-only:
 
-- none currently implemented; GOAL-V1-INTEGRITY-01 allows only a future explicit
-  GOAL-DASHBOARD-00 contract/layout design gate request
+- none currently locked as future design-only; GOAL-V1-INTEGRITY-01 still
+  allows only a future explicit GOAL-DASHBOARD-00 contract/layout design gate
+  request, while GOAL-10A is already implemented as design-only backtest
+  contract evidence
 
 Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
+- GOAL-10B Review-Only Backtest Validation
+- GOAL-10C Cost / Slippage Sensitivity
+- GOAL-10D Failure Attribution
 - Signal Backtest
 - Portfolio Backtest
 - Cost / Slippage Sensitivity
@@ -440,6 +446,35 @@ Streamlit, frontend code, visual reports, new risk rows, new recommendation
 rows, new position rows, actual position sizing, weights, orders, trading paths,
 production behavior, backtests, factor-mining outputs, broker outputs, local
 lake files, or DQN/RL outputs.
+
+## GOAL-10A Status
+
+GOAL-10A is `implemented_design_only` and currently `PASS_WITH_WARNINGS`. It
+creates:
+
+- `configs/backtest/goal10a_backtest_input_contract.yaml`
+- `configs/backtest/goal10a_backtest_metric_contract.yaml`
+- `configs/backtest/goal10a_backtest_grouping_contract.yaml`
+- `configs/backtest/goal10a_execution_alignment_policy.yaml`
+- `docs/backtest/GOAL10A_BACKTEST_CONTRACT_DESIGN_GATE.md`
+- `outputs/audits/goal10a_backtest_contract_design_report.md`
+- `outputs/audits/goal10a_backtest_contract_design_manifest.json`
+- `outputs/audits/goal10a_backtest_contract_design_audit.md`
+
+GOAL-10A defines future review-only validation contracts over GOAL-08B
+recommendation diagnostics and GOAL-09 position-band diagnostics at
+`trade_date + symbol` grain. It defines `signal_date`, `trade_date`,
+`execution_date`, `target_horizon`, benchmark alignment, T+1/no-lookahead
+rules, future metrics, grouping rules, cost/slippage sensitivity contracts, and
+suspended/limit/missing-price policy.
+
+GOAL-10A runs no backtest, generates no backtest performance rows, creates no
+equity curves, creates no portfolio returns, creates no dashboard files, creates
+no HTML/Streamlit/frontend files, creates no buy/sell/hold actions, target
+prices, position sizes, order quantities, local lake files, trading paths,
+production behavior, factor-mining outputs, broker outputs, or DQN/RL outputs.
+
+GOAL-10B, GOAL-10C, and GOAL-10D remain `locked_future`.
 
 ## GOAL-06D Status
 

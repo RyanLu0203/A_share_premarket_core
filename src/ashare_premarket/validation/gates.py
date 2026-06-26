@@ -12,6 +12,7 @@ from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
 from ashare_premarket.contract_design.goal08b0 import audit_goal08b0_recommendation_review_only_unlock_gate, run_goal08b0_recommendation_review_only_unlock_gate
 from ashare_premarket.contract_design.goal090 import audit_goal090_position_band_review_only_unlock_gate, run_goal090_position_band_review_only_unlock_gate
 from ashare_premarket.contract_design.goal091 import audit_goal091_position_band_warning_dashboard_readiness_gate, run_goal091_position_band_warning_dashboard_readiness_gate
+from ashare_premarket.contract_design.goal10a import audit_goal10a_backtest_contract_design_gate, run_goal10a_backtest_contract_design_gate
 from ashare_premarket.data.coverage import audit_data_source_coverage
 from ashare_premarket.datasets.feature_label_merge import audit_feature_label_leakage, build_model_ready_candidate_dataset
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
@@ -149,6 +150,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal09_position_band_diagnostics_review_only", run_goal09_position_band_diagnostics_prototype(root) and audit_goal09_position_band_diagnostics_prototype(root)),
         ("goal091_position_band_warning_dashboard_readiness", run_goal091_position_band_warning_dashboard_readiness_gate(root) and audit_goal091_position_band_warning_dashboard_readiness_gate(root)),
         ("goal_v1_integrity01_artifact_lineage_structure", run_goal_v1_integrity01_artifact_lineage_structure_gate(root) and audit_goal_v1_integrity01_artifact_lineage_structure_gate(root)),
+        ("goal10a_backtest_contract_design_gate", run_goal10a_backtest_contract_design_gate(root) and audit_goal10a_backtest_contract_design_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -243,6 +245,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py"]),
         ("python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
         ("python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
+        ("python scripts/run_goal10a_backtest_contract_design_gate.py", [sys.executable, "scripts/run_goal10a_backtest_contract_design_gate.py"]),
+        ("python scripts/audit_goal10a_backtest_contract_design_gate.py", [sys.executable, "scripts/audit_goal10a_backtest_contract_design_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -264,6 +268,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py", [sys.executable, "scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py"]),
         ("python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
         ("python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py", [sys.executable, "scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py"]),
+        ("python scripts/run_goal10a_backtest_contract_design_gate.py", [sys.executable, "scripts/run_goal10a_backtest_contract_design_gate.py"]),
+        ("python scripts/audit_goal10a_backtest_contract_design_gate.py", [sys.executable, "scripts/audit_goal10a_backtest_contract_design_gate.py"]),
     ]
     rows = []
     runtime_rows = []

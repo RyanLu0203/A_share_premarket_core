@@ -1,0 +1,60 @@
+{
+  "forbidden_group_outputs_from_goal10a": [
+    "ranked_top_n",
+    "buy_candidates",
+    "position_candidates",
+    "capital_allocation",
+    "trade_instruction"
+  ],
+  "future_grouping_rules": [
+    {
+      "evaluation_use": "future grouped review-only metric comparison",
+      "group_name": "recommendation_eligibility_status",
+      "observed_values": [
+        "blocked_high_risk"
+      ],
+      "source_field": "goal08b.recommendation_diagnostic_label"
+    },
+    {
+      "evaluation_use": "future confirmation that no actionable bucket is evaluated as a recommendation",
+      "group_name": "actionability_status",
+      "observed_values": [
+        "never_actionable"
+      ],
+      "source_field": "goal08b.actionability_status"
+    },
+    {
+      "evaluation_use": "future risk-severity grouped diagnostics",
+      "group_name": "risk_severity",
+      "observed_values": [
+        "HIGH"
+      ],
+      "source_field": "goal08b.risk_severity and goal09.risk_severity"
+    },
+    {
+      "evaluation_use": "future non-actionable position-band status comparison",
+      "group_name": "position_band_status",
+      "observed_values": [
+        "diagnostic_blocked_no_position_instruction"
+      ],
+      "source_field": "goal09.position_band_status"
+    },
+    {
+      "evaluation_use": "future warning-category grouped diagnostics",
+      "group_name": "warning_category",
+      "observed_values": [
+        "calibration_not_reliable_for_thresholding",
+        "feature_sign_instability_bounded",
+        "provider_source_concentration_disclosed",
+        "selected_score_variant_weak_rank_signal",
+        "single_provider_mode_akshare_direct",
+        "target_horizon_calibration_warning",
+        "weak_target_horizon_rank_signal"
+      ],
+      "source_field": "goal08b.risk_warning_codes and goal09.propagated_warning_codes"
+    }
+  ],
+  "goal": "GOAL-10A-BACKTEST-CONTRACT-DESIGN-GATE",
+  "goal10a_runs_group_evaluation": false,
+  "mode": "design_only"
+}

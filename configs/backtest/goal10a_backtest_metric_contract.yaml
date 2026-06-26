@@ -1,0 +1,87 @@
+{
+  "forbidden_metric_outputs_from_goal10a": [
+    "backtest_row",
+    "performance_table",
+    "equity_curve",
+    "portfolio_return",
+    "ranked_trade_list",
+    "buy_sell_hold_action"
+  ],
+  "future_metric_definitions": [
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Forward return from execution date through one future trading session.",
+      "metric_name": "forward_return_1d",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Forward return from execution date through five future trading sessions.",
+      "metric_name": "forward_return_5d",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Forward return from execution date through twenty future trading sessions.",
+      "metric_name": "forward_return_20d",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Future row return less benchmark return over the identical execution window.",
+      "metric_name": "benchmark_excess_return",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Share of evaluated rows with positive selected forward return.",
+      "metric_name": "hit_rate",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Arithmetic mean of selected forward returns.",
+      "metric_name": "mean_return",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Median selected forward return.",
+      "metric_name": "median_return",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Standard deviation of selected forward returns.",
+      "metric_name": "volatility",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Maximum drawdown of a future diagnostic-only grouped return series.",
+      "metric_name": "max_drawdown",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Pearson correlation between diagnostic score or ordered label and future return.",
+      "metric_name": "IC",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    },
+    {
+      "calculation_status": "future_contract_only_not_run_by_goal10a",
+      "definition": "Spearman rank correlation between diagnostic ordering and future return.",
+      "metric_name": "Rank IC",
+      "no_lookahead_rule": "Future return labels may be computed only after the relevant target horizon closes and may not change input eligibility."
+    }
+  ],
+  "goal": "GOAL-10A-BACKTEST-CONTRACT-DESIGN-GATE",
+  "goal10a_runs_metrics": false,
+  "metric_output_row_count": 0,
+  "mode": "design_only",
+  "target_horizons": [
+    "1d",
+    "5d",
+    "20d"
+  ]
+}

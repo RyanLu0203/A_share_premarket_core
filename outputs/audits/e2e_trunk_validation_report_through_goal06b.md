@@ -42,6 +42,7 @@ Status: `PASS_WITH_WARNINGS`
 - `goal09_position_band_diagnostics_review_only`: PASS
 - `goal091_position_band_warning_dashboard_readiness`: PASS
 - `goal_v1_integrity01_artifact_lineage_structure`: PASS
+- `goal10a_backtest_contract_design_gate`: PASS
 - `goal06d_blocked_or_review_only_after_engineering_pilot`: PASS
 - `workflow_status_audit_passes`: PASS
 - `safety_gate_passes`: PASS

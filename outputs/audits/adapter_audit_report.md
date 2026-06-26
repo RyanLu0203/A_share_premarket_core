@@ -1,6 +1,6 @@
 # Adapter Audit Report
 
 Status: `PASS`
-Public commands through GOAL-06B plus GOAL-06C/GOAL-06D review-only gates, the GOAL-07A design-only gate, the GOAL-07B.0 unlock gate, the GOAL-07B review-only risk overlay prototype, the GOAL-08A design-only contract gate, the GOAL-STORAGE-01 infrastructure-only hardening gate, the GOAL-08B.0 review-only unlock gate, the GOAL-08B review-only recommendation diagnostics prototype, and the GOAL-09.0 position-band review-only unlock gate are preserved as clean wrappers.
+Public commands through GOAL-06B plus GOAL-06C/GOAL-06D review-only gates, the GOAL-07A design-only gate, GOAL-07B/08B/09 review-only gates and diagnostics, GOAL-09.1 warning-readiness, GOAL-V1-INTEGRITY-01 infrastructure integrity, and GOAL-10A design-only backtest contract gate are preserved as clean wrappers.
 No wrapper imports legacy implementation code.
 

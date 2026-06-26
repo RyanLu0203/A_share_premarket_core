@@ -1,0 +1,61 @@
+{
+  "contract_boundary": {
+    "goal10a_fetches_prices": false,
+    "goal10a_generates_rows": false,
+    "goal10a_runs_backtest": false,
+    "goal10a_writes_local_lake": false
+  },
+  "date_field_contract": {
+    "future_execution_date": "Must be the first eligible trading date strictly after signal_date.",
+    "future_signal_date": "Must equal source trade_date unless a later explicit gate records a PIT-safe diagnostic publication timestamp.",
+    "source_trade_date": "Required upstream diagnostic date at trade_date + symbol grain."
+  },
+  "goal": "GOAL-10A-BACKTEST-CONTRACT-DESIGN-GATE",
+  "join_key": [
+    "trade_date",
+    "symbol"
+  ],
+  "mode": "design_only",
+  "required_goal08b_fields": [
+    "trade_date",
+    "symbol",
+    "recommendation_diagnostic_label",
+    "actionability_status",
+    "actionability_blocked",
+    "risk_severity",
+    "risk_state",
+    "risk_warning_codes",
+    "warning_propagation_codes",
+    "diagnostic_mode",
+    "non_actionable_disclaimer"
+  ],
+  "required_goal09_fields": [
+    "trade_date",
+    "symbol",
+    "recommendation_actionability_status",
+    "position_band_status",
+    "position_actionability_status",
+    "position_actionability_blocked",
+    "risk_severity",
+    "risk_warning_codes",
+    "propagated_warning_codes",
+    "diagnostic_mode",
+    "non_actionable_disclaimer"
+  ],
+  "required_input_grain": "trade_date + symbol",
+  "source_artifacts": {
+    "goal08b_audit": "outputs/audits/goal08b_recommendation_diagnostics_audit.md",
+    "goal08b_manifest": "outputs/audits/goal08b_recommendation_diagnostics_manifest.json",
+    "goal08b_recommendation_diagnostics": "outputs/recommendation/goal08b_review_only_recommendation_diagnostics.csv",
+    "goal08b_report": "outputs/audits/goal08b_recommendation_diagnostics_report.md",
+    "goal08b_rows_are_actionable": false,
+    "goal09_audit": "outputs/audits/goal09_position_band_diagnostics_audit.md",
+    "goal09_manifest": "outputs/audits/goal09_position_band_diagnostics_manifest.json",
+    "goal09_position_band_diagnostics": "outputs/position/goal09_review_only_position_band_diagnostics.csv",
+    "goal09_report": "outputs/audits/goal09_position_band_diagnostics_report.md",
+    "goal09_rows_are_actionable": false,
+    "source_modes_required": [
+      "review_only"
+    ]
+  }
+}

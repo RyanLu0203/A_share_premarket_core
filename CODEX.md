@@ -15,7 +15,8 @@ GOAL-08B non-actionable recommendation diagnostics prototype, plus the
 GOAL-09.0 position-band review-only unlock eligibility gate, plus the GOAL-09
 non-actionable position-band diagnostics prototype, plus the GOAL-09.1
 position-band warning review/dashboard-readiness gate, plus
-GOAL-V1-INTEGRITY-01 artifact-lineage structure governance. Preserve
+GOAL-V1-INTEGRITY-01 artifact-lineage structure governance, plus the GOAL-10A
+design-only future backtest contract gate. Preserve
 reproducibility and source governance before any future actionable
 recommendation execution, position work, or dashboard work.
 
@@ -100,6 +101,13 @@ recommendation execution, position work, or dashboard work.
   `PASS_WITH_WARNINGS`. It verifies only the GOAL-07B -> GOAL-08B -> GOAL-09 ->
   GOAL-09.1 review-only artifact lineage and structure before any future
   GOAL-DASHBOARD-00 design/contract request.
+- GOAL-10A is implemented_design_only and currently `PASS_WITH_WARNINGS`. It
+  defines future review-only backtest input, execution alignment, T+1,
+  no-lookahead, metric, grouping, benchmark, cost/slippage, and tradability
+  contracts from GOAL-08B and GOAL-09 diagnostics only. It runs no backtest and
+  creates no performance rows, equity curves, portfolio returns, dashboard,
+  trading, production, local-lake, broker, factor-mining, or DQN/RL outputs.
+- GOAL-10B, GOAL-10C, and GOAL-10D remain `locked_future`.
 - Production model promotion is false.
 - Actionable recommendation execution, position output, dashboard, paper trading,
   broker/live trading, production DB writes, V2 factor mining, and DQN/RL are
@@ -160,6 +168,8 @@ python scripts/run_goal091_position_band_warning_dashboard_readiness_gate.py
 python scripts/audit_goal091_position_band_warning_dashboard_readiness_gate.py
 python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py
 python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py
+python scripts/run_goal10a_backtest_contract_design_gate.py
+python scripts/audit_goal10a_backtest_contract_design_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -213,7 +223,9 @@ unless a later explicit gate allows it.
   dashboard-readiness evidence only. GOAL-V1-INTEGRITY-01 is artifact-lineage
   structure evidence only; it creates no new diagnostic rows or dashboard output
   and only allows a future explicit GOAL-DASHBOARD-00 design/contract gate
-  request.
+  request. GOAL-10A is design-only backtest contract evidence only; it runs no
+  backtest and creates no performance rows, equity curves, portfolio returns, or
+  cost/slippage outputs. GOAL-10B, GOAL-10C, and GOAL-10D remain locked.
   Actual positions, dashboards, and execution remain locked.
 
 ## GOAL-06D.1 Agent Note
@@ -226,7 +238,7 @@ promotion, or factor-mining outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 may mark GOAL-08B review-only eligible using prior evidence only, but it must not itself generate recommendation diagnostics rows. GOAL-08B may produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. GOAL-09.0 may mark GOAL-09 future_review_only eligible using prior GOAL-08B evidence only, but it must not itself implement GOAL-09 or create position-band rows. GOAL-09 may produce only non-actionable review-only position-band diagnostics at `trade_date + symbol` grain; it must not produce actual positions, sizing, weights, orders, buy/sell/hold actions, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 may classify warnings and define future dashboard contract/display blockers only; it must not implement Dashboard / Daily Report UI, create dashboard files, HTML, Streamlit, frontend, visual reports, new recommendation rows, new position rows, actual position sizing, trading, production, backtests, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-V1-INTEGRITY-01 may verify only artifact lineage and structure over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence; it must not create new risk, recommendation, position, dashboard, local-lake, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. All decision/execution paths remain locked.
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 may mark GOAL-08B review-only eligible using prior evidence only, but it must not itself generate recommendation diagnostics rows. GOAL-08B may produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. GOAL-09.0 may mark GOAL-09 future_review_only eligible using prior GOAL-08B evidence only, but it must not itself implement GOAL-09 or create position-band rows. GOAL-09 may produce only non-actionable review-only position-band diagnostics at `trade_date + symbol` grain; it must not produce actual positions, sizing, weights, orders, buy/sell/hold actions, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 may classify warnings and define future dashboard contract/display blockers only; it must not implement Dashboard / Daily Report UI, create dashboard files, HTML, Streamlit, frontend, visual reports, new recommendation rows, new position rows, actual position sizing, trading, production, backtests, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-V1-INTEGRITY-01 may verify only artifact lineage and structure over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence; it must not create new risk, recommendation, position, dashboard, local-lake, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-10A may define only design-only future backtest contracts; it must not run a backtest, generate backtest rows, create equity curves, create portfolio returns, fetch new data, create dashboards, write local-lake/trading/production data, integrate a broker, activate factor mining, or create DQN/RL outputs. GOAL-10B, GOAL-10C, and GOAL-10D remain locked. All decision/execution paths remain locked.
 
 
 

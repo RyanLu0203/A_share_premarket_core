@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 
 ## Current Stage
 
@@ -75,6 +75,17 @@ trading paths, production behavior, backtests, factor-mining outputs, broker
 outputs, or DQN/RL outputs. Dashboard / Daily Report UI remains `locked_future`;
 only a future explicit GOAL-DASHBOARD-00 design/contract gate request is now
 eligible.
+GOAL-10A is implemented as a design-only future backtest contract gate
+(`PASS_WITH_WARNINGS`). It consumes only prior GOAL-08B non-actionable
+recommendation diagnostics, GOAL-09 non-actionable position-band diagnostics,
+and GOAL-V1-INTEGRITY-01 lineage evidence to define future input, date
+alignment, T+1/no-lookahead, metric, grouping, benchmark, cost/slippage, and
+tradability policies. It runs no backtest, creates no performance rows, equity
+curves, portfolio returns, dashboard output, HTML, Streamlit, frontend code,
+trading path, production behavior, broker output, factor-mining output, local
+lake file, or DQN/RL output. GOAL-10B, GOAL-10C, GOAL-10D, Dashboard / Daily
+Report UI, paper/live trading, broker, production, factor-mining, and DQN/RL
+remain locked.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -147,6 +158,8 @@ Implemented and protected:
   future dashboard contract constraints only
 - GOAL-V1-INTEGRITY-01 artifact-lineage and structure integrity gate over the
   GOAL-07B -> GOAL-08B -> GOAL-09 -> GOAL-09.1 review-only chain
+- GOAL-10A backtest contract design gate for future review-only validation
+  contract rules only, with no backtest execution or performance rows
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -210,6 +223,9 @@ Implemented design-only:
   rule catalog, state machine, upstream-warning mapping, and audits only)
 - GOAL-08A recommendation contract design gate (`PASS`; names-only future
   contract and actionability guardrails only; zero recommendation rows)
+- GOAL-10A backtest contract design gate (`PASS_WITH_WARNINGS`; future input,
+  metric, grouping, execution alignment, benchmark, cost/slippage, and
+  tradability contracts only; no backtest execution or performance rows)
 
 Implemented infrastructure-only:
 
@@ -222,6 +238,9 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
+- GOAL-10B review-only backtest validation
+- GOAL-10C cost/slippage sensitivity
+- GOAL-10D failure attribution
 - dashboard
 - paper trading
 - broker/live trading
@@ -379,6 +398,25 @@ Streamlit, frontend code, visual reports, new risk rows, new recommendation
 rows, new position rows, local lake files, trading paths, production behavior,
 backtests, factor-mining outputs, broker outputs, or DQN/RL outputs.
 
+GOAL-10A writes only design-only future backtest contract evidence:
+
+- `configs/backtest/goal10a_backtest_input_contract.yaml`
+- `configs/backtest/goal10a_backtest_metric_contract.yaml`
+- `configs/backtest/goal10a_backtest_grouping_contract.yaml`
+- `configs/backtest/goal10a_execution_alignment_policy.yaml`
+- `docs/backtest/GOAL10A_BACKTEST_CONTRACT_DESIGN_GATE.md`
+- `outputs/audits/goal10a_backtest_contract_design_report.md`
+- `outputs/audits/goal10a_backtest_contract_design_manifest.json`
+- `outputs/audits/goal10a_backtest_contract_design_audit.md`
+
+GOAL-10A defines future review-only backtest contracts from GOAL-08B
+recommendation diagnostics and GOAL-09 position-band diagnostics only. It does
+not fetch prices, expand the data panel, run a backtest, create performance
+rows, create equity curves, create portfolio returns, create cost/slippage
+outputs, generate actionable recommendations, create position sizing, create
+dashboard files, write local lake data, write trading or production data,
+activate factor mining, integrate a broker, or create DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -398,10 +436,12 @@ The protected regenerated outputs live under:
 - `configs/position/`
 - `configs/storage/`
 - `configs/validation/`
+- `configs/backtest/`
 - `docs/risk/`
 - `docs/recommendation/`
 - `docs/storage/`
 - `docs/validation/`
+- `docs/backtest/`
 - `outputs/diagnostics/`
 
 Key GitHub locations after push:
@@ -434,8 +474,9 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
-GOAL-09, and GOAL-09.1 are `implemented_review_only`; GOAL-07A and GOAL-08A are `implemented_design_only`;
-GOAL-STORAGE-01 and GOAL-V1-INTEGRITY-01 are
+GOAL-09, and GOAL-09.1 are `implemented_review_only`; GOAL-07A, GOAL-08A, and
+GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
+GOAL-V1-INTEGRITY-01 are
 `implemented_infrastructure_only`. GOAL-07B is
 diagnostic-only and non-actionable. GOAL-08A is names-only design evidence with
 zero recommendation rows. STORAGE-01 hardens storage only and does not unlock
@@ -443,7 +484,9 @@ GOAL-08B by itself. GOAL-08B is non-actionable diagnostic-only evidence.
 GOAL-09.0 is unlock-only evidence. GOAL-09 is non-actionable review-only
 position-band diagnostics only. GOAL-09.1 is warning-review/dashboard-readiness
 evidence only. GOAL-V1-INTEGRITY-01 is artifact-lineage/structure evidence only;
-Dashboard / Daily Report UI remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
+GOAL-10A is future backtest contract design evidence only; GOAL-10B,
+GOAL-10C, and GOAL-10D remain `locked_future`. Dashboard / Daily Report UI
+remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 
 ## Known Warnings

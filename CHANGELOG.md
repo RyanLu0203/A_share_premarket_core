@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-26 - GOAL-10A Backtest Contract Design Gate
+
+- Implemented GOAL-10A only as a design-only future backtest contract gate.
+- Added the GOAL-10A module, runner, audit wrapper, input/metric/grouping/
+  execution-alignment contracts, documentation, manifest, workflow-status
+  governance, diagnostics integration, and focused tests.
+- Defined future signal_date, trade_date, execution_date, target_horizon,
+  benchmark alignment, T+1, no-lookahead, cost/slippage, benchmark leakage, and
+  suspended/limit/missing-price handling policies.
+- Kept GOAL-10B, GOAL-10C, GOAL-10D, dashboard, paper/live trading, broker,
+  production, factor-mining, local-lake, and DQN/RL locked.
+- Created no backtest rows, performance tables, equity curves, portfolio
+  returns, cost/slippage outputs, HTML, Streamlit, frontend files, buy/sell/hold
+  outputs, target prices, position sizes, order quantities, trading paths, or
+  production outputs.
+
 ## 2026-06-25 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
 
 - Implemented GOAL-V1-INTEGRITY-01 only as an infrastructure artifact-lineage
