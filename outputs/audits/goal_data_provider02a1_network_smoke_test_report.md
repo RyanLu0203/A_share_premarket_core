@@ -3,18 +3,18 @@
 GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test Gate: PASS_WITH_WARNINGS
 
 Mode: `review_only_network_opt_in_provider_smoke_test`
-Network opt-in present: `false`
-Live provider access attempted count: `0`
+Network opt-in present: `true`
+Live provider access attempted count: `4`
 Approved symbols tested: `002475.SZ;600036.SH`
 Smoke window: `2026-05-11` to `2026-06-19` over `30` trading-day contract.
 
 ## Provider Results
 - `tushare_pro`: status `SKIPPED`, live access attempted `false`, failure `tushare_unavailable_missing_token`, returned rows `0`.
-- `baostock`: status `SKIPPED`, live access attempted `false`, failure `provider_package_unavailable`, returned rows `0`.
-- `akshare`: status `SKIPPED`, live access attempted `false`, failure `network_disabled_by_policy`, returned rows `0`.
-- `efinance`: status `SKIPPED`, live access attempted `false`, failure `provider_package_unavailable`, returned rows `0`.
+- `baostock`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
+- `akshare`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
+- `efinance`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
 - `qstock`: status `SKIPPED`, live access attempted `false`, failure `provider_package_unavailable`, returned rows `0`.
-- `yfinance`: status `SKIPPED`, live access attempted `false`, failure `provider_package_unavailable`, returned rows `0`.
+- `yfinance`: status `PASS`, live access attempted `true`, failure `none`, returned rows `29`.
 - `local_import`: status `PASS_WITH_WARNINGS`, live access attempted `false`, failure `local_import_current_approved_ohlcv_rows_missing`, returned rows `0`.
 
 ## Boundary
@@ -28,9 +28,5 @@ Smoke window: `2026-05-11` to `2026-06-19` over `30` trading-day contract.
 ## Warnings
 - approved_universe_too_small
 - tushare_pro:tushare_unavailable_missing_token
-- baostock:provider_package_unavailable
-- akshare:network_disabled_by_policy
-- efinance:provider_package_unavailable
 - qstock:provider_package_unavailable
-- yfinance:provider_package_unavailable
 - local_import:local_import_current_approved_ohlcv_rows_missing
