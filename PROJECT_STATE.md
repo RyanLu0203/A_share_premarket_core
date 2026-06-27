@@ -148,8 +148,8 @@ the current approved-symbol smoke universe and a 30-trading-day contract
 window. It creates no final evaluation panel, recommendation diagnostics,
 position-band diagnostics, backtest rows, portfolio returns, equity curves,
 dashboards, trading paths, production behavior, broker output, local lake file,
-factor-mining output, or DQN/RL output. GOAL-DATA-PROVIDER-02B,
-GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
+factor-mining output, or DQN/RL output. GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
 Dashboard / Daily Report UI, signal and portfolio backtest promotion,
 paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
 remain locked or deleted from active mainline.
@@ -163,11 +163,21 @@ It persists no provider token, raw payload, final evaluation panel,
 recommendation diagnostic, position-band diagnostic, backtest row, portfolio
 return, equity curve, dashboard, trading path, production behavior, broker
 output, local lake file, factor-mining output, or DQN/RL output.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
-UI, signal and portfolio backtest promotion, paper/live trading, broker,
-production, local-lake, factor-mining, and DQN/RL remain locked or deleted
-from active mainline.
+GOAL-DATA-PROVIDER-02B is implemented as a review-only source-backed
+evaluation panel build gate (`PASS_WITH_WARNINGS`). It writes a bounded
+normalized panel artifact for future review-only diagnostics planning:
+6000 rows, 50 symbols, and 120 trade dates, with provider usage, coverage,
+failure-taxonomy, manifest, report, and audit evidence. The gate records a
+candidate provider-panel universe when the canonical approved universe is below
+the required 50 symbols; it does not promote that candidate universe into the
+approved trading universe or into GOAL-DATA-PANEL-02. It creates no
+recommendation diagnostic, position-band diagnostic, backtest row, portfolio
+return, equity curve, dashboard, trading path, production behavior, broker
+output, local lake file, factor-mining output, or DQN/RL output.
+GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
+Dashboard / Daily Report UI, signal and portfolio backtest promotion,
+paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
+remain locked or deleted from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -251,6 +261,13 @@ Implemented and protected:
   OHLCV and benchmark samples only
 - GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol non-actionable diagnostic
   coverage expansion from committed Stage 6C approved-symbol evidence only
+- GOAL-10B.2 recommendation backtest revalidation diagnostics over bounded
+  GOAL-V1-DIAGNOSTIC-COVERAGE-02 rows only
+- GOAL-10C row-level cost/slippage sensitivity diagnostics over bounded
+  position-band rows only
+- GOAL-DATA-PROVIDER-02A provider capability metadata only
+- GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke-test metadata only
+- GOAL-DATA-PROVIDER-02B bounded source-backed evaluation panel evidence only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -332,6 +349,10 @@ Implemented review-only:
 - GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke test
   (`PASS_WITH_WARNINGS`; `implemented_review_only`; opt-in smoke-test metadata
   only; no final panel)
+- GOAL-DATA-PROVIDER-02B source-backed evaluation panel build gate
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; bounded normalized
+  source-backed panel evidence only; no diagnostics, backtests, dashboards, or
+  execution outputs)
 
 Implemented design-only:
 
@@ -354,7 +375,6 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
-- GOAL-DATA-PROVIDER-02B provider selection
 - GOAL-DATA-PANEL-02 evaluation panel build
 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics
 - GOAL-10B.3 recommendation revalidation
@@ -685,9 +705,10 @@ recommendation revalidation diagnostics only; GOAL-10C is non-actionable
 position-band cost/slippage sensitivity diagnostics only; GOAL-DATA-PROVIDER-02A
 is provider capability metadata only and does not build a panel;
 GOAL-DATA-PROVIDER-02A.1 is opt-in provider smoke-test metadata only and does
-not build a panel; GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
-`locked_future`. Dashboard / Daily Report UI
+not build a panel; GOAL-DATA-PROVIDER-02B is bounded source-backed evaluation
+panel evidence only and does not unlock diagnostics, backtests, dashboards, or
+execution; GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3,
+and GOAL-10D remain `locked_future`. Dashboard / Daily Report UI
 remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 

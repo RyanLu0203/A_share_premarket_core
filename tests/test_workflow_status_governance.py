@@ -78,9 +78,10 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal_data_provider02a1_network_opt_in_provider_smoke_test"]["status"] == "implemented_review_only"
     assert rows["goal_data_provider02a1_network_opt_in_provider_smoke_test"]["implemented_in_repo"] == "true"
     assert rows["goal_data_provider02a1_network_opt_in_provider_smoke_test"]["depends_on"] == "goal_data_provider02a_multi_provider_capability_probe"
+    assert rows["goal_data_provider02b_provider_selection_gate"]["status"] == "implemented_review_only"
+    assert rows["goal_data_provider02b_provider_selection_gate"]["implemented_in_repo"] == "true"
     assert rows["goal_data_provider02b_provider_selection_gate"]["depends_on"] == "goal_data_provider02a1_network_opt_in_provider_smoke_test"
     for workflow_id in [
-        "goal_data_provider02b_provider_selection_gate",
         "goal_data_panel02_evaluation_panel_gate",
         "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
         "goal10b3_recommendation_backtest_revalidation",

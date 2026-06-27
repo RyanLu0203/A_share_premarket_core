@@ -11,7 +11,7 @@ Smoke window: `2026-05-11` to `2026-06-19` over `30` trading-day contract.
 ## Provider Results
 - `tushare_pro`: status `SKIPPED`, live access attempted `false`, failure `tushare_unavailable_missing_token`, returned rows `0`.
 - `baostock`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
-- `akshare`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
+- `akshare`: status `PASS`, live access attempted `true`, failure `none`, returned rows `87`.
 - `efinance`: status `PASS`, live access attempted `true`, failure `none`, returned rows `58`.
 - `qstock`: status `SKIPPED`, live access attempted `false`, failure `provider_package_unavailable`, returned rows `0`.
 - `yfinance`: status `PASS`, live access attempted `true`, failure `none`, returned rows `29`.
@@ -23,7 +23,7 @@ Smoke window: `2026-05-11` to `2026-06-19` over `30` trading-day contract.
 - Tushare Pro reads `TUSHARE_TOKEN` only from the environment and never persists it.
 - No raw provider payloads are persisted.
 - Smoke-test data is not final evaluation panel evidence.
-- GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
+- GOAL-DATA-PROVIDER-02B is implemented only by its own source-backed panel gate when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
 
 ## Warnings
 - approved_universe_too_small

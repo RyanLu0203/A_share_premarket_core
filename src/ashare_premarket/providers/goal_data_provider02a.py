@@ -23,7 +23,7 @@ GOAL_DATA_PANEL02_WORKFLOW_ID = "goal_data_panel02_evaluation_panel_gate"
 GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID = "goal_v1_diagnostic_coverage03_multi_provider_diagnostics"
 GOAL10B3_WORKFLOW_ID = "goal10b3_recommendation_backtest_revalidation"
 GOAL10D_WORKFLOW_ID = "goal10d_backtest_failure_attribution_gate"
-ALLOWED_NEXT = "request_goal_data_provider02b_provider_selection_or_fix_provider02a_warnings"
+ALLOWED_NEXT = "request_goal_data_provider02b_source_backed_panel_build_or_fix_provider02a_warnings"
 
 PASS = "PASS"
 PASS_WITH_WARNINGS = "PASS_WITH_WARNINGS"
@@ -268,8 +268,19 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
         failures.append("provider02a_depends_on_invalid")
     if gate.get("allowed_next_action") != ALLOWED_NEXT:
         failures.append("provider02a_allowed_next_invalid")
+
+    provider02b = workflow.get(GOAL_DATA_PROVIDER02B_WORKFLOW_ID, {})
+    if provider02b.get("status") not in {"locked_future", "implemented_review_only"}:
+        failures.append("goal_data_provider02b_provider_selection_gate_status_invalid")
+    elif provider02b.get("status") == "implemented_review_only":
+        if provider02b.get("implemented_in_repo") != "true":
+            failures.append("goal_data_provider02b_provider_selection_gate_implemented_marker_invalid")
+        if provider02b.get("depends_on") != "goal_data_provider02a1_network_opt_in_provider_smoke_test":
+            failures.append("goal_data_provider02b_provider_selection_gate_dependency_invalid")
+    elif provider02b.get("implemented_in_repo") != "false":
+        failures.append("goal_data_provider02b_provider_selection_gate_marked_implemented_while_locked")
+
     for workflow_id in [
-        GOAL_DATA_PROVIDER02B_WORKFLOW_ID,
         GOAL_DATA_PANEL02_WORKFLOW_ID,
         GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         GOAL10B3_WORKFLOW_ID,
@@ -388,13 +399,13 @@ def goal_data_provider02a_implemented_workflow_patch() -> dict[str, str]:
 
 def locked_goal_data_provider02b_patch() -> dict[str, str]:
     return _locked_patch(
-        "GOAL-DATA-PROVIDER-02B Provider Selection Gate",
+        "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate",
         "GOAL-DATA-PROVIDER-02B",
-        "locked_future_provider_selection_gate",
-        "remain_locked_until_explicit_goal_data_provider02b_request",
+        "locked_future_source_backed_evaluation_panel_build_gate",
+        "remain_locked_until_explicit_goal_data_provider02b_source_backed_panel_build_request",
         WORKFLOW_ID,
-        "locked_until_explicit_goal_data_provider02b_selection_gate",
-        "Future provider selection remains locked; GOAL-DATA-PROVIDER-02A only probes capabilities.",
+        "locked_until_explicit_goal_data_provider02b_source_backed_panel_build_gate",
+        "Future source-backed panel build remains locked until explicit GOAL-DATA-PROVIDER-02B request; GOAL-DATA-PROVIDER-02A only probes capabilities.",
     )
 
 

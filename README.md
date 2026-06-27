@@ -181,7 +181,7 @@ flowchart TD
     B10B2 -. "review-only sensitivity" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02A -. "network opt-in smoke test" .-> P02A1["GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P02A1 -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
     DC03 -. "locked future" .-> B10B3["GOAL-10B.3 Recommendation Revalidation<br/>(locked_future)"]
@@ -259,9 +259,13 @@ implemented only as a review-only network-opt-in smoke test: live provider
 access is attempted only with `ASHARE_ALLOW_NETWORK_INGESTION=1`, Tushare Pro
 also requires `ASHARE_ALLOW_TUSHARE=1` plus `TUSHARE_TOKEN` from the
 environment, and no provider tokens or raw provider payloads are persisted.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
-`locked_future`.
+GOAL-DATA-PROVIDER-02B is implemented only as a review-only source-backed
+evaluation panel build gate: it writes bounded normalized panel evidence plus
+coverage, provider-usage, failure-taxonomy, manifest, report, and audit files,
+but it creates no diagnostics, backtests, portfolios, dashboards, trading,
+production, local-lake, broker, factor-mining, or DQN/RL outputs.
+GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D
+remain `locked_future`.
 
 ## Required Public Commands
 

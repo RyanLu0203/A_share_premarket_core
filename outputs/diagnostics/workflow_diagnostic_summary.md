@@ -113,8 +113,14 @@ GOAL-DATA-PROVIDER-02A final panel created: `false`.
 GOAL-DATA-PROVIDER-02A.1 network smoke-test status: `PASS_WITH_WARNINGS`.
 GOAL-DATA-PROVIDER-02A.1 audit status: `PASS`.
 GOAL-DATA-PROVIDER-02A.1 providers represented: `7`.
-GOAL-DATA-PROVIDER-02A.1 live access attempted count: `0`.
+GOAL-DATA-PROVIDER-02A.1 live access attempted count: `4`.
 GOAL-DATA-PROVIDER-02A.1 final panel created: `false`.
+GOAL-DATA-PROVIDER-02B source-backed panel status: `PASS_WITH_WARNINGS`.
+GOAL-DATA-PROVIDER-02B audit status: `PASS`.
+GOAL-DATA-PROVIDER-02B panel rows: `6000`.
+GOAL-DATA-PROVIDER-02B unique symbols: `50`.
+GOAL-DATA-PROVIDER-02B unique trade dates: `120`.
+GOAL-DATA-PROVIDER-02B panel contract status: `source_backed_evaluation_panel_ready_for_dc03`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -134,7 +140,7 @@ GOAL-10B.2 workflow status: `implemented_review_only`.
 GOAL-10C workflow status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02A workflow status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02A.1 workflow status: `implemented_review_only`.
-GOAL-DATA-PROVIDER-02B workflow status: `locked_future`.
+GOAL-DATA-PROVIDER-02B workflow status: `implemented_review_only`.
 GOAL-DATA-PANEL-02 workflow status: `locked_future`.
 GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `locked_future`.
 GOAL-10B.3 workflow status: `locked_future`.
@@ -244,3 +250,5 @@ Protected regression commands:
 - `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`
 - `python scripts/run_goal_data_provider02a1_network_smoke_test.py`
 - `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`
+- `python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py`
+- `python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py`

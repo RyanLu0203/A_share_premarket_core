@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-27 - GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate
+
+- Implemented GOAL-DATA-PROVIDER-02B only as a review-only source-backed
+  evaluation panel build gate.
+- Added a bounded normalized 6000-row panel over 50 symbols and 120 trade
+  dates, plus coverage summary, provider usage summary, provider failure
+  taxonomy, report, manifest, audit, contract, docs, scripts, tests, and
+  workflow governance.
+- Preserved GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3,
+  GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining,
+  and DQN/RL as locked.
+- Created no recommendation diagnostics, position-band diagnostics, backtest
+  rows, portfolio returns, equity curves, dashboard, HTML, Streamlit, frontend,
+  visual report, trading, production, broker, local-lake, factor-mining, DQN/RL,
+  raw provider payload, or provider-token outputs.
+
 ## 2026-06-27 - GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test
 
 - Implemented GOAL-DATA-PROVIDER-02A.1 only as a review-only network-opt-in

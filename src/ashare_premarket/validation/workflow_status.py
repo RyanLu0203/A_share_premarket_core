@@ -29,7 +29,6 @@ DOWNSTREAM_LOCKED_IDS = {
     "production_db_writes",
     "production_model_promotion",
     "goal10d_backtest_failure_attribution_gate",
-    "goal_data_provider02b_provider_selection_gate",
     "goal_data_panel02_evaluation_panel_gate",
     "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
     "goal10b3_recommendation_backtest_revalidation",
@@ -70,10 +69,11 @@ GOAL10C_WORKFLOW_ID = "goal10c_backtest_cost_slippage_sensitivity_gate"
 GOAL10C_ALLOWED_NEXT = "request_goal10d_failure_attribution_or_fix_goal10c_warnings"
 GOAL10D_WORKFLOW_ID = "goal10d_backtest_failure_attribution_gate"
 GOAL_DATA_PROVIDER02A_WORKFLOW_ID = "goal_data_provider02a_multi_provider_capability_probe"
-GOAL_DATA_PROVIDER02A_ALLOWED_NEXT = "request_goal_data_provider02b_provider_selection_or_fix_provider02a_warnings"
+GOAL_DATA_PROVIDER02A_ALLOWED_NEXT = "request_goal_data_provider02b_source_backed_panel_build_or_fix_provider02a_warnings"
 GOAL_DATA_PROVIDER02A1_WORKFLOW_ID = "goal_data_provider02a1_network_opt_in_provider_smoke_test"
-GOAL_DATA_PROVIDER02A1_ALLOWED_NEXT = "request_goal_data_provider02b_provider_selection_or_fix_provider02a1_warnings"
+GOAL_DATA_PROVIDER02A1_ALLOWED_NEXT = "request_goal_data_provider02b_source_backed_panel_build_or_fix_provider02a1_warnings"
 GOAL_DATA_PROVIDER02B_WORKFLOW_ID = "goal_data_provider02b_provider_selection_gate"
+GOAL_DATA_PROVIDER02B_ALLOWED_NEXT = "request_goal_v1_diagnostic_coverage03_or_fix_provider02b_warnings"
 GOAL_DATA_PANEL02_WORKFLOW_ID = "goal_data_panel02_evaluation_panel_gate"
 GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID = "goal_v1_diagnostic_coverage03_multi_provider_diagnostics"
 GOAL10B3_WORKFLOW_ID = "goal10b3_recommendation_backtest_revalidation"
@@ -347,6 +347,10 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_data_provider02a1_manifest = _read(root / "outputs/audits/goal_data_provider02a1_network_smoke_test_manifest.json")
     goal_data_provider02a1_audit = _read(root / "outputs/audits/goal_data_provider02a1_network_smoke_test_audit.md")
     goal_data_provider02b = by_id.get(GOAL_DATA_PROVIDER02B_WORKFLOW_ID, {})
+    goal_data_provider02b_status = goal_data_provider02b.get("status")
+    goal_data_provider02b_report = _read(root / "outputs/audits/goal_data_provider02b_source_backed_panel_report.md")
+    goal_data_provider02b_manifest = _read(root / "outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json")
+    goal_data_provider02b_audit = _read(root / "outputs/audits/goal_data_provider02b_source_backed_panel_audit.md")
     goal_data_panel02 = by_id.get(GOAL_DATA_PANEL02_WORKFLOW_ID, {})
     goal_v1_diagnostic_coverage03 = by_id.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
     goal10b3 = by_id.get(GOAL10B3_WORKFLOW_ID, {})
@@ -409,6 +413,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_data_provider02a1_status == "implemented_review_only"
         and _goal_data_provider02a1_readiness_implemented(goal_data_provider02a1_report)
         and "Status: `PASS`" in goal_data_provider02a1_audit
+    )
+    goal_data_provider02b_evidence_ready = (
+        bool(goal_data_provider02b)
+        and goal_data_provider02b_status == "implemented_review_only"
+        and _goal_data_provider02b_readiness_implemented(goal_data_provider02b_report)
+        and "Status: `PASS`" in goal_data_provider02b_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -1674,12 +1684,14 @@ def run_workflow_status_audit(root: Path) -> bool:
         ]:
             if required_false not in goal_data_provider02a_manifest:
                 failures.append(f"GOAL-DATA-PROVIDER-02A manifest missing false boundary flag: {required_false}")
-        for workflow_id, row in [
-            (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b),
+        provider02a_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
             (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
             (GOAL10B3_WORKFLOW_ID, goal10b3),
-        ]:
+        ]
+        if not goal_data_provider02b_evidence_ready:
+            provider02a_downstream_rows.insert(0, (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b))
+        for workflow_id, row in provider02a_downstream_rows:
             if row.get("status") != "locked_future":
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02A")
             if row.get("implemented_in_repo") != "false":
@@ -1770,12 +1782,14 @@ def run_workflow_status_audit(root: Path) -> bool:
         ]:
             if required_false not in goal_data_provider02a1_manifest:
                 failures.append(f"GOAL-DATA-PROVIDER-02A.1 manifest missing false boundary flag: {required_false}")
-        for workflow_id, row in [
-            (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b),
+        provider02a1_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
             (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
             (GOAL10B3_WORKFLOW_ID, goal10b3),
-        ]:
+        ]
+        if not goal_data_provider02b_evidence_ready:
+            provider02a1_downstream_rows.insert(0, (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b))
+        for workflow_id, row in provider02a1_downstream_rows:
             if row.get("status") != "locked_future":
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02A.1")
             if row.get("implemented_in_repo") != "false":
@@ -1783,6 +1797,87 @@ def run_workflow_status_audit(root: Path) -> bool:
         if goal_data_provider02b.get("depends_on") != GOAL_DATA_PROVIDER02A1_WORKFLOW_ID:
             failures.append("GOAL-DATA-PROVIDER-02B must depend on GOAL-DATA-PROVIDER-02A.1 after the smoke test gate")
         _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-PROVIDER-02A.1")
+    if goal_data_provider02b:
+        if goal_data_provider02b_status != "implemented_review_only":
+            failures.append("GOAL-DATA-PROVIDER-02B must be implemented_review_only when present after its explicit request")
+        if not goal_data_provider02b_evidence_ready:
+            failures.append("GOAL-DATA-PROVIDER-02B lacks PASS/PASS_WITH_WARNINGS source-backed panel evidence")
+        if not goal_data_provider02a1_evidence_ready:
+            failures.append("GOAL-DATA-PROVIDER-02B requires GOAL-DATA-PROVIDER-02A.1 implemented_review_only evidence")
+        if goal_data_provider02b.get("implemented_in_repo") != "true":
+            failures.append("GOAL-DATA-PROVIDER-02B review-only row must be marked implemented")
+        if goal_data_provider02b.get("allowed_next_action") != GOAL_DATA_PROVIDER02B_ALLOWED_NEXT:
+            failures.append("GOAL-DATA-PROVIDER-02B allowed_next_action is invalid")
+        if goal_data_provider02b.get("depends_on") != GOAL_DATA_PROVIDER02A1_WORKFLOW_ID:
+            failures.append("GOAL-DATA-PROVIDER-02B must depend on GOAL-DATA-PROVIDER-02A.1")
+        for required_text in [
+            '"mode": "review_only_source_backed_evaluation_panel_build_gate"',
+            '"source_backed_evaluation_panel_created": true',
+            '"review_only_panel_generated": true',
+            '"panel_contract_status": "source_backed_evaluation_panel_ready_for_dc03"',
+            '"row_count": 6000',
+            '"unique_symbols": 50',
+            '"unique_trade_dates": 120',
+            '"universe_mode": "provider_panel_candidate_universe_review_only"',
+            '"approved_universe_expanded": false',
+            '"goal_data_provider02b_workflow_status_after_gate": "implemented_review_only"',
+            '"goal_data_panel02_status_after_goal_data_provider02b": "locked_future"',
+            '"goal_v1_diagnostic_coverage03_status_after_goal_data_provider02b": "locked_future"',
+            '"goal10b3_status_after_goal_data_provider02b": "locked_future"',
+            '"goal10d_status_after_goal_data_provider02b": "locked_future"',
+            '"dashboard_daily_report_status_after_goal_data_provider02b": "locked_future"',
+            '"raw_payloads_never_persisted": true',
+            '"provider_tokens_never_persisted": true',
+            '"yfinance_auxiliary_not_primary": true',
+        ]:
+            if required_text not in goal_data_provider02b_manifest:
+                failures.append(f"GOAL-DATA-PROVIDER-02B manifest missing required marker: {required_text}")
+        for required_false in [
+            '"recommendation_diagnostics_run": false',
+            '"position_band_diagnostics_run": false',
+            '"backtests_run": false',
+            '"goal_v1_diagnostic_coverage03_run": false',
+            '"goal10b3_run": false',
+            '"goal10c_rerun_by_this_goal": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"position_sizing_generated": false',
+            '"order_quantities_generated": false',
+            '"portfolio_weights_generated": false',
+            '"portfolio_returns_generated": false',
+            '"equity_curves_generated": false',
+            '"dashboard_outputs_generated": false',
+            '"dashboard_files_generated": false',
+            '"html_generated": false',
+            '"streamlit_generated": false',
+            '"frontend_code_generated": false',
+            '"visual_reports_generated": false',
+            '"paper_trading_enabled": false',
+            '"live_trading_enabled": false',
+            '"broker_integration_enabled": false',
+            '"production_db_writes_created": false',
+            '"production_model_behavior_created": false',
+            '"local_lake_files_created": false',
+            '"factor_mining_outputs_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"raw_provider_payloads_committed": false',
+            '"provider_tokens_committed": false',
+            '"secrets_logged": false',
+            '"downstream_execution_unlocked_by_this_goal": false',
+            '"goal_data_panel02_workflow_implemented_by_this_goal": false',
+        ]:
+            if required_false not in goal_data_provider02b_manifest:
+                failures.append(f"GOAL-DATA-PROVIDER-02B manifest missing false boundary flag: {required_false}")
+        for workflow_id, row in [
+            (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
+            (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
+            (GOAL10B3_WORKFLOW_ID, goal10b3),
+        ]:
+            if row.get("status") != "locked_future":
+                failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02B")
+            if row.get("implemented_in_repo") != "false":
+                failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-PROVIDER-02B")
+        _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-PROVIDER-02B")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -2052,8 +2147,15 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
             if row["depends_on"] != GOAL_DATA_PROVIDER02A_WORKFLOW_ID:
                 failures.append("goal_data_provider02a1_network_opt_in_provider_smoke_test must depend on GOAL-DATA-PROVIDER-02A")
         if workflow_id == GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal_data_provider02b_provider_selection_gate must remain locked_future and unimplemented")
+            if status not in {"locked_future", "implemented_review_only"}:
+                failures.append("goal_data_provider02b_provider_selection_gate must be locked_future or implemented_review_only")
+            if status == "implemented_review_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_data_provider02b_provider_selection_gate implemented_review_only must be marked implemented")
+                if row["allowed_next_action"] != GOAL_DATA_PROVIDER02B_ALLOWED_NEXT:
+                    failures.append("goal_data_provider02b_provider_selection_gate allowed_next_action is invalid")
+            elif row["implemented_in_repo"] != "false":
+                failures.append("goal_data_provider02b_provider_selection_gate must remain unimplemented while locked_future")
             if row["depends_on"] != GOAL_DATA_PROVIDER02A1_WORKFLOW_ID:
                 failures.append("goal_data_provider02b_provider_selection_gate must depend on GOAL-DATA-PROVIDER-02A.1")
         if workflow_id == GOAL_DATA_PANEL02_WORKFLOW_ID:
@@ -2180,9 +2282,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_DATA_PROVIDER02A_WORKFLOW_ID:
         next_goal = "GOAL-DATA-PROVIDER-02A.1 network opt-in smoke test may run only with explicit environment gates"
     elif row["workflow_id"] == GOAL_DATA_PROVIDER02A1_WORKFLOW_ID:
-        next_goal = "GOAL-DATA-PROVIDER-02B provider selection remains locked until explicit request"
+        next_goal = "GOAL-DATA-PROVIDER-02B source-backed panel build is implemented review-only when evidence exists"
     elif row["workflow_id"] == GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
-        next_goal = "GOAL-DATA-PANEL-02 evaluation panel remains locked until explicit provider selection"
+        next_goal = "GOAL-DATA-PANEL-02 evaluation panel remains locked until explicit panel promotion"
     elif row["workflow_id"] == GOAL_DATA_PANEL02_WORKFLOW_ID:
         next_goal = "GOAL-V1-DIAGNOSTIC-COVERAGE-03 remains locked until an explicit panel gate exists"
     elif row["workflow_id"] == GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
@@ -2376,6 +2478,13 @@ def _goal_data_provider02a1_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test Gate: PASS" in readiness
         or "GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_data_provider02b_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS" in readiness
+        or "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

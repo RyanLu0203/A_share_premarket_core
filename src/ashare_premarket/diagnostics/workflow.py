@@ -157,6 +157,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal_data_provider02a1_status = _goal_data_provider02a1_status(root)
     goal_data_provider02a1_manifest = _goal_data_provider02a1_manifest(root)
     goal_data_provider02a1_audit_status = _audit_status(root / "outputs/audits/goal_data_provider02a1_network_smoke_test_audit.md")
+    goal_data_provider02b_status = _goal_data_provider02b_status(root)
+    goal_data_provider02b_manifest = _goal_data_provider02b_manifest(root)
+    goal_data_provider02b_audit_status = _audit_status(root / "outputs/audits/goal_data_provider02b_source_backed_panel_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -285,6 +288,12 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-DATA-PROVIDER-02A.1 providers represented: `{goal_data_provider02a1_manifest.get('provider_count', 0)}`.",
                 f"GOAL-DATA-PROVIDER-02A.1 live access attempted count: `{goal_data_provider02a1_manifest.get('live_provider_access_attempted_count', 0)}`.",
                 f"GOAL-DATA-PROVIDER-02A.1 final panel created: `{str(goal_data_provider02a1_manifest.get('final_evaluation_panel_created', True)).lower()}`.",
+                f"GOAL-DATA-PROVIDER-02B source-backed panel status: `{goal_data_provider02b_status}`.",
+                f"GOAL-DATA-PROVIDER-02B audit status: `{goal_data_provider02b_audit_status}`.",
+                f"GOAL-DATA-PROVIDER-02B panel rows: `{goal_data_provider02b_manifest.get('row_count', 0)}`.",
+                f"GOAL-DATA-PROVIDER-02B unique symbols: `{goal_data_provider02b_manifest.get('unique_symbols', 0)}`.",
+                f"GOAL-DATA-PROVIDER-02B unique trade dates: `{goal_data_provider02b_manifest.get('unique_trade_dates', 0)}`.",
+                f"GOAL-DATA-PROVIDER-02B panel contract status: `{goal_data_provider02b_manifest.get('panel_contract_status', 'not yet generated')}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -402,6 +411,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`",
                 "- `python scripts/run_goal_data_provider02a1_network_smoke_test.py`",
                 "- `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`",
+                "- `python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py`",
+                "- `python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py`",
                 "",
             ]
         ),
@@ -422,7 +433,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
                 "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
-                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. GOAL-DATA-LABEL-01 adds label coverage only. GOAL-V1-DIAGNOSTIC-COVERAGE-02 adds separate non-actionable multi-symbol diagnostic coverage but still warns that multi-symbol 20d alignment is unavailable. GOAL-DATA-PROVIDER-02A probes provider capability only and does not build an evaluation panel. GOAL-DATA-PROVIDER-02A.1 smoke-tests providers only under explicit network opt-in and also does not build an evaluation panel. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
+                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. GOAL-DATA-LABEL-01 adds label coverage only. GOAL-V1-DIAGNOSTIC-COVERAGE-02 adds separate non-actionable multi-symbol diagnostic coverage but still warns that multi-symbol 20d alignment is unavailable. GOAL-DATA-PROVIDER-02A probes provider capability only. GOAL-DATA-PROVIDER-02A.1 smoke-tests providers only under explicit network opt-in. GOAL-DATA-PROVIDER-02B builds only a bounded normalized review-only source-backed evaluation panel and creates no diagnostics, backtests, dashboard, portfolio, trading, production, broker, local-lake, factor-mining, or DQN/RL output. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
                 "- These warnings do not unlock recommendation, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
@@ -465,8 +476,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "28. For GOAL-10C, run `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py` and `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`; it may create only review-only position-band cost/slippage sensitivity diagnostics.",
                 "29. For GOAL-DATA-PROVIDER-02A, run `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py` and `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`; it may create only provider capability metadata and must not build a panel.",
                 "30. For GOAL-DATA-PROVIDER-02A.1, run `python scripts/run_goal_data_provider02a1_network_smoke_test.py` and `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`; it may create only opt-in provider smoke-test metadata and must not build a panel.",
-                "31. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "32. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
+                "31. For GOAL-DATA-PROVIDER-02B, run `python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py` and `python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py`; it may build or replay only bounded normalized review-only source-backed panel evidence.",
+                "32. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "33. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -1048,6 +1060,30 @@ def _goal_data_provider02a1_status(root: Path) -> str:
 
 def _goal_data_provider02a1_manifest(root: Path) -> dict[str, object]:
     path = root / "outputs/audits/goal_data_provider02a1_network_smoke_test_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
+def _goal_data_provider02b_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_data_provider02b_source_backed_panel_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal_data_provider02b_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json"
     if not path.exists():
         return {}
     try:

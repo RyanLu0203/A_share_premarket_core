@@ -1,0 +1,21 @@
+metric,observed_value,required_value,status,deficit,notes
+row_count,6000,6000,PASS,0,Normalized panel rows.
+unique_symbols,50,50,PASS,0,Review-only candidate symbols.
+unique_trade_dates,120,120,PASS,0,Label-ready trade dates.
+duplicate_trade_date_symbol_keys,0,0,PASS,0,Duplicate grain check.
+missing_ohlcv_fields,10,0,PASS_WITH_WARNINGS,10,"Open, high, low, close, volume missing cells."
+missing_amount,10,0,PASS_WITH_WARNINGS,10,Amount missing cells.
+missing_turnover,10,0,PASS_WITH_WARNINGS,10,Turnover missing cells.
+trading_status_coverage,1.0,1.0,PASS,0.0,Trading status coverage.
+st_status_coverage,1.0,1.0,PASS,0.0,ST status coverage.
+adjustment_coverage,1.0,1.0,PASS,0.0,Adjustment-mode coverage.
+benchmark_coverage,1.0,1.0,PASS,0.0,Benchmark symbol and returns coverage.
+forward_return_1d_coverage,1.0,0.9,PASS,0.0,1d label coverage.
+forward_return_5d_coverage,1.0,0.85,PASS,0.0,5d label coverage.
+forward_return_20d_coverage,1.0,0.7,PASS,0.0,20d label coverage.
+benchmark_excess_return_1d_coverage,1.0,0.9,PASS,0,1d benchmark excess availability.
+benchmark_excess_return_5d_coverage,1.0,0.85,PASS,0,5d benchmark excess availability.
+benchmark_excess_return_20d_coverage,1.0,0.7,PASS,0,20d benchmark excess availability where label-ready.
+cross_provider_price_diff_available,600,1,PASS,0,AkShare sampled price-difference check.
+demo_fixture_detection,0,0,PASS,0,No demo fixture counted as final evidence.
+threshold_classification,source_backed_evaluation_panel_ready_for_dc03,source_backed_evaluation_panel_ready_for_dc03,PASS,,Downstream readiness classification.

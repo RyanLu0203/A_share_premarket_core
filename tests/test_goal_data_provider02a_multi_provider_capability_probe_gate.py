@@ -80,8 +80,9 @@ def test_goal_data_provider02a_preserves_downstream_locks() -> None:
     assert workflow["goal_data_provider02a_multi_provider_capability_probe"]["status"] == "implemented_review_only"
     assert workflow["goal_data_provider02a_multi_provider_capability_probe"]["implemented_in_repo"] == "true"
     assert workflow["goal_data_provider02a_multi_provider_capability_probe"]["depends_on"] == "goal10c_backtest_cost_slippage_sensitivity_gate"
+    assert workflow["goal_data_provider02b_provider_selection_gate"]["status"] == "implemented_review_only"
+    assert workflow["goal_data_provider02b_provider_selection_gate"]["implemented_in_repo"] == "true"
     for workflow_id in [
-        "goal_data_provider02b_provider_selection_gate",
         "goal_data_panel02_evaluation_panel_gate",
         "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
         "goal10b3_recommendation_backtest_revalidation",

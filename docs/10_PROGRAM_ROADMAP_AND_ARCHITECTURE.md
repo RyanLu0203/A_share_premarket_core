@@ -48,7 +48,7 @@ flowchart TD
     T10B2 -. "review-only sensitivity" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02A -. "network opt-in smoke test" .-> P02A1["GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P02A1 -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
     DC03 -. "locked future" .-> T10B3["GOAL-10B.3 Recommendation Backtest Revalidation<br/>(locked_future)"]
@@ -113,10 +113,12 @@ GOAL-DATA-PROVIDER-02A.1 is implemented only as review-only network-opt-in
 provider smoke-test metadata; live access is attempted only with explicit env
 opt-ins, Tushare tokens are environment-only, and no raw payloads or tokens are
 persisted.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
-Dashboard / Daily Report UI, and downstream execution stages remain locked
-future work; no dashboard files,
+GOAL-DATA-PROVIDER-02B is implemented only as bounded source-backed normalized
+panel evidence plus provider/coverage audit metadata; it does not unlock
+diagnostics, backtests, dashboards, trading, production, local-lake, broker,
+factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily
+Report UI, and downstream execution stages remain locked future work; no dashboard files,
 visual reports, frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

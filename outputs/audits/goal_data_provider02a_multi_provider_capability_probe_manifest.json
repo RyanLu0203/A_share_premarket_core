@@ -86,12 +86,12 @@
   "provider_count": 7,
   "provider_package_available": {
     "akshare": true,
-    "baostock": false,
-    "efinance": false,
+    "baostock": true,
+    "efinance": true,
     "local_import": true,
     "qstock": false,
-    "tushare_pro": false,
-    "yfinance": false
+    "tushare_pro": true,
+    "yfinance": true
   },
   "provider_probe_statuses": {
     "akshare": "SKIPPED",
@@ -135,11 +135,11 @@
   "warnings": [
     "approved_universe_has_fewer_than_5_symbols",
     "tushare_pro:tushare_unavailable_missing_token",
-    "baostock:provider_package_unavailable",
+    "baostock:network_disabled_by_policy",
     "akshare:network_disabled_by_policy",
-    "efinance:provider_package_unavailable",
+    "efinance:network_disabled_by_policy",
     "qstock:provider_package_unavailable",
-    "yfinance:provider_package_unavailable",
+    "yfinance:network_disabled_by_policy",
     "local_import:local_import_current_approved_ohlcv_rows_missing"
   ],
   "workflow_status_before_goal_data_provider02a": "implemented_review_only",

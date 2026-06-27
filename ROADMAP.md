@@ -132,8 +132,12 @@ GOAL-DATA-PROVIDER-02A.1 now implements only a review-only network-opt-in
 provider smoke test; it attempts live access only with explicit environment
 opt-ins, persists no provider token or raw payload, and does not build an
 evaluation panel.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain locked.
+GOAL-DATA-PROVIDER-02B now implements only a review-only source-backed
+evaluation panel build gate; it writes bounded normalized panel evidence and
+provider/coverage audit metadata, but does not create diagnostics, backtests,
+dashboards, trading, production, local-lake, broker, factor-mining, or DQN/RL
+outputs. GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and
+GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -152,7 +156,6 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
-- GOAL-DATA-PROVIDER-02B provider selection.
 - GOAL-DATA-PANEL-02 evaluation panel build.
 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics.
 - GOAL-10B.3 recommendation revalidation.

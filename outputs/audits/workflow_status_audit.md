@@ -37,7 +37,7 @@ GOAL-10B.2 status: `implemented_review_only`.
 GOAL-10C status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02A status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02A.1 status: `implemented_review_only`.
-GOAL-DATA-PROVIDER-02B status: `locked_future`.
+GOAL-DATA-PROVIDER-02B status: `implemented_review_only`.
 GOAL-DATA-PANEL-02 status: `locked_future`.
 GOAL-V1-DIAGNOSTIC-COVERAGE-03 status: `locked_future`.
 GOAL-10B.3 status: `locked_future`.

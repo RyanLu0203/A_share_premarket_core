@@ -1,0 +1,142 @@
+{
+  "allowed_outputs": [
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/diagnostics/goal_data_provider02b_panel_coverage_summary.csv",
+    "outputs/providers/goal_data_provider02b_provider_usage_summary.csv",
+    "outputs/providers/goal_data_provider02b_provider_failure_taxonomy.csv",
+    "outputs/audits/goal_data_provider02b_source_backed_panel_report.md",
+    "outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json",
+    "outputs/audits/goal_data_provider02b_source_backed_panel_audit.md",
+    "docs/providers/GOAL_DATA_PROVIDER02B_SOURCE_BACKED_EVALUATION_PANEL_BUILD_GATE.md",
+    "configs/providers/goal_data_provider02b_panel_build_contract.yaml"
+  ],
+  "approved_universe_policy": "use_if_at_least_50_else_provider_panel_candidate_universe_review_only",
+  "canonical_approved_universe_mutated": false,
+  "downstream_locks": {
+    "dashboard_daily_report": "locked_future",
+    "goal10b3_recommendation_backtest_revalidation": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "goal_data_panel02_evaluation_panel_gate": "locked_future",
+    "goal_v1_diagnostic_coverage03_multi_provider_diagnostics": "locked_future"
+  },
+  "forbidden_outputs": [
+    "recommendation_diagnostics_run",
+    "position_band_diagnostics_run",
+    "backtests_run",
+    "goal_v1_diagnostic_coverage03_run",
+    "goal10b3_run",
+    "goal10c_rerun_by_this_goal",
+    "buy_sell_hold_outputs_generated",
+    "target_prices_generated",
+    "position_sizing_generated",
+    "order_quantities_generated",
+    "portfolio_weights_generated",
+    "portfolio_returns_generated",
+    "equity_curves_generated",
+    "dashboard_outputs_generated",
+    "dashboard_files_generated",
+    "html_generated",
+    "streamlit_generated",
+    "frontend_code_generated",
+    "visual_reports_generated",
+    "trading_outputs_generated",
+    "paper_trading_enabled",
+    "live_trading_enabled",
+    "broker_integration_enabled",
+    "production_db_writes_created",
+    "production_model_behavior_created",
+    "local_lake_files_created",
+    "factor_mining_outputs_created",
+    "dqn_rl_outputs_created",
+    "raw_provider_payloads_committed",
+    "provider_tokens_committed",
+    "secrets_logged",
+    "approved_universe_expanded",
+    "downstream_execution_unlocked_by_this_goal",
+    "goal_data_panel02_workflow_implemented_by_this_goal"
+  ],
+  "goal": "GOAL-DATA-PROVIDER-02B-SOURCE-BACKED-EVALUATION-PANEL-BUILD-GATE",
+  "live_build_opt_in": "ASHARE_ALLOW_NETWORK_INGESTION=1",
+  "mode": "review_only_source_backed_evaluation_panel_build_gate",
+  "network_default": "disabled_committed_evidence_replay",
+  "normalized_panel_schema": [
+    "trade_date",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "pre_close",
+    "volume",
+    "amount",
+    "turnover",
+    "pct_chg",
+    "adjustment_mode",
+    "trading_status",
+    "is_st",
+    "pe_ttm",
+    "pb",
+    "benchmark_symbol",
+    "benchmark_return_1d",
+    "benchmark_return_5d",
+    "benchmark_return_20d",
+    "forward_return_1d",
+    "forward_return_5d",
+    "forward_return_20d",
+    "benchmark_excess_return_1d",
+    "benchmark_excess_return_5d",
+    "benchmark_excess_return_20d",
+    "label_ready_1d",
+    "label_ready_5d",
+    "label_ready_20d",
+    "source_provider",
+    "source_provider_priority",
+    "crosscheck_provider",
+    "crosscheck_status",
+    "source_warning_codes",
+    "panel_contract_status",
+    "universe_mode",
+    "non_actionable_disclaimer"
+  ],
+  "panel_window": {
+    "end": "2026-06-18",
+    "start": "2025-11-03",
+    "target_trade_dates": 120
+  },
+  "providers": [
+    {
+      "fields": "OHLCV, amount, turnover, adjustment, trading_status, ST status, PE TTM, PB",
+      "provider_name": "baostock",
+      "role": "primary_panel_builder"
+    },
+    {
+      "provider_name": "akshare",
+      "role": "sampled_crosscheck_and_fallback"
+    },
+    {
+      "provider_name": "efinance",
+      "role": "fallback_after_rate_limit_schema_review"
+    },
+    {
+      "provider_name": "yfinance",
+      "role": "auxiliary_only"
+    },
+    {
+      "provider_name": "tushare_pro",
+      "role": "optional_token_gated"
+    },
+    {
+      "provider_name": "local_import",
+      "role": "fallback_only_if_source_backed_rows_align"
+    }
+  ],
+  "review_only": true,
+  "thresholds": {
+    "forward_return_1d_coverage": 0.9,
+    "forward_return_20d_coverage": 0.7,
+    "forward_return_5d_coverage": 0.85,
+    "row_count": 6000,
+    "unique_symbols": 50,
+    "unique_trade_dates": 120
+  }
+}

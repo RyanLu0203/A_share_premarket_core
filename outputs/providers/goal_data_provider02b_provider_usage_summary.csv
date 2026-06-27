@@ -1,0 +1,8 @@
+provider_name,provider_role,provider_priority,usage_status,rows_returned,unique_symbols,unique_trade_dates,date_min,date_max,notes
+baostock,primary_panel_builder,1,PASS,6000,50,120,2025-11-19,2026-05-21,"Primary daily OHLCV, adjustment, trading status, ST status, and valuation source."
+akshare,sampled_crosscheck,2,PASS,600,5,120,2025-11-19,2026-05-21,Sampled close-price crosscheck against unadjusted AkShare rows.
+efinance,fallback_after_rate_limit_schema_review,3,not_used_primary_sufficient,0,0,0,,,No fallback call needed after Baostock primary panel build.
+yfinance,auxiliary_only,4,not_primary_auxiliary_only,0,0,0,,,Auxiliary only and never primary for A-share panel.
+tushare_pro,optional_token_gated,5,skipped_missing_token_or_policy,0,0,0,,,Requires TUSHARE_TOKEN and explicit Tushare opt-in from environment.
+qstock,optional_data_candidate,6,not_used_optional_dependency_or_scope,0,0,0,,,Backtest and strategy modules are forbidden.
+local_import,fallback,7,not_used_current_approved_rows_missing,0,0,0,,,Fallback only if source-backed rows align; demo fixtures do not count.

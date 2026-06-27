@@ -47,7 +47,7 @@ GOAL_NAME = "GOAL-DATA-PROVIDER-02A.1-NETWORK-OPT-IN-PROVIDER-SMOKE-TEST"
 MODE = "review_only_network_opt_in_provider_smoke_test"
 WORKFLOW_ID = "goal_data_provider02a1_network_opt_in_provider_smoke_test"
 GOAL_DATA_PROVIDER02A_WORKFLOW_ID = "goal_data_provider02a_multi_provider_capability_probe"
-ALLOWED_NEXT = "request_goal_data_provider02b_provider_selection_or_fix_provider02a1_warnings"
+ALLOWED_NEXT = "request_goal_data_provider02b_source_backed_panel_build_or_fix_provider02a1_warnings"
 BLOCKED = "BLOCKED"
 
 PROVIDER_DIR = "outputs/providers"
@@ -214,8 +214,17 @@ def audit_goal_data_provider02a1_network_smoke_test(root: Path) -> bool:
         failures.append("provider02a1_allowed_next_invalid")
     if workflow.get(GOAL_DATA_PROVIDER02B_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
         failures.append("provider02b_dependency_not_provider02a1")
+
+    provider02b = workflow.get(GOAL_DATA_PROVIDER02B_WORKFLOW_ID, {})
+    if provider02b.get("status") not in {"locked_future", "implemented_review_only"}:
+        failures.append("goal_data_provider02b_provider_selection_gate_status_invalid")
+    elif provider02b.get("status") == "implemented_review_only":
+        if provider02b.get("implemented_in_repo") != "true":
+            failures.append("goal_data_provider02b_provider_selection_gate_implemented_marker_invalid")
+    elif provider02b.get("implemented_in_repo") != "false":
+        failures.append("goal_data_provider02b_provider_selection_gate_marked_implemented_while_locked")
+
     for workflow_id in [
-        GOAL_DATA_PROVIDER02B_WORKFLOW_ID,
         GOAL_DATA_PANEL02_WORKFLOW_ID,
         GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         GOAL10B3_WORKFLOW_ID,
@@ -336,19 +345,19 @@ def goal_data_provider02a1_implemented_workflow_patch() -> dict[str, str]:
 
 def locked_goal_data_provider02b_patch() -> dict[str, str]:
     return {
-        "display_name": "GOAL-DATA-PROVIDER-02B Provider Selection Gate",
+        "display_name": "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate",
         "stage_or_goal": "GOAL-DATA-PROVIDER-02B",
         "status": "locked_future",
-        "current_repo_role": "locked_future_provider_selection_gate",
+        "current_repo_role": "locked_future_source_backed_evaluation_panel_build_gate",
         "implemented_in_repo": "false",
-        "allowed_next_action": "remain_locked_until_explicit_goal_data_provider02b_request",
+        "allowed_next_action": "remain_locked_until_explicit_goal_data_provider02b_source_backed_panel_build_request",
         "depends_on": WORKFLOW_ID,
         "produces_artifacts": "",
         "primary_docs": DOC_PATH,
         "primary_scripts": "",
         "primary_outputs": "",
-        "promotion_rule": "locked_until_explicit_goal_data_provider02b_selection_gate",
-        "notes": "Future provider selection remains locked; GOAL-DATA-PROVIDER-02A.1 only smoke-tests opt-in provider access.",
+        "promotion_rule": "locked_until_explicit_goal_data_provider02b_source_backed_panel_build_gate",
+        "notes": "Future source-backed panel build remains locked until explicit GOAL-DATA-PROVIDER-02B request; GOAL-DATA-PROVIDER-02A.1 only smoke-tests opt-in provider access.",
     }
 
 
@@ -537,7 +546,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "- Tushare Pro reads `TUSHARE_TOKEN` only from the environment and never persists it.",
                 "- No raw provider payloads are persisted.",
                 "- Smoke-test data is not final evaluation panel evidence.",
-                "- GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-DATA-PROVIDER-02B is implemented only by its own source-backed panel gate when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
                 "",
                 "## Warnings",
                 *[f"- {warning}" for warning in result["warnings"]],
@@ -624,6 +633,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_after_goal_data_provider02a_patch())
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_data_provider02a1"
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -658,6 +668,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         payload[GOAL_DATA_PANEL02_WORKFLOW_ID] = False
         payload[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID] = False
         payload[GOAL10B3_WORKFLOW_ID] = False
+        preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

@@ -75,6 +75,8 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test
   (`PASS_WITH_WARNINGS`)
+- GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -99,7 +101,6 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
-- GOAL-DATA-PROVIDER-02B Provider Selection
 - GOAL-DATA-PANEL-02 Evaluation Panel
 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics
 - GOAL-10B.3 Recommendation Backtest Revalidation
@@ -506,7 +507,10 @@ GOAL-DATA-PROVIDER-02A.1 is implemented only as review-only network-opt-in
 provider smoke-test metadata; it attempts live provider access only when
 explicit environment opt-ins are present, reads Tushare tokens only from the
 environment, and persists no raw provider payloads or tokens.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-DATA-PROVIDER-02B is implemented only as bounded source-backed normalized
+panel evidence plus provider/coverage audit metadata; it does not unlock
+diagnostics, backtests, dashboards, trading, production, local-lake, broker,
+factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
 `locked_future`.
 
@@ -535,7 +539,8 @@ evaluation panel, create recommendation diagnostics, create position-band
 diagnostics, run backtests, generate portfolio returns, create equity curves,
 create dashboard/frontend/HTML/Streamlit outputs, write local-lake data, write
 trading or production data, integrate brokers, activate factor mining, or
-create DQN/RL outputs. GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+create DQN/RL outputs. GOAL-DATA-PROVIDER-02B is implemented only by its own
+source-backed panel evidence gate. GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
 UI, and all execution paths remain `locked_future`.
 
@@ -567,7 +572,40 @@ run GOAL-10B.3, run GOAL-10C, generate portfolio returns, create equity curves,
 create dashboard/frontend/HTML/Streamlit outputs, commit raw provider payloads,
 persist provider tokens, write local-lake data, write trading or production
 data, integrate brokers, activate factor mining, or create DQN/RL outputs.
-GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-DATA-PROVIDER-02B is implemented only by its own source-backed panel
+evidence gate. GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03,
+GOAL-10B.3, GOAL-10D, Dashboard / Daily Report UI, and all execution paths
+remain `locked_future`.
+
+## GOAL-DATA-PROVIDER-02B Status
+
+GOAL-DATA-PROVIDER-02B is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It creates:
+
+- `outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv`
+- `outputs/diagnostics/goal_data_provider02b_panel_coverage_summary.csv`
+- `outputs/providers/goal_data_provider02b_provider_usage_summary.csv`
+- `outputs/providers/goal_data_provider02b_provider_failure_taxonomy.csv`
+- `configs/providers/goal_data_provider02b_panel_build_contract.yaml`
+- `docs/providers/GOAL_DATA_PROVIDER02B_SOURCE_BACKED_EVALUATION_PANEL_BUILD_GATE.md`
+- `outputs/audits/goal_data_provider02b_source_backed_panel_report.md`
+- `outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json`
+- `outputs/audits/goal_data_provider02b_source_backed_panel_audit.md`
+
+The gate builds bounded source-backed normalized panel evidence for future
+review-only diagnostics planning. The current evidence has 6000 rows,
+50 symbols, 120 trade dates, provider usage metadata, coverage checks, and
+failure-taxonomy rows. It records a warning when a provider-panel candidate
+universe is used because the canonical approved universe is below the required
+50-symbol threshold.
+
+GOAL-DATA-PROVIDER-02B does not promote GOAL-DATA-PANEL-02, expand the
+approved trading universe, create recommendation diagnostics, create
+position-band diagnostics, run backtests, generate portfolio returns, create
+equity curves, create dashboard/frontend/HTML/Streamlit outputs, commit raw
+provider payloads, persist provider tokens, write local-lake data, write
+trading or production data, integrate brokers, activate factor mining, or
+create DQN/RL outputs. GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
 UI, and all execution paths remain `locked_future`.
 

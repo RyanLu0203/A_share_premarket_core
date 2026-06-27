@@ -1,0 +1,8 @@
+provider_name,failure_code,failure_layer,failure_category,retryable,owner_action,notes
+baostock,,none,none,false,none,Provider used successfully.
+akshare,,none,none,false,none,Provider used successfully.
+efinance,not_used_primary_sufficient,provider_ladder,not_selected,false,no_action_required,No fallback call needed after Baostock primary panel build.
+yfinance,not_primary_auxiliary_only,provider_ladder,not_selected,false,no_action_required,Auxiliary only and never primary for A-share panel.
+tushare_pro,tushare_unavailable_missing_token_or_policy,credential_policy,missing_token_or_opt_in,false,set_env_only_if_needed,Requires TUSHARE_TOKEN and explicit Tushare opt-in from environment.
+qstock,optional_provider_not_used,dependency_or_scope,optional_provider,false,keep_strategy_modules_forbidden,Backtest and strategy modules are forbidden.
+local_import,not_used_current_approved_rows_missing,provider_ladder,not_selected,false,no_action_required,Fallback only if source-backed rows align; demo fixtures do not count.

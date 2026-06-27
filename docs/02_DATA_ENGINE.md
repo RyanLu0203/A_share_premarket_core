@@ -91,6 +91,15 @@ present. Tushare Pro additionally requires `ASHARE_ALLOW_TUSHARE=1` and
 attempt flags, schema mapping status, and failure taxonomy; it never prints or
 persists provider tokens, never commits raw provider payloads, and never treats
 smoke-test rows as final evaluation panel evidence.
+GOAL-DATA-PROVIDER-02B writes only review-only source-backed panel evidence
+under `outputs/datasets/`, `outputs/diagnostics/`, `outputs/providers/`,
+`configs/providers/`, `docs/providers/`, and `outputs/audits/`. It produces a
+bounded normalized panel artifact for future review-only diagnostics planning,
+plus coverage, provider usage, failure-taxonomy, report, manifest, and audit
+metadata. It does not promote GOAL-DATA-PANEL-02, expand the approved trading
+universe, run diagnostics, run backtests, write local lake files, create
+portfolio returns, create equity curves, create dashboard outputs, persist raw
+provider payloads or provider tokens, or write production storage.
 
 ## Active Contracts
 
@@ -128,6 +137,9 @@ smoke-test rows as final evaluation panel evidence.
 - GOAL-DATA-PROVIDER-02A.1 network-opt-in provider smoke-test metadata under
   `outputs/providers/`, `configs/providers/`, `docs/providers/`, and
   `outputs/audits/` only.
+- GOAL-DATA-PROVIDER-02B source-backed panel evidence under
+  `outputs/datasets/`, `outputs/diagnostics/`, `outputs/providers/`,
+  `configs/providers/`, `docs/providers/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -202,3 +214,9 @@ smoke-test rows as final evaluation panel evidence.
   rows as panel evidence, create diagnostics, run backtests, persist raw
   payloads or tokens, write local-lake data, create dashboards, or unlock
   trading, production, broker, factor-mining, or DQN/RL paths.
+- Do not treat GOAL-DATA-PROVIDER-02B source-backed panel evidence as
+  permission to promote GOAL-DATA-PANEL-02, create recommendation diagnostics,
+  create position-band diagnostics, run backtests, create portfolio returns,
+  create equity curves, persist raw payloads or tokens, write local-lake data,
+  create dashboards, or unlock trading, production, broker, factor-mining, or
+  DQN/RL paths.
