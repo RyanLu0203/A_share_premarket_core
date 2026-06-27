@@ -42,7 +42,7 @@ flowchart TD
     P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02B -. "evaluation panel remains locked" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    DC03 -. "locked future" .-> T10B3["GOAL-10B.3 Recommendation Backtest Revalidation<br/>(locked_future)"]
+    DC03 -. "review-only revalidation" .-> T10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
@@ -120,8 +120,10 @@ panel evidence plus provider/coverage audit metadata. GOAL-V1-DIAGNOSTIC-
 COVERAGE-03 is implemented only as non-actionable source-backed diagnostic
 coverage over that 02B panel; it does not overwrite canonical GOAL-07B/08B/09
 artifacts or unlock backtests, dashboards, trading, production, local-lake,
-broker, factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02, GOAL-10B.3,
-and GOAL-10D remain locked_future.
+broker, factor-mining, or DQN/RL outputs. GOAL-10B.3 is implemented only as
+review-only DC03 recommendation revalidation diagnostics and records weak /
+unreliable signal evidence due group imbalance and unavailable numeric-score
+IC/RankIC. GOAL-DATA-PANEL-02 and GOAL-10D remain locked_future.
 V2 factor research is planned but
 inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,

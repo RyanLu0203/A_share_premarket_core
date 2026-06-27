@@ -17,7 +17,7 @@ Forward return 20d deficit: `0.0`
 - This gate creates a bounded normalized source-backed review-only panel only.
 - The canonical approved universe is not expanded.
 - The separate GOAL-DATA-PANEL-02 workflow remains locked.
-- GOAL-V1-DIAGNOSTIC-COVERAGE-03 is not implemented by this panel gate; GOAL-10B.3, GOAL-10D, dashboards, backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 and GOAL-10B.3 are implemented only by their own separate review-only gates; GOAL-10D, dashboards, backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
 - No raw provider payloads or provider tokens are persisted.
 
 ## Warnings

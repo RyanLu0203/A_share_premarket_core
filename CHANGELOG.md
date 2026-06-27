@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-06-27 - GOAL-10B.3 DC03 Recommendation Revalidation Gate
+
+- Implemented GOAL-10B.3 only as a review-only DC03 recommendation
+  revalidation gate over committed GOAL-V1-DIAGNOSTIC-COVERAGE-03
+  recommendation/risk diagnostics joined to the GOAL-DATA-PROVIDER-02B
+  source-backed panel.
+- Added a 6000-row input snapshot, recommendation-group metrics, risk-severity
+  metrics, symbol metrics, horizon coverage, group-imbalance diagnostics,
+  report, manifest, audit, contract, docs, scripts, tests, and workflow
+  governance.
+- Recorded `PASS_WITH_WARNINGS`: all 1d/5d/20d forward-return and benchmark
+  excess labels are available, but one recommendation group dominates 5990 of
+  6000 rows, the blocked group has only 10 rows, and IC/RankIC is unavailable
+  because DC03 has no numeric recommendation score.
+- Classified the current evidence as
+  `recommendation_revalidation_signal_weak_or_unreliable` and recommended
+  GOAL-RISK-TIERING-01 / GOAL-REC-TIERING-01 before any position-band
+  validation.
+- Created no BUY/SELL/HOLD outputs, target prices, actual position sizes,
+  weights, order quantities, portfolio returns, equity curves, dashboard,
+  HTML, Streamlit, frontend, visual report, trading, production, broker,
+  local-lake, factor-mining, or DQN/RL outputs. GOAL-10D and all execution
+  paths remain locked.
+
 ## 2026-06-27 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Multi-Symbol Diagnostics Gate
 
 - Implemented GOAL-V1-DIAGNOSTIC-COVERAGE-03 only as a review-only

@@ -26,4 +26,4 @@ Primary input: `outputs/datasets/goal_data_provider02b_source_backed_evaluation_
 
 ## Locked Boundary
 
-This gate does not overwrite canonical GOAL-07B, GOAL-08B, or GOAL-09 artifacts. It does not run GOAL-10B.3, GOAL-10C, or any backtest, and it creates no portfolio returns, equity curves, dashboards, trading, broker, production, local-lake, factor-mining, or DQN/RL outputs.
+This gate does not overwrite canonical GOAL-07B, GOAL-08B, or GOAL-09 artifacts. It does not run GOAL-10B.3 itself, GOAL-10C, or any backtest, and it creates no portfolio returns, equity curves, dashboards, trading, broker, production, local-lake, factor-mining, or DQN/RL outputs.

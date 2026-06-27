@@ -385,7 +385,7 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
             by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_patch())
         if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_patch())
-        if GOAL10B3_WORKFLOW_ID in by_id:
+        if GOAL10B3_WORKFLOW_ID in by_id and not _goal10b3_valid(root):
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
         for workflow_id in [
             "goal10d_backtest_failure_attribution_gate",
@@ -430,7 +430,7 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
             by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_after_goal_data_provider02a_patch())
         if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_after_goal_data_provider02a_patch())
-        if GOAL10B3_WORKFLOW_ID in by_id:
+        if GOAL10B3_WORKFLOW_ID in by_id and not _goal10b3_valid(root):
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_after_goal_data_provider02a_patch())
         for workflow_id in [
             "goal10d_backtest_failure_attribution_gate",
@@ -470,7 +470,7 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
         goal_v1_diagnostic_coverage03_valid = _goal_v1_diagnostic_coverage03_valid(root)
         if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_patch())
-        if GOAL10B3_WORKFLOW_ID in by_id:
+        if GOAL10B3_WORKFLOW_ID in by_id and not _goal10b3_valid(root):
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
         for workflow_id in [
             "goal10d_backtest_failure_attribution_gate",
@@ -501,7 +501,7 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(goal_v1_diagnostic_coverage03_implemented_workflow_patch())
-        if GOAL10B3_WORKFLOW_ID in by_id:
+        if GOAL10B3_WORKFLOW_ID in by_id and not _goal10b3_valid(root):
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
         for workflow_id in [
             GOAL10D_WORKFLOW_ID,
@@ -521,6 +521,35 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_v1_diagnostic_coverage03"
+    if _goal10b3_valid(root):
+        from ashare_premarket.backtest.goal10b3 import (
+            GOAL10D_WORKFLOW_ID,
+            WORKFLOW_ID as GOAL10B3_WORKFLOW_ID,
+            goal10b3_implemented_workflow_patch,
+            locked_goal10d_patch as locked_goal10d_after_goal10b3_patch,
+        )
+
+        if GOAL10B3_WORKFLOW_ID in by_id:
+            by_id[GOAL10B3_WORKFLOW_ID].update(goal10b3_implemented_workflow_patch())
+        if GOAL10D_WORKFLOW_ID in by_id:
+            by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_after_goal10b3_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal10b3"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -584,7 +613,8 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal_data_panel02_evaluation_panel_gate"] = False
         if not _goal_v1_diagnostic_coverage03_valid(root):
             payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
-        payload["goal10b3_recommendation_backtest_revalidation"] = False
+        if not _goal10b3_valid(root):
+            payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_provider02a1_valid(root):
         payload["goal_data_provider02a1_network_opt_in_provider_smoke_test"] = "implemented_review_only"
@@ -593,18 +623,24 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal_data_panel02_evaluation_panel_gate"] = False
         if not _goal_v1_diagnostic_coverage03_valid(root):
             payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
-        payload["goal10b3_recommendation_backtest_revalidation"] = False
+        if not _goal10b3_valid(root):
+            payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_provider02b_valid(root):
         payload["goal_data_provider02b_provider_selection_gate"] = "implemented_review_only"
         payload["goal_data_panel02_evaluation_panel_gate"] = False
         if not _goal_v1_diagnostic_coverage03_valid(root):
             payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
-        payload["goal10b3_recommendation_backtest_revalidation"] = False
+        if not _goal10b3_valid(root):
+            payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_v1_diagnostic_coverage03_valid(root):
         payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = "implemented_review_only"
-        payload["goal10b3_recommendation_backtest_revalidation"] = False
+        if not _goal10b3_valid(root):
+            payload["goal10b3_recommendation_backtest_revalidation"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal10b3_valid(root):
+        payload["goal10b3_recommendation_backtest_revalidation"] = "implemented_review_only"
         payload["goal10d_backtest_failure_attribution_gate"] = False
 
 
@@ -786,6 +822,15 @@ def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
         )
 
         return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10b3_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b3 import goal10b3_valid_dc03_revalidation_evidence
+
+        return goal10b3_valid_dc03_revalidation_evidence(root)
     except Exception:
         return False
 

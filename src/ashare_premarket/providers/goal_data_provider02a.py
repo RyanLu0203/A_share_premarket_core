@@ -194,6 +194,7 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
     workflow = _workflow_rows(root)
     recheck = evaluate_goal_data_provider02a_multi_provider_capability_probe_gate(root)
     dc03_evidence_ready = _goal_v1_diagnostic_coverage03_valid(root)
+    goal10b3_evidence_ready = _goal10b3_valid(root)
     failures: list[str] = []
 
     if not _report_pass_or_warn(report, "GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe Gate:"):
@@ -283,7 +284,6 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
 
     for workflow_id in [
         GOAL_DATA_PANEL02_WORKFLOW_ID,
-        GOAL10B3_WORKFLOW_ID,
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
         "signal_backtest",
@@ -298,6 +298,20 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+
+    goal10b3 = workflow.get(GOAL10B3_WORKFLOW_ID, {})
+    if goal10b3_evidence_ready:
+        if goal10b3.get("status") != "implemented_review_only":
+            failures.append("goal10b3_not_preserved_as_implemented_review_only")
+        if goal10b3.get("implemented_in_repo") != "true":
+            failures.append("goal10b3_not_marked_implemented")
+        if goal10b3.get("depends_on") != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+            failures.append("goal10b3_dependency_not_dc03")
+    else:
+        if goal10b3.get("status") != "locked_future":
+            failures.append("goal10b3_not_locked_future")
+        if goal10b3.get("implemented_in_repo") != "false":
+            failures.append("goal10b3_marked_implemented")
 
     dc03 = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
     if dc03_evidence_ready:
@@ -455,7 +469,7 @@ def locked_goal10b3_patch() -> dict[str, str]:
         "remain_locked_until_explicit_goal10b3_request",
         GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         "locked_until_explicit_goal10b3_revalidation_gate",
-        "Future GOAL-10B.3 remains locked; Provider-02A runs no recommendation diagnostics or backtests.",
+        "GOAL-10B.3 is not implemented by Provider-02A itself; Provider-02A runs no recommendation diagnostics or backtests.",
     )
 
 
@@ -1451,6 +1465,15 @@ def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
         )
 
         return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10b3_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b3 import goal10b3_valid_dc03_revalidation_evidence
+
+        return goal10b3_valid_dc03_revalidation_evidence(root)
     except Exception:
         return False
 

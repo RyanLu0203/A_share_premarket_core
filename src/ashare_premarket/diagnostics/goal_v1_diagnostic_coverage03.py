@@ -188,6 +188,7 @@ def audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root: Pat
     position_rows = _read_csv(root / POSITION_DIAGNOSTICS_PATH)
     distribution_rows = _read_csv(root / DISTRIBUTION_SUMMARY_PATH)
     workflow = _workflow_rows(root)
+    goal10b3_evidence_ready = _goal10b3_valid(root)
     failures: list[str] = []
 
     if not _report_pass_or_warn(report):
@@ -257,7 +258,6 @@ def audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root: Pat
     if gate.get("allowed_next_action") != ALLOWED_NEXT:
         failures.append("dc03_allowed_next_invalid")
     for workflow_id in [
-        GOAL10B3_WORKFLOW_ID,
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
         "signal_backtest",
@@ -272,6 +272,17 @@ def audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root: Pat
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+    goal10b3 = workflow.get(GOAL10B3_WORKFLOW_ID, {})
+    if goal10b3_evidence_ready:
+        if goal10b3.get("status") != "implemented_review_only":
+            failures.append("goal10b3_not_preserved_as_implemented_review_only")
+        if goal10b3.get("implemented_in_repo") != "true":
+            failures.append("goal10b3_not_marked_implemented")
+    else:
+        if goal10b3.get("status") != "locked_future":
+            failures.append("goal10b3_not_locked_future")
+        if goal10b3.get("implemented_in_repo") != "false":
+            failures.append("goal10b3_marked_implemented")
     if workflow.get(GOAL10B3_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
         failures.append("goal10b3_dependency_not_dc03")
     failures.extend(f"forbidden_output_present:{path}" for path in _forbidden_outputs_present(root))
@@ -402,7 +413,7 @@ def locked_goal10b3_patch() -> dict[str, str]:
         "primary_scripts": "",
         "primary_outputs": "",
         "promotion_rule": "locked_until_explicit_goal10b3_revalidation_gate",
-        "notes": "GOAL-10B.3 remains locked; DC03 creates only non-actionable diagnostic coverage rows and does not run recommendation revalidation.",
+        "notes": "GOAL-10B.3 is not implemented by DC03 itself; this DC03 gate creates only non-actionable diagnostic coverage rows and does not run recommendation revalidation.",
     }
 
 
@@ -473,7 +484,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "- Diagnostics are derived only from the GOAL-DATA-PROVIDER-02B normalized source-backed panel.",
                 "- Canonical GOAL-07B, GOAL-08B, and GOAL-09 artifacts are preserved and not overwritten.",
                 "- Recommendation diagnostics are never actionable and contain no BUY/SELL/HOLD, target price, position size, weight, or order output.",
-                "- GOAL-10B.3, GOAL-10C, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-10B.3 is implemented only by its own separate review-only revalidation gate; GOAL-10C, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
                 "",
                 "## Warnings",
                 *[f"- {warning}" for warning in result["warnings"]],
@@ -520,7 +531,7 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "## Locked Boundary",
                 "",
-                "This gate does not overwrite canonical GOAL-07B, GOAL-08B, or GOAL-09 artifacts. It does not run GOAL-10B.3, GOAL-10C, or any backtest, and it creates no portfolio returns, equity curves, dashboards, trading, broker, production, local-lake, factor-mining, or DQN/RL outputs.",
+                "This gate does not overwrite canonical GOAL-07B, GOAL-08B, or GOAL-09 artifacts. It does not run GOAL-10B.3 itself, GOAL-10C, or any backtest, and it creates no portfolio returns, equity curves, dashboards, trading, broker, production, local-lake, factor-mining, or DQN/RL outputs.",
                 "",
             ]
         ),
@@ -818,7 +829,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
                 "primary_scripts": "",
                 "primary_outputs": "",
                 "promotion_rule": "locked_until_goal_v1_diagnostic_coverage03_passes",
-                "notes": "GOAL-V1-DIAGNOSTIC-COVERAGE-03 is blocked; GOAL-10B.3 and downstream execution remain locked.",
+                "notes": "GOAL-V1-DIAGNOSTIC-COVERAGE-03 is blocked; GOAL-10B.3 must be handled only by its own explicit gate and downstream execution remains locked.",
             }
         )
     _upsert_workflow_row(rows, by_id, WORKFLOW_ID, patch, after=GOAL_DATA_PROVIDER02B_WORKFLOW_ID)
@@ -850,7 +861,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_workflow_states(root, by_id)
     if result["status"] != BLOCKED and WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(goal_v1_diagnostic_coverage03_implemented_workflow_patch())
-        if GOAL10B3_WORKFLOW_ID in by_id:
+        if GOAL10B3_WORKFLOW_ID in by_id and not _goal10b3_valid(root):
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
     write_csv(path, rows, fields)
 
@@ -879,8 +890,18 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_capabilities(root, payload)
     if result["status"] != BLOCKED:
         payload[WORKFLOW_ID] = "implemented_review_only"
-        payload[GOAL10B3_WORKFLOW_ID] = False
+        if not _goal10b3_valid(root):
+            payload[GOAL10B3_WORKFLOW_ID] = False
     write_json(path, payload)
+
+
+def _goal10b3_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b3 import goal10b3_valid_dc03_revalidation_evidence
+
+        return goal10b3_valid_dc03_revalidation_evidence(root)
+    except Exception:
+        return False
 
 
 def _upsert_workflow_row(rows: list[dict[str, str]], by_id: dict[str, dict[str, str]], workflow_id: str, patch: dict[str, str], *, after: str) -> None:

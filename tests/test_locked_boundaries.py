@@ -24,7 +24,7 @@ def test_locked_capabilities_remain_false() -> None:
     assert locked["goal_data_provider02b_provider_selection_gate"] == "implemented_review_only"
     assert locked["goal_data_panel02_evaluation_panel_gate"] is False
     assert locked["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] == "implemented_review_only"
-    assert locked["goal10b3_recommendation_backtest_revalidation"] is False
+    assert locked["goal10b3_recommendation_backtest_revalidation"] == "implemented_review_only"
     assert locked["goal10d_backtest_failure_attribution_gate"] is False
     for key in [
         "signal_backtest",

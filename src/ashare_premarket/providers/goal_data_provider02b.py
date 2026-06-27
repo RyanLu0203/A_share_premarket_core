@@ -189,6 +189,7 @@ def audit_goal_data_provider02b_source_backed_panel_build_gate(root: Path) -> bo
     workflow = _workflow_rows(root)
     metrics = _coverage_metrics(panel_rows)
     dc03_evidence_ready = _goal_v1_diagnostic_coverage03_valid(root)
+    goal10b3_evidence_ready = _goal10b3_valid(root)
     failures: list[str] = []
 
     if not _report_pass_or_warn(report, "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate:"):
@@ -272,7 +273,6 @@ def audit_goal_data_provider02b_source_backed_panel_build_gate(root: Path) -> bo
         failures.append("provider02b_allowed_next_invalid")
     for workflow_id in [
         GOAL_DATA_PANEL02_WORKFLOW_ID,
-        GOAL10B3_WORKFLOW_ID,
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
         "signal_backtest",
@@ -287,6 +287,19 @@ def audit_goal_data_provider02b_source_backed_panel_build_gate(root: Path) -> bo
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+    goal10b3 = workflow.get(GOAL10B3_WORKFLOW_ID, {})
+    if goal10b3_evidence_ready:
+        if goal10b3.get("status") != "implemented_review_only":
+            failures.append("goal10b3_not_preserved_as_implemented_review_only")
+        if goal10b3.get("implemented_in_repo") != "true":
+            failures.append("goal10b3_not_marked_implemented")
+        if goal10b3.get("depends_on") != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+            failures.append("goal10b3_dependency_not_dc03")
+    else:
+        if goal10b3.get("status") != "locked_future":
+            failures.append("goal10b3_not_locked_future")
+        if goal10b3.get("implemented_in_repo") != "false":
+            failures.append("goal10b3_marked_implemented")
     dc03 = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
     if dc03_evidence_ready:
         if dc03.get("status") != "implemented_review_only":
@@ -480,7 +493,7 @@ def locked_goal10b3_patch() -> dict[str, str]:
         "remain_locked_until_explicit_goal10b3_request",
         GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         "locked_until_explicit_goal10b3_revalidation_gate",
-        "GOAL-10B.3 remains locked; GOAL-DATA-PROVIDER-02B creates no recommendation diagnostics or backtests.",
+        "GOAL-10B.3 is not implemented by GOAL-DATA-PROVIDER-02B itself; this panel gate creates no recommendation diagnostics or backtests.",
     )
 
 
@@ -942,7 +955,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "- This gate creates a bounded normalized source-backed review-only panel only.",
                 "- The canonical approved universe is not expanded.",
                 "- The separate GOAL-DATA-PANEL-02 workflow remains locked.",
-                "- GOAL-V1-DIAGNOSTIC-COVERAGE-03 is not implemented by this panel gate; GOAL-10B.3, GOAL-10D, dashboards, backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-V1-DIAGNOSTIC-COVERAGE-03 and GOAL-10B.3 are implemented only by their own separate review-only gates; GOAL-10D, dashboards, backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
                 "- No raw provider payloads or provider tokens are persisted.",
                 "",
                 "## Warnings",
@@ -987,7 +1000,7 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "## Locked Boundaries",
                 "",
-                "GOAL-V1-DIAGNOSTIC-COVERAGE-03 is not implemented by this panel gate; it may only be preserved when its own source-backed diagnostic evidence exists. GOAL-10B.3, GOAL-10D, dashboards, signal and portfolio backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked. This panel is not a recommendation, position, portfolio, or execution output.",
+                "GOAL-V1-DIAGNOSTIC-COVERAGE-03 and GOAL-10B.3 are not implemented by this panel gate; each may only be preserved when its own review-only evidence exists. GOAL-10D, dashboards, signal and portfolio backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked. This panel is not a recommendation, position, portfolio, or execution output.",
                 "",
             ]
         ),
@@ -1258,6 +1271,15 @@ def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
         )
 
         return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10b3_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b3 import goal10b3_valid_dc03_revalidation_evidence
+
+        return goal10b3_valid_dc03_revalidation_evidence(root)
     except Exception:
         return False
 

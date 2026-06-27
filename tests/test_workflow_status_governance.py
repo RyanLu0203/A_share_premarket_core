@@ -86,11 +86,13 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"]["depends_on"] == "goal_data_provider02b_provider_selection_gate"
     for workflow_id in [
         "goal_data_panel02_evaluation_panel_gate",
-        "goal10b3_recommendation_backtest_revalidation",
         "goal10d_backtest_failure_attribution_gate",
     ]:
         assert rows[workflow_id]["status"] == "locked_future"
         assert rows[workflow_id]["implemented_in_repo"] == "false"
+    assert rows["goal10b3_recommendation_backtest_revalidation"]["status"] == "implemented_review_only"
+    assert rows["goal10b3_recommendation_backtest_revalidation"]["implemented_in_repo"] == "true"
+    assert rows["goal10b3_recommendation_backtest_revalidation"]["depends_on"] == "goal_v1_diagnostic_coverage03_multi_provider_diagnostics"
     assert rows["dashboard_daily_report"]["status"] == "locked_future"
     assert rows["dashboard_daily_report"]["implemented_in_repo"] == "false"
     assert rows["dashboard_daily_report"]["depends_on"] == "goal_v1_integrity01_artifact_lineage_structure_gate"

@@ -84,9 +84,10 @@ def test_goal_data_provider02a_preserves_downstream_locks() -> None:
     assert workflow["goal_data_provider02b_provider_selection_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"]["status"] == "implemented_review_only"
     assert workflow["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"]["implemented_in_repo"] == "true"
+    assert workflow["goal10b3_recommendation_backtest_revalidation"]["status"] == "implemented_review_only"
+    assert workflow["goal10b3_recommendation_backtest_revalidation"]["implemented_in_repo"] == "true"
     for workflow_id in [
         "goal_data_panel02_evaluation_panel_gate",
-        "goal10b3_recommendation_backtest_revalidation",
         "goal10d_backtest_failure_attribution_gate",
         "dashboard_daily_report",
         "portfolio_backtest",

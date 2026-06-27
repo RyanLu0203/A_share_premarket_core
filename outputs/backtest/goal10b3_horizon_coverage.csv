@@ -1,0 +1,4 @@
+horizon,row_count,label_ready_rows,forward_return_available_rows,benchmark_excess_return_available_rows,missing_label_rows,coverage_rate,coverage_status
+1d,6000,6000,6000,6000,0,1.0000000000,PASS
+5d,6000,6000,6000,6000,0,1.0000000000,PASS
+20d,6000,6000,6000,6000,0,1.0000000000,PASS

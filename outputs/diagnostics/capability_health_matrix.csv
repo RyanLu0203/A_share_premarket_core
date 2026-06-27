@@ -72,3 +72,4 @@ goal_data_provider02a_multi_provider_capability_probe,GOAL-DATA-PROVIDER-02A rev
 goal_data_provider02a1_network_opt_in_provider_smoke_test,GOAL-DATA-PROVIDER-02A.1 review-only network opt-in provider smoke test,GOAL-DATA-PROVIDER-02A.1,PASS,ashare_premarket.providers.goal_data_provider02a1,Keep active
 goal_data_provider02b_source_backed_evaluation_panel,GOAL-DATA-PROVIDER-02B review-only source-backed evaluation panel,GOAL-DATA-PROVIDER-02B,PASS,ashare_premarket.providers.goal_data_provider02b,Keep active
 goal_v1_diagnostic_coverage03_source_backed_multi_symbol_diagnostics,GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage,GOAL-V1-DIAGNOSTIC-COVERAGE-03,PASS,ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03,Keep active
+goal10b3_dc03_recommendation_revalidation,GOAL-10B.3 review-only DC03 recommendation revalidation,GOAL-10B.3,PASS,ashare_premarket.backtest.goal10b3,Keep active

@@ -26,4 +26,4 @@ The current canonical approved universe has fewer than 50 symbols, so this gate 
 
 ## Locked Boundaries
 
-GOAL-V1-DIAGNOSTIC-COVERAGE-03 is not implemented by this panel gate; it may only be preserved when its own source-backed diagnostic evidence exists. GOAL-10B.3, GOAL-10D, dashboards, signal and portfolio backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked. This panel is not a recommendation, position, portfolio, or execution output.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 and GOAL-10B.3 are not implemented by this panel gate; each may only be preserved when its own review-only evidence exists. GOAL-10D, dashboards, signal and portfolio backtests, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked. This panel is not a recommendation, position, portfolio, or execution output.

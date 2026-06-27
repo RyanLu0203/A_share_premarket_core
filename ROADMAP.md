@@ -92,6 +92,10 @@
   (`PASS_WITH_WARNINGS`; implemented_review_only non-actionable risk,
   recommendation eligibility, and position-band diagnostics from 02B panel
   evidence only).
+- GOAL-10B.3 DC03 recommendation revalidation (`PASS_WITH_WARNINGS`;
+  implemented_review_only non-actionable revalidation diagnostics from DC03
+  plus Provider02B evidence only; signal currently weak/unreliable due group
+  imbalance and unavailable numeric-score IC/RankIC).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -146,8 +150,11 @@ dashboards, trading, production, local-lake, broker, factor-mining, or DQN/RL
 outputs. GOAL-V1-DIAGNOSTIC-COVERAGE-03 now implements only review-only
 source-backed diagnostic coverage over the 02B panel; it writes separate
 non-actionable risk, recommendation eligibility, and position-band diagnostics
-and preserves canonical GOAL-07B/08B/09 artifacts. GOAL-DATA-PANEL-02,
-GOAL-10B.3, and GOAL-10D remain locked.
+and preserves canonical GOAL-07B/08B/09 artifacts. GOAL-10B.3 now implements
+only review-only DC03 recommendation revalidation diagnostics and records
+`recommendation_revalidation_signal_weak_or_unreliable`; GOAL-RISK-TIERING-01
+/ GOAL-REC-TIERING-01 should repair tiering before any position-band
+validation. GOAL-DATA-PANEL-02 and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -167,7 +174,6 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
-- GOAL-10B.3 recommendation revalidation.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity execution.

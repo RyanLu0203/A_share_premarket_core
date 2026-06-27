@@ -51,7 +51,7 @@ flowchart TD
     P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02B -. "evaluation panel remains locked" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    DC03 -. "locked future" .-> T10B3["GOAL-10B.3 Recommendation Backtest Revalidation<br/>(locked_future)"]
+    DC03 -. "review-only revalidation" .-> T10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
@@ -118,10 +118,12 @@ panel evidence plus provider/coverage audit metadata. GOAL-V1-DIAGNOSTIC-
 COVERAGE-03 is implemented only as non-actionable source-backed diagnostic
 coverage over that 02B panel; it does not overwrite canonical GOAL-07B/08B/09
 artifacts or unlock backtests, dashboards, trading, production, local-lake,
-broker, factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02, GOAL-10B.3,
-GOAL-10D, Dashboard / Daily Report UI, and downstream execution stages remain
-locked future work; no dashboard files, visual reports, frontend, or UI output
-exist. V2 factor
+broker, factor-mining, or DQN/RL outputs. GOAL-10B.3 is implemented only as
+review-only DC03 recommendation revalidation diagnostics and records weak /
+unreliable signal evidence due group imbalance and unavailable numeric-score
+IC/RankIC. GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and
+downstream execution stages remain locked future work; no dashboard files,
+visual reports, frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, infrastructure-only, locked, planned-locked, and

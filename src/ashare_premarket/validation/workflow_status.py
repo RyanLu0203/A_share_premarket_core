@@ -30,7 +30,6 @@ DOWNSTREAM_LOCKED_IDS = {
     "production_model_promotion",
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
-    "goal10b3_recommendation_backtest_revalidation",
 }
 
 GOAL07B_WORKFLOW_ID = "goal07b_risk_overlay_calculation"
@@ -77,6 +76,7 @@ GOAL_DATA_PANEL02_WORKFLOW_ID = "goal_data_panel02_evaluation_panel_gate"
 GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID = "goal_v1_diagnostic_coverage03_multi_provider_diagnostics"
 GOAL_V1_DIAGNOSTIC_COVERAGE03_ALLOWED_NEXT = "request_goal10b3_recommendation_revalidation_or_fix_dc03_tiering_warnings"
 GOAL10B3_WORKFLOW_ID = "goal10b3_recommendation_backtest_revalidation"
+GOAL10B3_ALLOWED_NEXT = "fix_goal10b3_revalidation_warnings_before_position_band_validation"
 
 REQUIRED_ACTIVE_IDS = {
     "project_operating_system",
@@ -358,6 +358,10 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_v1_diagnostic_coverage03_manifest = _read(root / "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_manifest.json")
     goal_v1_diagnostic_coverage03_audit = _read(root / "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_audit.md")
     goal10b3 = by_id.get(GOAL10B3_WORKFLOW_ID, {})
+    goal10b3_status = goal10b3.get("status")
+    goal10b3_report = _read(root / "outputs/audits/goal10b3_dc03_recommendation_revalidation_report.md")
+    goal10b3_manifest = _read(root / "outputs/audits/goal10b3_dc03_recommendation_revalidation_manifest.json")
+    goal10b3_audit = _read(root / "outputs/audits/goal10b3_dc03_recommendation_revalidation_audit.md")
     goal10d = by_id.get(GOAL10D_WORKFLOW_ID, {})
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
     goal08b_evidence_ready = bool(goal08b) and goal08b_status == "implemented_review_only" and _goal08b_readiness_implemented(goal08b_report) and "Status: `PASS`" in goal08b_audit
@@ -429,6 +433,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_v1_diagnostic_coverage03_status == "implemented_review_only"
         and _goal_v1_diagnostic_coverage03_readiness_implemented(goal_v1_diagnostic_coverage03_report)
         and "Status: `PASS`" in goal_v1_diagnostic_coverage03_audit
+    )
+    goal10b3_evidence_ready = (
+        bool(goal10b3)
+        and goal10b3_status == "implemented_review_only"
+        and _goal10b3_readiness_implemented(goal10b3_report)
+        and "Status: `PASS`" in goal10b3_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -1696,7 +1706,6 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02A manifest missing false boundary flag: {required_false}")
         provider02a_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]
         if not goal_v1_diagnostic_coverage03_evidence_ready:
             provider02a_downstream_rows.insert(1, (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03))
@@ -1707,6 +1716,14 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02A")
             if row.get("implemented_in_repo") != "false":
                 failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-PROVIDER-02A")
+        if goal10b3_evidence_ready:
+            if goal10b3.get("status") != "implemented_review_only" or goal10b3.get("implemented_in_repo") != "true":
+                failures.append("GOAL-10B.3 valid evidence must be preserved after GOAL-DATA-PROVIDER-02A")
+        else:
+            if goal10b3.get("status") != "locked_future":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must remain locked_future after GOAL-DATA-PROVIDER-02A")
+            if goal10b3.get("implemented_in_repo") != "false":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must not be implemented after GOAL-DATA-PROVIDER-02A")
         _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-PROVIDER-02A")
     if goal_data_provider02a1:
         if goal_data_provider02a1_status != "implemented_review_only":
@@ -1795,7 +1812,6 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02A.1 manifest missing false boundary flag: {required_false}")
         provider02a1_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]
         if not goal_v1_diagnostic_coverage03_evidence_ready:
             provider02a1_downstream_rows.insert(1, (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03))
@@ -1806,6 +1822,14 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02A.1")
             if row.get("implemented_in_repo") != "false":
                 failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-PROVIDER-02A.1")
+        if goal10b3_evidence_ready:
+            if goal10b3.get("status") != "implemented_review_only" or goal10b3.get("implemented_in_repo") != "true":
+                failures.append("GOAL-10B.3 valid evidence must be preserved after GOAL-DATA-PROVIDER-02A.1")
+        else:
+            if goal10b3.get("status") != "locked_future":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must remain locked_future after GOAL-DATA-PROVIDER-02A.1")
+            if goal10b3.get("implemented_in_repo") != "false":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must not be implemented after GOAL-DATA-PROVIDER-02A.1")
         if goal_data_provider02b.get("depends_on") != GOAL_DATA_PROVIDER02A1_WORKFLOW_ID:
             failures.append("GOAL-DATA-PROVIDER-02B must depend on GOAL-DATA-PROVIDER-02A.1 after the smoke test gate")
         _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-PROVIDER-02A.1")
@@ -1882,12 +1906,19 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02B manifest missing false boundary flag: {required_false}")
         for workflow_id, row in [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]:
             if row.get("status") != "locked_future":
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02B")
             if row.get("implemented_in_repo") != "false":
                 failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-PROVIDER-02B")
+        if goal10b3_evidence_ready:
+            if goal10b3.get("status") != "implemented_review_only" or goal10b3.get("implemented_in_repo") != "true":
+                failures.append("GOAL-10B.3 valid evidence must be preserved after GOAL-DATA-PROVIDER-02B")
+        else:
+            if goal10b3.get("status") != "locked_future":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must remain locked_future after GOAL-DATA-PROVIDER-02B")
+            if goal10b3.get("implemented_in_repo") != "false":
+                failures.append(f"{GOAL10B3_WORKFLOW_ID} must not be implemented after GOAL-DATA-PROVIDER-02B")
         if not goal_v1_diagnostic_coverage03_evidence_ready:
             if goal_v1_diagnostic_coverage03.get("status") != "locked_future":
                 failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID} must remain locked_future after GOAL-DATA-PROVIDER-02B")
@@ -1958,11 +1989,75 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 manifest missing false boundary flag: {required_false}")
         if goal_data_panel02.get("status") != "locked_future" or goal_data_panel02.get("implemented_in_repo") != "false":
             failures.append("GOAL-DATA-PANEL-02 must remain locked_future after GOAL-V1-DIAGNOSTIC-COVERAGE-03")
-        if goal10b3.get("status") != "locked_future" or goal10b3.get("implemented_in_repo") != "false":
-            failures.append("GOAL-10B.3 must remain locked_future after GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+        if goal10b3_evidence_ready:
+            if goal10b3.get("status") != "implemented_review_only" or goal10b3.get("implemented_in_repo") != "true":
+                failures.append("GOAL-10B.3 valid evidence must be preserved after GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+        elif goal10b3.get("status") != "locked_future" or goal10b3.get("implemented_in_repo") != "false":
+            failures.append("GOAL-10B.3 must remain locked_future after GOAL-V1-DIAGNOSTIC-COVERAGE-03 unless valid GOAL-10B.3 evidence exists")
         if goal10b3.get("depends_on") != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
             failures.append("GOAL-10B.3 must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
         _validate_locked_execution_downstream(failures, by_id, context="GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+    if goal10b3:
+        if goal10b3_evidence_ready:
+            if not goal_v1_diagnostic_coverage03_evidence_ready:
+                failures.append("GOAL-10B.3 requires GOAL-V1-DIAGNOSTIC-COVERAGE-03 implemented_review_only evidence")
+            if goal10b3.get("status") != "implemented_review_only":
+                failures.append("GOAL-10B.3 must be implemented_review_only when valid evidence exists")
+            if goal10b3.get("implemented_in_repo") != "true":
+                failures.append("GOAL-10B.3 review-only row must be marked implemented")
+            if goal10b3.get("allowed_next_action") != GOAL10B3_ALLOWED_NEXT:
+                failures.append("GOAL-10B.3 allowed_next_action is invalid")
+            if goal10b3.get("depends_on") != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+                failures.append("GOAL-10B.3 must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+            for required_text in [
+                '"mode": "review_only_dc03_recommendation_revalidation_gate"',
+                '"input_snapshot_row_count": 6000',
+                '"unique_symbols": 50',
+                '"unique_trade_dates": 120',
+                '"recommendation_group_variation_available": true',
+                '"group_imbalance_warning": true',
+                '"small_blocked_group_warning": true',
+                '"actionability_all_never_actionable_review_only": true',
+                '"position_outputs_not_evaluated_in_goal10b3": true',
+                '"goal10d_status_after_goal10b3": "locked_future"',
+                '"dashboard_daily_report_status_after_goal10b3": "locked_future"',
+                '"portfolio_backtest_status_after_goal10b3": "locked_future"',
+                '"recommendation_revalidation_signal_weak_or_unreliable": true',
+            ]:
+                if required_text not in goal10b3_manifest:
+                    failures.append(f"GOAL-10B.3 manifest missing required marker: {required_text}")
+            for required_false in [
+                '"buy_sell_hold_outputs_generated": false',
+                '"target_prices_generated": false',
+                '"position_sizing_generated": false',
+                '"target_weights_generated": false',
+                '"portfolio_weights_generated": false',
+                '"order_quantities_generated": false',
+                '"portfolio_returns_generated": false',
+                '"equity_curves_generated": false',
+                '"dashboard_outputs_generated": false',
+                '"dashboard_files_generated": false',
+                '"html_generated": false',
+                '"streamlit_generated": false',
+                '"frontend_code_generated": false',
+                '"visual_reports_generated": false',
+                '"backtests_run": false',
+                '"backtest_execution_run": false',
+                '"local_lake_files_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"goal10b_one_symbol_evidence_used": false',
+                '"goal10b2_eight_row_evidence_used": false',
+                '"dc02_evidence_used": false',
+                '"outputs_samples_used": false',
+                '"diagnostic_group_variation_fabricated": false',
+                '"downstream_execution_unlocked_by_this_goal": false',
+            ]:
+                if required_false not in goal10b3_manifest:
+                    failures.append(f"GOAL-10B.3 manifest missing false boundary flag: {required_false}")
+        else:
+            if goal10b3.get("status") != "locked_future" or goal10b3.get("implemented_in_repo") != "false":
+                failures.append("GOAL-10B.3 must remain locked_future until valid GOAL-10B.3 evidence exists")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -2264,10 +2359,20 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 if row["depends_on"] not in {GOAL_DATA_PANEL02_WORKFLOW_ID, GOAL_DATA_PROVIDER02B_WORKFLOW_ID}:
                     failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics locked row has invalid dependency")
         if workflow_id == GOAL10B3_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal10b3_recommendation_backtest_revalidation must remain locked_future and unimplemented")
-            if row["depends_on"] != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
-                failures.append("goal10b3_recommendation_backtest_revalidation must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+            if status not in {"locked_future", "implemented_review_only"}:
+                failures.append("goal10b3_recommendation_backtest_revalidation must be locked_future or implemented_review_only")
+            if status == "implemented_review_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal10b3_recommendation_backtest_revalidation implemented_review_only must be marked implemented")
+                if row["allowed_next_action"] != GOAL10B3_ALLOWED_NEXT:
+                    failures.append("goal10b3_recommendation_backtest_revalidation allowed_next_action is invalid")
+                if row["depends_on"] != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+                    failures.append("goal10b3_recommendation_backtest_revalidation implemented row must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal10b3_recommendation_backtest_revalidation must remain unimplemented while locked_future")
+                if row["depends_on"] != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+                    failures.append("goal10b3_recommendation_backtest_revalidation locked row must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
         if workflow_id == GOAL10D_WORKFLOW_ID:
             if status != "locked_future":
                 failures.append("goal10d_backtest_failure_attribution_gate must remain locked_future")
@@ -2383,9 +2488,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_DATA_PANEL02_WORKFLOW_ID:
         next_goal = "GOAL-DATA-PANEL-02 remains locked; GOAL-V1-DIAGNOSTIC-COVERAGE-03 uses separate 02B source-backed evidence"
     elif row["workflow_id"] == GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
-        next_goal = "GOAL-10B.3 remains locked until an explicit recommendation revalidation gate is requested"
+        next_goal = "GOAL-10B.3 DC03 recommendation revalidation is implemented review-only when valid evidence exists"
     elif row["workflow_id"] == GOAL10B3_WORKFLOW_ID:
-        next_goal = "Remain locked until an explicit GOAL-10B.3 revalidation gate is requested"
+        next_goal = "Repair GOAL-10B.3 group imbalance and categorical-signal warnings before any position-band validation"
     elif row["workflow_id"] == GOAL10D_WORKFLOW_ID:
         next_goal = "Remain locked until an explicit GOAL-10D failure attribution gate is requested"
     elif row["workflow_id"] == "dashboard_daily_report":
@@ -2590,6 +2695,13 @@ def _goal_v1_diagnostic_coverage03_readiness_implemented(readiness: str) -> bool
     )
 
 
+def _goal10b3_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-10B.3 DC03 Recommendation Revalidation Gate: PASS" in readiness
+        or "GOAL-10B.3 DC03 Recommendation Revalidation Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
 def _validate_goal10b2_goal10c_state_after_diagnostic_chain(
     failures: list[str],
     goal10b2: dict[str, str],
@@ -2671,6 +2783,12 @@ def _unexpected_goal10b_backtest_outputs(root: Path) -> list[str]:
         "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
         "outputs/backtest/goal10b2_symbol_metrics.csv",
         "outputs/backtest/goal10b2_horizon_coverage.csv",
+        "outputs/backtest/goal10b3_dc03_revalidation_input_snapshot.csv",
+        "outputs/backtest/goal10b3_recommendation_group_metrics.csv",
+        "outputs/backtest/goal10b3_risk_severity_group_metrics.csv",
+        "outputs/backtest/goal10b3_symbol_metrics.csv",
+        "outputs/backtest/goal10b3_horizon_coverage.csv",
+        "outputs/backtest/goal10b3_group_imbalance_diagnostics.csv",
         "outputs/backtest/goal10c_position_band_input_snapshot.csv",
         "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
         "outputs/backtest/goal10c_position_band_group_metrics.csv",

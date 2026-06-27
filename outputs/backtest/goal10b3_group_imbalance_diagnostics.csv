@@ -1,0 +1,14 @@
+diagnostic_name,diagnostic_status,group_type,group_value,row_count,share,threshold,notes
+source_backed_panel_linkage_check,PASS,all_inputs,trade_date+symbol,6000,1.0000000000,1.0000000000,DC03 recommendation and risk rows are linked to the Provider02B source-backed panel.
+duplicate_key_check,PASS,trade_date_symbol,duplicate_keys,0,0.0000000000,0.0000000000,Duplicate trade_date + symbol keys must be zero.
+missing_label_check,PASS,forward_return_labels,all_horizons,0,0.0000000000,0.0000000000,Forward return and benchmark excess labels must be available for all horizons.
+no_lookahead_alignment_check,PASS,alignment,t_plus_1_or_later,6000,1.0000000000,1.0000000000,Uses committed Provider02B forward-return labels only; no same-day execution or future portfolio output is created.
+recommendation_group_variation_available,PASS,recommendation_eligibility_status,2,6000,0.0003333333,2.0000000000,At least two recommendation eligibility groups are present.
+group_imbalance_warning,PASS_WITH_WARNINGS,recommendation_eligibility_status,eligible_for_review_only_revalidation_never_actionable,5990,0.9983333333,0.9500000000,Dominant recommendation group exceeds the imbalance threshold.
+risk_group_imbalance_warning,PASS_WITH_WARNINGS,risk_severity,MEDIUM,5990,0.9983333333,0.9500000000,Dominant risk severity group exceeds the imbalance threshold.
+small_blocked_group_warning,PASS_WITH_WARNINGS,recommendation_eligibility_status,blocked_review_only_source_risk,10,0.0016666667,30.0000000000,Blocked source-risk group has too few rows for stable comparison.
+actionability_all_never_actionable_review_only,PASS,actionability_status,never_actionable,6000,1.0000000000,1.0000000000,Every recommendation row remains never actionable.
+position_outputs_not_evaluated_in_goal10b3,PASS,position_outputs,not_evaluated,0,0.0000000000,0.0000000000,"GOAL-10B.3 does not evaluate position-band output, sizing, or weights."
+review_only_non_actionable_boundary_preserved,PASS,boundary,preserved,6000,1.0000000000,1.0000000000,Review-only non-actionable boundary is preserved.
+ic_rankic_availability,PASS_WITH_WARNINGS,recommendation_signal,unavailable_non_numeric_categorical_label,0,0.0000000000,0.0000000000,IC/RankIC is not computed because DC03 has no valid numeric recommendation score.
+recommendation_revalidation_signal_weak_or_unreliable,PASS_WITH_WARNINGS,signal_classification,weak_or_unreliable,6000,0.9983333333,0.9500000000,Signal evidence is weak because grouping is heavily imbalanced and IC/RankIC is unavailable.

@@ -19,7 +19,7 @@ Primary input: `outputs/datasets/goal_data_provider02b_source_backed_evaluation_
 - Diagnostics are derived only from the GOAL-DATA-PROVIDER-02B normalized source-backed panel.
 - Canonical GOAL-07B, GOAL-08B, and GOAL-09 artifacts are preserved and not overwritten.
 - Recommendation diagnostics are never actionable and contain no BUY/SELL/HOLD, target price, position size, weight, or order output.
-- GOAL-10B.3, GOAL-10C, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
+- GOAL-10B.3 is implemented only by its own separate review-only revalidation gate; GOAL-10C, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
 
 ## Warnings
 - all_blocked_recommendation_collapse_detected

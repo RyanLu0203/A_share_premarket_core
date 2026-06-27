@@ -27,7 +27,8 @@ GOAL-10B.2/GOAL-10C review-only bounded diagnostics, and
 GOAL-DATA-PROVIDER-02A review-only multi-provider capability probing, plus
 GOAL-DATA-PROVIDER-02A.1 review-only network-opt-in provider smoke testing,
 GOAL-DATA-PROVIDER-02B review-only source-backed panel evidence, and
-GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage,
+and GOAL-10B.3 review-only DC03 recommendation revalidation diagnostics.
 
 ## Repository Roles
 
@@ -122,6 +123,8 @@ python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py
 python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py
 python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py
 python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py
+python scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py
+python scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -190,7 +193,7 @@ flowchart TD
     P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02B -. "evaluation panel remains locked" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    DC03 -. "locked future" .-> B10B3["GOAL-10B.3 Recommendation Revalidation<br/>(locked_future)"]
+    DC03 -. "review-only revalidation" .-> B10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -274,8 +277,12 @@ GOAL-V1-DIAGNOSTIC-COVERAGE-03 is implemented only as review-only
 source-backed diagnostic coverage over the 02B panel: it writes separate
 non-actionable risk, recommendation eligibility, and position-band diagnostics
 at `trade_date + symbol` grain and preserves canonical GOAL-07B/08B/09
-artifacts. GOAL-DATA-PANEL-02, GOAL-10B.3, and GOAL-10D remain
-`locked_future`.
+artifacts. GOAL-10B.3 is implemented only as review-only DC03 recommendation
+revalidation diagnostics: it joins the DC03 recommendation/risk rows to the
+Provider02B panel, writes group, symbol, horizon, and imbalance diagnostics,
+and records `recommendation_revalidation_signal_weak_or_unreliable` because
+the groups are severely imbalanced and no numeric recommendation score exists
+for IC/RankIC. GOAL-DATA-PANEL-02 and GOAL-10D remain `locked_future`.
 
 ## Required Public Commands
 

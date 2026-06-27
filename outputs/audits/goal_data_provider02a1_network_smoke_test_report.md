@@ -23,7 +23,7 @@ Smoke window: `2026-05-11` to `2026-06-19` over `30` trading-day contract.
 - Tushare Pro reads `TUSHARE_TOKEN` only from the environment and never persists it.
 - No raw provider payloads are persisted.
 - Smoke-test data is not final evaluation panel evidence.
-- GOAL-DATA-PROVIDER-02B and GOAL-V1-DIAGNOSTIC-COVERAGE-03 are implemented only by their own explicit review-only gates when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
+- GOAL-DATA-PROVIDER-02B, GOAL-V1-DIAGNOSTIC-COVERAGE-03, and GOAL-10B.3 are implemented only by their own explicit review-only gates when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
 
 ## Warnings
 - approved_universe_too_small

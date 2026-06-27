@@ -106,10 +106,11 @@ diagnostic coverage evidence under `outputs/diagnostics/`,
 only the committed GOAL-DATA-PROVIDER-02B normalized panel, creates separate
 non-actionable risk, recommendation eligibility, and position-band diagnostics
 at `trade_date + symbol` grain, and preserves canonical GOAL-07B/08B/09
-artifacts. It does not promote GOAL-DATA-PANEL-02, run GOAL-10B.3, run
-backtests, write local lake files, create portfolio returns, create equity
-curves, create dashboard outputs, fetch new provider data, persist raw payloads
-or provider tokens, or write production storage.
+artifacts. It does not promote GOAL-DATA-PANEL-02, run portfolio backtests,
+write local lake files, create portfolio returns, create equity curves, create
+dashboard outputs, fetch new provider data, persist raw payloads or provider
+tokens, or write production storage. GOAL-10B.3 consumes this DC03 evidence
+only through its separate review-only recommendation revalidation gate.
 
 ## Active Contracts
 
@@ -234,7 +235,8 @@ or provider tokens, or write production storage.
   create dashboards, or unlock trading, production, broker, factor-mining, or
   DQN/RL paths.
 - Do not treat GOAL-V1-DIAGNOSTIC-COVERAGE-03 diagnostic coverage evidence as
-  permission to overwrite canonical GOAL-07B/08B/09 artifacts, run GOAL-10B.3,
-  create actionable recommendations, create actual positions, create
+  permission to overwrite canonical GOAL-07B/08B/09 artifacts, run portfolio
+  backtests, create actionable recommendations, create actual positions, create
   portfolio outputs, write local-lake data, create dashboards, or unlock
-  trading, production, broker, factor-mining, or DQN/RL paths.
+  trading, production, broker, factor-mining, or DQN/RL paths. GOAL-10B.3 uses
+  DC03 evidence only for non-actionable revalidation diagnostics.

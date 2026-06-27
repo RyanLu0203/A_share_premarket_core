@@ -12,6 +12,7 @@ from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
 from ashare_premarket.backtest.goal10b import audit_goal10b_recommendation_backtest_review_only, run_goal10b_recommendation_backtest_review_only
 from ashare_premarket.backtest.goal10b1 import audit_goal10b1_backtest_coverage_repair_gate, run_goal10b1_backtest_coverage_repair_gate
 from ashare_premarket.backtest.goal10b2 import audit_goal10b2_recommendation_backtest_revalidation, run_goal10b2_recommendation_backtest_revalidation
+from ashare_premarket.backtest.goal10b3 import audit_goal10b3_dc03_recommendation_revalidation_gate, run_goal10b3_dc03_recommendation_revalidation_gate
 from ashare_premarket.backtest.goal10c import audit_goal10c_cost_slippage_sensitivity_gate, run_goal10c_cost_slippage_sensitivity_gate
 from ashare_premarket.contract_design.goal08b0 import audit_goal08b0_recommendation_review_only_unlock_gate, run_goal08b0_recommendation_review_only_unlock_gate
 from ashare_premarket.contract_design.goal090 import audit_goal090_position_band_review_only_unlock_gate, run_goal090_position_band_review_only_unlock_gate
@@ -171,6 +172,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_data_provider02a1_network_opt_in_provider_smoke_test", run_goal_data_provider02a1_network_smoke_test(root) and audit_goal_data_provider02a1_network_smoke_test(root)),
         ("goal_data_provider02b_source_backed_evaluation_panel", run_goal_data_provider02b_source_backed_panel_build_gate(root) and audit_goal_data_provider02b_source_backed_panel_build_gate(root)),
         ("goal_v1_diagnostic_coverage03_source_backed_multi_symbol_diagnostics", run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root) and audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root)),
+        ("goal10b3_dc03_recommendation_revalidation", run_goal10b3_dc03_recommendation_revalidation_gate(root) and audit_goal10b3_dc03_recommendation_revalidation_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -286,6 +288,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py"]),
         ("python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
         ("python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
+        ("python scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py", [sys.executable, "scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py"]),
+        ("python scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py", [sys.executable, "scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -328,6 +332,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py"]),
         ("python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
         ("python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
+        ("python scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py", [sys.executable, "scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py"]),
+        ("python scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py", [sys.executable, "scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py"]),
     ]
     rows = []
     runtime_rows = []

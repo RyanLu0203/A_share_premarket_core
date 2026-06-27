@@ -16,7 +16,7 @@
   "goal10a_backtest_contract_design_gate": "implemented_design_only",
   "goal10b1_backtest_coverage_repair_gate": "implemented_review_only",
   "goal10b2_recommendation_backtest_revalidation": "implemented_review_only",
-  "goal10b3_recommendation_backtest_revalidation": false,
+  "goal10b3_recommendation_backtest_revalidation": "implemented_review_only",
   "goal10b_backtest_review_only_validation_gate": "implemented_review_only",
   "goal10c_backtest_cost_slippage_sensitivity_gate": "implemented_review_only",
   "goal10d_backtest_failure_attribution_gate": false,
