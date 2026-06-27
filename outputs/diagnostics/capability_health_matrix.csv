@@ -71,3 +71,4 @@ goal10c_cost_slippage_sensitivity,GOAL-10C review-only position-band cost/slippa
 goal_data_provider02a_multi_provider_capability_probe,GOAL-DATA-PROVIDER-02A review-only multi-provider capability probe,GOAL-DATA-PROVIDER-02A,PASS,ashare_premarket.providers.goal_data_provider02a,Keep active
 goal_data_provider02a1_network_opt_in_provider_smoke_test,GOAL-DATA-PROVIDER-02A.1 review-only network opt-in provider smoke test,GOAL-DATA-PROVIDER-02A.1,PASS,ashare_premarket.providers.goal_data_provider02a1,Keep active
 goal_data_provider02b_source_backed_evaluation_panel,GOAL-DATA-PROVIDER-02B review-only source-backed evaluation panel,GOAL-DATA-PROVIDER-02B,PASS,ashare_premarket.providers.goal_data_provider02b,Keep active
+goal_v1_diagnostic_coverage03_source_backed_multi_symbol_diagnostics,GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage,GOAL-V1-DIAGNOSTIC-COVERAGE-03,PASS,ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03,Keep active

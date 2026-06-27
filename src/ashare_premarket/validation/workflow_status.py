@@ -30,7 +30,6 @@ DOWNSTREAM_LOCKED_IDS = {
     "production_model_promotion",
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
-    "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
     "goal10b3_recommendation_backtest_revalidation",
 }
 
@@ -76,6 +75,7 @@ GOAL_DATA_PROVIDER02B_WORKFLOW_ID = "goal_data_provider02b_provider_selection_ga
 GOAL_DATA_PROVIDER02B_ALLOWED_NEXT = "request_goal_v1_diagnostic_coverage03_or_fix_provider02b_warnings"
 GOAL_DATA_PANEL02_WORKFLOW_ID = "goal_data_panel02_evaluation_panel_gate"
 GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID = "goal_v1_diagnostic_coverage03_multi_provider_diagnostics"
+GOAL_V1_DIAGNOSTIC_COVERAGE03_ALLOWED_NEXT = "request_goal10b3_recommendation_revalidation_or_fix_dc03_tiering_warnings"
 GOAL10B3_WORKFLOW_ID = "goal10b3_recommendation_backtest_revalidation"
 
 REQUIRED_ACTIVE_IDS = {
@@ -353,6 +353,10 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_data_provider02b_audit = _read(root / "outputs/audits/goal_data_provider02b_source_backed_panel_audit.md")
     goal_data_panel02 = by_id.get(GOAL_DATA_PANEL02_WORKFLOW_ID, {})
     goal_v1_diagnostic_coverage03 = by_id.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
+    goal_v1_diagnostic_coverage03_status = goal_v1_diagnostic_coverage03.get("status")
+    goal_v1_diagnostic_coverage03_report = _read(root / "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_report.md")
+    goal_v1_diagnostic_coverage03_manifest = _read(root / "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_manifest.json")
+    goal_v1_diagnostic_coverage03_audit = _read(root / "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_audit.md")
     goal10b3 = by_id.get(GOAL10B3_WORKFLOW_ID, {})
     goal10d = by_id.get(GOAL10D_WORKFLOW_ID, {})
     goal08b0_evidence_ready = bool(goal08b0) and goal08b0_status == "implemented_review_only" and _goal08b0_readiness_implemented(goal08b0_report) and "Status: `PASS`" in goal08b0_audit
@@ -419,6 +423,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_data_provider02b_status == "implemented_review_only"
         and _goal_data_provider02b_readiness_implemented(goal_data_provider02b_report)
         and "Status: `PASS`" in goal_data_provider02b_audit
+    )
+    goal_v1_diagnostic_coverage03_evidence_ready = (
+        bool(goal_v1_diagnostic_coverage03)
+        and goal_v1_diagnostic_coverage03_status == "implemented_review_only"
+        and _goal_v1_diagnostic_coverage03_readiness_implemented(goal_v1_diagnostic_coverage03_report)
+        and "Status: `PASS`" in goal_v1_diagnostic_coverage03_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -1686,9 +1696,10 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02A manifest missing false boundary flag: {required_false}")
         provider02a_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
             (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]
+        if not goal_v1_diagnostic_coverage03_evidence_ready:
+            provider02a_downstream_rows.insert(1, (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03))
         if not goal_data_provider02b_evidence_ready:
             provider02a_downstream_rows.insert(0, (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b))
         for workflow_id, row in provider02a_downstream_rows:
@@ -1784,9 +1795,10 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02A.1 manifest missing false boundary flag: {required_false}")
         provider02a1_downstream_rows = [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
             (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]
+        if not goal_v1_diagnostic_coverage03_evidence_ready:
+            provider02a1_downstream_rows.insert(1, (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03))
         if not goal_data_provider02b_evidence_ready:
             provider02a1_downstream_rows.insert(0, (GOAL_DATA_PROVIDER02B_WORKFLOW_ID, goal_data_provider02b))
         for workflow_id, row in provider02a1_downstream_rows:
@@ -1870,14 +1882,87 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append(f"GOAL-DATA-PROVIDER-02B manifest missing false boundary flag: {required_false}")
         for workflow_id, row in [
             (GOAL_DATA_PANEL02_WORKFLOW_ID, goal_data_panel02),
-            (GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, goal_v1_diagnostic_coverage03),
             (GOAL10B3_WORKFLOW_ID, goal10b3),
         ]:
             if row.get("status") != "locked_future":
                 failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-PROVIDER-02B")
             if row.get("implemented_in_repo") != "false":
                 failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-PROVIDER-02B")
+        if not goal_v1_diagnostic_coverage03_evidence_ready:
+            if goal_v1_diagnostic_coverage03.get("status") != "locked_future":
+                failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID} must remain locked_future after GOAL-DATA-PROVIDER-02B")
+            if goal_v1_diagnostic_coverage03.get("implemented_in_repo") != "false":
+                failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID} must not be implemented after GOAL-DATA-PROVIDER-02B")
         _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-PROVIDER-02B")
+    if goal_v1_diagnostic_coverage03:
+        if goal_v1_diagnostic_coverage03_status != "implemented_review_only":
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 must be implemented_review_only when present after its explicit request")
+        if not goal_v1_diagnostic_coverage03_evidence_ready:
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 lacks PASS/PASS_WITH_WARNINGS source-backed diagnostic evidence")
+        if not goal_data_provider02b_evidence_ready:
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 requires GOAL-DATA-PROVIDER-02B implemented_review_only evidence")
+        if goal_v1_diagnostic_coverage03.get("implemented_in_repo") != "true":
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only row must be marked implemented")
+        if goal_v1_diagnostic_coverage03.get("allowed_next_action") != GOAL_V1_DIAGNOSTIC_COVERAGE03_ALLOWED_NEXT:
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 allowed_next_action is invalid")
+        if goal_v1_diagnostic_coverage03.get("depends_on") != GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
+            failures.append("GOAL-V1-DIAGNOSTIC-COVERAGE-03 must depend on GOAL-DATA-PROVIDER-02B")
+        for required_text in [
+            '"mode": "review_only_source_backed_multi_symbol_diagnostics_gate"',
+            '"primary_input_artifact": "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv"',
+            '"risk_diagnostic_row_count": 6000',
+            '"recommendation_diagnostic_row_count": 6000',
+            '"position_band_diagnostic_row_count": 6000',
+            '"unique_symbols": 50',
+            '"unique_trade_dates": 120',
+            '"duplicate_trade_date_symbol_keys": 0',
+            '"keys_match_across_diagnostic_families": true',
+            '"canonical_goal07b_goal08b_goal09_preserved": true',
+            '"goal_v1_diagnostic_coverage03_status_after_gate": "implemented_review_only"',
+            '"goal10b3_status_after_goal_v1_diagnostic_coverage03": "locked_future"',
+            '"goal10d_status_after_goal_v1_diagnostic_coverage03": "locked_future"',
+            '"dashboard_daily_report_status_after_goal_v1_diagnostic_coverage03": "locked_future"',
+        ]:
+            if required_text not in goal_v1_diagnostic_coverage03_manifest:
+                failures.append(f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 manifest missing required marker: {required_text}")
+        for required_false in [
+            '"goal10b3_run": false',
+            '"goal10c_run": false',
+            '"buy_sell_hold_outputs_generated": false',
+            '"target_prices_generated": false',
+            '"actual_position_sizes_generated": false',
+            '"position_sizing_generated": false',
+            '"target_weights_generated": false',
+            '"portfolio_weights_generated": false',
+            '"order_quantities_generated": false',
+            '"portfolio_returns_generated": false',
+            '"equity_curves_generated": false',
+            '"dashboard_outputs_generated": false',
+            '"dashboard_files_generated": false',
+            '"html_generated": false',
+            '"streamlit_generated": false',
+            '"frontend_code_generated": false',
+            '"visual_reports_generated": false',
+            '"trading_outputs_generated": false',
+            '"broker_outputs_generated": false',
+            '"production_outputs_generated": false',
+            '"local_lake_files_created": false',
+            '"factor_mining_outputs_created": false',
+            '"dqn_rl_outputs_created": false',
+            '"new_provider_data_fetched": false',
+            '"demo_fixture_used_as_primary_evidence": false',
+            '"diagnostic_group_variation_fabricated": false',
+            '"downstream_execution_unlocked_by_this_goal": false',
+        ]:
+            if required_false not in goal_v1_diagnostic_coverage03_manifest:
+                failures.append(f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 manifest missing false boundary flag: {required_false}")
+        if goal_data_panel02.get("status") != "locked_future" or goal_data_panel02.get("implemented_in_repo") != "false":
+            failures.append("GOAL-DATA-PANEL-02 must remain locked_future after GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+        if goal10b3.get("status") != "locked_future" or goal10b3.get("implemented_in_repo") != "false":
+            failures.append("GOAL-10B.3 must remain locked_future after GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+        if goal10b3.get("depends_on") != GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
+            failures.append("GOAL-10B.3 must depend on GOAL-V1-DIAGNOSTIC-COVERAGE-03")
+        _validate_locked_execution_downstream(failures, by_id, context="GOAL-V1-DIAGNOSTIC-COVERAGE-03")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -2164,10 +2249,20 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
             if row["depends_on"] != GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
                 failures.append("goal_data_panel02_evaluation_panel_gate must depend on GOAL-DATA-PROVIDER-02B")
         if workflow_id == GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics must remain locked_future and unimplemented")
-            if row["depends_on"] != GOAL_DATA_PANEL02_WORKFLOW_ID:
-                failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics must depend on GOAL-DATA-PANEL-02")
+            if status not in {"locked_future", "implemented_review_only"}:
+                failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics must be locked_future or implemented_review_only")
+            if status == "implemented_review_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics implemented_review_only must be marked implemented")
+                if row["allowed_next_action"] != GOAL_V1_DIAGNOSTIC_COVERAGE03_ALLOWED_NEXT:
+                    failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics allowed_next_action is invalid")
+                if row["depends_on"] != GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
+                    failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics implemented row must depend on GOAL-DATA-PROVIDER-02B")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics must remain unimplemented while locked_future")
+                if row["depends_on"] not in {GOAL_DATA_PANEL02_WORKFLOW_ID, GOAL_DATA_PROVIDER02B_WORKFLOW_ID}:
+                    failures.append("goal_v1_diagnostic_coverage03_multi_provider_diagnostics locked row has invalid dependency")
         if workflow_id == GOAL10B3_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal10b3_recommendation_backtest_revalidation must remain locked_future and unimplemented")
@@ -2286,9 +2381,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
         next_goal = "GOAL-DATA-PANEL-02 evaluation panel remains locked until explicit panel promotion"
     elif row["workflow_id"] == GOAL_DATA_PANEL02_WORKFLOW_ID:
-        next_goal = "GOAL-V1-DIAGNOSTIC-COVERAGE-03 remains locked until an explicit panel gate exists"
+        next_goal = "GOAL-DATA-PANEL-02 remains locked; GOAL-V1-DIAGNOSTIC-COVERAGE-03 uses separate 02B source-backed evidence"
     elif row["workflow_id"] == GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID:
-        next_goal = "GOAL-10B.3 remains locked until explicit multi-provider diagnostics exist"
+        next_goal = "GOAL-10B.3 remains locked until an explicit recommendation revalidation gate is requested"
     elif row["workflow_id"] == GOAL10B3_WORKFLOW_ID:
         next_goal = "Remain locked until an explicit GOAL-10B.3 revalidation gate is requested"
     elif row["workflow_id"] == GOAL10D_WORKFLOW_ID:
@@ -2485,6 +2580,13 @@ def _goal_data_provider02b_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS" in readiness
         or "GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_v1_diagnostic_coverage03_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Multi-Symbol Diagnostics Gate: PASS" in readiness
+        or "GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Multi-Symbol Diagnostics Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

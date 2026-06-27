@@ -18,6 +18,6 @@ The gate records provider status, schema mapping status, failure taxonomy, live-
 
 - Status: `PASS_WITH_WARNINGS`
 - Providers represented: `7`
-- Network opt-in present: `true`
-- Live provider access attempted count: `4`
+- Network opt-in present: `false`
+- Live provider access attempted count: `0`
 - Tested symbols: `002475.SZ;600036.SH`

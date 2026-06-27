@@ -21,6 +21,7 @@ from ashare_premarket.data.coverage import audit_data_source_coverage
 from ashare_premarket.datasets.feature_label_merge import audit_feature_label_leakage, build_model_ready_candidate_dataset
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02 import audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion, run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion
+from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03 import audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate, run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate
 from ashare_premarket.features.panel_expansion import audit_engineering_pit_signal_panel, build_engineering_pit_signal_panel
 from ashare_premarket.features.pit_signal_store import audit_pit_signal_snapshot, build_pit_signal_snapshot
 from ashare_premarket.labels.goal_data_label01 import audit_goal_data_label01_forward_return_label_coverage_expansion, run_goal_data_label01_forward_return_label_coverage_expansion
@@ -169,6 +170,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_data_provider02a_multi_provider_capability_probe", run_goal_data_provider02a_multi_provider_capability_probe_gate(root) and audit_goal_data_provider02a_multi_provider_capability_probe_gate(root)),
         ("goal_data_provider02a1_network_opt_in_provider_smoke_test", run_goal_data_provider02a1_network_smoke_test(root) and audit_goal_data_provider02a1_network_smoke_test(root)),
         ("goal_data_provider02b_source_backed_evaluation_panel", run_goal_data_provider02b_source_backed_panel_build_gate(root) and audit_goal_data_provider02b_source_backed_panel_build_gate(root)),
+        ("goal_v1_diagnostic_coverage03_source_backed_multi_symbol_diagnostics", run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root) and audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -282,6 +284,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_data_provider02a1_network_smoke_test.py", [sys.executable, "scripts/audit_goal_data_provider02a1_network_smoke_test.py"]),
         ("python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py"]),
         ("python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py"]),
+        ("python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
+        ("python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -322,6 +326,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_data_provider02a1_network_smoke_test.py", [sys.executable, "scripts/audit_goal_data_provider02a1_network_smoke_test.py"]),
         ("python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py"]),
         ("python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py", [sys.executable, "scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py"]),
+        ("python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
+        ("python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py", [sys.executable, "scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py"]),
     ]
     rows = []
     runtime_rows = []

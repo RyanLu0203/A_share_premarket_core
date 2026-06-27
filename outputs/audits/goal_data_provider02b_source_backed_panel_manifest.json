@@ -4,7 +4,7 @@
   "backtests_run": false,
   "benchmark_coverage_deficit": 0.0,
   "broker_integration_enabled": false,
-  "build_mode": "network_opt_in_baostock_primary_live_build",
+  "build_mode": "network_disabled_committed_evidence_replay",
   "buy_sell_hold_outputs_generated": false,
   "candidate_symbols": [
     "000001.SZ",
@@ -113,7 +113,7 @@
   "live_trading_enabled": false,
   "local_lake_files_created": false,
   "mode": "review_only_source_backed_evaluation_panel_build_gate",
-  "network_opt_in_present": true,
+  "network_opt_in_present": false,
   "no_duplicate_trade_date_symbol_keys": true,
   "no_network_replay_supported": true,
   "normalized_bounded_panel_only": true,
@@ -186,7 +186,7 @@
   "raw_payloads_never_persisted": true,
   "raw_provider_payloads_committed": false,
   "recommendation_diagnostics_run": false,
-  "replay_mode_classification": "network_opt_in_source_backed_build_or_replay",
+  "replay_mode_classification": "no_network_committed_evidence_replay",
   "review_only_panel_generated": true,
   "row_count": 6000,
   "row_deficit": 0,
@@ -206,7 +206,8 @@
   "universe_mode": "provider_panel_candidate_universe_review_only",
   "visual_reports_generated": false,
   "warnings": [
-    "canonical_approved_universe_below_50_review_only_candidate_used"
+    "canonical_approved_universe_below_50_review_only_candidate_used",
+    "no_network_committed_evidence_replay"
   ],
   "workflow_status_before_goal_data_provider02b": "implemented_review_only",
   "yfinance_auxiliary_not_primary": true

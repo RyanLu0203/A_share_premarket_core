@@ -77,6 +77,8 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate
   (`PASS_WITH_WARNINGS`)
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Multi-Symbol Diagnostics Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -102,7 +104,6 @@ Locked future:
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
 - GOAL-DATA-PANEL-02 Evaluation Panel
-- GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics
 - GOAL-10B.3 Recommendation Backtest Revalidation
 - GOAL-10D Failure Attribution
 - Signal Backtest
@@ -508,11 +509,12 @@ provider smoke-test metadata; it attempts live provider access only when
 explicit environment opt-ins are present, reads Tushare tokens only from the
 environment, and persists no raw provider payloads or tokens.
 GOAL-DATA-PROVIDER-02B is implemented only as bounded source-backed normalized
-panel evidence plus provider/coverage audit metadata; it does not unlock
-diagnostics, backtests, dashboards, trading, production, local-lake, broker,
-factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
-`locked_future`.
+panel evidence plus provider/coverage audit metadata. GOAL-V1-DIAGNOSTIC-
+COVERAGE-03 is implemented only as non-actionable source-backed diagnostic
+coverage over that 02B panel; it does not overwrite canonical GOAL-07B/08B/09
+artifacts or unlock backtests, dashboards, trading, production, local-lake,
+broker, factor-mining, or DQN/RL outputs. GOAL-DATA-PANEL-02, GOAL-10B.3,
+and GOAL-10D remain `locked_future`.
 
 ## GOAL-DATA-PROVIDER-02A Status
 
@@ -540,8 +542,9 @@ diagnostics, run backtests, generate portfolio returns, create equity curves,
 create dashboard/frontend/HTML/Streamlit outputs, write local-lake data, write
 trading or production data, integrate brokers, activate factor mining, or
 create DQN/RL outputs. GOAL-DATA-PROVIDER-02B is implemented only by its own
-source-backed panel evidence gate. GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
+source-backed panel evidence gate. GOAL-V1-DIAGNOSTIC-COVERAGE-03 is
+implemented only as non-actionable source-backed diagnostic coverage from the
+02B panel. GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
 UI, and all execution paths remain `locked_future`.
 
 ## GOAL-DATA-PROVIDER-02A.1 Status
@@ -573,9 +576,10 @@ create dashboard/frontend/HTML/Streamlit outputs, commit raw provider payloads,
 persist provider tokens, write local-lake data, write trading or production
 data, integrate brokers, activate factor mining, or create DQN/RL outputs.
 GOAL-DATA-PROVIDER-02B is implemented only by its own source-backed panel
-evidence gate. GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03,
-GOAL-10B.3, GOAL-10D, Dashboard / Daily Report UI, and all execution paths
-remain `locked_future`.
+evidence gate. GOAL-V1-DIAGNOSTIC-COVERAGE-03 is implemented only as
+non-actionable source-backed diagnostic coverage from the 02B panel.
+GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report UI, and all
+execution paths remain `locked_future`.
 
 ## GOAL-DATA-PROVIDER-02B Status
 
@@ -600,13 +604,43 @@ universe is used because the canonical approved universe is below the required
 50-symbol threshold.
 
 GOAL-DATA-PROVIDER-02B does not promote GOAL-DATA-PANEL-02, expand the
-approved trading universe, create recommendation diagnostics, create
-position-band diagnostics, run backtests, generate portfolio returns, create
-equity curves, create dashboard/frontend/HTML/Streamlit outputs, commit raw
-provider payloads, persist provider tokens, write local-lake data, write
-trading or production data, integrate brokers, activate factor mining, or
-create DQN/RL outputs. GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
+approved trading universe, run GOAL-10B.3, run GOAL-10C, run backtests,
+generate portfolio returns, create equity curves, create
+dashboard/frontend/HTML/Streamlit outputs, commit raw provider payloads,
+persist provider tokens, write local-lake data, write trading or production
+data, integrate brokers, activate factor mining, or create DQN/RL outputs.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 is implemented only by its own non-actionable
+diagnostic coverage gate. GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard
+/ Daily Report UI, and all execution paths remain `locked_future`.
+
+## GOAL-V1-DIAGNOSTIC-COVERAGE-03 Status
+
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It creates:
+
+- `outputs/diagnostics/goal_v1_diagnostic_coverage03_risk_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage03_recommendation_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage03_position_band_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage03_distribution_summary.csv`
+- `configs/diagnostics/goal_v1_diagnostic_coverage03_contract.yaml`
+- `docs/diagnostics/GOAL_V1_DIAGNOSTIC_COVERAGE03_SOURCE_BACKED_MULTI_SYMBOL_DIAGNOSTICS_GATE.md`
+- `outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_report.md`
+- `outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_manifest.json`
+- `outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_audit.md`
+
+The gate consumes only
+`outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv`
+and creates separate non-actionable risk, recommendation eligibility, and
+position-band diagnostics at `trade_date + symbol` grain. Current evidence has
+6000 rows per family, 50 symbols, 120 trade dates, and natural group variation
+without fabricated tiers.
+
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 does not overwrite canonical GOAL-07B/08B/09
+artifacts, run GOAL-10B.3, run GOAL-10C, run backtests, generate portfolio
+returns, create equity curves, create dashboard/frontend/HTML/Streamlit
+outputs, fetch new provider data, write local-lake data, write trading or
+production data, integrate brokers, activate factor mining, or create DQN/RL
+outputs. GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
 UI, and all execution paths remain `locked_future`.
 
 ## GOAL-06D Status

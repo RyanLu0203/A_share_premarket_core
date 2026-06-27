@@ -1,0 +1,122 @@
+{
+  "allowed_outputs": [
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_recommendation_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_position_band_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_distribution_summary.csv",
+    "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_report.md",
+    "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_manifest.json",
+    "outputs/audits/goal_v1_diagnostic_coverage03_source_backed_diagnostics_audit.md",
+    "docs/diagnostics/GOAL_V1_DIAGNOSTIC_COVERAGE03_SOURCE_BACKED_MULTI_SYMBOL_DIAGNOSTICS_GATE.md",
+    "configs/diagnostics/goal_v1_diagnostic_coverage03_contract.yaml"
+  ],
+  "diagnostic_grain": [
+    "trade_date",
+    "symbol"
+  ],
+  "distribution_schema": [
+    "diagnostic_area",
+    "metric",
+    "metric_value",
+    "row_count",
+    "share",
+    "status",
+    "notes"
+  ],
+  "downstream_locks": {
+    "dashboard_daily_report": "locked_future",
+    "goal10b3_recommendation_backtest_revalidation": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future"
+  },
+  "forbidden_outputs": [
+    "canonical_goal07b_rows_created",
+    "canonical_goal07b_rows_overwritten",
+    "canonical_goal08b_rows_created",
+    "canonical_goal08b_rows_overwritten",
+    "canonical_goal09_rows_created",
+    "canonical_goal09_rows_overwritten",
+    "goal10b3_run",
+    "goal10c_run",
+    "buy_sell_hold_outputs_generated",
+    "target_prices_generated",
+    "actual_position_sizes_generated",
+    "position_sizing_generated",
+    "target_weights_generated",
+    "portfolio_weights_generated",
+    "order_quantities_generated",
+    "portfolio_returns_generated",
+    "equity_curves_generated",
+    "dashboard_outputs_generated",
+    "dashboard_files_generated",
+    "html_generated",
+    "streamlit_generated",
+    "frontend_code_generated",
+    "visual_reports_generated",
+    "trading_outputs_generated",
+    "broker_outputs_generated",
+    "production_outputs_generated",
+    "local_lake_files_created",
+    "factor_mining_outputs_created",
+    "dqn_rl_outputs_created",
+    "new_provider_data_fetched",
+    "demo_fixture_used_as_primary_evidence",
+    "diagnostic_group_variation_fabricated",
+    "downstream_execution_unlocked_by_this_goal"
+  ],
+  "forbidden_primary_inputs": [
+    "outputs/samples/*",
+    "contract_demo_fixture",
+    "GOAL-V1-DIAGNOSTIC-COVERAGE-02 evidence",
+    "canonical GOAL-08B/GOAL-09 one-symbol diagnostics"
+  ],
+  "goal": "GOAL-V1-DIAGNOSTIC-COVERAGE-03-SOURCE-BACKED-MULTI-SYMBOL-DIAGNOSTICS-GATE",
+  "minimum_coverage": {
+    "rows_per_family": 6000,
+    "unique_symbols": 50,
+    "unique_trade_dates": 120
+  },
+  "mode": "review_only_source_backed_multi_symbol_diagnostics_gate",
+  "position_band_schema": [
+    "trade_date",
+    "symbol",
+    "source_panel",
+    "position_band_status",
+    "position_band_review_label",
+    "position_band_blocked",
+    "position_band_reason_codes",
+    "source_recommendation_eligibility_status",
+    "source_risk_severity",
+    "diagnostic_mode",
+    "non_actionable_disclaimer"
+  ],
+  "primary_input_artifact": "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+  "recommendation_schema": [
+    "trade_date",
+    "symbol",
+    "source_panel",
+    "recommendation_eligibility_status",
+    "actionability_status",
+    "actionability_blocked",
+    "blocked_reason_codes",
+    "warning_propagation_codes",
+    "source_risk_severity",
+    "diagnostic_mode",
+    "non_actionable_disclaimer"
+  ],
+  "review_only": true,
+  "risk_schema": [
+    "trade_date",
+    "symbol",
+    "source_panel",
+    "risk_severity",
+    "risk_state",
+    "source_risk_tag",
+    "triggered_rule_ids",
+    "risk_warning_codes",
+    "provider_concentration_disclosure",
+    "source_provider",
+    "panel_contract_status",
+    "diagnostic_mode",
+    "non_actionable_disclaimer"
+  ]
+}

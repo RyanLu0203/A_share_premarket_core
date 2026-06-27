@@ -100,6 +100,16 @@ metadata. It does not promote GOAL-DATA-PANEL-02, expand the approved trading
 universe, run diagnostics, run backtests, write local lake files, create
 portfolio returns, create equity curves, create dashboard outputs, persist raw
 provider payloads or provider tokens, or write production storage.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 writes only review-only source-backed
+diagnostic coverage evidence under `outputs/diagnostics/`,
+`configs/diagnostics/`, `docs/diagnostics/`, and `outputs/audits/`. It consumes
+only the committed GOAL-DATA-PROVIDER-02B normalized panel, creates separate
+non-actionable risk, recommendation eligibility, and position-band diagnostics
+at `trade_date + symbol` grain, and preserves canonical GOAL-07B/08B/09
+artifacts. It does not promote GOAL-DATA-PANEL-02, run GOAL-10B.3, run
+backtests, write local lake files, create portfolio returns, create equity
+curves, create dashboard outputs, fetch new provider data, persist raw payloads
+or provider tokens, or write production storage.
 
 ## Active Contracts
 
@@ -140,6 +150,9 @@ provider payloads or provider tokens, or write production storage.
 - GOAL-DATA-PROVIDER-02B source-backed panel evidence under
   `outputs/datasets/`, `outputs/diagnostics/`, `outputs/providers/`,
   `configs/providers/`, `docs/providers/`, and `outputs/audits/` only.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed diagnostic coverage evidence
+  under `outputs/diagnostics/`, `configs/diagnostics/`, `docs/diagnostics/`,
+  and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -220,3 +233,8 @@ provider payloads or provider tokens, or write production storage.
   create equity curves, persist raw payloads or tokens, write local-lake data,
   create dashboards, or unlock trading, production, broker, factor-mining, or
   DQN/RL paths.
+- Do not treat GOAL-V1-DIAGNOSTIC-COVERAGE-03 diagnostic coverage evidence as
+  permission to overwrite canonical GOAL-07B/08B/09 artifacts, run GOAL-10B.3,
+  create actionable recommendations, create actual positions, create
+  portfolio outputs, write local-lake data, create dashboards, or unlock
+  trading, production, broker, factor-mining, or DQN/RL paths.

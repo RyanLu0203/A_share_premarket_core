@@ -193,6 +193,7 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
     taxonomy_rows = _read_csv(root / FAILURE_TAXONOMY_PATH)
     workflow = _workflow_rows(root)
     recheck = evaluate_goal_data_provider02a_multi_provider_capability_probe_gate(root)
+    dc03_evidence_ready = _goal_v1_diagnostic_coverage03_valid(root)
     failures: list[str] = []
 
     if not _report_pass_or_warn(report, "GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe Gate:"):
@@ -282,7 +283,6 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
 
     for workflow_id in [
         GOAL_DATA_PANEL02_WORKFLOW_ID,
-        GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         GOAL10B3_WORKFLOW_ID,
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
@@ -298,6 +298,20 @@ def audit_goal_data_provider02a_multi_provider_capability_probe_gate(root: Path)
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+
+    dc03 = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
+    if dc03_evidence_ready:
+        if dc03.get("status") != "implemented_review_only":
+            failures.append("goal_v1_diagnostic_coverage03_not_preserved_as_implemented_review_only")
+        if dc03.get("implemented_in_repo") != "true":
+            failures.append("goal_v1_diagnostic_coverage03_not_marked_implemented")
+        if dc03.get("depends_on") != GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
+            failures.append("goal_v1_diagnostic_coverage03_dependency_not_provider02b")
+    else:
+        if dc03.get("status") != "locked_future":
+            failures.append("goal_v1_diagnostic_coverage03_not_locked_future")
+        if dc03.get("implemented_in_repo") != "false":
+            failures.append("goal_v1_diagnostic_coverage03_marked_implemented")
 
     for path in _forbidden_outputs_present(root):
         failures.append(f"forbidden_output_path_exists:{path}")
@@ -1428,6 +1442,17 @@ def _forbidden_outputs_present(root: Path) -> list[str]:
 def _workflow_rows(root: Path) -> dict[str, dict[str, str]]:
     path = root / "configs/project/workflow_status.csv"
     return {row["workflow_id"]: row for row in read_csv(path)} if path.exists() else {}
+
+
+def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03 import (
+            goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence,
+        )
+
+        return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
+    except Exception:
+        return False
 
 
 def _read(path: Path) -> str:

@@ -38,20 +38,15 @@
   "goal_v1_diagnostic_coverage03_locked_future": true,
   "goal_v1_diagnostic_coverage03_status_after_goal_data_provider02a1": "locked_future",
   "html_generated": false,
-  "live_provider_access_attempted_count": 4,
-  "live_provider_access_attempted_providers": [
-    "baostock",
-    "akshare",
-    "efinance",
-    "yfinance"
-  ],
+  "live_provider_access_attempted_count": 0,
+  "live_provider_access_attempted_providers": [],
   "live_trading_enabled": false,
   "local_import_fallback_recorded": true,
   "local_lake_files_created": false,
   "mode": "review_only_network_opt_in_provider_smoke_test",
   "network_disabled_by_default_supported": true,
   "network_live_access_only_when_opted_in": true,
-  "network_opt_in_present": true,
+  "network_opt_in_present": false,
   "order_quantities_generated": false,
   "paper_trading_enabled": false,
   "portfolio_backtest_status_after_goal_data_provider02a1": "locked_future",
@@ -72,13 +67,13 @@
     "yfinance": true
   },
   "provider_probe_statuses": {
-    "akshare": "PASS",
-    "baostock": "PASS",
-    "efinance": "PASS",
+    "akshare": "SKIPPED",
+    "baostock": "SKIPPED",
+    "efinance": "SKIPPED",
     "local_import": "PASS_WITH_WARNINGS",
     "qstock": "SKIPPED",
     "tushare_pro": "SKIPPED",
-    "yfinance": "PASS"
+    "yfinance": "SKIPPED"
   },
   "provider_tokens_committed": false,
   "provider_tokens_never_persisted": true,
@@ -154,7 +149,11 @@
   "warnings": [
     "approved_universe_too_small",
     "tushare_pro:tushare_unavailable_missing_token",
+    "baostock:network_disabled_by_policy",
+    "akshare:network_disabled_by_policy",
+    "efinance:network_disabled_by_policy",
     "qstock:provider_package_unavailable",
+    "yfinance:network_disabled_by_policy",
     "local_import:local_import_current_approved_ohlcv_rows_missing"
   ],
   "workflow_status_before_goal_data_provider02a1": "implemented_review_only",

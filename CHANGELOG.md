@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-27 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Multi-Symbol Diagnostics Gate
+
+- Implemented GOAL-V1-DIAGNOSTIC-COVERAGE-03 only as a review-only
+  source-backed diagnostic coverage gate over the committed GOAL-DATA-PROVIDER-02B
+  normalized panel.
+- Added 6000 non-actionable risk rows, 6000 recommendation eligibility rows,
+  6000 position-band rows, a distribution summary, report, manifest, audit,
+  contract, docs, scripts, tests, and workflow governance.
+- Recorded natural group variation without fabricating tiers:
+  5990 MEDIUM / 10 HIGH risk rows, 5990 review-only recommendation eligible /
+  10 source-risk blocked rows, and 5990 non-actionable blocked / 10 high-risk
+  blocked position-band rows.
+- Preserved canonical GOAL-07B/08B/09 outputs and kept GOAL-DATA-PANEL-02,
+  GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake,
+  factor-mining, and DQN/RL locked.
+- Created no BUY/SELL/HOLD outputs, target prices, actual position sizes,
+  weights, order quantities, portfolio returns, equity curves, dashboard,
+  HTML, Streamlit, frontend, visual report, trading, production, broker,
+  local-lake, factor-mining, or DQN/RL outputs.
+
 ## 2026-06-27 - GOAL-DATA-PROVIDER-02B Source-Backed Evaluation Panel Build Gate
 
 - Implemented GOAL-DATA-PROVIDER-02B only as a review-only source-backed

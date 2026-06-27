@@ -25,7 +25,9 @@ review-only forward-return label coverage expansion, plus
 GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic coverage,
 GOAL-10B.2/GOAL-10C review-only bounded diagnostics, and
 GOAL-DATA-PROVIDER-02A review-only multi-provider capability probing, plus
-GOAL-DATA-PROVIDER-02A.1 review-only network-opt-in provider smoke testing.
+GOAL-DATA-PROVIDER-02A.1 review-only network-opt-in provider smoke testing,
+GOAL-DATA-PROVIDER-02B review-only source-backed panel evidence, and
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage.
 
 ## Repository Roles
 
@@ -116,6 +118,10 @@ python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py
 python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py
 python scripts/run_goal_data_provider02a1_network_smoke_test.py
 python scripts/audit_goal_data_provider02a1_network_smoke_test.py
+python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py
+python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py
+python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py
+python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -182,8 +188,8 @@ flowchart TD
     B10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02A -. "network opt-in smoke test" .-> P02A1["GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     P02A1 -. "source-backed panel gate" .-> P02B["GOAL-DATA-PROVIDER-02B Source-Backed Panel Build<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
-    PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
+    P02B -. "evaluation panel remains locked" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
+    P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     DC03 -. "locked future" .-> B10B3["GOAL-10B.3 Recommendation Revalidation<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
@@ -264,8 +270,12 @@ evaluation panel build gate: it writes bounded normalized panel evidence plus
 coverage, provider-usage, failure-taxonomy, manifest, report, and audit files,
 but it creates no diagnostics, backtests, portfolios, dashboards, trading,
 production, local-lake, broker, factor-mining, or DQN/RL outputs.
-GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D
-remain `locked_future`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 is implemented only as review-only
+source-backed diagnostic coverage over the 02B panel: it writes separate
+non-actionable risk, recommendation eligibility, and position-band diagnostics
+at `trade_date + symbol` grain and preserves canonical GOAL-07B/08B/09
+artifacts. GOAL-DATA-PANEL-02, GOAL-10B.3, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 
@@ -362,6 +372,10 @@ review-only validation wrappers:
 - `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`
 - `python scripts/run_goal_data_provider02a1_network_smoke_test.py`
 - `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`
+- `python scripts/run_goal_data_provider02b_source_backed_panel_build_gate.py`
+- `python scripts/audit_goal_data_provider02b_source_backed_panel_build_gate.py`
+- `python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py`
+- `python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`

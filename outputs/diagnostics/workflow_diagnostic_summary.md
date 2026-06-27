@@ -113,7 +113,7 @@ GOAL-DATA-PROVIDER-02A final panel created: `false`.
 GOAL-DATA-PROVIDER-02A.1 network smoke-test status: `PASS_WITH_WARNINGS`.
 GOAL-DATA-PROVIDER-02A.1 audit status: `PASS`.
 GOAL-DATA-PROVIDER-02A.1 providers represented: `7`.
-GOAL-DATA-PROVIDER-02A.1 live access attempted count: `4`.
+GOAL-DATA-PROVIDER-02A.1 live access attempted count: `0`.
 GOAL-DATA-PROVIDER-02A.1 final panel created: `false`.
 GOAL-DATA-PROVIDER-02B source-backed panel status: `PASS_WITH_WARNINGS`.
 GOAL-DATA-PROVIDER-02B audit status: `PASS`.
@@ -142,7 +142,7 @@ GOAL-DATA-PROVIDER-02A workflow status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02A.1 workflow status: `implemented_review_only`.
 GOAL-DATA-PROVIDER-02B workflow status: `implemented_review_only`.
 GOAL-DATA-PANEL-02 workflow status: `locked_future`.
-GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `locked_future`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `implemented_review_only`.
 GOAL-10B.3 workflow status: `locked_future`.
 GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.

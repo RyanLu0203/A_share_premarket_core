@@ -132,6 +132,7 @@ def audit_goal_data_provider02a1_network_smoke_test(root: Path) -> bool:
     taxonomy_rows = _read_csv(root / FAILURE_TAXONOMY_PATH)
     workflow = _workflow_rows(root)
     recheck = evaluate_goal_data_provider02a1_network_smoke_test(root)
+    dc03_evidence_ready = _goal_v1_diagnostic_coverage03_valid(root)
     failures: list[str] = []
 
     if not _report_pass_or_warn(report, "GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test Gate:"):
@@ -226,7 +227,6 @@ def audit_goal_data_provider02a1_network_smoke_test(root: Path) -> bool:
 
     for workflow_id in [
         GOAL_DATA_PANEL02_WORKFLOW_ID,
-        GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
         GOAL10B3_WORKFLOW_ID,
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
@@ -242,6 +242,20 @@ def audit_goal_data_provider02a1_network_smoke_test(root: Path) -> bool:
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
+
+    dc03 = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID, {})
+    if dc03_evidence_ready:
+        if dc03.get("status") != "implemented_review_only":
+            failures.append("goal_v1_diagnostic_coverage03_not_preserved_as_implemented_review_only")
+        if dc03.get("implemented_in_repo") != "true":
+            failures.append("goal_v1_diagnostic_coverage03_not_marked_implemented")
+        if dc03.get("depends_on") != GOAL_DATA_PROVIDER02B_WORKFLOW_ID:
+            failures.append("goal_v1_diagnostic_coverage03_dependency_not_provider02b")
+    else:
+        if dc03.get("status") != "locked_future":
+            failures.append("goal_v1_diagnostic_coverage03_not_locked_future")
+        if dc03.get("implemented_in_repo") != "false":
+            failures.append("goal_v1_diagnostic_coverage03_marked_implemented")
 
     for path in _forbidden_outputs_present(root):
         failures.append(f"forbidden_output_path_exists:{path}")
@@ -546,7 +560,7 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "- Tushare Pro reads `TUSHARE_TOKEN` only from the environment and never persists it.",
                 "- No raw provider payloads are persisted.",
                 "- Smoke-test data is not final evaluation panel evidence.",
-                "- GOAL-DATA-PROVIDER-02B is implemented only by its own source-backed panel gate when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-DATA-PROVIDER-02B and GOAL-V1-DIAGNOSTIC-COVERAGE-03 are implemented only by their own explicit review-only gates when valid evidence exists; GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, dashboards, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
                 "",
                 "## Warnings",
                 *[f"- {warning}" for warning in result["warnings"]],
@@ -703,6 +717,17 @@ def _token_leak_failures(root: Path) -> list[str]:
         if full_path.exists() and token in full_path.read_text(encoding="utf-8"):
             failures.append(f"provider_token_leaked:{path}")
     return failures
+
+
+def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03 import (
+            goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence,
+        )
+
+        return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
+    except Exception:
+        return False
 
 
 def _read(path: Path) -> str:

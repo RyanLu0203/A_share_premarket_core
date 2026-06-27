@@ -377,11 +377,13 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if "goal_data_provider02a_multi_provider_capability_probe" in by_id:
             by_id["goal_data_provider02a_multi_provider_capability_probe"].update(goal_data_provider02a_implemented_workflow_patch())
-        if GOAL_DATA_PROVIDER02B_WORKFLOW_ID in by_id:
+        goal_data_provider02b_valid = _goal_data_provider02b_valid(root)
+        goal_v1_diagnostic_coverage03_valid = _goal_v1_diagnostic_coverage03_valid(root)
+        if GOAL_DATA_PROVIDER02B_WORKFLOW_ID in by_id and not goal_data_provider02b_valid:
             by_id[GOAL_DATA_PROVIDER02B_WORKFLOW_ID].update(locked_goal_data_provider02b_patch())
         if GOAL_DATA_PANEL02_WORKFLOW_ID in by_id:
             by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_patch())
-        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
+        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_patch())
         if GOAL10B3_WORKFLOW_ID in by_id:
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
@@ -420,11 +422,13 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if GOAL_DATA_PROVIDER02A1_WORKFLOW_ID in by_id:
             by_id[GOAL_DATA_PROVIDER02A1_WORKFLOW_ID].update(goal_data_provider02a1_implemented_workflow_patch())
-        if GOAL_DATA_PROVIDER02B_WORKFLOW_ID in by_id:
+        goal_data_provider02b_valid = _goal_data_provider02b_valid(root)
+        goal_v1_diagnostic_coverage03_valid = _goal_v1_diagnostic_coverage03_valid(root)
+        if GOAL_DATA_PROVIDER02B_WORKFLOW_ID in by_id and not goal_data_provider02b_valid:
             by_id[GOAL_DATA_PROVIDER02B_WORKFLOW_ID].update(locked_goal_data_provider02b_after_goal_data_provider02a1_patch())
         if GOAL_DATA_PANEL02_WORKFLOW_ID in by_id:
             by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_after_goal_data_provider02a_patch())
-        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
+        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_after_goal_data_provider02a_patch())
         if GOAL10B3_WORKFLOW_ID in by_id:
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_after_goal_data_provider02a_patch())
@@ -463,7 +467,8 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
             by_id[GOAL_DATA_PROVIDER02B_WORKFLOW_ID].update(goal_data_provider02b_implemented_workflow_patch())
         if GOAL_DATA_PANEL02_WORKFLOW_ID in by_id:
             by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_patch())
-        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
+        goal_v1_diagnostic_coverage03_valid = _goal_v1_diagnostic_coverage03_valid(root)
+        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id and not goal_v1_diagnostic_coverage03_valid:
             by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_patch())
         if GOAL10B3_WORKFLOW_ID in by_id:
             by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
@@ -485,6 +490,37 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_data_provider02b"
+    if _goal_v1_diagnostic_coverage03_valid(root):
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03 import (
+            GOAL10B3_WORKFLOW_ID,
+            GOAL10D_WORKFLOW_ID,
+            WORKFLOW_ID as GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
+            goal_v1_diagnostic_coverage03_implemented_workflow_patch,
+            locked_goal10b3_patch,
+        )
+
+        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
+            by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(goal_v1_diagnostic_coverage03_implemented_workflow_patch())
+        if GOAL10B3_WORKFLOW_ID in by_id:
+            by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
+        for workflow_id in [
+            GOAL10D_WORKFLOW_ID,
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_v1_diagnostic_coverage03"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -543,22 +579,31 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_provider02a_valid(root):
         payload["goal_data_provider02a_multi_provider_capability_probe"] = "implemented_review_only"
-        payload["goal_data_provider02b_provider_selection_gate"] = False
+        if not _goal_data_provider02b_valid(root):
+            payload["goal_data_provider02b_provider_selection_gate"] = False
         payload["goal_data_panel02_evaluation_panel_gate"] = False
-        payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
+        if not _goal_v1_diagnostic_coverage03_valid(root):
+            payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
         payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_provider02a1_valid(root):
         payload["goal_data_provider02a1_network_opt_in_provider_smoke_test"] = "implemented_review_only"
-        payload["goal_data_provider02b_provider_selection_gate"] = False
+        if not _goal_data_provider02b_valid(root):
+            payload["goal_data_provider02b_provider_selection_gate"] = False
         payload["goal_data_panel02_evaluation_panel_gate"] = False
-        payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
+        if not _goal_v1_diagnostic_coverage03_valid(root):
+            payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
         payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_provider02b_valid(root):
         payload["goal_data_provider02b_provider_selection_gate"] = "implemented_review_only"
         payload["goal_data_panel02_evaluation_panel_gate"] = False
-        payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
+        if not _goal_v1_diagnostic_coverage03_valid(root):
+            payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
+        payload["goal10b3_recommendation_backtest_revalidation"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_v1_diagnostic_coverage03_valid(root):
+        payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = "implemented_review_only"
         payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
 
@@ -730,6 +775,17 @@ def _goal_data_provider02b_valid(root: Path) -> bool:
         from ashare_premarket.providers.goal_data_provider02b import goal_data_provider02b_valid_source_backed_panel_evidence
 
         return goal_data_provider02b_valid_source_backed_panel_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_v1_diagnostic_coverage03_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03 import (
+            goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence,
+        )
+
+        return goal_v1_diagnostic_coverage03_valid_source_backed_diagnostics_evidence(root)
     except Exception:
         return False
 

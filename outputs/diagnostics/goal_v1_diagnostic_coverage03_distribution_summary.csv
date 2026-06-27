@@ -1,0 +1,40 @@
+diagnostic_area,metric,metric_value,row_count,share,status,notes
+risk,risk_severity,HIGH,10,0.001667,PASS,Risk severity distribution.
+risk,risk_severity,MEDIUM,5990,0.998333,PASS,Risk severity distribution.
+risk,risk_state,blocked_review_only_source_panel_issue,10,0.001667,PASS,Risk state distribution.
+risk,risk_state,review_only_warning_propagation,5990,0.998333,PASS,Risk state distribution.
+recommendation,recommendation_eligibility_status,blocked_review_only_source_risk,10,0.001667,PASS,Recommendation eligibility distribution.
+recommendation,recommendation_eligibility_status,eligible_for_review_only_revalidation_never_actionable,5990,0.998333,PASS,Recommendation eligibility distribution.
+recommendation,actionability_status,never_actionable,6000,1.000000,PASS,Actionability status distribution.
+position_band,position_band_status,blocked_review_only_high_risk,10,0.001667,PASS,Position-band status distribution.
+position_band,position_band_status,blocked_review_only_no_position_output,5990,0.998333,PASS,Position-band status distribution.
+risk,warning_code_frequency,canonical_approved_universe_below_50,6000,1.000000,PASS,risk_warning_codes frequency.
+risk,warning_code_frequency,crosscheck_sample_scope_limited,5400,0.900000,PASS,risk_warning_codes frequency.
+risk,warning_code_frequency,review_only_dc03_non_actionable,6000,1.000000,PASS,risk_warning_codes frequency.
+risk,warning_code_frequency,single_primary_provider_baostock,6000,1.000000,PASS,risk_warning_codes frequency.
+recommendation,blocked_reason_frequency,NON_ACTIONABLE_REVIEW_ONLY,6000,1.000000,PASS,blocked_reason_codes frequency.
+recommendation,blocked_reason_frequency,NO_BUY_SELL_HOLD_OUTPUT,6000,1.000000,PASS,blocked_reason_codes frequency.
+recommendation,blocked_reason_frequency,SOURCE_RISK_HIGH,10,0.001667,PASS,blocked_reason_codes frequency.
+position_band,blocked_reason_frequency,NON_ACTIONABLE_REVIEW_ONLY,6000,1.000000,PASS,position_band_reason_codes frequency.
+position_band,blocked_reason_frequency,NO_POSITION_SIZE_OR_WEIGHT_OUTPUT,6000,1.000000,PASS,position_band_reason_codes frequency.
+position_band,blocked_reason_frequency,SOURCE_RISK_HIGH,10,0.001667,PASS,position_band_reason_codes frequency.
+risk,row_count,6000,6000,1.000000,PASS,Rows at trade_date + symbol grain.
+risk,unique_symbols,50,50,1.000000,PASS,Symbol coverage.
+risk,unique_trade_dates,120,120,1.000000,PASS,Trade-date coverage.
+risk,duplicate_trade_date_symbol_keys,0,0,0.000000,PASS,Duplicate grain check.
+recommendation,row_count,6000,6000,1.000000,PASS,Rows at trade_date + symbol grain.
+recommendation,unique_symbols,50,50,1.000000,PASS,Symbol coverage.
+recommendation,unique_trade_dates,120,120,1.000000,PASS,Trade-date coverage.
+recommendation,duplicate_trade_date_symbol_keys,0,0,0.000000,PASS,Duplicate grain check.
+position_band,row_count,6000,6000,1.000000,PASS,Rows at trade_date + symbol grain.
+position_band,unique_symbols,50,50,1.000000,PASS,Symbol coverage.
+position_band,unique_trade_dates,120,120,1.000000,PASS,Trade-date coverage.
+position_band,duplicate_trade_date_symbol_keys,0,0,0.000000,PASS,Duplicate grain check.
+family_keys,keys_match_across_all_three_diagnostic_families,true,6000,1.000000,PASS,Required key alignment.
+distribution_check,risk_tiering_collapse_detected,false,6000,0.000000,PASS,Collapse detection status.
+distribution_check,recommendation_tiering_collapse_detected,false,6000,0.000000,PASS,Collapse detection status.
+distribution_check,position_band_tiering_collapse_detected,false,6000,0.000000,PASS,Collapse detection status.
+distribution_check,single_group_collapse_detected,false,6000,0.000000,PASS,Collapse detection status.
+distribution_check,all_high_risk_collapse_detected,false,6000,0.000000,PASS,Collapse detection status.
+distribution_check,all_blocked_recommendation_collapse_detected,true,6000,1.000000,PASS_WITH_WARNINGS,Collapse detection status.
+distribution_check,all_zero_or_blocked_position_band_collapse_detected,true,6000,1.000000,PASS_WITH_WARNINGS,Collapse detection status.

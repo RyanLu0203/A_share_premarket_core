@@ -148,11 +148,12 @@ the current approved-symbol smoke universe and a 30-trading-day contract
 window. It creates no final evaluation panel, recommendation diagnostics,
 position-band diagnostics, backtest rows, portfolio returns, equity curves,
 dashboards, trading paths, production behavior, broker output, local lake file,
-factor-mining output, or DQN/RL output. GOAL-DATA-PANEL-02,
-GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
-Dashboard / Daily Report UI, signal and portfolio backtest promotion,
-paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
-remain locked or deleted from active mainline.
+factor-mining output, or DQN/RL output. GOAL-DATA-PROVIDER-02B and
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 are implemented only by their own later
+review-only gates. GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard /
+Daily Report UI, signal and portfolio backtest promotion, paper/live trading,
+broker, production, local-lake, factor-mining, and DQN/RL remain locked or
+deleted from active mainline.
 GOAL-DATA-PROVIDER-02A.1 is implemented as a review-only network-opt-in
 provider smoke test gate (`PASS_WITH_WARNINGS`). It records live-access attempt
 metadata for Tushare Pro, Baostock, AkShare, efinance, qstock, yfinance
@@ -174,10 +175,23 @@ approved trading universe or into GOAL-DATA-PANEL-02. It creates no
 recommendation diagnostic, position-band diagnostic, backtest row, portfolio
 return, equity curve, dashboard, trading path, production behavior, broker
 output, local lake file, factor-mining output, or DQN/RL output.
-GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
-Dashboard / Daily Report UI, signal and portfolio backtest promotion,
-paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
-remain locked or deleted from active mainline.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 is implemented as a review-only source-backed
+multi-symbol diagnostics gate (`PASS_WITH_WARNINGS`). It consumes only the
+GOAL-DATA-PROVIDER-02B normalized panel and writes separate non-actionable
+risk, recommendation eligibility, and position-band diagnostics at
+`trade_date + symbol` grain: 6000 rows per family, 50 symbols, and 120 trade
+dates. Natural group variation is available: risk severity is 5990 MEDIUM /
+10 HIGH, recommendation eligibility is 5990 review-only revalidation eligible /
+10 blocked by source risk, and position-band status is 5990 blocked
+non-actionable / 10 blocked high-risk. It preserves canonical GOAL-07B/08B/09
+artifacts and creates no BUY/SELL/HOLD output, target prices, actual position
+sizes, weights, orders, portfolio returns, equity curves, dashboards, trading
+paths, production behavior, broker output, local lake file, factor-mining
+output, or DQN/RL output.
+GOAL-DATA-PANEL-02, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report UI, signal
+and portfolio backtest promotion, paper/live trading, broker, production,
+local-lake, factor-mining, and DQN/RL remain locked or deleted from active
+mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -268,6 +282,8 @@ Implemented and protected:
 - GOAL-DATA-PROVIDER-02A provider capability metadata only
 - GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke-test metadata only
 - GOAL-DATA-PROVIDER-02B bounded source-backed evaluation panel evidence only
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed non-actionable diagnostic
+  coverage from the 02B panel only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -353,6 +369,10 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`; `implemented_review_only`; bounded normalized
   source-backed panel evidence only; no diagnostics, backtests, dashboards, or
   execution outputs)
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed multi-symbol diagnostics gate
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; separate non-actionable
+  risk, recommendation eligibility, and position-band diagnostics from 02B
+  panel evidence only)
 
 Implemented design-only:
 
@@ -376,7 +396,6 @@ Still locked:
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
 - GOAL-DATA-PANEL-02 evaluation panel build
-- GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics
 - GOAL-10B.3 recommendation revalidation
 - GOAL-10D failure attribution
 - dashboard
@@ -684,8 +703,9 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
 GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, GOAL-DATA-LABEL-01,
-GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, and
-GOAL-DATA-PROVIDER-02A, and GOAL-DATA-PROVIDER-02A.1 are
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C,
+GOAL-DATA-PROVIDER-02A, GOAL-DATA-PROVIDER-02A.1,
+GOAL-DATA-PROVIDER-02B, and GOAL-V1-DIAGNOSTIC-COVERAGE-03 are
 `implemented_review_only`; GOAL-07A, GOAL-08A, and
 GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
 GOAL-V1-INTEGRITY-01 are
@@ -706,9 +726,10 @@ position-band cost/slippage sensitivity diagnostics only; GOAL-DATA-PROVIDER-02A
 is provider capability metadata only and does not build a panel;
 GOAL-DATA-PROVIDER-02A.1 is opt-in provider smoke-test metadata only and does
 not build a panel; GOAL-DATA-PROVIDER-02B is bounded source-backed evaluation
-panel evidence only and does not unlock diagnostics, backtests, dashboards, or
-execution; GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3,
-and GOAL-10D remain `locked_future`. Dashboard / Daily Report UI
+panel evidence only; GOAL-V1-DIAGNOSTIC-COVERAGE-03 is non-actionable
+source-backed diagnostic coverage only and does not unlock backtests,
+dashboards, or execution; GOAL-DATA-PANEL-02, GOAL-10B.3, and GOAL-10D remain
+`locked_future`. Dashboard / Daily Report UI
 remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 

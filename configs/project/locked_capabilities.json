@@ -27,7 +27,7 @@
   "goal_data_provider02b_provider_selection_gate": "implemented_review_only",
   "goal_storage01_local_research_lake_hardening_gate": "implemented_infrastructure_only",
   "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion": "implemented_review_only",
-  "goal_v1_diagnostic_coverage03_multi_provider_diagnostics": false,
+  "goal_v1_diagnostic_coverage03_multi_provider_diagnostics": "implemented_review_only",
   "goal_v1_integrity01_artifact_lineage_structure_gate": "implemented_infrastructure_only",
   "local_lake": false,
   "paper_trading": false,

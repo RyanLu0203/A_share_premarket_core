@@ -92,6 +92,10 @@ ALLOWED_REVIEW_ONLY_DIAGNOSTIC_CSV_OUTPUTS = {
     "outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv",
     "outputs/diagnostics/goal_v1_diagnostic_coverage02_position_band_diagnostics.csv",
     "outputs/diagnostics/goal_v1_diagnostic_coverage02_coverage_summary.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_recommendation_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_position_band_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_distribution_summary.csv",
 }
 
 FORBIDDEN_OUTPUT_DIRS = [

@@ -85,6 +85,13 @@
 - GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke test
   (`PASS_WITH_WARNINGS`; implemented_review_only opt-in smoke-test metadata
   only; no panel build).
+- GOAL-DATA-PROVIDER-02B source-backed evaluation panel build
+  (`PASS_WITH_WARNINGS`; implemented_review_only bounded source-backed panel
+  evidence only; no diagnostics or backtests).
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed multi-symbol diagnostics
+  (`PASS_WITH_WARNINGS`; implemented_review_only non-actionable risk,
+  recommendation eligibility, and position-band diagnostics from 02B panel
+  evidence only).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -136,8 +143,11 @@ GOAL-DATA-PROVIDER-02B now implements only a review-only source-backed
 evaluation panel build gate; it writes bounded normalized panel evidence and
 provider/coverage audit metadata, but does not create diagnostics, backtests,
 dashboards, trading, production, local-lake, broker, factor-mining, or DQN/RL
-outputs. GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and
-GOAL-10D remain locked.
+outputs. GOAL-V1-DIAGNOSTIC-COVERAGE-03 now implements only review-only
+source-backed diagnostic coverage over the 02B panel; it writes separate
+non-actionable risk, recommendation eligibility, and position-band diagnostics
+and preserves canonical GOAL-07B/08B/09 artifacts. GOAL-DATA-PANEL-02,
+GOAL-10B.3, and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -157,7 +167,6 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
-- GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics.
 - GOAL-10B.3 recommendation revalidation.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.
