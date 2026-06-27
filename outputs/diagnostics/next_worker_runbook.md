@@ -29,5 +29,6 @@
 27. For GOAL-10B.2, run `python scripts/run_goal10b2_recommendation_backtest_revalidation.py` and `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`; it may create only review-only recommendation revalidation diagnostics.
 28. For GOAL-10C, run `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py` and `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`; it may create only review-only position-band cost/slippage sensitivity diagnostics.
 29. For GOAL-DATA-PROVIDER-02A, run `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py` and `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`; it may create only provider capability metadata and must not build a panel.
-30. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
-31. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.
+30. For GOAL-DATA-PROVIDER-02A.1, run `python scripts/run_goal_data_provider02a1_network_smoke_test.py` and `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`; it may create only opt-in provider smoke-test metadata and must not build a panel.
+31. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.
+32. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.

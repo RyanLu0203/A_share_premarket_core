@@ -24,7 +24,8 @@ review-only coverage repair diagnostic gate, plus GOAL-DATA-LABEL-01
 review-only forward-return label coverage expansion, plus
 GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic coverage,
 GOAL-10B.2/GOAL-10C review-only bounded diagnostics, and
-GOAL-DATA-PROVIDER-02A review-only multi-provider capability probing.
+GOAL-DATA-PROVIDER-02A review-only multi-provider capability probing, plus
+GOAL-DATA-PROVIDER-02A.1 review-only network-opt-in provider smoke testing.
 
 ## Repository Roles
 
@@ -113,6 +114,8 @@ python scripts/run_goal10c_cost_slippage_sensitivity_gate.py
 python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py
 python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py
 python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py
+python scripts/run_goal_data_provider02a1_network_smoke_test.py
+python scripts/audit_goal_data_provider02a1_network_smoke_test.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -177,7 +180,8 @@ flowchart TD
     DC02 -. "review-only revalidation" .-> B10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B2 -. "review-only sensitivity" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P02A -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02A -. "network opt-in smoke test" .-> P02A1["GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    P02A1 -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
     P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
     DC03 -. "locked future" .-> B10B3["GOAL-10B.3 Recommendation Revalidation<br/>(locked_future)"]
@@ -250,9 +254,14 @@ production, local-lake, factor-mining, broker, and DQN/RL remain locked.
 GOAL-DATA-PROVIDER-02A is implemented only as a review-only multi-provider
 capability probe for Tushare Pro, Baostock, AkShare, efinance, qstock,
 yfinance auxiliary, and local import fallback. It writes provider metadata only
-and does not build a final evaluation panel. GOAL-DATA-PROVIDER-02B,
-GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D
-remain `locked_future`.
+and does not build a final evaluation panel. GOAL-DATA-PROVIDER-02A.1 is
+implemented only as a review-only network-opt-in smoke test: live provider
+access is attempted only with `ASHARE_ALLOW_NETWORK_INGESTION=1`, Tushare Pro
+also requires `ASHARE_ALLOW_TUSHARE=1` plus `TUSHARE_TOKEN` from the
+environment, and no provider tokens or raw provider payloads are persisted.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 
@@ -347,6 +356,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`
 - `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py`
 - `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`
+- `python scripts/run_goal_data_provider02a1_network_smoke_test.py`
+- `python scripts/audit_goal_data_provider02a1_network_smoke_test.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -529,7 +540,11 @@ recommendations, positions, portfolios, dashboards, local-lake data, trading,
 production, broker, factor-mining, or DQN/RL outputs. GOAL-10B.2 is
 review-only recommendation revalidation diagnostics over DC02 rows, and
 GOAL-10C is review-only row-level position-band cost/slippage sensitivity.
-GOAL-10D and GOAL-DASHBOARD-00 remain `locked_future`.
+GOAL-DATA-PROVIDER-02A is review-only provider capability metadata only.
+GOAL-DATA-PROVIDER-02A.1 is review-only network-opt-in provider smoke-test
+metadata only; it is not provider selection, final panel evidence, diagnostics,
+backtest evidence, dashboard evidence, or an execution unlock. GOAL-10D and
+GOAL-DASHBOARD-00 remain `locked_future`.
 Dashboard / Daily Report UI remains `locked_future`. Actionable recommendations, actual
 position rows, position sizing,
 dashboards, trading, production, portfolio backtests, factor-mining, broker integration,

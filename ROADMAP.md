@@ -82,6 +82,9 @@
 - GOAL-DATA-PROVIDER-02A multi-provider capability probe
   (`PASS_WITH_WARNINGS`; implemented_review_only provider capability metadata
   only; no panel build).
+- GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke test
+  (`PASS_WITH_WARNINGS`; implemented_review_only opt-in smoke-test metadata
+  only; no panel build).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -125,6 +128,10 @@ cost/slippage sensitivity. GOAL-DATA-PROVIDER-02A now implements only a
 review-only multi-provider capability probe over Tushare Pro, Baostock,
 AkShare, efinance, qstock, yfinance auxiliary, and local import fallback; it
 writes provider metadata only and does not build an evaluation panel.
+GOAL-DATA-PROVIDER-02A.1 now implements only a review-only network-opt-in
+provider smoke test; it attempts live access only with explicit environment
+opt-ins, persists no provider token or raw payload, and does not build an
+evaluation panel.
 GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and

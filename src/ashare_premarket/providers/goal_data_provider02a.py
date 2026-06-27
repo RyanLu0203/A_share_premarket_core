@@ -1045,6 +1045,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_data_provider02a"
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -1079,6 +1080,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         payload[GOAL_DATA_PANEL02_WORKFLOW_ID] = False
         payload[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID] = False
         payload[GOAL10B3_WORKFLOW_ID] = False
+        preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

@@ -22,6 +22,7 @@
   "goal10d_backtest_failure_attribution_gate": false,
   "goal_data_label01_forward_return_label_coverage_expansion": "implemented_review_only",
   "goal_data_panel02_evaluation_panel_gate": false,
+  "goal_data_provider02a1_network_opt_in_provider_smoke_test": "implemented_review_only",
   "goal_data_provider02a_multi_provider_capability_probe": "implemented_review_only",
   "goal_data_provider02b_provider_selection_gate": false,
   "goal_storage01_local_research_lake_hardening_gate": "implemented_infrastructure_only",

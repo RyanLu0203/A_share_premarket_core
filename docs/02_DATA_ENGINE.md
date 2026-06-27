@@ -83,6 +83,14 @@ explicit opt-in. Provider-02A does not expand the approved universe, fetch or
 commit raw payloads, build a final evaluation panel, create diagnostics, run
 backtests, write local lake files, create portfolio returns, create equity
 curves, create dashboard outputs, or write production storage.
+GOAL-DATA-PROVIDER-02A.1 writes only review-only network-opt-in provider
+smoke-test metadata under the same provider/audit/doc/config boundaries. Live
+provider access is attempted only when `ASHARE_ALLOW_NETWORK_INGESTION=1` is
+present. Tushare Pro additionally requires `ASHARE_ALLOW_TUSHARE=1` and
+`TUSHARE_TOKEN` read from the environment only. The gate records live-access
+attempt flags, schema mapping status, and failure taxonomy; it never prints or
+persists provider tokens, never commits raw provider payloads, and never treats
+smoke-test rows as final evaluation panel evidence.
 
 ## Active Contracts
 
@@ -115,6 +123,9 @@ curves, create dashboard outputs, or write production storage.
 - GOAL-DATA-LABEL-01 forward-return label coverage evidence under
   `outputs/labels/`, `docs/labels/`, and `outputs/audits/` only.
 - GOAL-DATA-PROVIDER-02A provider capability metadata under
+  `outputs/providers/`, `configs/providers/`, `docs/providers/`, and
+  `outputs/audits/` only.
+- GOAL-DATA-PROVIDER-02A.1 network-opt-in provider smoke-test metadata under
   `outputs/providers/`, `configs/providers/`, `docs/providers/`, and
   `outputs/audits/` only.
 
@@ -186,3 +197,8 @@ curves, create dashboard outputs, or write production storage.
   evaluation panel, create new diagnostics, run backtests, fetch or commit raw
   payloads, write local-lake data, create dashboards, or unlock trading,
   production, broker, factor-mining, or DQN/RL paths.
+- Do not treat GOAL-DATA-PROVIDER-02A.1 network smoke-test metadata as
+  permission to select a provider, build a final evaluation panel, treat smoke
+  rows as panel evidence, create diagnostics, run backtests, persist raw
+  payloads or tokens, write local-lake data, create dashboards, or unlock
+  trading, production, broker, factor-mining, or DQN/RL paths.

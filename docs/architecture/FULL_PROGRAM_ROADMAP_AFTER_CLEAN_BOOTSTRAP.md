@@ -38,7 +38,8 @@ flowchart TD
     DC02 -. "review-only revalidation" .-> T10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B2 -. "review-only sensitivity" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    P02A -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02A -. "network opt-in smoke test" .-> P02A1["GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    P02A1 -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
     P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
     DC03 -. "locked future" .-> T10B3["GOAL-10B.3 Recommendation Backtest Revalidation<br/>(locked_future)"]
@@ -110,6 +111,10 @@ implemented only as review-only non-actionable revalidation and sensitivity
 diagnostics over bounded DC02 rows. GOAL-DATA-PROVIDER-02A is implemented only
 as review-only provider capability metadata for future source-backed planning;
 it builds no evaluation panel and creates no diagnostics or backtests.
+GOAL-DATA-PROVIDER-02A.1 is implemented only as review-only network-opt-in
+provider smoke-test metadata; live access is attempted only with explicit env
+opt-ins, Tushare tokens are environment-only, and no raw payloads or tokens are
+persisted.
 GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain locked_future.
 V2 factor research is planned but

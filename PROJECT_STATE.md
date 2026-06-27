@@ -153,6 +153,21 @@ GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
 Dashboard / Daily Report UI, signal and portfolio backtest promotion,
 paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
 remain locked or deleted from active mainline.
+GOAL-DATA-PROVIDER-02A.1 is implemented as a review-only network-opt-in
+provider smoke test gate (`PASS_WITH_WARNINGS`). It records live-access attempt
+metadata for Tushare Pro, Baostock, AkShare, efinance, qstock, yfinance
+auxiliary, and local import fallback. Live provider access is attempted only
+when `ASHARE_ALLOW_NETWORK_INGESTION=1` is present; Tushare additionally
+requires `ASHARE_ALLOW_TUSHARE=1` and `TUSHARE_TOKEN` from the environment.
+It persists no provider token, raw payload, final evaluation panel,
+recommendation diagnostic, position-band diagnostic, backtest row, portfolio
+return, equity curve, dashboard, trading path, production behavior, broker
+output, local lake file, factor-mining output, or DQN/RL output.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
+UI, signal and portfolio backtest promotion, paper/live trading, broker,
+production, local-lake, factor-mining, and DQN/RL remain locked or deleted
+from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -314,6 +329,9 @@ Implemented review-only:
 - GOAL-DATA-PROVIDER-02A multi-provider capability probe
   (`PASS_WITH_WARNINGS`; `implemented_review_only`; provider capability
   metadata only; no evaluation panel)
+- GOAL-DATA-PROVIDER-02A.1 network opt-in provider smoke test
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; opt-in smoke-test metadata
+  only; no final panel)
 
 Implemented design-only:
 
@@ -647,7 +665,7 @@ GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
 GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, GOAL-DATA-LABEL-01,
 GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, and
-GOAL-DATA-PROVIDER-02A are
+GOAL-DATA-PROVIDER-02A, and GOAL-DATA-PROVIDER-02A.1 are
 `implemented_review_only`; GOAL-07A, GOAL-08A, and
 GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
 GOAL-V1-INTEGRITY-01 are
@@ -665,9 +683,10 @@ coverage evidence only; GOAL-V1-DIAGNOSTIC-COVERAGE-02 is non-actionable
 multi-symbol diagnostic coverage only; GOAL-10B.2 is non-actionable
 recommendation revalidation diagnostics only; GOAL-10C is non-actionable
 position-band cost/slippage sensitivity diagnostics only; GOAL-DATA-PROVIDER-02A
-is provider capability metadata only and does not build a panel; GOAL-DATA-
-PROVIDER-02B, GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03,
-GOAL-10B.3, and GOAL-10D remain
+is provider capability metadata only and does not build a panel;
+GOAL-DATA-PROVIDER-02A.1 is opt-in provider smoke-test metadata only and does
+not build a panel; GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
 `locked_future`. Dashboard / Daily Report UI
 remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.

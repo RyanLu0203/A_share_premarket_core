@@ -1,0 +1,8 @@
+provider_name,failure_code,failure_layer,failure_category,retryable,owner_action,notes
+tushare_pro,tushare_unavailable_missing_token,credential,missing_token,false,Set TUSHARE_TOKEN outside the repository and opt in explicitly.,TUSHARE_TOKEN is not set; Tushare Pro probe skipped by env-only policy.
+baostock,provider_package_unavailable,dependency,optional_dependency_missing,false,Install optional provider dependency outside committed artifacts.,Optional dependency baostock is not installed.
+akshare,network_disabled_by_policy,policy,policy_skip,false,Enable explicit env gates only if a future goal authorizes network probing.,ASHARE_ALLOW_NETWORK_INGESTION=1 is required before provider network probes.
+efinance,provider_package_unavailable,dependency,optional_dependency_missing,false,Install optional provider dependency outside committed artifacts.,Optional dependency efinance is not installed.
+qstock,provider_package_unavailable,dependency,optional_dependency_missing,false,Install optional provider dependency outside committed artifacts.,Optional dependency qstock is not installed.
+yfinance,provider_package_unavailable,dependency,optional_dependency_missing,false,Install optional provider dependency outside committed artifacts.,Optional dependency yfinance is not installed.
+local_import,local_import_current_approved_ohlcv_rows_missing,data_quality,coverage_gap,false,Treat as coverage warning; do not fabricate rows.,Existing source-backed local OHLCV sample has no rows for the current config-approved symbols; fixture/demo sources are not counted as source-backed evidence.

@@ -73,6 +73,8 @@ Implemented review-only:
 - GOAL-10C Cost / Slippage Sensitivity (`PASS_WITH_WARNINGS`)
 - GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe
   (`PASS_WITH_WARNINGS`)
+- GOAL-DATA-PROVIDER-02A.1 Network Opt-In Provider Smoke Test
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -500,6 +502,10 @@ implemented only as review-only row-level position-band cost/slippage
 sensitivity diagnostics. GOAL-DATA-PROVIDER-02A is implemented only as
 review-only provider capability metadata for future source-backed planning and
 does not build an evaluation panel, run diagnostics, or run backtests.
+GOAL-DATA-PROVIDER-02A.1 is implemented only as review-only network-opt-in
+provider smoke-test metadata; it attempts live provider access only when
+explicit environment opt-ins are present, reads Tushare tokens only from the
+environment, and persists no raw provider payloads or tokens.
 GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
 `locked_future`.
@@ -530,6 +536,38 @@ diagnostics, run backtests, generate portfolio returns, create equity curves,
 create dashboard/frontend/HTML/Streamlit outputs, write local-lake data, write
 trading or production data, integrate brokers, activate factor mining, or
 create DQN/RL outputs. GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
+UI, and all execution paths remain `locked_future`.
+
+## GOAL-DATA-PROVIDER-02A.1 Status
+
+GOAL-DATA-PROVIDER-02A.1 is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It creates:
+
+- `outputs/providers/goal_data_provider02a1_network_smoke_test_results.csv`
+- `outputs/providers/goal_data_provider02a1_schema_mapping_results.csv`
+- `outputs/providers/goal_data_provider02a1_failure_taxonomy.csv`
+- `configs/providers/goal_data_provider02a1_network_smoke_test_contract.yaml`
+- `docs/providers/GOAL_DATA_PROVIDER02A1_NETWORK_OPT_IN_PROVIDER_SMOKE_TEST.md`
+- `outputs/audits/goal_data_provider02a1_network_smoke_test_report.md`
+- `outputs/audits/goal_data_provider02a1_network_smoke_test_manifest.json`
+- `outputs/audits/goal_data_provider02a1_network_smoke_test_audit.md`
+
+The gate records provider smoke-test metadata for Tushare Pro, Baostock,
+AkShare, efinance, qstock, yfinance auxiliary, and local import fallback over
+the current approved-symbol smoke universe and a 30-trading-day contract
+window. Live provider access is attempted only when
+`ASHARE_ALLOW_NETWORK_INGESTION=1` is set. Tushare Pro additionally requires
+`ASHARE_ALLOW_TUSHARE=1` and `TUSHARE_TOKEN` from the environment.
+
+GOAL-DATA-PROVIDER-02A.1 does not select a provider, expand the approved
+universe, build a final evaluation panel, treat smoke-test data as final panel
+evidence, create recommendation diagnostics, create position-band diagnostics,
+run GOAL-10B.3, run GOAL-10C, generate portfolio returns, create equity curves,
+create dashboard/frontend/HTML/Streamlit outputs, commit raw provider payloads,
+persist provider tokens, write local-lake data, write trading or production
+data, integrate brokers, activate factor mining, or create DQN/RL outputs.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
 GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
 UI, and all execution paths remain `locked_future`.
 
