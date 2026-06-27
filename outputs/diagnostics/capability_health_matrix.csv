@@ -65,3 +65,6 @@ goal10a_backtest_contract_design,GOAL-10A design-only future backtest contract g
 goal10b_recommendation_backtest_review_only,GOAL-10B review-only recommendation diagnostics backtest,GOAL-10B,PASS,ashare_premarket.backtest.goal10b,Keep active
 goal10b1_backtest_coverage_repair_gate,GOAL-10B.1 review-only backtest coverage repair diagnostics,GOAL-10B.1,PASS,ashare_premarket.backtest.goal10b1,Keep active
 goal_data_label01_forward_return_label_coverage_expansion,GOAL-DATA-LABEL-01 review-only forward-return label coverage expansion,GOAL-DATA-LABEL-01,PASS,ashare_premarket.labels.goal_data_label01,Keep active
+goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion,GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostics expansion,GOAL-V1-DIAGNOSTIC-COVERAGE-02,PASS,ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02,Keep active
+goal10b2_recommendation_backtest_revalidation,GOAL-10B.2 review-only recommendation backtest revalidation,GOAL-10B.2,PASS,ashare_premarket.backtest.goal10b2,Keep active
+goal10c_cost_slippage_sensitivity,GOAL-10C review-only position-band cost/slippage sensitivity,GOAL-10C,PASS,ashare_premarket.backtest.goal10c,Keep active

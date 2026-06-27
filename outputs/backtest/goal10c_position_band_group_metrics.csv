@@ -1,0 +1,4 @@
+group_type,group_value,cost_bps,slippage_bps,total_cost_bps,row_count,unique_symbols,mean_net_excess_return_1d,median_net_excess_return_1d,positive_net_excess_rate_1d
+position_band_status,blocked_review_only_no_position_instruction,0,0,0,8,2,0.003250,0.004500,0.625000
+position_band_status,blocked_review_only_no_position_instruction,5,5,10,8,2,0.002250,0.003500,0.625000
+position_band_status,blocked_review_only_no_position_instruction,10,10,20,8,2,0.001250,0.002500,0.625000

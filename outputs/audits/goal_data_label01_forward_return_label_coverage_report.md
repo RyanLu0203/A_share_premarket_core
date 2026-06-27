@@ -15,10 +15,10 @@ Mode: `review_only_label_coverage_expansion`
 ## Boundary
 - Labels were derived only from existing committed OHLCV and benchmark samples.
 - GOAL-DATA-LABEL-01 does not fetch data, modify providers, commit local bundles, create local-lake files, create or overwrite GOAL-07B/08B/09 rows, run a backtest, generate performance rows, create portfolio outputs, or unlock dashboard/trading/production paths.
-- GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, dashboard, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 may only provide separate non-actionable diagnostic coverage evidence; later GOAL-10B.2/GOAL-10C gates may only preserve review-only non-actionable diagnostics, while GOAL-10D, dashboard, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.
 
 ## Next
-- GOAL-V1-DIAGNOSTIC-COVERAGE-02 must expand risk/recommendation/position-band diagnostics to align with expanded label coverage before GOAL-10B.2 revalidation.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 now provides bounded multi-symbol, non-actionable diagnostic coverage from committed Stage 6C approved-symbol evidence; GOAL-10B.2 may only proceed through its explicit review-only revalidation gate and must carry the remaining 20d alignment warning.
 
 ## Failures
 

@@ -142,6 +142,15 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal_data_label01_status = _goal_data_label01_status(root)
     goal_data_label01_manifest = _goal_data_label01_manifest(root)
     goal_data_label01_audit_status = _audit_status(root / "outputs/audits/goal_data_label01_forward_return_label_coverage_audit.md")
+    goal_v1_diagnostic_coverage02_status = _goal_v1_diagnostic_coverage02_status(root)
+    goal_v1_diagnostic_coverage02_manifest = _goal_v1_diagnostic_coverage02_manifest(root)
+    goal_v1_diagnostic_coverage02_audit_status = _audit_status(root / "outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_audit.md")
+    goal10b2_status = _goal10b2_status(root)
+    goal10b2_manifest = _goal10b2_manifest(root)
+    goal10b2_audit_status = _audit_status(root / "outputs/audits/goal10b2_recommendation_backtest_revalidation_audit.md")
+    goal10c_status = _goal10c_status(root)
+    goal10c_manifest = _goal10c_manifest(root)
+    goal10c_audit_status = _audit_status(root / "outputs/audits/goal10c_cost_slippage_sensitivity_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -250,6 +259,17 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-DATA-LABEL-01 audit status: `{goal_data_label01_audit_status}`.",
                 f"GOAL-DATA-LABEL-01 20d label-ready rows: `{goal_data_label01_manifest.get('label_ready_20d_rows', 0)}`.",
                 f"GOAL-DATA-LABEL-01 diagnostic join ready: `{str(goal_data_label01_manifest.get('diagnostic_join_ready', False)).lower()}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics status: `{goal_v1_diagnostic_coverage02_status}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 audit status: `{goal_v1_diagnostic_coverage02_audit_status}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 risk diagnostic rows: `{goal_v1_diagnostic_coverage02_manifest.get('risk_diagnostic_row_count', 0)}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 unique symbols: `{goal_v1_diagnostic_coverage02_manifest.get('unique_symbols', 0)}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 20d available: `{str(goal_v1_diagnostic_coverage02_manifest.get('forward_return_20d_available', False)).lower()}`.",
+                f"GOAL-10B.2 recommendation revalidation status: `{goal10b2_status}`.",
+                f"GOAL-10B.2 audit status: `{goal10b2_audit_status}`.",
+                f"GOAL-10B.2 snapshot rows: `{goal10b2_manifest.get('input_snapshot_row_count', 0)}`.",
+                f"GOAL-10C cost/slippage sensitivity status: `{goal10c_status}`.",
+                f"GOAL-10C audit status: `{goal10c_audit_status}`.",
+                f"GOAL-10C sensitivity rows: `{goal10c_manifest.get('sensitivity_row_count', 0)}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -271,7 +291,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, and GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, and GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
@@ -351,6 +371,12 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`",
                 "- `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py`",
                 "- `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`",
+                "- `python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`",
+                "- `python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`",
+                "- `python scripts/run_goal10b2_recommendation_backtest_revalidation.py`",
+                "- `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`",
+                "- `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py`",
+                "- `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`",
                 "",
             ]
         ),
@@ -371,7 +397,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
                 "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
-                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
+                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. GOAL-DATA-LABEL-01 adds label coverage only. GOAL-V1-DIAGNOSTIC-COVERAGE-02 adds separate non-actionable multi-symbol diagnostic coverage but still warns that multi-symbol 20d alignment is unavailable. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
                 "- These warnings do not unlock recommendation, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
@@ -407,8 +433,13 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "21. For GOAL-V1-INTEGRITY-01, run `python scripts/run_goal_v1_integrity01_artifact_lineage_structure_gate.py` and `python scripts/audit_goal_v1_integrity01_artifact_lineage_structure_gate.py`; it may verify only artifact lineage and source-of-truth structure before a future explicit dashboard design contract request.",
                 "22. For GOAL-10A, run `python scripts/run_goal10a_backtest_contract_design_gate.py` and `python scripts/audit_goal10a_backtest_contract_design_gate.py`; it may define future backtest contracts only and must not run backtests, generate performance rows, create equity curves, or fetch new data.",
                 "23. For GOAL-10B, run `python scripts/run_goal10b_recommendation_backtest_review_only.py` and `python scripts/audit_goal10b_recommendation_backtest_review_only.py`; it may compute only non-actionable recommendation diagnostic forward-return metrics and IC/RankIC availability checks.",
-                "24. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "25. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
+                "24. For GOAL-10B.1, run `python scripts/run_goal10b1_backtest_coverage_repair_gate.py` and `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`; it may audit coverage and group variation only.",
+                "25. For GOAL-DATA-LABEL-01, run `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py` and `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`; it may create forward-return label coverage only.",
+                "26. For GOAL-V1-DIAGNOSTIC-COVERAGE-02, run `python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py` and `python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`; it may create only non-actionable diagnostic coverage rows.",
+                "27. For GOAL-10B.2, run `python scripts/run_goal10b2_recommendation_backtest_revalidation.py` and `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`; it may create only review-only recommendation revalidation diagnostics.",
+                "28. For GOAL-10C, run `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py` and `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`; it may create only review-only position-band cost/slippage sensitivity diagnostics.",
+                "29. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "30. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -870,6 +901,78 @@ def _goal_data_label01_status(root: Path) -> str:
 
 def _goal_data_label01_manifest(root: Path) -> dict[str, object]:
     path = root / "outputs/audits/goal_data_label01_forward_return_label_coverage_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
+def _goal_v1_diagnostic_coverage02_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal_v1_diagnostic_coverage02_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
+def _goal10b2_status(root: Path) -> str:
+    report = root / "outputs/audits/goal10b2_recommendation_backtest_revalidation_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-10B.2 Recommendation Backtest Revalidation: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-10B.2 Recommendation Backtest Revalidation: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-10B.2 Recommendation Backtest Revalidation: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal10b2_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal10b2_recommendation_backtest_revalidation_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
+def _goal10c_status(root: Path) -> str:
+    report = root / "outputs/audits/goal10c_cost_slippage_sensitivity_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-10C Cost / Slippage Sensitivity Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-10C Cost / Slippage Sensitivity Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-10C Cost / Slippage Sensitivity Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal10c_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal10c_cost_slippage_sensitivity_manifest.json"
     if not path.exists():
         return {}
     try:

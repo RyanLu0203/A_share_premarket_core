@@ -4,6 +4,10 @@ from pathlib import Path
 
 from ashare_premarket.backtest.goal10b1 import goal10b1_valid_coverage_repair_evidence
 from ashare_premarket.core.io import read_csv, read_json, write_csv, write_json, write_text
+from ashare_premarket.core.workflow_preservation import (
+    preserve_later_review_only_capabilities,
+    preserve_later_review_only_workflow_states,
+)
 from ashare_premarket.diagnostics.workflow import run_workflow_diagnostics
 from ashare_premarket.validation.workflow_status import run_workflow_status_audit
 
@@ -177,7 +181,7 @@ WORKFLOW_PRIMARY_OUTPUTS = ";".join(
         AUDIT_PATH,
     ]
 )
-WORKFLOW_NOTES = "Review-only forward-return label coverage expansion from existing committed OHLCV and benchmark samples. It adds 20d label horizon coverage where future bars exist, records that current diagnostics are not yet multi-symbol/aligned, and creates no recommendation, position, portfolio, dashboard, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs."
+WORKFLOW_NOTES = "Review-only forward-return label coverage expansion from existing committed OHLCV and benchmark samples. It adds 20d label horizon coverage where future bars exist, records that canonical GOAL-08B/GOAL-09 diagnostics do not overlap the expanded labels, and creates no recommendation, position, portfolio, dashboard, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs."
 
 
 def run_goal_data_label01_forward_return_label_coverage_expansion(root: Path) -> bool:
@@ -245,19 +249,44 @@ def audit_goal_data_label01_forward_return_label_coverage_expansion(root: Path) 
         failures.append("goal_data_label01_depends_on_invalid")
     if row.get("allowed_next_action") != GOAL_DATA_LABEL01_ALLOWED_NEXT:
         failures.append("goal_data_label01_allowed_next_invalid")
+    goal_v1_diagnostic_coverage02_valid = _goal_v1_diagnostic_coverage02_valid(root)
+    if goal_v1_diagnostic_coverage02_valid:
+        target = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID, {})
+        if target.get("status") != "implemented_review_only":
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_not_preserved_implemented_review_only")
+        if target.get("implemented_in_repo") != "true":
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_not_marked_implemented")
+        if target.get("depends_on") != WORKFLOW_ID:
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_dependency_invalid")
+    else:
+        target = workflow.get(GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID, {})
+        if target.get("status") != "locked_future":
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_not_locked_future")
+        if target.get("implemented_in_repo") != "false":
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_marked_implemented")
+        if target.get("depends_on") != WORKFLOW_ID:
+            failures.append(f"{GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID}_dependency_invalid")
     for workflow_id, dependency in [
-        (GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID, WORKFLOW_ID),
         (GOAL10B2_WORKFLOW_ID, GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID),
         (GOAL10C_WORKFLOW_ID, GOAL10B2_WORKFLOW_ID),
-        (GOAL10D_WORKFLOW_ID, GOAL10C_WORKFLOW_ID),
     ]:
         target = workflow.get(workflow_id, {})
-        if target.get("status") != "locked_future":
-            failures.append(f"{workflow_id}_not_locked_future")
-        if target.get("implemented_in_repo") != "false":
+        if target.get("status") not in {"locked_future", "implemented_review_only"}:
+            failures.append(f"{workflow_id}_invalid_status")
+        if target.get("status") == "implemented_review_only":
+            if target.get("implemented_in_repo") != "true":
+                failures.append(f"{workflow_id}_not_marked_implemented")
+        elif target.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
         if target.get("depends_on") != dependency:
             failures.append(f"{workflow_id}_dependency_invalid")
+    target = workflow.get(GOAL10D_WORKFLOW_ID, {})
+    if target.get("status") != "locked_future":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_not_locked_future")
+    if target.get("implemented_in_repo") != "false":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_marked_implemented")
+    if target.get("depends_on") != GOAL10C_WORKFLOW_ID:
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_dependency_invalid")
     failures.extend(f"forbidden_output_present:{path}" for path in _forbidden_outputs_present(root))
 
     status = PASS if not failures else BLOCKED
@@ -453,10 +482,10 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "## Boundary",
                 "- Labels were derived only from existing committed OHLCV and benchmark samples.",
                 "- GOAL-DATA-LABEL-01 does not fetch data, modify providers, commit local bundles, create local-lake files, create or overwrite GOAL-07B/08B/09 rows, run a backtest, generate performance rows, create portfolio outputs, or unlock dashboard/trading/production paths.",
-                "- GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, dashboard, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
+                "- GOAL-V1-DIAGNOSTIC-COVERAGE-02 may only provide separate non-actionable diagnostic coverage evidence; later GOAL-10B.2/GOAL-10C gates may only preserve review-only non-actionable diagnostics, while GOAL-10D, dashboard, trading, production, broker, local-lake, factor-mining, and DQN/RL remain locked.",
                 "",
                 "## Next",
-                "- GOAL-V1-DIAGNOSTIC-COVERAGE-02 must expand risk/recommendation/position-band diagnostics to align with expanded label coverage before GOAL-10B.2 revalidation.",
+                "- GOAL-V1-DIAGNOSTIC-COVERAGE-02 now provides bounded multi-symbol, non-actionable diagnostic coverage from committed Stage 6C approved-symbol evidence; GOAL-10B.2 may only proceed through its explicit review-only revalidation gate and must carry the remaining 20d alignment warning.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in result["failures"]],
@@ -501,11 +530,11 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "## Remaining Gap",
                 "",
-                "The current committed diagnostic rows do not overlap the expanded label sample by `trade_date + symbol`, and the expanded sample is still single-symbol. GOAL-V1-DIAGNOSTIC-COVERAGE-02 must create multi-symbol, non-actionable, review-only diagnostic coverage before GOAL-10B.2 revalidation.",
+                "The current committed canonical GOAL-08B/GOAL-09 diagnostic rows do not overlap the expanded label sample by `trade_date + symbol`, and the expanded sample is still single-symbol. GOAL-V1-DIAGNOSTIC-COVERAGE-02 now provides bounded multi-symbol, non-actionable, review-only diagnostic coverage from committed Stage 6C approved-symbol evidence, but 20d multi-symbol alignment remains unavailable and must be propagated by any GOAL-10B.2 review-only revalidation.",
                 "",
                 "## Locked Boundary",
                 "",
-                "GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtests, trading, production, broker integration, local-lake writes, factor-mining, and DQN/RL remain locked.",
+                "GOAL-10B.2 and GOAL-10C may only exist as explicit review-only non-actionable diagnostic gates. GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtest promotion, trading, production, broker integration, local-lake writes, factor-mining, and DQN/RL remain locked.",
                 "",
             ]
         ),
@@ -664,6 +693,16 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     _upsert_workflow_row(rows, by_id, GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID, locked_goal_v1_diagnostic_coverage02_patch(), after=WORKFLOW_ID)
     _upsert_workflow_row(rows, by_id, GOAL10B2_WORKFLOW_ID, locked_goal10b2_patch(), after=GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID)
     _upsert_workflow_row(rows, by_id, GOAL10C_WORKFLOW_ID, locked_goal10c_patch(), after=GOAL10B2_WORKFLOW_ID)
+    if _goal_v1_diagnostic_coverage02_valid(root):
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02 import (
+            goal_v1_diagnostic_coverage02_implemented_workflow_patch,
+            locked_goal10b2_patch as diagnostic_coverage02_locked_goal10b2_patch,
+            locked_goal10c_patch as diagnostic_coverage02_locked_goal10c_patch,
+        )
+
+        by_id[GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID].update(goal_v1_diagnostic_coverage02_implemented_workflow_patch())
+        by_id[GOAL10B2_WORKFLOW_ID].update(diagnostic_coverage02_locked_goal10b2_patch())
+        by_id[GOAL10C_WORKFLOW_ID].update(diagnostic_coverage02_locked_goal10c_patch())
     for workflow_id in [
         GOAL10D_WORKFLOW_ID,
         "dashboard_daily_report",
@@ -690,6 +729,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     if "v2_factor_research_upgrade" in by_id:
         by_id["v2_factor_research_upgrade"]["status"] = "planned_locked"
         by_id["v2_factor_research_upgrade"]["implemented_in_repo"] = "false"
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows, fields)
 
 
@@ -720,6 +760,8 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     payload[GOAL10B2_WORKFLOW_ID] = False
     payload[GOAL10C_WORKFLOW_ID] = False
     payload[GOAL10D_WORKFLOW_ID] = False
+    if _goal_v1_diagnostic_coverage02_valid(root):
+        payload[GOAL_V1_DIAGNOSTIC_COVERAGE02_WORKFLOW_ID] = "implemented_review_only"
     for key in [
         "signal_backtest",
         "portfolio_backtest",
@@ -733,6 +775,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
         "local_lake",
     ]:
         payload[key] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 
@@ -799,6 +842,17 @@ def _local_bundle_manifest_matches_committed_summary(root: Path) -> bool:
         return False
     manifest = _read_json(Path(local_path) / "manifest.json")
     return int(manifest.get("label_ready_rows", 0) or 0) >= int(summary.get("label_ready_rows", 0) or 0)
+
+
+def _goal_v1_diagnostic_coverage02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02 import (
+            goal_v1_diagnostic_coverage02_valid_multi_symbol_diagnostic_evidence,
+        )
+
+        return goal_v1_diagnostic_coverage02_valid_multi_symbol_diagnostic_evidence(root)
+    except Exception:
+        return False
 
 
 def _forbidden_outputs_present(root: Path) -> list[str]:

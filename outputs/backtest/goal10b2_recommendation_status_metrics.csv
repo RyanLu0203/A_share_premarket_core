@@ -1,0 +1,2 @@
+group_type,group_value,row_count,unique_symbols,unique_trade_dates,mean_forward_return_1d,median_forward_return_1d,mean_excess_forward_return_1d,median_excess_forward_return_1d,hit_rate_1d,positive_excess_rate_1d,forward_return_3d_available_rows,forward_return_5d_available_rows,forward_return_20d_available_rows
+recommendation_eligibility_status,blocked_review_only_multihorizon_incomplete,8,2,4,0.006250,0.006500,0.003250,0.004500,0.750000,0.625000,0,0,0

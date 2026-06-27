@@ -24,8 +24,8 @@ The gate is a label coverage step only. It does not expand risk, recommendation,
 
 ## Remaining Gap
 
-The current committed diagnostic rows do not overlap the expanded label sample by `trade_date + symbol`, and the expanded sample is still single-symbol. GOAL-V1-DIAGNOSTIC-COVERAGE-02 must create multi-symbol, non-actionable, review-only diagnostic coverage before GOAL-10B.2 revalidation.
+The current committed canonical GOAL-08B/GOAL-09 diagnostic rows do not overlap the expanded label sample by `trade_date + symbol`, and the expanded sample is still single-symbol. GOAL-V1-DIAGNOSTIC-COVERAGE-02 now provides bounded multi-symbol, non-actionable, review-only diagnostic coverage from committed Stage 6C approved-symbol evidence, but 20d multi-symbol alignment remains unavailable and must be propagated by any GOAL-10B.2 review-only revalidation.
 
 ## Locked Boundary
 
-GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtests, trading, production, broker integration, local-lake writes, factor-mining, and DQN/RL remain locked.
+GOAL-10B.2 and GOAL-10C may only exist as explicit review-only non-actionable diagnostic gates. GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtest promotion, trading, production, broker integration, local-lake writes, factor-mining, and DQN/RL remain locked.

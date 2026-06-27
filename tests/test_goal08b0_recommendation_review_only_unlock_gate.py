@@ -6,6 +6,7 @@ from pathlib import Path
 
 from ashare_premarket.contract_design.goal08b0 import (
     GOAL08B0_ALLOWED_NEXT,
+    _forbidden_recommendation_row_outputs,
     audit_goal08b0_recommendation_review_only_unlock_gate,
     run_goal08b0_recommendation_review_only_unlock_gate,
 )
@@ -71,6 +72,8 @@ def test_goal08b0_uses_prior_evidence_and_preserves_non_actionability() -> None:
 def test_goal08b0_generates_no_forbidden_outputs() -> None:
     assert run_goal08b0_recommendation_review_only_unlock_gate(ROOT)
     manifest = _json("outputs/audits/goal08b0_recommendation_review_only_unlock_manifest.json")
+    forbidden_rows = _forbidden_recommendation_row_outputs(ROOT)
+    assert "outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv" not in forbidden_rows
     for key in [
         "recommendation_diagnostics_rows_generated",
         "recommendation_rows_generated",

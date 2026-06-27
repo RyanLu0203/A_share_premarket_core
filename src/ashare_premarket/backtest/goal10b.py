@@ -255,6 +255,13 @@ ALLOWED_BACKTEST_OUTPUTS = {
     "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
     "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
     "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b2_revalidation_input_snapshot.csv",
+    "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
+    "outputs/backtest/goal10b2_symbol_metrics.csv",
+    "outputs/backtest/goal10b2_horizon_coverage.csv",
+    "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
+    "outputs/backtest/goal10c_position_band_group_metrics.csv",
 }
 
 
@@ -349,12 +356,19 @@ def audit_goal10b_recommendation_backtest_review_only(root: Path) -> bool:
         failures.append("goal10b_depends_on_invalid")
     if gate_row.get("allowed_next_action") != GOAL10B_ALLOWED_NEXT:
         failures.append("goal10b_allowed_next_invalid")
-    for workflow_id in [GOAL10C_WORKFLOW_ID, GOAL10D_WORKFLOW_ID]:
-        row = workflow.get(workflow_id, {})
-        if row.get("status") != "locked_future":
-            failures.append(f"{workflow_id}_not_locked_future")
-        if row.get("implemented_in_repo") != "false":
-            failures.append(f"{workflow_id}_marked_implemented")
+    goal10c_row = workflow.get(GOAL10C_WORKFLOW_ID, {})
+    if goal10c_row.get("status") not in {"locked_future", "implemented_review_only"}:
+        failures.append(f"{GOAL10C_WORKFLOW_ID}_invalid_status")
+    if goal10c_row.get("status") == "implemented_review_only":
+        if goal10c_row.get("implemented_in_repo") != "true":
+            failures.append(f"{GOAL10C_WORKFLOW_ID}_not_marked_implemented")
+    elif goal10c_row.get("implemented_in_repo") != "false":
+        failures.append(f"{GOAL10C_WORKFLOW_ID}_marked_implemented")
+    goal10d_row = workflow.get(GOAL10D_WORKFLOW_ID, {})
+    if goal10d_row.get("status") != "locked_future":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_not_locked_future")
+    if goal10d_row.get("implemented_in_repo") != "false":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_marked_implemented")
     for workflow_id in [
         "dashboard_daily_report",
         "signal_backtest",

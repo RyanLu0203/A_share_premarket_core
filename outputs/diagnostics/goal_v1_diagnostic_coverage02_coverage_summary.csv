@@ -1,0 +1,4 @@
+diagnostic_area,row_count,unique_symbols,unique_trade_dates,date_min,date_max,approved_symbol_rows,never_actionable_rows,warning_rows,label_20d_ready_rows,canonical_goal08b_overlap_rows,canonical_goal09_overlap_rows,goal_data_label01_overlap_rows,coverage_status
+risk,8,2,4,2026-06-16,2026-06-19,8,0,8,0,0,0,0,review_only_multi_symbol_20d_incomplete
+recommendation,8,2,4,2026-06-16,2026-06-19,8,8,8,0,0,0,0,review_only_multi_symbol_20d_incomplete
+position_band,8,2,4,2026-06-16,2026-06-19,8,8,8,0,0,0,0,review_only_multi_symbol_20d_incomplete

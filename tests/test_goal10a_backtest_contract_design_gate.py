@@ -116,9 +116,13 @@ def test_goal10a_grouping_contract_and_workflow_keep_future_backtest_gates_locke
     assert workflow[WORKFLOW_ID]["implemented_in_repo"] == "true"
     assert workflow[GOAL10B_WORKFLOW_ID]["status"] == "implemented_review_only"
     assert workflow[GOAL10B_WORKFLOW_ID]["implemented_in_repo"] == "true"
-    for workflow_id in [GOAL10C_WORKFLOW_ID, GOAL10D_WORKFLOW_ID]:
-        assert workflow[workflow_id]["status"] == "locked_future"
-        assert workflow[workflow_id]["implemented_in_repo"] == "false"
+    assert workflow[GOAL10C_WORKFLOW_ID]["status"] in {"locked_future", "implemented_review_only"}
+    if workflow[GOAL10C_WORKFLOW_ID]["status"] == "implemented_review_only":
+        assert workflow[GOAL10C_WORKFLOW_ID]["implemented_in_repo"] == "true"
+    else:
+        assert workflow[GOAL10C_WORKFLOW_ID]["implemented_in_repo"] == "false"
+    assert workflow[GOAL10D_WORKFLOW_ID]["status"] == "locked_future"
+    assert workflow[GOAL10D_WORKFLOW_ID]["implemented_in_repo"] == "false"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
 
 

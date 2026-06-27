@@ -188,7 +188,10 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if "goal10b1_backtest_coverage_repair_gate" in by_id:
             by_id["goal10b1_backtest_coverage_repair_gate"].update(goal10b1_implemented_workflow_patch())
-        if "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id:
+        if (
+            "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id
+            and by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].get("status") != "implemented_review_only"
+        ):
             by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(locked_goal10c_after_goal10b1_patch())
         if "goal10d_backtest_failure_attribution_gate" in by_id:
             by_id["goal10d_backtest_failure_attribution_gate"].update(locked_goal10d_after_goal10b1_patch())
@@ -220,11 +223,21 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if "goal_data_label01_forward_return_label_coverage_expansion" in by_id:
             by_id["goal_data_label01_forward_return_label_coverage_expansion"].update(goal_data_label01_implemented_workflow_patch())
-        if "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion" in by_id:
+        if (
+            "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion" in by_id
+            and by_id["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"].get("status")
+            != "implemented_review_only"
+        ):
             by_id["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"].update(locked_goal_v1_diagnostic_coverage02_patch())
-        if "goal10b2_recommendation_backtest_revalidation" in by_id:
+        if (
+            "goal10b2_recommendation_backtest_revalidation" in by_id
+            and by_id["goal10b2_recommendation_backtest_revalidation"].get("status") != "implemented_review_only"
+        ):
             by_id["goal10b2_recommendation_backtest_revalidation"].update(locked_goal10b2_patch())
-        if "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id:
+        if (
+            "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id
+            and by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].get("status") != "implemented_review_only"
+        ):
             by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(locked_goal10c_after_goal_data_label01_patch())
         for workflow_id in [
             "goal10d_backtest_failure_attribution_gate",
@@ -246,6 +259,108 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
             by_id["goal10d_backtest_failure_attribution_gate"]["depends_on"] = "goal10c_backtest_cost_slippage_sensitivity_gate"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_data_label01"
+    goal_v1_diagnostic_coverage02_valid = _goal_v1_diagnostic_coverage02_valid(root)
+    if goal_v1_diagnostic_coverage02_valid:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02 import (
+            goal_v1_diagnostic_coverage02_implemented_workflow_patch,
+            locked_goal10b2_patch,
+            locked_goal10c_patch as locked_goal10c_after_diagnostic_coverage02_patch,
+        )
+
+        if "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion" in by_id:
+            by_id["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"].update(goal_v1_diagnostic_coverage02_implemented_workflow_patch())
+        if (
+            "goal10b2_recommendation_backtest_revalidation" in by_id
+            and by_id["goal10b2_recommendation_backtest_revalidation"].get("status") != "implemented_review_only"
+        ):
+            by_id["goal10b2_recommendation_backtest_revalidation"].update(locked_goal10b2_patch())
+        if (
+            "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id
+            and by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].get("status") != "implemented_review_only"
+        ):
+            by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(locked_goal10c_after_diagnostic_coverage02_patch())
+        for workflow_id in [
+            "goal10d_backtest_failure_attribution_gate",
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "goal10d_backtest_failure_attribution_gate" in by_id:
+            by_id["goal10d_backtest_failure_attribution_gate"]["depends_on"] = "goal10c_backtest_cost_slippage_sensitivity_gate"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_v1_diagnostic_coverage02"
+    goal10b2_valid = _goal10b2_valid(root)
+    if goal10b2_valid:
+        from ashare_premarket.backtest.goal10b2 import (
+            goal10b2_implemented_workflow_patch,
+            locked_goal10c_patch as locked_goal10c_after_goal10b2_patch,
+            locked_goal10d_patch as locked_goal10d_after_goal10b2_patch,
+        )
+
+        if "goal10b2_recommendation_backtest_revalidation" in by_id:
+            by_id["goal10b2_recommendation_backtest_revalidation"].update(goal10b2_implemented_workflow_patch())
+        if (
+            "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id
+            and by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].get("status") != "implemented_review_only"
+        ):
+            by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(locked_goal10c_after_goal10b2_patch())
+        if "goal10d_backtest_failure_attribution_gate" in by_id:
+            by_id["goal10d_backtest_failure_attribution_gate"].update(locked_goal10d_after_goal10b2_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal10b2"
+    goal10c_valid = _goal10c_valid(root)
+    if goal10c_valid:
+        from ashare_premarket.backtest.goal10c import (
+            goal10c_implemented_workflow_patch,
+            locked_goal10d_patch as locked_goal10d_after_goal10c_patch,
+        )
+
+        if "goal10c_backtest_cost_slippage_sensitivity_gate" in by_id:
+            by_id["goal10c_backtest_cost_slippage_sensitivity_gate"].update(goal10c_implemented_workflow_patch())
+        if "goal10d_backtest_failure_attribution_gate" in by_id:
+            by_id["goal10d_backtest_failure_attribution_gate"].update(locked_goal10d_after_goal10c_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal10c"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -275,13 +390,32 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10b_backtest_review_only_validation_gate"] = "implemented_review_only"
     if _goal10b1_valid(root):
         payload["goal10b1_backtest_coverage_repair_gate"] = "implemented_review_only"
-        payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
+        if payload.get("goal10c_backtest_cost_slippage_sensitivity_gate") != "implemented_review_only":
+            payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_data_label01_valid(root):
         payload["goal_data_label01_forward_return_label_coverage_expansion"] = "implemented_review_only"
-        payload["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"] = False
-        payload["goal10b2_recommendation_backtest_revalidation"] = False
-        payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
+        if payload.get("goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion") != "implemented_review_only":
+            payload["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"] = False
+        if payload.get("goal10b2_recommendation_backtest_revalidation") != "implemented_review_only":
+            payload["goal10b2_recommendation_backtest_revalidation"] = False
+        if payload.get("goal10c_backtest_cost_slippage_sensitivity_gate") != "implemented_review_only":
+            payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_v1_diagnostic_coverage02_valid(root):
+        payload["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"] = "implemented_review_only"
+        if payload.get("goal10b2_recommendation_backtest_revalidation") != "implemented_review_only":
+            payload["goal10b2_recommendation_backtest_revalidation"] = False
+        if payload.get("goal10c_backtest_cost_slippage_sensitivity_gate") != "implemented_review_only":
+            payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal10b2_valid(root):
+        payload["goal10b2_recommendation_backtest_revalidation"] = "implemented_review_only"
+        if payload.get("goal10c_backtest_cost_slippage_sensitivity_gate") != "implemented_review_only":
+            payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal10c_valid(root):
+        payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = "implemented_review_only"
         payload["goal10d_backtest_failure_attribution_gate"] = False
 
 
@@ -396,6 +530,35 @@ def _goal_data_label01_valid(root: Path) -> bool:
         from ashare_premarket.labels.goal_data_label01 import goal_data_label01_valid_forward_return_label_coverage_evidence
 
         return goal_data_label01_valid_forward_return_label_coverage_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_v1_diagnostic_coverage02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02 import (
+            goal_v1_diagnostic_coverage02_valid_multi_symbol_diagnostic_evidence,
+        )
+
+        return goal_v1_diagnostic_coverage02_valid_multi_symbol_diagnostic_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10b2_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10b2 import goal10b2_valid_revalidation_evidence
+
+        return goal10b2_valid_revalidation_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal10c_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.backtest.goal10c import goal10c_valid_cost_slippage_evidence
+
+        return goal10c_valid_cost_slippage_evidence(root)
     except Exception:
         return False
 

@@ -64,6 +64,14 @@ exist, and does not fetch data, expand provider coverage, create or overwrite
 GOAL-07B/GOAL-08B/GOAL-09 diagnostics, run backtests, write local lake files,
 create portfolio returns, create equity curves, create dashboard outputs, or
 write production storage.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 writes only small review-only multi-symbol
+diagnostic coverage evidence under `outputs/diagnostics/`, `docs/diagnostics/`,
+and `outputs/audits/`. It reads existing committed Stage 6C approved-symbol
+evidence only, creates separate non-actionable risk, recommendation, and
+position-band diagnostic coverage rows, preserves canonical GOAL-07B/GOAL-08B/
+GOAL-09 artifacts, and does not fetch data, run backtests, write local lake
+files, create portfolio returns, create equity curves, create dashboard outputs,
+or write production storage.
 
 ## Active Contracts
 
@@ -143,8 +151,19 @@ write production storage.
 - Do not treat GOAL-10B.1 coverage repair evidence as permission to fetch data,
   expand panels, create repaired rows or metrics without contract-valid support,
   create new recommendation or position rows, run portfolio backtests, create
-  dashboards, or unlock GOAL-10C.
+  dashboards, or unlock execution paths.
 - Do not treat GOAL-DATA-LABEL-01 label coverage evidence as permission to
-  create or overwrite diagnostics, run GOAL-10B.2/GOAL-10C backtests, create
+  create or overwrite canonical diagnostics, run production backtests, create
   portfolio outputs, write local-lake data, create dashboards, or unlock
   trading, production, broker, factor-mining, or DQN/RL paths.
+- Do not treat GOAL-V1-DIAGNOSTIC-COVERAGE-02 diagnostic coverage evidence as
+  permission to create actionable recommendations, create actual positions,
+  create portfolio outputs, write local-lake data, create dashboards, or unlock
+  trading, production, broker, factor-mining, or DQN/RL paths. GOAL-10B.2 and
+  GOAL-10C may consume DC02 rows only through their explicit review-only
+  diagnostic gates.
+- Do not treat GOAL-10B.2 recommendation revalidation diagnostics or GOAL-10C
+  cost/slippage sensitivity diagnostics as permission to create actionable
+  recommendations, positions, sizing, weights, orders, portfolio returns,
+  equity curves, dashboards, local-lake data, trading, production, broker,
+  factor-mining, or DQN/RL outputs.

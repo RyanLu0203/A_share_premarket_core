@@ -68,10 +68,11 @@ def test_goal_data_label01_preserves_locked_boundaries() -> None:
         assert manifest[key] is False
     assert workflow["goal_data_label01_forward_return_label_coverage_expansion"]["status"] == "implemented_review_only"
     assert workflow["goal_data_label01_forward_return_label_coverage_expansion"]["depends_on"] == "goal10b1_backtest_coverage_repair_gate"
-    assert workflow["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["status"] == "locked_future"
+    assert workflow["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["status"] == "implemented_review_only"
+    assert workflow["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["implemented_in_repo"] == "true"
     assert workflow["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["depends_on"] == "goal_data_label01_forward_return_label_coverage_expansion"
-    assert workflow["goal10b2_recommendation_backtest_revalidation"]["status"] == "locked_future"
+    assert workflow["goal10b2_recommendation_backtest_revalidation"]["status"] in {"locked_future", "implemented_review_only"}
     assert workflow["goal10b2_recommendation_backtest_revalidation"]["depends_on"] == "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"
-    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] == "locked_future"
+    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] in {"locked_future", "implemented_review_only"}
     assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["depends_on"] == "goal10b2_recommendation_backtest_revalidation"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"

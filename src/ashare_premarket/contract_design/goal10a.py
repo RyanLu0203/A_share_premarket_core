@@ -48,6 +48,9 @@ GOAL_V1_AUDIT_PATH = "outputs/audits/goal_v1_integrity01_artifact_lineage_struct
 GOAL10B_REPORT_PATH = "outputs/audits/goal10b_recommendation_backtest_report.md"
 GOAL10B_MANIFEST_PATH = "outputs/audits/goal10b_recommendation_backtest_manifest.json"
 GOAL10B_AUDIT_PATH = "outputs/audits/goal10b_recommendation_backtest_audit.md"
+GOAL10C_REPORT_PATH = "outputs/audits/goal10c_cost_slippage_sensitivity_report.md"
+GOAL10C_MANIFEST_PATH = "outputs/audits/goal10c_cost_slippage_sensitivity_manifest.json"
+GOAL10C_AUDIT_PATH = "outputs/audits/goal10c_cost_slippage_sensitivity_audit.md"
 
 WORKFLOW_PRODUCES_ARTIFACTS = ";".join(
     [
@@ -193,6 +196,13 @@ ALLOWED_GOAL10B_BACKTEST_OUTPUTS = {
     "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
     "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
     "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b2_revalidation_input_snapshot.csv",
+    "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
+    "outputs/backtest/goal10b2_symbol_metrics.csv",
+    "outputs/backtest/goal10b2_horizon_coverage.csv",
+    "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
+    "outputs/backtest/goal10c_position_band_group_metrics.csv",
 }
 
 
@@ -320,12 +330,23 @@ def audit_goal10a_backtest_contract_design_gate(root: Path) -> bool:
             failures.append(f"{GOAL10B_WORKFLOW_ID}_not_locked_future")
         if goal10b_row.get("implemented_in_repo") != "false":
             failures.append(f"{GOAL10B_WORKFLOW_ID}_marked_implemented")
-    for workflow_id in [GOAL10C_WORKFLOW_ID, GOAL10D_WORKFLOW_ID]:
-        row = workflow.get(workflow_id, {})
-        if row.get("status") != "locked_future":
-            failures.append(f"{workflow_id}_not_locked_future")
-        if row.get("implemented_in_repo") != "false":
-            failures.append(f"{workflow_id}_marked_implemented")
+    goal10c_ready = _goal10c_review_only_evidence_ready(root)
+    goal10c_row = workflow.get(GOAL10C_WORKFLOW_ID, {})
+    if goal10c_ready:
+        if goal10c_row.get("status") != "implemented_review_only":
+            failures.append("goal10c_workflow_not_implemented_review_only")
+        if goal10c_row.get("implemented_in_repo") != "true":
+            failures.append("goal10c_workflow_not_marked_implemented")
+    else:
+        if goal10c_row.get("status") != "locked_future":
+            failures.append(f"{GOAL10C_WORKFLOW_ID}_not_locked_future")
+        if goal10c_row.get("implemented_in_repo") != "false":
+            failures.append(f"{GOAL10C_WORKFLOW_ID}_marked_implemented")
+    goal10d_row = workflow.get(GOAL10D_WORKFLOW_ID, {})
+    if goal10d_row.get("status") != "locked_future":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_not_locked_future")
+    if goal10d_row.get("implemented_in_repo") != "false":
+        failures.append(f"{GOAL10D_WORKFLOW_ID}_marked_implemented")
     failures.extend(f"forbidden_output_dir_present:{path}" for path in _forbidden_output_dirs_present(root))
     failures.extend(f"unexpected_backtest_output:{path}" for path in _unexpected_backtest_outputs(root))
 
@@ -1001,6 +1022,22 @@ def _goal10b_review_only_evidence_ready(root: Path) -> bool:
         and manifest.get("mode") == "review_only"
         and manifest.get("review_only_backtest_diagnostics_generated") is True
         and manifest.get("goal10c_locked_future") is True
+        and manifest.get("goal10d_locked_future") is True
+        and manifest.get("portfolio_returns_generated") is False
+        and manifest.get("equity_curves_generated") is False
+    )
+
+
+def _goal10c_review_only_evidence_ready(root: Path) -> bool:
+    report = _read(root / GOAL10C_REPORT_PATH)
+    audit = _read(root / GOAL10C_AUDIT_PATH)
+    manifest = _read_json(root / GOAL10C_MANIFEST_PATH)
+    return (
+        _report_pass_or_warn(report, "GOAL-10C Cost / Slippage Sensitivity Gate:")
+        and "Status: `PASS`" in audit
+        and manifest.get("goal_id") == "GOAL-10C"
+        and manifest.get("mode") == "review_only_position_band_cost_slippage_sensitivity"
+        and manifest.get("review_only_cost_slippage_sensitivity_generated") is True
         and manifest.get("goal10d_locked_future") is True
         and manifest.get("portfolio_returns_generated") is False
         and manifest.get("equity_curves_generated") is False

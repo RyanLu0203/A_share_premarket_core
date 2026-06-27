@@ -1,5 +1,110 @@
 # 09 Step Iteration Log
 
+## 2026-06-27 - GOAL-10C Cost / Slippage Sensitivity Gate
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-10C review-only position-band cost/slippage sensitivity gate.
+- Consumed GOAL-V1-DIAGNOSTIC-COVERAGE-02 position-band diagnostics and
+  GOAL-10B.2 readiness evidence only.
+- Wrote 8 input snapshot rows, 24 non-actionable row-level sensitivity rows,
+  and 3 group metric rows.
+- Preserved GOAL-10D and all execution/dashboard paths as locked.
+
+Evidence:
+
+- `outputs/backtest/goal10c_position_band_input_snapshot.csv`
+- `outputs/backtest/goal10c_cost_slippage_sensitivity.csv`
+- `outputs/backtest/goal10c_position_band_group_metrics.csv`
+- `docs/backtest/GOAL10C_COST_SLIPPAGE_SENSITIVITY_GATE.md`
+- `outputs/audits/goal10c_cost_slippage_sensitivity_report.md`
+- `outputs/audits/goal10c_cost_slippage_sensitivity_manifest.json`
+- `outputs/audits/goal10c_cost_slippage_sensitivity_audit.md`
+
+Safety:
+
+- No actual position row, position sizing, target weight, order quantity,
+  BUY/SELL/HOLD output, target price, portfolio return, equity curve, dashboard,
+  HTML, Streamlit, frontend, trading, production, broker, factor-mining,
+  local-lake, or DQN/RL output was generated.
+- GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtest
+  promotion, paper/live trading, broker, production, factor-mining, local-lake,
+  and DQN/RL remain locked or deleted from active mainline.
+
+## 2026-06-27 - GOAL-10B.2 Recommendation Backtest Revalidation
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-10B.2 review-only recommendation backtest revalidation gate.
+- Consumed GOAL-V1-DIAGNOSTIC-COVERAGE-02 recommendation and risk diagnostics
+  only.
+- Wrote an 8-row input snapshot, recommendation-status metrics, symbol metrics,
+  and horizon-coverage diagnostics.
+- Recorded warnings for missing 3d/5d/20d forward-return coverage and limited
+  recommendation/risk group variation.
+
+Evidence:
+
+- `outputs/backtest/goal10b2_revalidation_input_snapshot.csv`
+- `outputs/backtest/goal10b2_recommendation_status_metrics.csv`
+- `outputs/backtest/goal10b2_symbol_metrics.csv`
+- `outputs/backtest/goal10b2_horizon_coverage.csv`
+- `docs/backtest/GOAL10B2_RECOMMENDATION_BACKTEST_REVALIDATION.md`
+- `outputs/audits/goal10b2_recommendation_backtest_revalidation_report.md`
+- `outputs/audits/goal10b2_recommendation_backtest_revalidation_manifest.json`
+- `outputs/audits/goal10b2_recommendation_backtest_revalidation_audit.md`
+
+Safety:
+
+- No actionable recommendation, actual position row, BUY/SELL/HOLD output,
+  target price, position sizing, portfolio weight, portfolio return, equity
+  curve, dashboard, HTML, Streamlit, frontend, trading, production, broker,
+  factor-mining, local-lake, or DQN/RL output was generated.
+- GOAL-10C remained eligible only for its explicit review-only sensitivity gate;
+  GOAL-10D and execution/dashboard paths remained locked at this step.
+
+## 2026-06-26 - GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic
+  coverage gate.
+- Derived 8 deterministic non-actionable diagnostic rows per family for risk,
+  recommendation, and position-band coverage from existing committed Stage 6C
+  approved-symbol evidence only.
+- Preserved canonical GOAL-07B/GOAL-08B/GOAL-09 artifacts and recorded that the
+  multi-symbol source still lacks 20d forward-return alignment.
+- Kept GOAL-10B.2, GOAL-10C, and GOAL-10D locked.
+
+Evidence:
+
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_risk_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_position_band_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_coverage_summary.csv`
+- `docs/diagnostics/GOAL_V1_DIAGNOSTIC_COVERAGE02_MULTI_SYMBOL_DIAGNOSTICS_EXPANSION.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_report.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_manifest.json`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_audit.md`
+
+Safety:
+
+- No new data fetch, provider change, local bundle commit, local-lake file,
+  canonical GOAL-07B row, canonical GOAL-08B row, canonical GOAL-09 row,
+  actionable recommendation row, actual position row, BUY/SELL/HOLD output,
+  target price, position sizing, portfolio weight, portfolio return, equity
+  curve, backtest performance row, dashboard, HTML, Streamlit, frontend,
+  trading, production, broker, factor-mining, or DQN/RL output was generated.
+- GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest
+  promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading,
+  broker, production, factor-mining, local-lake, and DQN/RL remain locked.
+
 ## 2026-06-26 - GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion
 
 Status: `PASS_WITH_WARNINGS`.
@@ -33,10 +138,10 @@ Safety:
   portfolio return, equity curve, backtest performance row, dashboard, HTML,
   Streamlit, frontend, trading, production, broker, factor-mining, or DQN/RL
   output was generated.
-- GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard /
-  Daily Report UI, signal backtest promotion, portfolio backtest,
-  cost/slippage sensitivity, paper/live trading, broker, production,
-  factor-mining, local-lake, and DQN/RL remain locked.
+- At the end of the GOAL-DATA-LABEL-01 step, the next diagnostic coverage gate,
+  GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest
+  promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading,
+  broker, production, factor-mining, local-lake, and DQN/RL remained locked.
 
 ## 2026-06-26 - GOAL-10B.1 Backtest Coverage and Group Variation Repair Gate
 

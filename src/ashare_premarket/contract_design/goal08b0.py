@@ -79,6 +79,19 @@ GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS = {
     "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
     "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
     "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b2_revalidation_input_snapshot.csv",
+    "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
+    "outputs/backtest/goal10b2_symbol_metrics.csv",
+    "outputs/backtest/goal10b2_horizon_coverage.csv",
+    "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
+    "outputs/backtest/goal10c_position_band_group_metrics.csv",
+}
+ALLOWED_REVIEW_ONLY_DIAGNOSTIC_CSV_OUTPUTS = {
+    "outputs/diagnostics/goal_v1_diagnostic_coverage02_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage02_position_band_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage02_coverage_summary.csv",
 }
 
 FORBIDDEN_OUTPUT_DIRS = [
@@ -831,6 +844,8 @@ def _forbidden_recommendation_row_outputs(root: Path) -> list[str]:
         if rel == GOAL08B_DIAGNOSTIC_PATH:
             continue
         if rel in GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS:
+            continue
+        if rel in ALLOWED_REVIEW_ONLY_DIAGNOSTIC_CSV_OUTPUTS:
             continue
         if lower.startswith("outputs/diagnostics/") and not any(token in lower for token in ["goal08b", "recommendation"]):
             continue

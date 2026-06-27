@@ -73,6 +73,13 @@ GOAL10B_ALLOWED_BACKTEST_CSV_OUTPUTS = {
     "outputs/backtest/goal10b1_label_source_coverage_audit.csv",
     "outputs/backtest/goal10b1_repaired_backtest_input_snapshot.csv",
     "outputs/backtest/goal10b1_repaired_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b2_revalidation_input_snapshot.csv",
+    "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
+    "outputs/backtest/goal10b2_symbol_metrics.csv",
+    "outputs/backtest/goal10b2_horizon_coverage.csv",
+    "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
+    "outputs/backtest/goal10c_position_band_group_metrics.csv",
 }
 
 REQUIRED_GOAL07B_FIELDS = [

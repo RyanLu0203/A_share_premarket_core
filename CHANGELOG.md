@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-27 - GOAL-10C Cost / Slippage Sensitivity Gate
+
+- Implemented GOAL-10C only as a review-only position-band cost/slippage
+  sensitivity gate over GOAL-V1-DIAGNOSTIC-COVERAGE-02 position-band rows and
+  GOAL-10B.2 readiness evidence.
+- Added 8 input snapshot rows, 24 non-actionable row-level sensitivity rows,
+  and 3 group metric rows, plus report, manifest, audit, docs, scripts, tests,
+  and workflow governance.
+- Kept GOAL-10D, dashboards, signal/portfolio backtest promotion, trading,
+  production, broker, local-lake, factor-mining, and DQN/RL locked or deleted
+  from active mainline.
+
+## 2026-06-27 - GOAL-10B.2 Recommendation Backtest Revalidation
+
+- Implemented GOAL-10B.2 only as a review-only recommendation backtest
+  revalidation gate over GOAL-V1-DIAGNOSTIC-COVERAGE-02 recommendation/risk
+  diagnostic rows.
+- Added an 8-row revalidation input snapshot, recommendation-status metrics,
+  symbol metrics, horizon-coverage diagnostics, report, manifest, audit, docs,
+  scripts, tests, and workflow governance.
+- Recorded `PASS_WITH_WARNINGS` because 3d/5d/20d forward-return coverage is
+  unavailable in the bounded DC02 rows and recommendation/risk groups remain
+  limited.
+- Created no actionable recommendations, actual positions, portfolio returns,
+  equity curves, dashboards, trading, production, broker, local-lake,
+  factor-mining, or DQN/RL outputs.
+
+## 2026-06-26 - GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion
+
+- Implemented GOAL-V1-DIAGNOSTIC-COVERAGE-02 only as a review-only
+  multi-symbol diagnostic coverage gate over existing committed Stage 6C
+  approved-symbol evidence.
+- Added 8 non-actionable diagnostic rows per family for risk, recommendation,
+  and position-band coverage, plus coverage summary, report, manifest, audit,
+  scripts, tests, and workflow governance.
+- Preserved canonical GOAL-07B/GOAL-08B/GOAL-09 artifacts and kept GOAL-10B.2,
+  GOAL-10C, GOAL-10D, dashboards, trading, production, broker, local-lake,
+  factor-mining, and DQN/RL locked.
+
 ## 2026-06-26 - GOAL-DATA-LABEL-01 Forward-Return Label Coverage Expansion
 
 - Implemented GOAL-DATA-LABEL-01 only as a review-only label coverage gate over

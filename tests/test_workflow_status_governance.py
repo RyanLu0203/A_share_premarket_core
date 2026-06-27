@@ -63,17 +63,16 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal_data_label01_forward_return_label_coverage_expansion"]["status"] == "implemented_review_only"
     assert rows["goal_data_label01_forward_return_label_coverage_expansion"]["implemented_in_repo"] == "true"
     assert rows["goal_data_label01_forward_return_label_coverage_expansion"]["depends_on"] == "goal10b1_backtest_coverage_repair_gate"
-    assert rows["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["status"] == "locked_future"
-    assert rows["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["implemented_in_repo"] == "false"
+    assert rows["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["status"] == "implemented_review_only"
+    assert rows["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["implemented_in_repo"] == "true"
     assert rows["goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"]["depends_on"] == "goal_data_label01_forward_return_label_coverage_expansion"
-    assert rows["goal10b2_recommendation_backtest_revalidation"]["status"] == "locked_future"
-    assert rows["goal10b2_recommendation_backtest_revalidation"]["implemented_in_repo"] == "false"
+    assert rows["goal10b2_recommendation_backtest_revalidation"]["status"] == "implemented_review_only"
+    assert rows["goal10b2_recommendation_backtest_revalidation"]["implemented_in_repo"] == "true"
     assert rows["goal10b2_recommendation_backtest_revalidation"]["depends_on"] == "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion"
+    assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] == "implemented_review_only"
+    assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["implemented_in_repo"] == "true"
     assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["depends_on"] == "goal10b2_recommendation_backtest_revalidation"
-    for workflow_id in [
-        "goal10c_backtest_cost_slippage_sensitivity_gate",
-        "goal10d_backtest_failure_attribution_gate",
-    ]:
+    for workflow_id in ["goal10d_backtest_failure_attribution_gate"]:
         assert rows[workflow_id]["status"] == "locked_future"
         assert rows[workflow_id]["implemented_in_repo"] == "false"
     assert rows["dashboard_daily_report"]["status"] == "locked_future"

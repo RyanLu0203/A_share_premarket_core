@@ -105,8 +105,13 @@ current artifacts, records `coverage_repair_not_possible_with_current_artifacts`
 and writes no repaired rows or metrics. GOAL-DATA-LABEL-01 now implements only
 review-only forward-return label coverage expansion from committed samples; it
 writes 100 label rows, 80 with 20d labels, but current GOAL-08B/GOAL-09
-diagnostics are not yet aligned to those labels. GOAL-V1-DIAGNOSTIC-COVERAGE-02,
-GOAL-10B.2, GOAL-10C, and GOAL-10D remain locked.
+diagnostics are not yet aligned to those labels. GOAL-V1-DIAGNOSTIC-COVERAGE-02
+now implements only review-only multi-symbol diagnostic coverage from committed
+Stage 6C approved-symbol evidence; it writes 8 non-actionable diagnostic rows
+per family and keeps canonical GOAL-07B/08B/09 artifacts unchanged. GOAL-10B.2
+now implements only review-only recommendation backtest revalidation over DC02
+rows, and GOAL-10C now implements only review-only row-level position-band
+cost/slippage sensitivity. GOAL-10D remains locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -125,9 +130,6 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
-- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics expansion.
-- GOAL-10B.2 recommendation backtest revalidation.
-- GOAL-10C cost/slippage sensitivity.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity execution.

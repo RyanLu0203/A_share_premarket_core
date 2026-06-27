@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-26
+Last updated: 2026-06-27
 
 ## Current Stage
 
@@ -84,9 +84,10 @@ tradability policies. It runs no backtest, creates no performance rows, equity
 curves, portfolio returns, dashboard output, HTML, Streamlit, frontend code,
 trading path, production behavior, broker output, factor-mining output, local
 lake file, or DQN/RL output. GOAL-10B is implemented only by its own
-review-only diagnostic gate; GOAL-10C, GOAL-10D, Dashboard / Daily Report UI,
-paper/live trading, broker, production, factor-mining, and DQN/RL remain
-locked.
+review-only diagnostic gate, and GOAL-10B.2/GOAL-10C are implemented only by
+their own review-only non-actionable diagnostic gates. GOAL-10D, Dashboard /
+Daily Report UI, paper/live trading, broker, production, factor-mining, and
+DQN/RL remain locked.
 GOAL-10B is implemented as a review-only recommendation diagnostics backtest
 (`PASS_WITH_WARNINGS`). It joins GOAL-08B non-actionable recommendation
 diagnostics to existing PIT-safe forward-return labels using GOAL-10A T+1
@@ -95,8 +96,10 @@ evidence only. It creates no BUY/SELL/HOLD actions, target prices, position
 sizing, portfolio weights, portfolio returns, equity curves, dashboard output,
 trading path, production behavior, broker output, factor-mining output, local
 lake file, or DQN/RL output. GOAL-10C, GOAL-10D, Dashboard / Daily Report UI,
-paper/live trading, broker, production, factor-mining, and DQN/RL remain
-locked.
+paper/live trading, broker, production, factor-mining, and DQN/RL remain locked
+unless an explicit later gate implements a review-only diagnostic. In the
+current state, GOAL-10C has proceeded only as review-only non-actionable
+row-level sensitivity diagnostics, and GOAL-10D remains locked.
 GOAL-10B.1 is implemented as a review-only coverage and group-variation repair
 gate (`PASS_WITH_WARNINGS`). It audits existing label, Stage6C, GOAL-08B, and
 GOAL-10B artifacts only, determines that repair is not possible with current
@@ -110,10 +113,33 @@ coverage expansion gate (`PASS_WITH_WARNINGS`). It derives 100 deterministic
 label rows from existing committed OHLCV and benchmark samples only, including
 1d, 3d, 5d, and 20d stock, benchmark, and excess-return labels where future
 bars exist; 80 rows are 20d-label-ready. It remains single-symbol and does not
-yet overlap GOAL-08B or GOAL-09 diagnostics by `trade_date + symbol`, so
-GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard /
-Daily Report UI, trading, production, broker, local-lake, factor-mining, and
-DQN/RL remain locked.
+yet overlap GOAL-08B or GOAL-09 diagnostics by `trade_date + symbol`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 is implemented as a review-only multi-symbol
+diagnostic coverage expansion gate (`PASS_WITH_WARNINGS`). It derives 8
+non-actionable diagnostic rows per family for risk, recommendation, and
+position-band coverage from existing committed Stage 6C approved-symbol sample
+evidence only. It does not overwrite canonical GOAL-07B/08B/09 artifacts and
+does not run a backtest. Because multi-symbol 20d label alignment is still
+unavailable, GOAL-10B.2 revalidation proceeds only as bounded review-only
+diagnostics with warnings.
+GOAL-10B.2 is implemented as a review-only recommendation backtest
+revalidation gate (`PASS_WITH_WARNINGS`). It consumes GOAL-V1-DIAGNOSTIC-
+COVERAGE-02 recommendation and risk diagnostics, writes an 8-row input
+snapshot plus recommendation-status, symbol, and horizon-coverage diagnostic
+metrics, and keeps every row non-actionable. It creates no BUY/SELL/HOLD
+actions, target prices, positions, portfolio returns, equity curves,
+dashboards, trading paths, production behavior, broker output, factor-mining
+output, local lake file, or DQN/RL output.
+GOAL-10C is implemented as a review-only position-band cost/slippage
+sensitivity gate (`PASS_WITH_WARNINGS`). It consumes GOAL-V1-DIAGNOSTIC-
+COVERAGE-02 position-band diagnostics and GOAL-10B.2 readiness evidence, writes
+8 input snapshot rows, 24 row-level cost/slippage sensitivity rows, and 3 group
+metric rows, all non-actionable. It creates no actual positions, sizing,
+weights, orders, portfolio returns, equity curves, dashboards, trading paths,
+production behavior, broker output, factor-mining output, local lake file, or
+DQN/RL output. GOAL-10D, Dashboard / Daily Report UI, signal and portfolio
+backtest promotion, paper/live trading, broker, production, local-lake,
+factor-mining, and DQN/RL remain locked or deleted from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -195,6 +221,8 @@ Implemented and protected:
   distribution, and label-source diagnostics only
 - GOAL-DATA-LABEL-01 forward-return label coverage expansion from committed
   OHLCV and benchmark samples only
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol non-actionable diagnostic
+  coverage expansion from committed Stage 6C approved-symbol evidence only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -260,6 +288,10 @@ Implemented review-only:
 - GOAL-DATA-LABEL-01 forward-return label coverage expansion
   (`PASS_WITH_WARNINGS`; `implemented_review_only`; committed-sample label
   coverage only; no diagnostic rows or backtests)
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics expansion
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; 8 non-actionable risk,
+  recommendation, and position-band diagnostic coverage rows per family; no
+  canonical diagnostic overwrite and no backtests)
 
 Implemented design-only:
 
@@ -270,6 +302,13 @@ Implemented design-only:
 - GOAL-10A backtest contract design gate (`PASS_WITH_WARNINGS`; future input,
   metric, grouping, execution alignment, benchmark, cost/slippage, and
   tradability contracts only; no backtest execution or performance rows)
+- GOAL-10B.2 recommendation backtest revalidation (`PASS_WITH_WARNINGS`;
+  review-only multi-symbol diagnostic metrics over DC02 rows only; no
+  actions, portfolios, dashboards, trading, production, local-lake, or DQN/RL)
+- GOAL-10C cost/slippage sensitivity (`PASS_WITH_WARNINGS`; review-only
+  row-level position-band sensitivity diagnostics only; no actual positions,
+  portfolios, equity curves, dashboards, trading, production, local-lake, or
+  DQN/RL)
 
 Implemented infrastructure-only:
 
@@ -282,9 +321,6 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
-- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics expansion
-- GOAL-10B.2 recommendation backtest revalidation
-- GOAL-10C cost/slippage sensitivity
 - GOAL-10D failure attribution
 - dashboard
 - paper trading
@@ -514,6 +550,24 @@ create portfolio returns or equity curves, create dashboards, write local
 lake/trading/production data, activate factor mining, integrate a broker, or
 create DQN/RL outputs.
 
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 writes only review-only multi-symbol diagnostic
+coverage evidence:
+
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_risk_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_position_band_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_coverage_summary.csv`
+- `docs/diagnostics/GOAL_V1_DIAGNOSTIC_COVERAGE02_MULTI_SYMBOL_DIAGNOSTICS_EXPANSION.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_report.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_manifest.json`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_audit.md`
+
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 uses existing committed Stage 6C approved-symbol
+evidence only. It does not overwrite canonical GOAL-07B/GOAL-08B/GOAL-09
+diagnostics, run backtests, create performance rows, create portfolio returns
+or equity curves, create dashboards, write local lake/trading/production data,
+activate factor mining, integrate a broker, or create DQN/RL outputs.
+
 ## Current Evidence Chain
 
 The protected regenerated outputs live under:
@@ -572,7 +626,8 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
-GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, and GOAL-DATA-LABEL-01 are
+GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, GOAL-DATA-LABEL-01, and
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, and GOAL-10C are
 `implemented_review_only`; GOAL-07A, GOAL-08A, and
 GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
 GOAL-V1-INTEGRITY-01 are
@@ -586,8 +641,11 @@ evidence only. GOAL-V1-INTEGRITY-01 is artifact-lineage/structure evidence only;
 GOAL-10A is future backtest contract design evidence only; GOAL-10B is
 non-actionable review-only recommendation diagnostics backtest evidence only;
 GOAL-10B.1 is coverage repair diagnostics only; GOAL-DATA-LABEL-01 is label
-coverage evidence only; GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C,
-and GOAL-10D remain `locked_future`. Dashboard / Daily Report UI
+coverage evidence only; GOAL-V1-DIAGNOSTIC-COVERAGE-02 is non-actionable
+multi-symbol diagnostic coverage only; GOAL-10B.2 is non-actionable
+recommendation revalidation diagnostics only; GOAL-10C is non-actionable
+position-band cost/slippage sensitivity diagnostics only; GOAL-10D remains
+`locked_future`. Dashboard / Daily Report UI
 remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.
 

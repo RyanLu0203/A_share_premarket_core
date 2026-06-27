@@ -1,0 +1,5 @@
+horizon,available_rows,row_count,coverage_rate,coverage_status
+1d,8,8,1.000000,available
+3d,0,8,0.000000,missing_or_partial
+5d,0,8,0.000000,missing_or_partial
+20d,0,8,0.000000,missing_or_partial

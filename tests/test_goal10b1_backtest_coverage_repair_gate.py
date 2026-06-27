@@ -101,7 +101,7 @@ def test_goal10b1_preserves_locked_boundaries_and_workflow_status() -> None:
     assert workflow["goal10b1_backtest_coverage_repair_gate"]["status"] == "implemented_review_only"
     assert workflow["goal10b1_backtest_coverage_repair_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal10b1_backtest_coverage_repair_gate"]["depends_on"] == "goal10b_backtest_review_only_validation_gate"
-    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] == "locked_future"
+    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] in {"locked_future", "implemented_review_only"}
     assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["depends_on"] in {
         "goal10b1_backtest_coverage_repair_gate",
         "goal10b2_recommendation_backtest_revalidation",

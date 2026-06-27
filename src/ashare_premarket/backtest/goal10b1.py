@@ -203,6 +203,13 @@ ALLOWED_BACKTEST_OUTPUTS = {
     LABEL_SOURCE_COVERAGE_AUDIT_PATH,
     REPAIRED_SNAPSHOT_PATH,
     REPAIRED_RECOMMENDATION_METRICS_PATH,
+    "outputs/backtest/goal10b2_revalidation_input_snapshot.csv",
+    "outputs/backtest/goal10b2_recommendation_status_metrics.csv",
+    "outputs/backtest/goal10b2_symbol_metrics.csv",
+    "outputs/backtest/goal10b2_horizon_coverage.csv",
+    "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
+    "outputs/backtest/goal10c_position_band_group_metrics.csv",
 }
 
 FIELD_CANDIDATES = {
@@ -295,8 +302,14 @@ def audit_goal10b1_backtest_coverage_repair_gate(root: Path) -> bool:
         failures.append("goal10b1_depends_on_invalid")
     if row.get("allowed_next_action") != GOAL10B1_ALLOWED_NEXT:
         failures.append("goal10b1_allowed_next_invalid")
-    if workflow.get(GOAL10C_WORKFLOW_ID, {}).get("status") != "locked_future":
-        failures.append("goal10c_not_locked_future")
+    goal10c_row = workflow.get(GOAL10C_WORKFLOW_ID, {})
+    if goal10c_row.get("status") not in {"locked_future", "implemented_review_only"}:
+        failures.append("goal10c_invalid_status")
+    if goal10c_row.get("status") == "implemented_review_only":
+        if goal10c_row.get("implemented_in_repo") != "true":
+            failures.append("goal10c_not_marked_implemented")
+    elif goal10c_row.get("implemented_in_repo") != "false":
+        failures.append("goal10c_marked_implemented")
     if workflow.get(GOAL10C_WORKFLOW_ID, {}).get("depends_on") not in {WORKFLOW_ID, GOAL10B2_WORKFLOW_ID}:
         failures.append("goal10c_dependency_invalid_after_goal10b1")
     if workflow.get(GOAL10D_WORKFLOW_ID, {}).get("status") != "locked_future":
@@ -506,10 +519,10 @@ def _write_report(root: Path, result: dict[str, object]) -> None:
                 "## Boundary",
                 "- GOAL-10B.1 is review-only diagnostics over existing committed artifacts.",
                 "- No new data fetch, panel expansion, provider change, GOAL-08B row, GOAL-09 row, BUY/SELL/HOLD output, target price, position sizing, portfolio return, equity curve, dashboard, trading, production, broker, local-lake, factor-mining, or DQN/RL output was created.",
-                "- GOAL-DATA-LABEL-01 may follow only as review-only label coverage expansion; GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked unless their own explicit gates pass.",
+                "- GOAL-DATA-LABEL-01 may follow only as review-only label coverage expansion; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may follow only as review-only non-actionable diagnostic coverage evidence. GOAL-10B.2 and GOAL-10C may only proceed through their explicit review-only non-actionable diagnostic gates; GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage execution, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked.",
                 "",
                 "## Recommended Next Gate",
-                "- `future_data_label_coverage_expansion_gate` should be requested before attempting GOAL-10C or any broader backtest diagnostics.",
+                "- `future_data_label_coverage_expansion_gate` is the prerequisite before any later GOAL-10B.2/GOAL-10C review-only diagnostic gate can be considered.",
                 "",
                 "## Failures",
                 *[f"- {failure}" for failure in result["failures"]],
@@ -562,9 +575,13 @@ def _write_doc(root: Path, result: dict[str, object]) -> None:
                 "",
                 "GOAL-DATA-LABEL-01 follows this gate only as review-only label coverage expansion from existing committed OHLCV and benchmark samples. It may add 20d forward-return label coverage where future bars exist, but it does not create new GOAL-08B or GOAL-09 diagnostics and does not run GOAL-10B.2 or GOAL-10C backtests.",
                 "",
+                "## Later Diagnostic Coverage",
+                "",
+                "GOAL-V1-DIAGNOSTIC-COVERAGE-02 has since been implemented only as review-only multi-symbol diagnostic coverage evidence. It does not overwrite canonical GOAL-07B/GOAL-08B/GOAL-09 artifacts and does not run backtests.",
+                "",
                 "## Locked Boundary",
                 "",
-                "GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.",
+                "GOAL-10B.2 and GOAL-10C may only proceed through their explicit review-only non-actionable diagnostic gates. GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage execution, paper/live trading, live trading, broker integration, production writes, factor-mining, local-lake writes, and DQN/RL remain locked or deleted from active mainline.",
                 "",
             ]
         ),

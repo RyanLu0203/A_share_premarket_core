@@ -101,9 +101,8 @@ def test_goal10b_preserves_locked_boundaries_and_workflow_status() -> None:
     assert manifest["dashboard_daily_report_locked_future"] is True
     assert workflow["goal10b_backtest_review_only_validation_gate"]["status"] == "implemented_review_only"
     assert workflow["goal10b_backtest_review_only_validation_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] == "locked_future"
+    assert workflow["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] in {"locked_future", "implemented_review_only"}
     assert workflow["goal10d_backtest_failure_attribution_gate"]["status"] == "locked_future"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
     assert workflow["signal_backtest"]["status"] == "locked_future"
     assert workflow["portfolio_backtest"]["status"] == "locked_future"
-

@@ -21,7 +21,8 @@ gate, GOAL-V1-INTEGRITY-01 infrastructure-only artifact-lineage structure
 gate, the GOAL-10A design-only future backtest contract gate, the GOAL-10B
 review-only recommendation diagnostics backtest, and the GOAL-10B.1
 review-only coverage repair diagnostic gate, plus GOAL-DATA-LABEL-01
-review-only forward-return label coverage expansion.
+review-only forward-return label coverage expansion, plus
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic coverage.
 
 ## Repository Roles
 
@@ -102,6 +103,8 @@ python scripts/run_goal10b1_backtest_coverage_repair_gate.py
 python scripts/audit_goal10b1_backtest_coverage_repair_gate.py
 python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py
 python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py
+python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py
+python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -162,9 +165,9 @@ flowchart TD
     B10A -. "review-only diagnostics" .-> B10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B -. "coverage repair diagnostics" .-> B10B1["GOAL-10B.1 Coverage Repair Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B1 -. "label coverage expansion" .-> DL01["GOAL-DATA-LABEL-01 Forward-Return Label Coverage<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    DL01 -. "locked future" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(locked_future)"]
-    DC02 -. "locked future" .-> B10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(locked_future)"]
-    B10B2 -. "locked future" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    DL01 -. "review-only diagnostics" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    DC02 -. "review-only revalidation" .-> B10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    B10B2 -. "review-only sensitivity" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -207,18 +210,30 @@ GOAL-07A.1 is implemented as a review-only design review gate. It classifies ups
 
 GOAL-10B.1 is implemented only as review-only coverage repair diagnostics. It
 records that current artifacts cannot repair GOAL-10B coverage/group variation,
-writes no repaired snapshots or repaired metrics, and keeps GOAL-10C,
-GOAL-10D, Dashboard / Daily Report UI, portfolio backtests, trading,
-production, factor-mining, local-lake, broker, and DQN/RL locked.
+writes no repaired snapshots or repaired metrics, and does not itself unlock
+GOAL-10C. In the current state GOAL-10C has proceeded only as review-only
+non-actionable row-level sensitivity diagnostics; GOAL-10D, Dashboard / Daily
+Report UI, portfolio backtests, trading, production, factor-mining, local-lake,
+broker, and DQN/RL remain locked.
 
 GOAL-DATA-LABEL-01 is implemented only as review-only forward-return label
 coverage expansion from existing committed OHLCV and benchmark samples. It
 writes 100 deterministic label rows with 1d, 3d, 5d, and 20d stock,
 benchmark, and excess-return fields where future bars exist; 80 rows are
 20d-label-ready. The current expanded labels remain single-symbol and do not
-yet overlap GOAL-08B/GOAL-09 diagnostics, so GOAL-V1-DIAGNOSTIC-COVERAGE-02,
-GOAL-10B.2, GOAL-10C, GOAL-10D, dashboard, trading, production, local-lake,
-factor-mining, broker, and DQN/RL remain locked.
+yet overlap GOAL-08B/GOAL-09 diagnostics.
+
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 is implemented only as review-only
+multi-symbol diagnostic coverage from existing committed Stage 6C
+approved-symbol evidence. It writes 8 non-actionable risk, recommendation, and
+position-band diagnostic rows per family, preserves canonical GOAL-07B/08B/09
+artifacts, and does not run production backtests. GOAL-10B.2 is implemented
+only as review-only recommendation backtest revalidation over those DC02 rows:
+it writes an 8-row snapshot plus recommendation-status, symbol, and
+horizon-coverage diagnostics. GOAL-10C is implemented only as review-only
+position-band cost/slippage sensitivity: it writes 8 input rows, 24 row-level
+sensitivity rows, and 3 group metric rows. GOAL-10D, dashboard, trading,
+production, local-lake, factor-mining, broker, and DQN/RL remain locked.
 
 ## Required Public Commands
 
@@ -305,6 +320,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal10b1_backtest_coverage_repair_gate.py`
 - `python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py`
 - `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`
+- `python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`
+- `python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`
@@ -440,6 +457,20 @@ GOAL-06C.6A provider failure evidence is stored as sanitized metadata only:
 - `outputs/audits/goal10b1_backtest_coverage_repair_report.md`
 - `outputs/audits/goal10b1_backtest_coverage_repair_manifest.json`
 - `outputs/audits/goal10b1_backtest_coverage_repair_audit.md`
+- `outputs/labels/goal_data_label01_forward_return_label_coverage_sample.csv`
+- `outputs/labels/goal_data_label01_forward_return_label_coverage_summary.csv`
+- `docs/labels/GOAL_DATA_LABEL01_FORWARD_RETURN_LABEL_COVERAGE_EXPANSION.md`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_report.md`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_manifest.json`
+- `outputs/audits/goal_data_label01_forward_return_label_coverage_audit.md`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_risk_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_recommendation_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_position_band_diagnostics.csv`
+- `outputs/diagnostics/goal_v1_diagnostic_coverage02_coverage_summary.csv`
+- `docs/diagnostics/GOAL_V1_DIAGNOSTIC_COVERAGE02_MULTI_SYMBOL_DIAGNOSTICS_EXPANSION.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_report.md`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_manifest.json`
+- `outputs/audits/goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_audit.md`
 
 ## Lock Boundary
 
@@ -467,8 +498,13 @@ cannot repair coverage/group variation and creates no repaired rows or metrics.
 GOAL-DATA-LABEL-01 is review-only label coverage expansion from committed
 samples only; it creates no new diagnostics, backtests, portfolios, dashboards,
 local-lake data, trading, production, broker, factor-mining, or DQN/RL outputs.
-GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, and
-GOAL-DASHBOARD-00 remain `locked_future`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 is review-only multi-symbol diagnostic coverage
+from committed Stage 6C approved-symbol evidence only; it creates no actionable
+recommendations, positions, portfolios, dashboards, local-lake data, trading,
+production, broker, factor-mining, or DQN/RL outputs. GOAL-10B.2 is
+review-only recommendation revalidation diagnostics over DC02 rows, and
+GOAL-10C is review-only row-level position-band cost/slippage sensitivity.
+GOAL-10D and GOAL-DASHBOARD-00 remain `locked_future`.
 Dashboard / Daily Report UI remains `locked_future`. Actionable recommendations, actual
 position rows, position sizing,
 dashboards, trading, production, portfolio backtests, factor-mining, broker integration,

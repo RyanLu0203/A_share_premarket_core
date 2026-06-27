@@ -34,9 +34,9 @@ flowchart TD
     T10A -. "review-only diagnostics" .-> T10B["GOAL-10B Recommendation Diagnostics Backtest<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B -. "coverage repair diagnostics" .-> T10B1["GOAL-10B.1 Coverage Repair Gate<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B1 -. "label coverage expansion" .-> DL01["GOAL-DATA-LABEL-01 Forward-Return Label Coverage<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    DL01 -. "locked future" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(locked_future)"]
-    DC02 -. "locked future" .-> T10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(locked_future)"]
-    T10B2 -. "locked future" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(locked_future)"]
+    DL01 -. "review-only diagnostics" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    DC02 -. "review-only revalidation" .-> T10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    T10B2 -. "review-only sensitivity" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     L -. "locked future" .-> M["Signal Backtest<br/>(locked_future)"]
     M -. "locked future" .-> N["Portfolio Backtest<br/>(locked_future)"]
@@ -97,8 +97,12 @@ existing PIT-safe forward-return labels; it creates grouped diagnostic metrics
 and IC/RankIC availability evidence only. GOAL-10B.1 is implemented only as a
 review-only coverage and group-variation repair diagnostic gate; it audits
 existing label/Stage6C artifacts, records that repair is not possible with
-current artifacts, and creates no repaired rows or metrics. GOAL-10C and
-GOAL-10D remain locked_future.
+current artifacts, and creates no repaired rows or metrics. GOAL-DATA-LABEL-01
+is implemented only as review-only label coverage evidence, and
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 is implemented only as non-actionable
+multi-symbol diagnostic coverage evidence. GOAL-10B.2 and GOAL-10C are
+implemented only as review-only non-actionable revalidation and sensitivity
+diagnostics over bounded DC02 rows. GOAL-10D remains locked_future.
 V2 factor research is planned but
 inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,

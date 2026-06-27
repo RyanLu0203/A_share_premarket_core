@@ -20,10 +20,10 @@ Mode: `review_only`
 ## Boundary
 - GOAL-10B.1 is review-only diagnostics over existing committed artifacts.
 - No new data fetch, panel expansion, provider change, GOAL-08B row, GOAL-09 row, BUY/SELL/HOLD output, target price, position sizing, portfolio return, equity curve, dashboard, trading, production, broker, local-lake, factor-mining, or DQN/RL output was created.
-- GOAL-DATA-LABEL-01 may follow only as review-only label coverage expansion; GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage sensitivity, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked unless their own explicit gates pass.
+- GOAL-DATA-LABEL-01 may follow only as review-only label coverage expansion; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may follow only as review-only non-actionable diagnostic coverage evidence. GOAL-10B.2 and GOAL-10C may only proceed through their explicit review-only non-actionable diagnostic gates; GOAL-10D, Dashboard / Daily Report UI, signal backtest promotion, portfolio backtest, cost/slippage execution, paper/live trading, broker, production, factor-mining, local-lake, and DQN/RL remain locked.
 
 ## Recommended Next Gate
-- `future_data_label_coverage_expansion_gate` should be requested before attempting GOAL-10C or any broader backtest diagnostics.
+- `future_data_label_coverage_expansion_gate` is the prerequisite before any later GOAL-10B.2/GOAL-10C review-only diagnostic gate can be considered.
 
 ## Failures
 
