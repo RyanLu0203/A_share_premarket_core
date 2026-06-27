@@ -69,6 +69,10 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics Expansion
   (`PASS_WITH_WARNINGS`)
+- GOAL-10B.2 Recommendation Backtest Revalidation (`PASS_WITH_WARNINGS`)
+- GOAL-10C Cost / Slippage Sensitivity (`PASS_WITH_WARNINGS`)
+- GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -93,6 +97,10 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
+- GOAL-DATA-PROVIDER-02B Provider Selection
+- GOAL-DATA-PANEL-02 Evaluation Panel
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics
+- GOAL-10B.3 Recommendation Backtest Revalidation
 - GOAL-10D Failure Attribution
 - Signal Backtest
 - Portfolio Backtest
@@ -489,7 +497,41 @@ multi-symbol diagnostic coverage evidence from committed Stage 6C
 approved-symbol samples. GOAL-10B.2 is implemented only as review-only
 recommendation backtest revalidation diagnostics over DC02 rows. GOAL-10C is
 implemented only as review-only row-level position-band cost/slippage
-sensitivity diagnostics. GOAL-10D remains `locked_future`.
+sensitivity diagnostics. GOAL-DATA-PROVIDER-02A is implemented only as
+review-only provider capability metadata for future source-backed planning and
+does not build an evaluation panel, run diagnostics, or run backtests.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain
+`locked_future`.
+
+## GOAL-DATA-PROVIDER-02A Status
+
+GOAL-DATA-PROVIDER-02A is `implemented_review_only` and currently
+`PASS_WITH_WARNINGS`. It creates:
+
+- `outputs/providers/goal_data_provider02a_provider_capability_probe.csv`
+- `outputs/providers/goal_data_provider02a_provider_schema_mapping.csv`
+- `outputs/providers/goal_data_provider02a_provider_failure_taxonomy.csv`
+- `configs/providers/goal_data_provider02a_provider_ladder_contract.yaml`
+- `docs/providers/GOAL_DATA_PROVIDER02A_MULTI_PROVIDER_CAPABILITY_PROBE_GATE.md`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_report.md`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_manifest.json`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_audit.md`
+
+The gate probes provider capability metadata for Tushare Pro, Baostock,
+AkShare, efinance, qstock, yfinance auxiliary, and local import fallback over
+the current approved-symbol smoke universe and a 30-trading-day contract
+window. It records package availability, token/network policy, schema mapping,
+failure taxonomy, and panel-readiness metadata only.
+
+GOAL-DATA-PROVIDER-02A does not expand the approved universe, build a final
+evaluation panel, create recommendation diagnostics, create position-band
+diagnostics, run backtests, generate portfolio returns, create equity curves,
+create dashboard/frontend/HTML/Streamlit outputs, write local-lake data, write
+trading or production data, integrate brokers, activate factor mining, or
+create DQN/RL outputs. GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily Report
+UI, and all execution paths remain `locked_future`.
 
 ## GOAL-06D Status
 

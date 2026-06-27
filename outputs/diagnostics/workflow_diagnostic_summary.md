@@ -106,6 +106,10 @@ GOAL-10B.2 snapshot rows: `8`.
 GOAL-10C cost/slippage sensitivity status: `PASS_WITH_WARNINGS`.
 GOAL-10C audit status: `PASS`.
 GOAL-10C sensitivity rows: `24`.
+GOAL-DATA-PROVIDER-02A provider capability probe status: `PASS_WITH_WARNINGS`.
+GOAL-DATA-PROVIDER-02A audit status: `PASS`.
+GOAL-DATA-PROVIDER-02A providers represented: `7`.
+GOAL-DATA-PROVIDER-02A final panel created: `false`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -123,11 +127,16 @@ GOAL-DATA-LABEL-01 workflow status: `implemented_review_only`.
 GOAL-V1-DIAGNOSTIC-COVERAGE-02 workflow status: `implemented_review_only`.
 GOAL-10B.2 workflow status: `implemented_review_only`.
 GOAL-10C workflow status: `implemented_review_only`.
+GOAL-DATA-PROVIDER-02A workflow status: `implemented_review_only`.
+GOAL-DATA-PROVIDER-02B workflow status: `locked_future`.
+GOAL-DATA-PANEL-02 workflow status: `locked_future`.
+GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `locked_future`.
+GOAL-10B.3 workflow status: `locked_future`.
 GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, and GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, and GOAL-DATA-PROVIDER-02A may produce only provider capability metadata.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
@@ -225,3 +234,5 @@ Protected regression commands:
 - `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`
 - `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py`
 - `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`
+- `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py`
+- `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`

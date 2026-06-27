@@ -68,3 +68,4 @@ goal_data_label01_forward_return_label_coverage_expansion,GOAL-DATA-LABEL-01 rev
 goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion,GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostics expansion,GOAL-V1-DIAGNOSTIC-COVERAGE-02,PASS,ashare_premarket.diagnostics.goal_v1_diagnostic_coverage02,Keep active
 goal10b2_recommendation_backtest_revalidation,GOAL-10B.2 review-only recommendation backtest revalidation,GOAL-10B.2,PASS,ashare_premarket.backtest.goal10b2,Keep active
 goal10c_cost_slippage_sensitivity,GOAL-10C review-only position-band cost/slippage sensitivity,GOAL-10C,PASS,ashare_premarket.backtest.goal10c,Keep active
+goal_data_provider02a_multi_provider_capability_probe,GOAL-DATA-PROVIDER-02A review-only multi-provider capability probe,GOAL-DATA-PROVIDER-02A,PASS,ashare_premarket.providers.goal_data_provider02a,Keep active

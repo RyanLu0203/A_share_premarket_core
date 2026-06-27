@@ -140,6 +140,19 @@ production behavior, broker output, factor-mining output, local lake file, or
 DQN/RL output. GOAL-10D, Dashboard / Daily Report UI, signal and portfolio
 backtest promotion, paper/live trading, broker, production, local-lake,
 factor-mining, and DQN/RL remain locked or deleted from active mainline.
+GOAL-DATA-PROVIDER-02A is implemented as a review-only multi-provider
+capability probe gate (`PASS_WITH_WARNINGS`). It records provider availability,
+schema mapping, and failure taxonomy metadata for Tushare Pro, Baostock,
+AkShare, efinance, qstock, yfinance auxiliary, and local import fallback over
+the current approved-symbol smoke universe and a 30-trading-day contract
+window. It creates no final evaluation panel, recommendation diagnostics,
+position-band diagnostics, backtest rows, portfolio returns, equity curves,
+dashboards, trading paths, production behavior, broker output, local lake file,
+factor-mining output, or DQN/RL output. GOAL-DATA-PROVIDER-02B,
+GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
+Dashboard / Daily Report UI, signal and portfolio backtest promotion,
+paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
+remain locked or deleted from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -292,6 +305,15 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`; `implemented_review_only`; 8 non-actionable risk,
   recommendation, and position-band diagnostic coverage rows per family; no
   canonical diagnostic overwrite and no backtests)
+- GOAL-10B.2 recommendation backtest revalidation (`PASS_WITH_WARNINGS`;
+  `implemented_review_only`; bounded non-actionable recommendation
+  revalidation diagnostics only)
+- GOAL-10C cost/slippage sensitivity (`PASS_WITH_WARNINGS`;
+  `implemented_review_only`; row-level non-actionable position-band sensitivity
+  diagnostics only)
+- GOAL-DATA-PROVIDER-02A multi-provider capability probe
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; provider capability
+  metadata only; no evaluation panel)
 
 Implemented design-only:
 
@@ -302,13 +324,6 @@ Implemented design-only:
 - GOAL-10A backtest contract design gate (`PASS_WITH_WARNINGS`; future input,
   metric, grouping, execution alignment, benchmark, cost/slippage, and
   tradability contracts only; no backtest execution or performance rows)
-- GOAL-10B.2 recommendation backtest revalidation (`PASS_WITH_WARNINGS`;
-  review-only multi-symbol diagnostic metrics over DC02 rows only; no
-  actions, portfolios, dashboards, trading, production, local-lake, or DQN/RL)
-- GOAL-10C cost/slippage sensitivity (`PASS_WITH_WARNINGS`; review-only
-  row-level position-band sensitivity diagnostics only; no actual positions,
-  portfolios, equity curves, dashboards, trading, production, local-lake, or
-  DQN/RL)
 
 Implemented infrastructure-only:
 
@@ -321,6 +336,10 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
+- GOAL-DATA-PROVIDER-02B provider selection
+- GOAL-DATA-PANEL-02 evaluation panel build
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics
+- GOAL-10B.3 recommendation revalidation
 - GOAL-10D failure attribution
 - dashboard
 - paper trading
@@ -626,8 +645,9 @@ Future goals must update that file, README diagrams, architecture diagrams, and
 `PROJECT_STATE.md` before any workflow block can move status. GOAL-06C,
 GOAL-06C.5, GOAL-06C.6, GOAL-06C.6A, GOAL-06C.7, GOAL-06D, GOAL-06D.1,
 GOAL-07A.1, GOAL-07B.0, GOAL-07B, GOAL-08B.0, GOAL-08B, GOAL-09.0,
-GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, GOAL-DATA-LABEL-01, and
-GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, and GOAL-10C are
+GOAL-09, GOAL-09.1, GOAL-10B, GOAL-10B.1, GOAL-DATA-LABEL-01,
+GOAL-V1-DIAGNOSTIC-COVERAGE-02, GOAL-10B.2, GOAL-10C, and
+GOAL-DATA-PROVIDER-02A are
 `implemented_review_only`; GOAL-07A, GOAL-08A, and
 GOAL-10A are `implemented_design_only`; GOAL-STORAGE-01 and
 GOAL-V1-INTEGRITY-01 are
@@ -644,7 +664,10 @@ GOAL-10B.1 is coverage repair diagnostics only; GOAL-DATA-LABEL-01 is label
 coverage evidence only; GOAL-V1-DIAGNOSTIC-COVERAGE-02 is non-actionable
 multi-symbol diagnostic coverage only; GOAL-10B.2 is non-actionable
 recommendation revalidation diagnostics only; GOAL-10C is non-actionable
-position-band cost/slippage sensitivity diagnostics only; GOAL-10D remains
+position-band cost/slippage sensitivity diagnostics only; GOAL-DATA-PROVIDER-02A
+is provider capability metadata only and does not build a panel; GOAL-DATA-
+PROVIDER-02B, GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03,
+GOAL-10B.3, and GOAL-10D remain
 `locked_future`. Dashboard / Daily Report UI
 remains `locked_future`. Actionable recommendation, actual position, dashboard, trading, production, V2
 factor-mining, and DQN/RL paths remain locked or deleted from active mainline.

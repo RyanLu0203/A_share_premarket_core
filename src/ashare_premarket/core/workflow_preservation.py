@@ -361,6 +361,48 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal10c"
+    goal_data_provider02a_valid = _goal_data_provider02a_valid(root)
+    if goal_data_provider02a_valid:
+        from ashare_premarket.providers.goal_data_provider02a import (
+            GOAL10B3_WORKFLOW_ID,
+            GOAL_DATA_PANEL02_WORKFLOW_ID,
+            GOAL_DATA_PROVIDER02B_WORKFLOW_ID,
+            GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID,
+            goal_data_provider02a_implemented_workflow_patch,
+            locked_goal10b3_patch,
+            locked_goal_data_panel02_patch,
+            locked_goal_data_provider02b_patch,
+            locked_goal_v1_diagnostic_coverage03_patch,
+        )
+
+        if "goal_data_provider02a_multi_provider_capability_probe" in by_id:
+            by_id["goal_data_provider02a_multi_provider_capability_probe"].update(goal_data_provider02a_implemented_workflow_patch())
+        if GOAL_DATA_PROVIDER02B_WORKFLOW_ID in by_id:
+            by_id[GOAL_DATA_PROVIDER02B_WORKFLOW_ID].update(locked_goal_data_provider02b_patch())
+        if GOAL_DATA_PANEL02_WORKFLOW_ID in by_id:
+            by_id[GOAL_DATA_PANEL02_WORKFLOW_ID].update(locked_goal_data_panel02_patch())
+        if GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID in by_id:
+            by_id[GOAL_V1_DIAGNOSTIC_COVERAGE03_WORKFLOW_ID].update(locked_goal_v1_diagnostic_coverage03_patch())
+        if GOAL10B3_WORKFLOW_ID in by_id:
+            by_id[GOAL10B3_WORKFLOW_ID].update(locked_goal10b3_patch())
+        for workflow_id in [
+            "goal10d_backtest_failure_attribution_gate",
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_data_provider02a"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -416,6 +458,13 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal10c_valid(root):
         payload["goal10c_backtest_cost_slippage_sensitivity_gate"] = "implemented_review_only"
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_data_provider02a_valid(root):
+        payload["goal_data_provider02a_multi_provider_capability_probe"] = "implemented_review_only"
+        payload["goal_data_provider02b_provider_selection_gate"] = False
+        payload["goal_data_panel02_evaluation_panel_gate"] = False
+        payload["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] = False
+        payload["goal10b3_recommendation_backtest_revalidation"] = False
         payload["goal10d_backtest_failure_attribution_gate"] = False
 
 
@@ -559,6 +608,15 @@ def _goal10c_valid(root: Path) -> bool:
         from ashare_premarket.backtest.goal10c import goal10c_valid_cost_slippage_evidence
 
         return goal10c_valid_cost_slippage_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_data_provider02a_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.providers.goal_data_provider02a import goal_data_provider02a_valid_capability_probe_evidence
+
+        return goal_data_provider02a_valid_capability_probe_evidence(root)
     except Exception:
         return False
 

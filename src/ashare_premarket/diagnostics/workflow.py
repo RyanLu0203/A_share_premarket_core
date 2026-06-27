@@ -151,6 +151,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal10c_status = _goal10c_status(root)
     goal10c_manifest = _goal10c_manifest(root)
     goal10c_audit_status = _audit_status(root / "outputs/audits/goal10c_cost_slippage_sensitivity_audit.md")
+    goal_data_provider02a_status = _goal_data_provider02a_status(root)
+    goal_data_provider02a_manifest = _goal_data_provider02a_manifest(root)
+    goal_data_provider02a_audit_status = _audit_status(root / "outputs/audits/goal_data_provider02a_multi_provider_capability_probe_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -270,6 +273,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-10C cost/slippage sensitivity status: `{goal10c_status}`.",
                 f"GOAL-10C audit status: `{goal10c_audit_status}`.",
                 f"GOAL-10C sensitivity rows: `{goal10c_manifest.get('sensitivity_row_count', 0)}`.",
+                f"GOAL-DATA-PROVIDER-02A provider capability probe status: `{goal_data_provider02a_status}`.",
+                f"GOAL-DATA-PROVIDER-02A audit status: `{goal_data_provider02a_audit_status}`.",
+                f"GOAL-DATA-PROVIDER-02A providers represented: `{goal_data_provider02a_manifest.get('provider_count', 0)}`.",
+                f"GOAL-DATA-PROVIDER-02A final panel created: `{str(goal_data_provider02a_manifest.get('final_evaluation_panel_created', True)).lower()}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -287,11 +294,16 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-V1-DIAGNOSTIC-COVERAGE-02 workflow status: `{downstream_status.get('goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion', 'missing')}`.",
                 f"GOAL-10B.2 workflow status: `{downstream_status.get('goal10b2_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-10C workflow status: `{downstream_status.get('goal10c_backtest_cost_slippage_sensitivity_gate', 'missing')}`.",
+                f"GOAL-DATA-PROVIDER-02A workflow status: `{downstream_status.get('goal_data_provider02a_multi_provider_capability_probe', 'missing')}`.",
+                f"GOAL-DATA-PROVIDER-02B workflow status: `{downstream_status.get('goal_data_provider02b_provider_selection_gate', 'missing')}`.",
+                f"GOAL-DATA-PANEL-02 workflow status: `{downstream_status.get('goal_data_panel02_evaluation_panel_gate', 'missing')}`.",
+                f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `{downstream_status.get('goal_v1_diagnostic_coverage03_multi_provider_diagnostics', 'missing')}`.",
+                f"GOAL-10B.3 workflow status: `{downstream_status.get('goal10b3_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-10D workflow status: `{downstream_status.get('goal10d_backtest_failure_attribution_gate', 'missing')}`.",
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, and GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, and GOAL-DATA-PROVIDER-02A may produce only provider capability metadata.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
@@ -377,6 +389,8 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`",
                 "- `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py`",
                 "- `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`",
+                "- `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py`",
+                "- `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`",
                 "",
             ]
         ),
@@ -397,7 +411,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "- GOAL-06D is `PASS_WITH_WARNINGS`: calibration is weak/non-monotonic for the compared review-only baselines, selected baseline is weak, and provider/source concentration is single-mode `akshare_direct`.",
                 "- GOAL-06D.1 repairs warning diagnostics but remains review-only: weak baseline, calibration not reliable for thresholding where marked, bounded feature instability, and provider concentration disclosure may remain.",
                 "- GOAL-07A is design-only. It carries the GOAL-06D.1 warnings into governance design but does not calculate risk values or generate symbol-level risk rows.",
-                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. GOAL-DATA-LABEL-01 adds label coverage only. GOAL-V1-DIAGNOSTIC-COVERAGE-02 adds separate non-actionable multi-symbol diagnostic coverage but still warns that multi-symbol 20d alignment is unavailable. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
+                "- GOAL-07A.1, GOAL-07B.0, GOAL-08B.0, and GOAL-09.0 are review-only governance gates. GOAL-07B may produce non-actionable risk overlay diagnostics only; GOAL-08A may define names-only recommendation contract designs with zero rows. GOAL-STORAGE-01 is infrastructure-only and does not unlock GOAL-08B by itself. GOAL-08B may produce only non-actionable recommendation diagnostic rows. GOAL-09 may produce only non-actionable position-band diagnostic rows. GOAL-09.1 may classify warnings for future dashboard design-readiness only. GOAL-V1-INTEGRITY-01 may verify artifact-lineage and structure only. GOAL-10A may define future backtest contracts only and must not run backtests or create performance rows. GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics and currently warns on missing 20d labels, one excluded T+1 label row, single-symbol coverage, and insufficient ranking variation. GOAL-DATA-LABEL-01 adds label coverage only. GOAL-V1-DIAGNOSTIC-COVERAGE-02 adds separate non-actionable multi-symbol diagnostic coverage but still warns that multi-symbol 20d alignment is unavailable. GOAL-DATA-PROVIDER-02A probes provider capability only and does not build an evaluation panel. Recommendation execution, actual positions, position sizing, dashboards, trading, production, portfolio backtests, factor mining, broker, local-lake, and DQN/RL remain locked.",
                 "- V2 factor research is `planned_locked`, disabled in V1, and has no active factor mining runner or outputs.",
                 "- These warnings do not unlock recommendation, position sizing, dashboard, paper/live trading, production DB writes, production model promotion, factor mining, or DQN/RL.",
                 "",
@@ -438,8 +452,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "26. For GOAL-V1-DIAGNOSTIC-COVERAGE-02, run `python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py` and `python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`; it may create only non-actionable diagnostic coverage rows.",
                 "27. For GOAL-10B.2, run `python scripts/run_goal10b2_recommendation_backtest_revalidation.py` and `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`; it may create only review-only recommendation revalidation diagnostics.",
                 "28. For GOAL-10C, run `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py` and `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`; it may create only review-only position-band cost/slippage sensitivity diagnostics.",
-                "29. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "30. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
+                "29. For GOAL-DATA-PROVIDER-02A, run `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py` and `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`; it may create only provider capability metadata and must not build a panel.",
+                "30. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "31. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -981,6 +996,30 @@ def _goal10c_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal_data_provider02a_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_data_provider02a_multi_provider_capability_probe_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal_data_provider02a_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_data_provider02a_multi_provider_capability_probe_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -1034,6 +1073,11 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion",
             "goal10b2_recommendation_backtest_revalidation",
             "goal10c_backtest_cost_slippage_sensitivity_gate",
+            "goal_data_provider02a_multi_provider_capability_probe",
+            "goal_data_provider02b_provider_selection_gate",
+            "goal_data_panel02_evaluation_panel_gate",
+            "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
+            "goal10b3_recommendation_backtest_revalidation",
             "goal10d_backtest_failure_attribution_gate",
             "dashboard_daily_report",
             "paper_trading_journal",

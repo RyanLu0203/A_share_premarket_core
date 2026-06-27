@@ -30,6 +30,7 @@ from ashare_premarket.ops.adapter_audit import run_adapter_audit
 from ashare_premarket.ops.manifests import bootstrap_audit_manifests
 from ashare_premarket.ops.safety import run_safety_gate
 from ashare_premarket.providers.failure_classification import audit_provider_failure_classification
+from ashare_premarket.providers.goal_data_provider02a import audit_goal_data_provider02a_multi_provider_capability_probe_gate, run_goal_data_provider02a_multi_provider_capability_probe_gate
 from ashare_premarket.providers.ingestion import audit_stage6c_source_backed_engineering_panel
 from ashare_premarket.review_diagnostics.goal08b import audit_goal08b_recommendation_diagnostics_prototype, run_goal08b_recommendation_diagnostics_prototype
 from ashare_premarket.review_diagnostics.goal09 import audit_goal09_position_band_diagnostics_prototype, run_goal09_position_band_diagnostics_prototype
@@ -163,6 +164,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion", run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion(root) and audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion(root)),
         ("goal10b2_recommendation_backtest_revalidation", run_goal10b2_recommendation_backtest_revalidation(root) and audit_goal10b2_recommendation_backtest_revalidation(root)),
         ("goal10c_cost_slippage_sensitivity_gate", run_goal10c_cost_slippage_sensitivity_gate(root) and audit_goal10c_cost_slippage_sensitivity_gate(root)),
+        ("goal_data_provider02a_multi_provider_capability_probe", run_goal_data_provider02a_multi_provider_capability_probe_gate(root) and audit_goal_data_provider02a_multi_provider_capability_probe_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -271,6 +273,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal10b2_recommendation_backtest_revalidation.py", [sys.executable, "scripts/audit_goal10b2_recommendation_backtest_revalidation.py"]),
         ("python scripts/run_goal10c_cost_slippage_sensitivity_gate.py", [sys.executable, "scripts/run_goal10c_cost_slippage_sensitivity_gate.py"]),
         ("python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py", [sys.executable, "scripts/audit_goal10c_cost_slippage_sensitivity_gate.py"]),
+        ("python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py", [sys.executable, "scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py"]),
+        ("python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py", [sys.executable, "scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),
@@ -306,6 +310,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal10b2_recommendation_backtest_revalidation.py", [sys.executable, "scripts/audit_goal10b2_recommendation_backtest_revalidation.py"]),
         ("python scripts/run_goal10c_cost_slippage_sensitivity_gate.py", [sys.executable, "scripts/run_goal10c_cost_slippage_sensitivity_gate.py"]),
         ("python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py", [sys.executable, "scripts/audit_goal10c_cost_slippage_sensitivity_gate.py"]),
+        ("python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py", [sys.executable, "scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py"]),
+        ("python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py", [sys.executable, "scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py"]),
     ]
     rows = []
     runtime_rows = []

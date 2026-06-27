@@ -1,5 +1,43 @@
 # 09 Step Iteration Log
 
+## 2026-06-27 - GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-DATA-PROVIDER-02A review-only multi-provider capability probe
+  gate.
+- Recorded provider availability, network/token policy, schema mapping, failure
+  taxonomy, and panel-readiness metadata for Tushare Pro, Baostock, AkShare,
+  efinance, qstock, yfinance auxiliary, and local import fallback.
+- Used the current approved-symbol smoke universe and a 30-trading-day contract
+  window without expanding the universe or building a final panel.
+- Preserved GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+  GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, Dashboard / Daily
+  Report UI, and all execution paths as locked.
+
+Evidence:
+
+- `outputs/providers/goal_data_provider02a_provider_capability_probe.csv`
+- `outputs/providers/goal_data_provider02a_provider_schema_mapping.csv`
+- `outputs/providers/goal_data_provider02a_provider_failure_taxonomy.csv`
+- `configs/providers/goal_data_provider02a_provider_ladder_contract.yaml`
+- `docs/providers/GOAL_DATA_PROVIDER02A_MULTI_PROVIDER_CAPABILITY_PROBE_GATE.md`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_report.md`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_manifest.json`
+- `outputs/audits/goal_data_provider02a_multi_provider_capability_probe_audit.md`
+
+Safety:
+
+- No approved-universe expansion, final evaluation panel, recommendation
+  diagnostics, position-band diagnostics, backtest rows, portfolio returns,
+  equity curves, dashboard, HTML, Streamlit, frontend, visual report, trading,
+  production, broker, factor-mining, local-lake, or DQN/RL output was
+  generated.
+- Provider-02A is metadata only; Provider-02B/provider selection and all panel
+  construction remain future explicit gates.
+
 ## 2026-06-27 - GOAL-10C Cost / Slippage Sensitivity Gate
 
 Status: `PASS_WITH_WARNINGS`.

@@ -72,6 +72,16 @@
 - GOAL-DATA-LABEL-01 forward-return label coverage expansion
   (`PASS_WITH_WARNINGS`; implemented_review_only label coverage from committed
   OHLCV and benchmark samples only; no diagnostics or backtests).
+- GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostics expansion
+  (`PASS_WITH_WARNINGS`; implemented_review_only non-actionable diagnostic
+  coverage rows from committed Stage 6C evidence only).
+- GOAL-10B.2 recommendation backtest revalidation (`PASS_WITH_WARNINGS`;
+  implemented_review_only bounded non-actionable revalidation diagnostics).
+- GOAL-10C cost/slippage sensitivity (`PASS_WITH_WARNINGS`;
+  implemented_review_only row-level non-actionable position-band sensitivity).
+- GOAL-DATA-PROVIDER-02A multi-provider capability probe
+  (`PASS_WITH_WARNINGS`; implemented_review_only provider capability metadata
+  only; no panel build).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -111,7 +121,12 @@ Stage 6C approved-symbol evidence; it writes 8 non-actionable diagnostic rows
 per family and keeps canonical GOAL-07B/08B/09 artifacts unchanged. GOAL-10B.2
 now implements only review-only recommendation backtest revalidation over DC02
 rows, and GOAL-10C now implements only review-only row-level position-band
-cost/slippage sensitivity. GOAL-10D remains locked.
+cost/slippage sensitivity. GOAL-DATA-PROVIDER-02A now implements only a
+review-only multi-provider capability probe over Tushare Pro, Baostock,
+AkShare, efinance, qstock, yfinance auxiliary, and local import fallback; it
+writes provider metadata only and does not build an evaluation panel.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D remain locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -130,6 +145,10 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
+- GOAL-DATA-PROVIDER-02B provider selection.
+- GOAL-DATA-PANEL-02 evaluation panel build.
+- GOAL-V1-DIAGNOSTIC-COVERAGE-03 multi-provider diagnostics.
+- GOAL-10B.3 recommendation revalidation.
 - GOAL-10D failure attribution.
 - Signal and portfolio backtests.
 - Cost/slippage sensitivity execution.

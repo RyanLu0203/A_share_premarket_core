@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-27 - GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe
+
+- Implemented GOAL-DATA-PROVIDER-02A only as a review-only provider capability
+  probe gate over the current approved-symbol smoke universe.
+- Added provider capability, schema mapping, and failure taxonomy CSVs for
+  Tushare Pro, Baostock, AkShare, efinance, qstock, yfinance auxiliary, and
+  local import fallback, plus report, manifest, audit, contract, docs, scripts,
+  tests, and workflow governance.
+- Kept GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+  GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D, dashboards, trading,
+  production, broker, local-lake, factor-mining, and DQN/RL locked.
+- Created no final evaluation panel, recommendation diagnostics, position-band
+  diagnostics, backtest rows, portfolio returns, equity curves, dashboard,
+  HTML, Streamlit, frontend, visual report, trading, production, broker,
+  local-lake, factor-mining, or DQN/RL outputs.
+
 ## 2026-06-27 - GOAL-10C Cost / Slippage Sensitivity Gate
 
 - Implemented GOAL-10C only as a review-only position-band cost/slippage

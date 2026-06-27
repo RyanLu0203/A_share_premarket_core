@@ -22,7 +22,9 @@ gate, the GOAL-10A design-only future backtest contract gate, the GOAL-10B
 review-only recommendation diagnostics backtest, and the GOAL-10B.1
 review-only coverage repair diagnostic gate, plus GOAL-DATA-LABEL-01
 review-only forward-return label coverage expansion, plus
-GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic coverage.
+GOAL-V1-DIAGNOSTIC-COVERAGE-02 review-only multi-symbol diagnostic coverage,
+GOAL-10B.2/GOAL-10C review-only bounded diagnostics, and
+GOAL-DATA-PROVIDER-02A review-only multi-provider capability probing.
 
 ## Repository Roles
 
@@ -105,6 +107,12 @@ python scripts/run_goal_data_label01_forward_return_label_coverage_expansion.py
 python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py
 python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py
 python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py
+python scripts/run_goal10b2_recommendation_backtest_revalidation.py
+python scripts/audit_goal10b2_recommendation_backtest_revalidation.py
+python scripts/run_goal10c_cost_slippage_sensitivity_gate.py
+python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py
+python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py
+python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -168,6 +176,11 @@ flowchart TD
     DL01 -. "review-only diagnostics" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     DC02 -. "review-only revalidation" .-> B10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B2 -. "review-only sensitivity" .-> B10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    B10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    P02A -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
+    PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
+    DC03 -. "locked future" .-> B10B3["GOAL-10B.3 Recommendation Revalidation<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> DASH["Dashboard / Daily Report UI<br/>(locked_future)"]
 ```
@@ -234,6 +247,12 @@ horizon-coverage diagnostics. GOAL-10C is implemented only as review-only
 position-band cost/slippage sensitivity: it writes 8 input rows, 24 row-level
 sensitivity rows, and 3 group metric rows. GOAL-10D, dashboard, trading,
 production, local-lake, factor-mining, broker, and DQN/RL remain locked.
+GOAL-DATA-PROVIDER-02A is implemented only as a review-only multi-provider
+capability probe for Tushare Pro, Baostock, AkShare, efinance, qstock,
+yfinance auxiliary, and local import fallback. It writes provider metadata only
+and does not build a final evaluation panel. GOAL-DATA-PROVIDER-02B,
+GOAL-DATA-PANEL-02, GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, and GOAL-10D
+remain `locked_future`.
 
 ## Required Public Commands
 
@@ -322,6 +341,12 @@ review-only validation wrappers:
 - `python scripts/audit_goal_data_label01_forward_return_label_coverage_expansion.py`
 - `python scripts/run_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`
 - `python scripts/audit_goal_v1_diagnostic_coverage02_multi_symbol_diagnostics_expansion.py`
+- `python scripts/run_goal10b2_recommendation_backtest_revalidation.py`
+- `python scripts/audit_goal10b2_recommendation_backtest_revalidation.py`
+- `python scripts/run_goal10c_cost_slippage_sensitivity_gate.py`
+- `python scripts/audit_goal10c_cost_slippage_sensitivity_gate.py`
+- `python scripts/run_goal_data_provider02a_multi_provider_capability_probe_gate.py`
+- `python scripts/audit_goal_data_provider02a_multi_provider_capability_probe_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`

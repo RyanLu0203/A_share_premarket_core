@@ -72,7 +72,16 @@ def test_goal06c_is_review_only_and_downstream_are_not_implemented_active() -> N
     assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["status"] == "implemented_review_only"
     assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["implemented_in_repo"] == "true"
     assert rows["goal10c_backtest_cost_slippage_sensitivity_gate"]["depends_on"] == "goal10b2_recommendation_backtest_revalidation"
-    for workflow_id in ["goal10d_backtest_failure_attribution_gate"]:
+    assert rows["goal_data_provider02a_multi_provider_capability_probe"]["status"] == "implemented_review_only"
+    assert rows["goal_data_provider02a_multi_provider_capability_probe"]["implemented_in_repo"] == "true"
+    assert rows["goal_data_provider02a_multi_provider_capability_probe"]["depends_on"] == "goal10c_backtest_cost_slippage_sensitivity_gate"
+    for workflow_id in [
+        "goal_data_provider02b_provider_selection_gate",
+        "goal_data_panel02_evaluation_panel_gate",
+        "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
+        "goal10b3_recommendation_backtest_revalidation",
+        "goal10d_backtest_failure_attribution_gate",
+    ]:
         assert rows[workflow_id]["status"] == "locked_future"
         assert rows[workflow_id]["implemented_in_repo"] == "false"
     assert rows["dashboard_daily_report"]["status"] == "locked_future"

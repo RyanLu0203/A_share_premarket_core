@@ -46,6 +46,11 @@ flowchart TD
     DL01 -. "review-only diagnostics" .-> DC02["GOAL-V1-DIAGNOSTIC-COVERAGE-02 Multi-Symbol Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     DC02 -. "review-only revalidation" .-> T10B2["GOAL-10B.2 Recommendation Backtest Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B2 -. "review-only sensitivity" .-> T10C["GOAL-10C Cost / Slippage Sensitivity<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    T10C -. "provider capability probe" .-> P02A["GOAL-DATA-PROVIDER-02A Multi-Provider Capability Probe<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    P02A -. "locked future" .-> P02B["GOAL-DATA-PROVIDER-02B Provider Selection<br/>(locked_future)"]
+    P02B -. "locked future" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
+    PANEL02 -. "locked future" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Multi-Provider Diagnostics<br/>(locked_future)"]
+    DC03 -. "locked future" .-> T10B3["GOAL-10B.3 Recommendation Backtest Revalidation<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
@@ -100,8 +105,13 @@ GOAL-DATA-LABEL-01 is implemented only as review-only label coverage evidence,
 and GOAL-V1-DIAGNOSTIC-COVERAGE-02 is implemented only as non-actionable
 multi-symbol diagnostic coverage evidence. GOAL-10B.2 and GOAL-10C are
 implemented only as review-only non-actionable revalidation and sensitivity
-diagnostics over bounded DC02 rows. GOAL-10D, Dashboard / Daily Report UI, and
-downstream execution stages remain locked future work; no dashboard files,
+diagnostics over bounded DC02 rows. GOAL-DATA-PROVIDER-02A is implemented only
+as review-only provider capability metadata for future source-backed planning;
+it builds no evaluation panel and creates no diagnostics or backtests.
+GOAL-DATA-PROVIDER-02B, GOAL-DATA-PANEL-02,
+GOAL-V1-DIAGNOSTIC-COVERAGE-03, GOAL-10B.3, GOAL-10D,
+Dashboard / Daily Report UI, and downstream execution stages remain locked
+future work; no dashboard files,
 visual reports, frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

@@ -1,0 +1,98 @@
+{
+  "approved_universe_source": "configs/universe/approved_symbols.csv",
+  "downstream_locks": {
+    "dashboard_daily_report": "locked_future",
+    "goal10b3_recommendation_backtest_revalidation": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "goal_data_panel02_evaluation_panel_gate": "locked_future",
+    "goal_data_provider02b_provider_selection_gate": "locked_future",
+    "goal_v1_diagnostic_coverage03_multi_provider_diagnostics": "locked_future"
+  },
+  "forbidden_outputs": [
+    "final_evaluation_panel_created",
+    "evaluation_panel_created",
+    "recommendation_diagnostics_run",
+    "position_band_diagnostics_run",
+    "backtests_run",
+    "goal10b3_run",
+    "goal10c_rerun_by_this_goal",
+    "buy_sell_hold_outputs_generated",
+    "target_prices_generated",
+    "position_sizing_generated",
+    "order_quantities_generated",
+    "portfolio_weights_generated",
+    "portfolio_returns_generated",
+    "equity_curves_generated",
+    "dashboard_outputs_generated",
+    "dashboard_files_generated",
+    "html_generated",
+    "streamlit_generated",
+    "frontend_code_generated",
+    "visual_reports_generated",
+    "trading_outputs_generated",
+    "paper_trading_enabled",
+    "live_trading_enabled",
+    "broker_integration_enabled",
+    "production_db_writes_created",
+    "production_model_behavior_created",
+    "local_lake_files_created",
+    "factor_mining_outputs_created",
+    "dqn_rl_outputs_created",
+    "raw_provider_payloads_committed",
+    "provider_tokens_committed",
+    "secrets_logged",
+    "approved_universe_expanded",
+    "source_backed_panel_materialized",
+    "downstream_execution_unlocked_by_this_goal"
+  ],
+  "goal": "GOAL-DATA-PROVIDER-02A-MULTI-PROVIDER-CAPABILITY-PROBE-GATE",
+  "mode": "review_only_multi_provider_capability_probe",
+  "network_default": "disabled_unless_ASHARE_ALLOW_NETWORK_INGESTION_1",
+  "probe_window": {
+    "end": "2026-06-19",
+    "start": "2026-05-11",
+    "trading_days": 30
+  },
+  "providers": [
+    {
+      "allow_env": "ASHARE_ALLOW_TUSHARE",
+      "provider_name": "tushare_pro",
+      "requires_token": true,
+      "role": "primary_candidate",
+      "token_env": "TUSHARE_TOKEN"
+    },
+    {
+      "provider_name": "baostock",
+      "requires_token": false,
+      "role": "primary_candidate"
+    },
+    {
+      "provider_name": "akshare",
+      "requires_token": false,
+      "role": "primary_candidate"
+    },
+    {
+      "provider_name": "efinance",
+      "requires_token": false,
+      "role": "primary_candidate"
+    },
+    {
+      "forbidden_modules": [
+        "backtest",
+        "strategy"
+      ],
+      "provider_name": "qstock",
+      "role": "data_candidate"
+    },
+    {
+      "provider_name": "yfinance",
+      "role": "auxiliary_only",
+      "source_priority": "auxiliary_not_primary"
+    },
+    {
+      "provider_name": "local_import",
+      "role": "fallback"
+    }
+  ],
+  "review_only": true
+}

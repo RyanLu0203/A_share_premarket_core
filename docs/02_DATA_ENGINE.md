@@ -72,6 +72,17 @@ position-band diagnostic coverage rows, preserves canonical GOAL-07B/GOAL-08B/
 GOAL-09 artifacts, and does not fetch data, run backtests, write local lake
 files, create portfolio returns, create equity curves, create dashboard outputs,
 or write production storage.
+GOAL-DATA-PROVIDER-02A writes only review-only provider capability metadata
+under `outputs/providers/`, `configs/providers/`, `docs/providers/`, and
+`outputs/audits/`. It probes or records Tushare Pro, Baostock, AkShare,
+efinance, qstock, yfinance auxiliary, and local import fallback readiness over
+the current approved-symbol smoke universe and a 30-trading-day contract
+window. Network provider calls remain disabled by default unless explicitly
+enabled by policy; Tushare Pro requires an external `TUSHARE_TOKEN` and
+explicit opt-in. Provider-02A does not expand the approved universe, fetch or
+commit raw payloads, build a final evaluation panel, create diagnostics, run
+backtests, write local lake files, create portfolio returns, create equity
+curves, create dashboard outputs, or write production storage.
 
 ## Active Contracts
 
@@ -103,6 +114,9 @@ or write production storage.
   `docs/backtest/`, and `outputs/audits/` only.
 - GOAL-DATA-LABEL-01 forward-return label coverage evidence under
   `outputs/labels/`, `docs/labels/`, and `outputs/audits/` only.
+- GOAL-DATA-PROVIDER-02A provider capability metadata under
+  `outputs/providers/`, `configs/providers/`, `docs/providers/`, and
+  `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -167,3 +181,8 @@ or write production storage.
   recommendations, positions, sizing, weights, orders, portfolio returns,
   equity curves, dashboards, local-lake data, trading, production, broker,
   factor-mining, or DQN/RL outputs.
+- Do not treat GOAL-DATA-PROVIDER-02A provider capability metadata as
+  permission to select a provider, expand the approved universe, build an
+  evaluation panel, create new diagnostics, run backtests, fetch or commit raw
+  payloads, write local-lake data, create dashboards, or unlock trading,
+  production, broker, factor-mining, or DQN/RL paths.
