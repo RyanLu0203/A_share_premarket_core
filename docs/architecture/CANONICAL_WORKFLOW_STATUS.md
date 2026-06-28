@@ -18,6 +18,10 @@ a block is implemented in this repository.
   only; downstream execution remains locked.
 - `implemented_research_only`: implemented as research diagnostics only;
   downstream execution remains locked.
+- `implemented_mvp_research_only`: implemented as an MVP research-only
+  diagnostic terminal; downstream recommendation, position, dashboard,
+  execution, production, local-lake, factor-mining, and DQN/RL paths remain
+  locked.
 - `future_review_only`: future review-only work; dotted arrows only.
 - `future_design_only`: future design-only work; dotted arrows only.
 - `locked_future`: locked future work; dotted arrows only.
@@ -90,6 +94,8 @@ Implemented research-only:
 
 - GOAL-QUANT-RESEARCH-01 Factor Research Lab And Score Validity Gate
   (`PASS_WITH_WARNINGS`)
+- GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -114,6 +120,7 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research
 - GOAL-REC-TIERING-01 Recommendation Score Tiering
 - GOAL-DATA-PANEL-02 Evaluation Panel
 - GOAL-10B.4 Recommendation Revalidation

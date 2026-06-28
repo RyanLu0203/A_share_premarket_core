@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-06-28 - GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate
+
+- Implemented GOAL-MVP-01 only as a research-only premarket diagnostic terminal
+  over committed Provider02B, DC03, GOAL-RISK-TIERING-01,
+  GOAL-RISK-TIERING-01.1, and GOAL-QUANT-RESEARCH-01 evidence.
+- Added the MVP Markdown report, symbol diagnostic table, review queue,
+  factor-validity summary, market-context summary, manifests, audit, contract,
+  docs, scripts, tests, and workflow governance.
+- Resolved the MVP report date from committed evidence as `2026-05-21` and ran
+  in `committed_evidence_replay` mode.
+- Recorded `PASS_WITH_WARNINGS` because ready factor count remains 0:
+  no factor is currently approved for recommendation tiering.
+- Kept GOAL-ALPHA-FACTOR-CANDIDATE-01, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, dashboards, trading, production, broker,
+  local-lake, factor-mining, and DQN/RL locked.
+
 ## 2026-06-28 - GOAL-QUANT-RESEARCH-01 Factor Research Lab
 
 - Implemented GOAL-QUANT-RESEARCH-01 only as a research-only factor research

@@ -52,6 +52,8 @@ python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py,PASS,local_
 python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py,PASS,local_only,
 python scripts/run_goal_quant_research01_factor_research_lab_gate.py,PASS,local_only,
 python scripts/audit_goal_quant_research01_factor_research_lab_gate.py,PASS,local_only,
+python scripts/run_goal_mvp01_premarket_research_terminal_gate.py,PASS,local_only,
+python scripts/audit_goal_mvp01_premarket_research_terminal_gate.py,PASS,local_only,
 python scripts/audit_workflow_status.py,PASS,local_only,
 python scripts/run_safety_gate.py,PASS,local_only,
 python scripts/run_adapter_audit.py,PASS,local_only,

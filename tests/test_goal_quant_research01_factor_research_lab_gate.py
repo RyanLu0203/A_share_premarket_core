@@ -87,7 +87,10 @@ def test_goal_quant_research01_preserves_boundaries_and_workflow_locks() -> None
     assert workflow["goal_quant_research01_factor_research_lab_gate"]["depends_on"] == "goal_risk_tiering011_downside_risk_repair_gate"
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["status"] == "locked_future"
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["implemented_in_repo"] == "false"
-    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_quant_research01_factor_research_lab_gate"
+    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
+        "goal_quant_research01_factor_research_lab_gate",
+        "goal_alpha_factor_candidate01_research_gate",
+    }
     for workflow_id in [
         "goal10b4_recommendation_backtest_revalidation",
         "goal_position_band_validation01_position_band_validation_gate",

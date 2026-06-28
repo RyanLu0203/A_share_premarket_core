@@ -110,6 +110,10 @@
   evaluation-panel, IC/RankIC, monotonicity, stability, trial-registry, and
   score-validity diagnostics from committed evidence only; no factor ready for
   recommendation tiering).
+- GOAL-MVP-01 premarket research diagnostic terminal
+  (`PASS_WITH_WARNINGS`; implemented_mvp_research_only committed-evidence
+  replay report, symbol diagnostic table, review queues, factor-validity
+  summary, and market-context summary only; no actionable outputs or UI).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -176,7 +180,12 @@ position-band validation. GOAL-QUANT-RESEARCH-01 now implements only a
 research-only factor lab over committed Provider02B, DC03, GOAL-10B.3,
 GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence; it records
 `no_factor_ready_for_rec_tiering` and recommends GOAL-ALPHA-FACTOR-CANDIDATE-01
-before recommendation tiering. GOAL-REC-TIERING-01, GOAL-10B.4,
+before recommendation tiering. GOAL-MVP-01 now implements only a research-only
+premarket diagnostic terminal from committed evidence replay; it writes the
+latest report for `2026-05-21`, summarizes 50 symbols and factor readiness,
+and creates no actionable recommendation, position, portfolio, dashboard,
+trading, production, local-lake, broker, factor-mining, or DQN/RL outputs.
+GOAL-ALPHA-FACTOR-CANDIDATE-01, GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
 locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
@@ -198,6 +207,7 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha-factor candidate research.
 - GOAL-REC-TIERING-01 recommendation score tiering.
 - GOAL-10B.4 recommendation revalidation after tiering.
 - GOAL-POSITION-BAND-VALIDATION-01 position-band validation.

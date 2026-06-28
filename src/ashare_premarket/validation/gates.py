@@ -36,6 +36,7 @@ from ashare_premarket.providers.goal_data_provider02a import audit_goal_data_pro
 from ashare_premarket.providers.goal_data_provider02a1 import audit_goal_data_provider02a1_network_smoke_test, run_goal_data_provider02a1_network_smoke_test
 from ashare_premarket.providers.goal_data_provider02b import audit_goal_data_provider02b_source_backed_panel_build_gate, run_goal_data_provider02b_source_backed_panel_build_gate
 from ashare_premarket.research.goal_quant_research01 import audit_goal_quant_research01_factor_research_lab_gate, run_goal_quant_research01_factor_research_lab_gate
+from ashare_premarket.mvp.goal_mvp01 import audit_goal_mvp01_premarket_research_terminal_gate, run_goal_mvp01_premarket_research_terminal_gate
 from ashare_premarket.providers.ingestion import audit_stage6c_source_backed_engineering_panel
 from ashare_premarket.risk_tiering.goal_risk_tiering01 import audit_goal_risk_tiering01_risk_severity_numeric_score_gate, run_goal_risk_tiering01_risk_severity_numeric_score_gate
 from ashare_premarket.risk_tiering.goal_risk_tiering011 import audit_goal_risk_tiering011_downside_risk_repair_gate, run_goal_risk_tiering011_downside_risk_repair_gate
@@ -179,6 +180,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_risk_tiering01_risk_severity_numeric_score", run_goal_risk_tiering01_risk_severity_numeric_score_gate(root) and audit_goal_risk_tiering01_risk_severity_numeric_score_gate(root)),
         ("goal_risk_tiering011_downside_risk_repair", run_goal_risk_tiering011_downside_risk_repair_gate(root) and audit_goal_risk_tiering011_downside_risk_repair_gate(root)),
         ("goal_quant_research01_factor_research_lab", run_goal_quant_research01_factor_research_lab_gate(root) and audit_goal_quant_research01_factor_research_lab_gate(root)),
+        ("goal_mvp01_premarket_research_terminal", run_goal_mvp01_premarket_research_terminal_gate(root) and audit_goal_mvp01_premarket_research_terminal_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -302,6 +304,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py", [sys.executable, "scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py"]),
         ("python scripts/run_goal_quant_research01_factor_research_lab_gate.py", [sys.executable, "scripts/run_goal_quant_research01_factor_research_lab_gate.py"]),
         ("python scripts/audit_goal_quant_research01_factor_research_lab_gate.py", [sys.executable, "scripts/audit_goal_quant_research01_factor_research_lab_gate.py"]),
+        ("python scripts/run_goal_mvp01_premarket_research_terminal_gate.py", [sys.executable, "scripts/run_goal_mvp01_premarket_research_terminal_gate.py"]),
+        ("python scripts/audit_goal_mvp01_premarket_research_terminal_gate.py", [sys.executable, "scripts/audit_goal_mvp01_premarket_research_terminal_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),

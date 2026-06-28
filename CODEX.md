@@ -22,7 +22,8 @@ source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed
 diagnostic coverage, GOAL-10B.3 DC03 recommendation revalidation diagnostics,
 GOAL-RISK-TIERING-01 risk severity numeric score tiering, and
 GOAL-RISK-TIERING-01.1 downside risk repair diagnostics, plus
-GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics. Preserve
+GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics, plus
+GOAL-MVP-01 research-only premarket diagnostic terminal evidence. Preserve
 reproducibility and source governance before any future actionable
 recommendation execution, position work, or dashboard work.
 
@@ -184,6 +185,15 @@ recommendation execution, position work, or dashboard work.
   It uses future returns only post-hoc, records `no_factor_ready_for_rec_tiering`,
   and creates no recommendation, position, portfolio, dashboard, trading,
   production, local-lake, broker, factor-mining, or DQN/RL outputs.
+- GOAL-MVP-01 is implemented_mvp_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only a committed-evidence replay premarket
+  research report, symbol diagnostic table, review queue, factor-validity
+  summary, market-context summary, and manifests. The report date is
+  `2026-05-21`; no factor is currently approved for recommendation tiering.
+  It creates no actionable recommendations, positions, portfolio outputs,
+  dashboard/frontend files, trading, production, local-lake, broker,
+  factor-mining, or DQN/RL outputs.
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -355,8 +365,21 @@ unless a later explicit gate allows it.
   construction. GOAL-QUANT-RESEARCH-01 is research-only factor validity
   diagnostics over committed evidence only; it is not factor mining, a
   recommendation-tiering unlock, production predictive validity, or an
-  actionable signal. GOAL-DATA-PANEL-02, GOAL-10D, actual positions,
-  dashboards, and execution remain locked.
+  actionable signal. GOAL-MVP-01 is a research-only terminal over committed
+  evidence replay; it is not a recommendation, position, portfolio, dashboard,
+  trading, production, or factor-mining unlock. GOAL-DATA-PANEL-02, GOAL-10D,
+  actual positions, dashboards, and execution remain locked.
+
+## GOAL-MVP-01 Agent Note
+
+GOAL-MVP-01 is a research-only premarket diagnostic terminal over committed
+Provider02B, DC03, GOAL-RISK-TIERING-01, GOAL-RISK-TIERING-01.1, and
+GOAL-QUANT-RESEARCH-01 evidence. It may maintain the Markdown report,
+supporting CSVs, manifests, docs, and audits only. It must not create
+actionable recommendations, positions, portfolio outputs, dashboard/frontend
+files, trading, production, local-lake, broker, factor-mining, or DQN/RL
+outputs. GOAL-ALPHA-FACTOR-CANDIDATE-01 remains locked until explicitly
+requested.
 
 ## GOAL-06D.1 Agent Note
 

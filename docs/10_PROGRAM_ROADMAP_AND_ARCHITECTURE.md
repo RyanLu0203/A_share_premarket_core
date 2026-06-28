@@ -55,7 +55,9 @@ flowchart TD
     T10B3 -. "risk tiering" .-> RISK01["GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     RISK01 -. "downside repair" .-> RISK011["GOAL-RISK-TIERING-01.1 Downside Risk Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     RISK011 -. "research-only factor lab" .-> QRESEARCH01["GOAL-QUANT-RESEARCH-01 Factor Research Lab<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    QRESEARCH01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
+    MVP01 -. "locked alpha research" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01<br/>(locked_future)"]
+    ALPHA01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -141,7 +143,14 @@ factor lab and score validity gate over committed Provider02B, DC03,
 GOAL-10B.3, GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence; it
 creates no recommendation, position, portfolio, dashboard, trading,
 production, local-lake, broker, factor-mining, or DQN/RL outputs.
-GOAL-REC-TIERING-01, GOAL-10B.4,
+GOAL-MVP-01 is implemented only as a research-only premarket diagnostic
+terminal over committed Provider02B, DC03, risk-tiering, downside-risk, and
+factor-validity evidence. It writes a Markdown report, symbol diagnostic table,
+review queue, factor-validity summary, market-context summary, and manifests
+for the latest committed report date, and creates no actionable outputs,
+positions, portfolios, dashboard/frontend files, trading, production,
+local-lake, broker, factor-mining, or DQN/RL outputs.
+GOAL-ALPHA-FACTOR-CANDIDATE-01, GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
 execution stages remain locked future work; no dashboard files, visual reports,

@@ -154,6 +154,15 @@ This file is long-term project memory for Codex and other coding agents.
   It uses future returns only post-hoc, records `no_factor_ready_for_rec_tiering`,
   and creates no recommendation, position, portfolio, dashboard, trading,
   production, local-lake, broker, factor-mining, or DQN/RL outputs.
+- GOAL-MVP-01 is implemented_mvp_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only a committed-evidence replay premarket
+  research report, symbol diagnostic table, review queue, factor-validity
+  summary, market-context summary, and manifests. The report date is
+  `2026-05-21`; no factor is currently approved for recommendation tiering.
+  It creates no actionable recommendations, positions, portfolio outputs,
+  dashboard/frontend files, trading, production, local-lake, broker,
+  factor-mining, or DQN/RL outputs.
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -322,6 +331,17 @@ predictive validity, recommendation tiering, position validation, dashboard
 work, trading, production, broker integration, local-lake materialization, or a
 DQN/RL unlock. If no factor is ready, request GOAL-ALPHA-FACTOR-CANDIDATE-01
 before GOAL-REC-TIERING-01.
+
+## GOAL-MVP-01 Agent Note
+
+GOAL-MVP-01 is a research-only premarket diagnostic terminal over committed
+Provider02B, DC03, GOAL-RISK-TIERING-01, GOAL-RISK-TIERING-01.1, and
+GOAL-QUANT-RESEARCH-01 evidence. It may maintain the Markdown report,
+supporting CSVs, manifests, docs, and audits only. It must not create
+actionable recommendations, positions, portfolio outputs, dashboard/frontend
+files, trading, production, local-lake, broker, factor-mining, or DQN/RL
+outputs. GOAL-ALPHA-FACTOR-CANDIDATE-01 remains locked until explicitly
+requested.
 
 ## GOAL-06D.1 Agent Note
 

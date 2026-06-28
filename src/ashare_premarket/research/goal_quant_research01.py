@@ -49,6 +49,8 @@ CONTRACT_PATH = "configs/research/goal_quant_research01_factor_research_lab_cont
 DOC_PATH = "docs/research/GOAL_QUANT_RESEARCH01_FACTOR_RESEARCH_LAB_AND_SCORE_VALIDITY_GATE.md"
 
 GOAL_RISK_TIERING011_WORKFLOW_ID = "goal_risk_tiering011_downside_risk_repair_gate"
+GOAL_MVP01_WORKFLOW_ID = "goal_mvp01_premarket_research_terminal_gate"
+GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID = "goal_alpha_factor_candidate01_research_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -581,7 +583,12 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_quant_research")
-    if rec.get("depends_on") != WORKFLOW_ID:
+    expected_rec_dependency = (
+        GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+        if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only"
+        else WORKFLOW_ID
+    )
+    if rec.get("depends_on") != expected_rec_dependency:
         failures.append("goal_rec_tiering01_not_rebased_on_quant_research")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,
@@ -1430,6 +1437,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
         if GOAL10D_WORKFLOW_ID in by_id:
             by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 

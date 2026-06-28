@@ -142,6 +142,16 @@ controls, and does not fetch data, write local lake files, create
 recommendation rows, position rows, portfolios, dashboard outputs, trading
 paths, production storage, broker output, factor-mining output, or DQN/RL
 output.
+GOAL-MVP-01 writes only research-only premarket diagnostic terminal evidence
+under `outputs/mvp/`, `configs/mvp/`, `docs/mvp/`, and `outputs/audits/`. It
+consumes committed Provider02B, DC03, GOAL-RISK-TIERING-01,
+GOAL-RISK-TIERING-01.1, and GOAL-QUANT-RESEARCH-01 evidence only, resolves the
+latest report date from committed evidence, and creates a Markdown report,
+symbol diagnostic table, review queue, factor-validity summary, market-context
+summary, and manifests. It does not fetch data, write local lake files, create
+recommendation rows, position rows, portfolios, dashboard/frontend outputs,
+trading paths, production storage, broker output, factor-mining output, or
+DQN/RL output.
 
 ## Active Contracts
 
@@ -193,6 +203,8 @@ output.
   and `outputs/audits/` only.
 - GOAL-QUANT-RESEARCH-01 factor research evidence under `outputs/research/`,
   `configs/research/`, `docs/research/`, and `outputs/audits/` only.
+- GOAL-MVP-01 premarket terminal evidence under `outputs/mvp/`,
+  `configs/mvp/`, `docs/mvp/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 

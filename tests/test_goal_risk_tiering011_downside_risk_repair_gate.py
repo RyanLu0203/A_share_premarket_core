@@ -89,6 +89,7 @@ def test_goal_risk_tiering011_preserves_no_lookahead_and_downstream_locks() -> N
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
         "goal_risk_tiering011_downside_risk_repair_gate",
         "goal_quant_research01_factor_research_lab_gate",
+        "goal_alpha_factor_candidate01_research_gate",
     }
     for workflow_id in [
         "goal_rec_tiering01_recommendation_score_tiering_gate",

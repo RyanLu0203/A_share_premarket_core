@@ -1,0 +1,47 @@
+{
+  "goal_id": "GOAL-MVP-01",
+  "mode": "mvp_research_only_premarket_diagnostic_terminal",
+  "run_mode": "committed_evidence_replay",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "allowed_inputs": [
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_recommendation_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_position_band_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering01_risk_tiered_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering011_downside_risk_diagnostics.csv",
+    "outputs/research/goal_quant_research01_factor_registry.csv",
+    "outputs/research/goal_quant_research01_score_validity_classification.csv",
+    "outputs/research/goal_quant_research01_factor_bucket_metrics.csv",
+    "outputs/research/goal_quant_research01_factor_ic_rankic_summary.csv",
+    "outputs/research/goal_quant_research01_factor_monotonicity_summary.csv",
+    "outputs/research/goal_quant_research01_factor_rolling_stability_summary.csv",
+    "outputs/research/goal_quant_research01_trial_registry.csv"
+  ],
+  "allowed_outputs": [
+    "outputs/mvp/goal_mvp01_premarket_research_report.md",
+    "outputs/mvp/goal_mvp01_symbol_diagnostic_table.csv",
+    "outputs/mvp/goal_mvp01_review_queue.csv",
+    "outputs/mvp/goal_mvp01_factor_validity_summary.csv",
+    "outputs/mvp/goal_mvp01_market_context_summary.csv",
+    "outputs/mvp/goal_mvp01_run_manifest.json",
+    "outputs/audits/goal_mvp01_premarket_terminal_report.md",
+    "outputs/audits/goal_mvp01_premarket_terminal_manifest.json",
+    "outputs/audits/goal_mvp01_premarket_terminal_audit.md",
+    "docs/mvp/GOAL_MVP01_PREMARKET_RESEARCH_DIAGNOSTIC_TERMINAL_GATE.md",
+    "configs/mvp/goal_mvp01_premarket_terminal_contract.yaml"
+  ],
+  "symbol_diagnostic_schema": ["report_date", "symbol", "source_provider", "panel_contract_status", "data_quality_status", "trading_status", "is_st", "risk_score_bucket", "downside_risk_bucket", "original_dc03_risk_severity", "dc03_recommendation_eligibility_status", "dc03_actionability_status", "dc03_position_band_status", "factor_validity_status", "research_ready_status", "review_queue_category", "review_priority_level", "review_reason_codes", "non_actionable_disclaimer"],
+  "review_queue_schema": ["report_date", "symbol", "review_queue_category", "review_priority_level", "queue_status", "review_reason_codes", "source_provider", "risk_score_bucket", "downside_risk_bucket", "factor_validity_status", "non_actionable_disclaimer"],
+  "forbidden_table_labels": ["ADD", "BUY", "CLOSE_POSITION", "HOLD", "OPEN_POSITION", "ORDER_QUANTITY", "POSITION_SIZE", "REDUCE", "SELL", "STRONG_BUY", "STRONG_SELL", "TARGET_WEIGHT"],
+  "downstream_locks": {
+    "goal_alpha_factor_candidate01_research_gate": "locked_future",
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}
