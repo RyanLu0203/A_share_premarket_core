@@ -86,7 +86,10 @@ def test_goal_risk_tiering011_preserves_no_lookahead_and_downstream_locks() -> N
     assert workflow["goal_risk_tiering011_downside_risk_repair_gate"]["status"] == "implemented_review_only"
     assert workflow["goal_risk_tiering011_downside_risk_repair_gate"]["implemented_in_repo"] == "true"
     assert workflow["goal_risk_tiering011_downside_risk_repair_gate"]["depends_on"] == "goal_risk_tiering01_risk_severity_numeric_score_gate"
-    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_risk_tiering011_downside_risk_repair_gate"
+    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
+        "goal_risk_tiering011_downside_risk_repair_gate",
+        "goal_quant_research01_factor_research_lab_gate",
+    }
     for workflow_id in [
         "goal_rec_tiering01_recommendation_score_tiering_gate",
         "goal10b4_recommendation_backtest_revalidation",

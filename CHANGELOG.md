@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-28 - GOAL-QUANT-RESEARCH-01 Factor Research Lab
+
+- Implemented GOAL-QUANT-RESEARCH-01 only as a research-only factor research
+  lab and score validity gate over committed Provider02B, DC03, GOAL-10B.3,
+  GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence.
+- Added factor registry, factor evaluation panel, bucket metrics, IC/RankIC,
+  monotonicity, rolling stability, regime availability, trial registry,
+  score-validity classification, report, manifest, audit, contract, docs,
+  scripts, tests, and workflow governance.
+- Kept future returns out of factor construction; forward-return fields are
+  used only after factor assignment for post-hoc diagnostics.
+- Recorded `PASS_WITH_WARNINGS` with
+  `no_factor_ready_for_rec_tiering`, recommending GOAL-ALPHA-FACTOR-CANDIDATE-01
+  before recommendation tiering.
+- Kept GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-28 - GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate
 
 - Implemented GOAL-RISK-TIERING-01.1 only as a review-only risk-score

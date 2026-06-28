@@ -21,7 +21,8 @@ review-only network-opt-in provider smoke testing, plus GOAL-DATA-PROVIDER-02B
 source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed
 diagnostic coverage, GOAL-10B.3 DC03 recommendation revalidation diagnostics,
 GOAL-RISK-TIERING-01 risk severity numeric score tiering, and
-GOAL-RISK-TIERING-01.1 downside risk repair diagnostics. Preserve
+GOAL-RISK-TIERING-01.1 downside risk repair diagnostics, plus
+GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics. Preserve
 reproducibility and source governance before any future actionable
 recommendation execution, position work, or dashboard work.
 
@@ -175,6 +176,14 @@ recommendation execution, position work, or dashboard work.
   GOAL-DATA-PROVIDER-02B evidence, separates volatility/momentum from downside
   score construction, excludes future returns from score construction, and
   classifies the current downside-risk tiering signal as weak/unreliable.
+- GOAL-QUANT-RESEARCH-01 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only research-only factor registry,
+  evaluation-panel, IC/RankIC, monotonicity, rolling-stability,
+  trial-registry, and score-validity diagnostics from committed Provider02B,
+  DC03, GOAL-10B.3, GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence.
+  It uses future returns only post-hoc, records `no_factor_ready_for_rec_tiering`,
+  and creates no recommendation, position, portfolio, dashboard, trading,
+  production, local-lake, broker, factor-mining, or DQN/RL outputs.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -268,6 +277,8 @@ python scripts/run_goal_risk_tiering01_risk_severity_numeric_score_gate.py
 python scripts/audit_goal_risk_tiering01_risk_severity_numeric_score_gate.py
 python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py
 python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py
+python scripts/run_goal_quant_research01_factor_research_lab_gate.py
+python scripts/audit_goal_quant_research01_factor_research_lab_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -341,8 +352,11 @@ unless a later explicit gate allows it.
   GOAL-RISK-TIERING-01.1 are separate review-only non-actionable risk
   diagnostics only; GOAL-RISK-TIERING-01.1 does not overwrite
   GOAL-RISK-TIERING-01 or DC03 and keeps future returns out of score
-  construction. GOAL-DATA-PANEL-02,
-  GOAL-10D, actual positions, dashboards, and execution remain locked.
+  construction. GOAL-QUANT-RESEARCH-01 is research-only factor validity
+  diagnostics over committed evidence only; it is not factor mining, a
+  recommendation-tiering unlock, production predictive validity, or an
+  actionable signal. GOAL-DATA-PANEL-02, GOAL-10D, actual positions,
+  dashboards, and execution remain locked.
 
 ## GOAL-06D.1 Agent Note
 

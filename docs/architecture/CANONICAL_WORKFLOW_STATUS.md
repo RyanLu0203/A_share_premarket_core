@@ -16,6 +16,8 @@ a block is implemented in this repository.
 - `implemented_design_only`: implemented as design documentation only.
 - `implemented_infrastructure_only`: implemented as infrastructure governance
   only; downstream execution remains locked.
+- `implemented_research_only`: implemented as research diagnostics only;
+  downstream execution remains locked.
 - `future_review_only`: future review-only work; dotted arrows only.
 - `future_design_only`: future design-only work; dotted arrows only.
 - `locked_future`: locked future work; dotted arrows only.
@@ -83,6 +85,11 @@ Implemented review-only:
 - GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering Gate
   (`PASS_WITH_WARNINGS`)
 - GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate (`PASS_WITH_WARNINGS`)
+
+Implemented research-only:
+
+- GOAL-QUANT-RESEARCH-01 Factor Research Lab And Score Validity Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 

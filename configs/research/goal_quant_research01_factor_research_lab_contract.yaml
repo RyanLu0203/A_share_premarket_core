@@ -1,0 +1,55 @@
+{
+  "goal_id": "GOAL-QUANT-RESEARCH-01",
+  "mode": "research_only_factor_research_lab_and_score_validity_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "allowed_inputs": [
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_v1_diagnostic_coverage03_recommendation_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering01_risk_tiered_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering01_distribution_summary.csv",
+    "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
+    "outputs/diagnostics/goal_risk_tiering011_downside_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering011_component_contribution_summary.csv",
+    "outputs/diagnostics/goal_risk_tiering011_distribution_summary.csv",
+    "outputs/backtest/goal_risk_tiering011_downside_risk_forward_return_metrics.csv",
+    "outputs/backtest/goal10b3_recommendation_group_metrics.csv",
+    "outputs/backtest/goal10b3_group_imbalance_diagnostics.csv"
+  ],
+  "allowed_outputs": [
+    "outputs/research/goal_quant_research01_factor_registry.csv",
+    "outputs/research/goal_quant_research01_factor_evaluation_panel.csv",
+    "outputs/research/goal_quant_research01_factor_bucket_metrics.csv",
+    "outputs/research/goal_quant_research01_factor_ic_rankic_summary.csv",
+    "outputs/research/goal_quant_research01_factor_monotonicity_summary.csv",
+    "outputs/research/goal_quant_research01_factor_rolling_stability_summary.csv",
+    "outputs/research/goal_quant_research01_factor_regime_split_summary.csv",
+    "outputs/research/goal_quant_research01_trial_registry.csv",
+    "outputs/research/goal_quant_research01_score_validity_classification.csv",
+    "outputs/audits/goal_quant_research01_factor_research_lab_report.md",
+    "outputs/audits/goal_quant_research01_factor_research_lab_manifest.json",
+    "outputs/audits/goal_quant_research01_factor_research_lab_audit.md",
+    "configs/research/goal_quant_research01_factor_research_lab_contract.yaml",
+    "docs/research/GOAL_QUANT_RESEARCH01_FACTOR_RESEARCH_LAB_AND_SCORE_VALIDITY_GATE.md"
+  ],
+  "factor_registry_schema": ["factor_id", "factor_family", "factor_name", "source_artifact", "input_columns", "factor_direction_hypothesis", "expected_monotonic_direction", "score_construction_no_lookahead_status", "uses_forward_returns_in_construction", "allowed_for_posthoc_evaluation_only", "research_stage_status", "trial_id", "rule_version", "governance_notes"],
+  "factor_evaluation_schema": ["trade_date", "symbol", "factor_id", "factor_family", "factor_value", "factor_bucket", "factor_quantile", "factor_direction_hypothesis", "expected_monotonic_direction", "forward_return_1d", "forward_return_5d", "forward_return_20d", "benchmark_excess_return_1d", "benchmark_excess_return_5d", "benchmark_excess_return_20d", "source_provider", "universe_mode", "panel_contract_status", "score_construction_no_lookahead_status", "diagnostic_mode", "non_actionable_disclaimer"],
+  "anti_overfitting_policy": [
+    "do_not_tune_score_weights_to_forward_returns",
+    "record_every_trial",
+    "do_not_promote_one_horizon_only",
+    "require_stability_checks",
+    "require_no_lookahead_audit",
+    "do_not_promote_collapsed_bucket_factors",
+    "do_not_use_portfolio_returns_or_equity_curves"
+  ],
+  "downstream_locks": {
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

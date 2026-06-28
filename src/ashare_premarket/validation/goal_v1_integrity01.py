@@ -102,6 +102,7 @@ ALLOWED_STATUSES = {
     "implemented_review_only",
     "implemented_design_only",
     "implemented_infrastructure_only",
+    "implemented_research_only",
     "locked_future",
     "deleted_from_active_mainline",
     "planned_locked",

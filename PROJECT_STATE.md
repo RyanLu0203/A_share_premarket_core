@@ -224,6 +224,18 @@ score, excludes `forward_return_*`, `benchmark_excess_return_*`, and
 assignment for post-hoc evaluation, and records
 `downside_risk_tiering_signal_weak_or_unreliable`. GOAL-RISK-TIERING-01 and
 DC03 artifacts are not overwritten.
+GOAL-QUANT-RESEARCH-01 is implemented as a research-only factor research lab
+and score validity gate (`PASS_WITH_WARNINGS`). It consumes only committed
+Provider02B, DC03, GOAL-10B.3, GOAL-RISK-TIERING-01, and
+GOAL-RISK-TIERING-01.1 evidence, evaluates 11 candidate factor definitions
+over a 66000-row `trade_date + symbol + factor_id` panel, and writes factor
+registry, bucket, IC/RankIC, monotonicity, rolling-stability, regime
+availability, trial-registry, and score-validity diagnostics only. It uses
+forward returns only after factor assignment for post-hoc evaluation, records
+anti-overfitting controls, creates no recommendation rows, position rows,
+portfolio outputs, dashboards, trading paths, production behavior, local-lake
+files, broker outputs, factor-mining outputs, or DQN/RL outputs, and currently
+classifies the state as `no_factor_ready_for_rec_tiering`.
 GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
 portfolio backtest promotion, paper/live trading, broker, production,
@@ -413,6 +425,16 @@ Implemented review-only:
 - GOAL-10B.3 DC03 recommendation revalidation gate (`PASS_WITH_WARNINGS`;
   `implemented_review_only`; non-actionable group/symbol/horizon diagnostics
   from DC03 plus Provider02B evidence only; weak/unreliable signal warning)
+- GOAL-RISK-TIERING-01 risk severity numeric score tiering gate
+  (`PASS_WITH_WARNINGS`; `implemented_review_only`; separate non-actionable
+  risk-tier diagnostics only; future returns excluded from score construction)
+- GOAL-RISK-TIERING-01.1 downside-risk repair gate (`PASS_WITH_WARNINGS`;
+  `implemented_review_only`; separate non-actionable downside-risk diagnostics
+  only; future returns excluded from score construction)
+- GOAL-QUANT-RESEARCH-01 factor research lab and score validity gate
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; research-only factor
+  validity diagnostics over committed Provider02B/DC03/risk-tiering evidence
+  only; no factor ready for recommendation tiering)
 
 Implemented design-only:
 

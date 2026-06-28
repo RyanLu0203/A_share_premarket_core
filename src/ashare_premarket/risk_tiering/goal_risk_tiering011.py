@@ -419,7 +419,10 @@ def audit_goal_risk_tiering011_downside_risk_repair_gate(root: Path) -> bool:
             failures.append(f"{workflow_id}_not_locked_future")
         if downstream.get("implemented_in_repo") != "false":
             failures.append(f"{workflow_id}_marked_implemented")
-    if workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
+    valid_rec_dependencies = {WORKFLOW_ID}
+    if workflow.get("goal_quant_research01_factor_research_lab_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research01_factor_research_lab_gate")
+    if workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {}).get("depends_on") not in valid_rec_dependencies:
         failures.append("goal_rec_tiering01_not_rebased_on_goal_risk_tiering011")
     failures.extend(f"forbidden_output_present:{path}" for path in _forbidden_outputs_present(root))
     failures.extend(f"unexpected_backtest_output:{path}" for path in _unexpected_backtest_outputs(root))
@@ -551,6 +554,14 @@ def goal_risk_tiering011_valid_evidence(root: Path) -> bool:
         and manifest.get("portfolio_returns_generated") is False
         and manifest.get("future_returns_used_in_score") is False
     )
+
+
+def _goal_quant_research01_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research01 import goal_quant_research01_valid_evidence
+    except Exception:
+        return False
+    return goal_quant_research01_valid_evidence(root)
 
 
 def goal_risk_tiering011_implemented_workflow_patch(status: str = PASS_WITH_WARNINGS) -> dict[str, str]:
@@ -1474,7 +1485,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     if result["status"] != BLOCKED and WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(goal_risk_tiering011_implemented_workflow_patch(str(result["status"])))
         by_id[WORKFLOW_ID]["allowed_next_action"] = str(manifest.get("allowed_next_action", ALLOWED_NEXT_WEAK))
-    if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
+    if GOAL_REC_TIERING01_WORKFLOW_ID in by_id and not _goal_quant_research01_valid(root):
         by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
     write_csv(path, rows, fields)
 

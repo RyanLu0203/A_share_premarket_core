@@ -30,7 +30,8 @@ GOAL-DATA-PROVIDER-02B review-only source-backed panel evidence, and
 GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage,
 GOAL-10B.3 review-only DC03 recommendation revalidation diagnostics,
 GOAL-RISK-TIERING-01 review-only risk severity numeric score tiering, and
-GOAL-RISK-TIERING-01.1 review-only downside-risk repair.
+GOAL-RISK-TIERING-01.1 review-only downside-risk repair, plus
+GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics.
 
 ## Repository Roles
 
@@ -131,6 +132,8 @@ python scripts/run_goal_risk_tiering01_risk_severity_numeric_score_gate.py
 python scripts/audit_goal_risk_tiering01_risk_severity_numeric_score_gate.py
 python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py
 python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py
+python scripts/run_goal_quant_research01_factor_research_lab_gate.py
+python scripts/audit_goal_quant_research01_factor_research_lab_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -202,7 +205,8 @@ flowchart TD
     DC03 -. "review-only revalidation" .-> B10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     B10B3 -. "risk tiering" .-> RISK01["GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     RISK01 -. "downside repair" .-> RISK011["GOAL-RISK-TIERING-01.1 Downside Risk Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    RISK011 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    RISK011 -. "research-only factor lab" .-> QRESEARCH01["GOAL-QUANT-RESEARCH-01 Factor Research Lab<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    QRESEARCH01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -302,6 +306,13 @@ implemented only as separate non-actionable downside-risk repair diagnostics:
 it reconstructs component contributions, keeps volatility/momentum flags
 separate from downside score construction, excludes future returns from score
 construction, and classifies the downside signal as weak or unreliable.
+GOAL-QUANT-RESEARCH-01 is implemented only as a research-only factor lab and
+score validity gate over committed Provider02B, DC03, GOAL-10B.3,
+GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence. It writes factor
+registry, evaluation, IC/RankIC, monotonicity, rolling stability, trial
+registry, and score-validity diagnostics only; it creates no recommendation,
+position, portfolio, dashboard, trading, production, local-lake, broker,
+factor-mining, or DQN/RL outputs.
 GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02,
 and GOAL-10D remain `locked_future`.
 
@@ -408,6 +419,10 @@ review-only validation wrappers:
 - `python scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py`
 - `python scripts/run_goal_risk_tiering01_risk_severity_numeric_score_gate.py`
 - `python scripts/audit_goal_risk_tiering01_risk_severity_numeric_score_gate.py`
+- `python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py`
+- `python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py`
+- `python scripts/run_goal_quant_research01_factor_research_lab_gate.py`
+- `python scripts/audit_goal_quant_research01_factor_research_lab_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`

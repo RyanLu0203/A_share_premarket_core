@@ -105,6 +105,11 @@
   downside-risk diagnostics from GOAL-RISK-TIERING-01 plus DC03/Provider02B
   evidence only; volatility/momentum separated and future returns excluded
   from score construction).
+- GOAL-QUANT-RESEARCH-01 factor research lab and score validity gate
+  (`PASS_WITH_WARNINGS`; implemented_research_only factor registry,
+  evaluation-panel, IC/RankIC, monotonicity, stability, trial-registry, and
+  score-validity diagnostics from committed evidence only; no factor ready for
+  recommendation tiering).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -167,7 +172,11 @@ records `risk_tiering_signal_weak_or_unreliable`; GOAL-RISK-TIERING-01.1 now
 implements only separate non-actionable downside-risk repair diagnostics,
 records `downside_risk_tiering_signal_weak_or_unreliable`, and leaves
 GOAL-REC-TIERING-01 for a future explicit gate before GOAL-10B.4 or any
-position-band validation. GOAL-REC-TIERING-01, GOAL-10B.4,
+position-band validation. GOAL-QUANT-RESEARCH-01 now implements only a
+research-only factor lab over committed Provider02B, DC03, GOAL-10B.3,
+GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence; it records
+`no_factor_ready_for_rec_tiering` and recommends GOAL-ALPHA-FACTOR-CANDIDATE-01
+before recommendation tiering. GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
 locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and

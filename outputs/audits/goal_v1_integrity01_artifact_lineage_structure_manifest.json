@@ -176,6 +176,7 @@
     "implemented_active",
     "implemented_design_only",
     "implemented_infrastructure_only",
+    "implemented_research_only",
     "implemented_review_only",
     "locked_future",
     "planned_locked"

@@ -132,6 +132,16 @@ GOAL-RISK-TIERING-01 and DC03 artifacts, and does not fetch data, write local
 lake files, create recommendation rows, position rows, portfolios, dashboard
 outputs, trading paths, production storage, broker output, factor-mining
 output, or DQN/RL output.
+GOAL-QUANT-RESEARCH-01 writes only research-only factor validity diagnostics
+under `outputs/research/`, `configs/research/`, `docs/research/`, and
+`outputs/audits/`. It consumes committed Provider02B, DC03, GOAL-10B.3,
+GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence only. It excludes
+future returns from factor construction, uses future returns only after factor
+assignment for post-hoc diagnostics, records trial and anti-overfitting
+controls, and does not fetch data, write local lake files, create
+recommendation rows, position rows, portfolios, dashboard outputs, trading
+paths, production storage, broker output, factor-mining output, or DQN/RL
+output.
 
 ## Active Contracts
 
@@ -181,6 +191,8 @@ output, or DQN/RL output.
 - GOAL-RISK-TIERING-01.1 downside-risk repair diagnostic evidence under
   `outputs/diagnostics/`, `outputs/backtest/`, `configs/risk/`, `docs/risk/`,
   and `outputs/audits/` only.
+- GOAL-QUANT-RESEARCH-01 factor research evidence under `outputs/research/`,
+  `configs/research/`, `docs/research/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 
@@ -256,6 +268,11 @@ output, or DQN/RL output.
   returns, equity curves, dashboards, local-lake data, trading, production,
   broker, factor-mining, or DQN/RL outputs. Future returns must remain out of
   downside-risk score construction.
+- Do not treat GOAL-QUANT-RESEARCH-01 factor validity diagnostics as
+  permission to create recommendation rows, REC-TIERING outputs, actual
+  positions, sizing, weights, orders, portfolio returns, equity curves,
+  dashboards, local-lake data, trading, production, broker, factor-mining, or
+  DQN/RL outputs. Future returns must remain out of factor construction.
 - Do not treat GOAL-DATA-PROVIDER-02A provider capability metadata as
   permission to select a provider, expand the approved universe, build an
   evaluation panel, create new diagnostics, run backtests, fetch or commit raw
