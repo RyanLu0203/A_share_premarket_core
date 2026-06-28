@@ -174,6 +174,7 @@ ALLOWED_BACKTEST_OUTPUTS = {
     "outputs/backtest/goal10b3_symbol_metrics.csv",
     "outputs/backtest/goal10b3_horizon_coverage.csv",
     "outputs/backtest/goal10b3_group_imbalance_diagnostics.csv",
+    "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
     SNAPSHOT_PATH,
     SENSITIVITY_PATH,
     GROUP_METRICS_PATH,

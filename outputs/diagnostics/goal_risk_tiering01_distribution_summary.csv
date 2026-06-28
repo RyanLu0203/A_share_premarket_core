@@ -1,0 +1,9 @@
+distribution_name,group_type,group_value,row_count,share,unique_symbols,unique_trade_dates,dominant_bucket_share,minimum_bucket_size_warning,collapse_detected,original_dc03_medium_rows,original_dc03_high_rows,diagnostic_status,notes
+risk_score_bucket_distribution,risk_score_bucket,LOW_RISK_REVIEW_ONLY,2891,0.4818333333,48,120,0.4818333333,false,false,5990,10,PASS,Risk score bucket row count and share.
+risk_score_bucket_distribution,risk_score_bucket,MEDIUM_RISK_REVIEW_ONLY,2821,0.4701666667,49,120,0.4818333333,false,false,5990,10,PASS,Risk score bucket row count and share.
+risk_score_bucket_distribution,risk_score_bucket,HIGH_RISK_REVIEW_ONLY,278,0.0463333333,28,101,0.4818333333,false,false,5990,10,PASS,Risk score bucket row count and share.
+risk_score_bucket_distribution,risk_score_bucket,INSUFFICIENT_EVIDENCE_REVIEW_ONLY,10,0.0016666667,1,10,0.4818333333,true,false,5990,10,PASS_WITH_WARNINGS,Risk score bucket row count and share.
+original_dc03_risk_severity_distribution,original_dc03_risk_severity,HIGH,10,0.0016666667,1,10,0.4818333333,true,false,5990,10,PASS,Original DC03 risk severity distribution for comparison.
+original_dc03_risk_severity_distribution,original_dc03_risk_severity,MEDIUM,5990,0.9983333333,50,120,0.4818333333,true,false,5990,10,PASS,Original DC03 risk severity distribution for comparison.
+dominant_bucket_share,diagnostic,dominant_bucket_share,2891,0.4818333333,50,120,0.4818333333,true,false,5990,10,PASS,Dominant risk score bucket share compared with collapse threshold.
+minimum_bucket_size_warning,diagnostic,represented_bucket_minimum,10,0.0016666667,50,120,0.4818333333,true,false,5990,10,PASS_WITH_WARNINGS,Warns when any represented risk score bucket has fewer than 30 rows.

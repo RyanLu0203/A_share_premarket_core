@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-28 - GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering Gate
+
+- Implemented GOAL-RISK-TIERING-01 only as a review-only numeric risk score
+  and risk severity tiering gate over committed DC03 risk diagnostics,
+  GOAL-DATA-PROVIDER-02B panel evidence, and GOAL-10B.3 imbalance evidence.
+- Added a 6000-row separate non-actionable risk-tiered diagnostic artifact,
+  distribution summary, post-hoc forward-return metric output, report,
+  manifest, audit, contract, docs, scripts, tests, and workflow governance.
+- Recorded `PASS_WITH_WARNINGS`: buckets are 2891 LOW, 2821 MEDIUM, 278 HIGH,
+  and 10 INSUFFICIENT_EVIDENCE rows, with the small insufficient bucket causing
+  `risk_tiering_signal_weak_or_unreliable`.
+- Kept forward returns out of score construction; forward-return and benchmark
+  excess fields are used only for post-hoc group evaluation.
+- Preserved canonical GOAL-07B and DC03 risk diagnostics and kept
+  GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-27 - GOAL-10B.3 DC03 Recommendation Revalidation Gate
 
 - Implemented GOAL-10B.3 only as a review-only DC03 recommendation

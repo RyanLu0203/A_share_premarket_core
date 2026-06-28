@@ -111,6 +111,16 @@ write local lake files, create portfolio returns, create equity curves, create
 dashboard outputs, fetch new provider data, persist raw payloads or provider
 tokens, or write production storage. GOAL-10B.3 consumes this DC03 evidence
 only through its separate review-only recommendation revalidation gate.
+GOAL-RISK-TIERING-01 writes only separate review-only risk severity numeric
+score tiering diagnostics under `outputs/diagnostics/`, `outputs/backtest/`,
+`configs/risk/`, `docs/risk/`, and `outputs/audits/`. It consumes committed
+DC03 risk diagnostics, the GOAL-DATA-PROVIDER-02B source-backed panel, and
+GOAL-10B.3 imbalance evidence only. It excludes future returns from score
+construction, uses forward returns only for post-hoc group metrics, preserves
+canonical GOAL-07B and DC03 risk artifacts, and does not fetch data, write
+local lake files, create recommendation rows, position rows, portfolios,
+dashboard outputs, trading paths, production storage, broker output,
+factor-mining output, or DQN/RL output.
 
 ## Active Contracts
 
@@ -153,6 +163,9 @@ only through its separate review-only recommendation revalidation gate.
   `configs/providers/`, `docs/providers/`, and `outputs/audits/` only.
 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed diagnostic coverage evidence
   under `outputs/diagnostics/`, `configs/diagnostics/`, `docs/diagnostics/`,
+  and `outputs/audits/` only.
+- GOAL-RISK-TIERING-01 risk-tier diagnostic evidence under
+  `outputs/diagnostics/`, `outputs/backtest/`, `configs/risk/`, `docs/risk/`,
   and `outputs/audits/` only.
 
 ## Source Evidence Warnings
@@ -218,6 +231,11 @@ only through its separate review-only recommendation revalidation gate.
   recommendations, positions, sizing, weights, orders, portfolio returns,
   equity curves, dashboards, local-lake data, trading, production, broker,
   factor-mining, or DQN/RL outputs.
+- Do not treat GOAL-RISK-TIERING-01 risk-tier diagnostics as permission to
+  create recommendation rows, actual positions, sizing, weights, orders,
+  portfolio returns, equity curves, dashboards, local-lake data, trading,
+  production, broker, factor-mining, or DQN/RL outputs. Future returns must
+  remain out of risk score construction.
 - Do not treat GOAL-DATA-PROVIDER-02A provider capability metadata as
   permission to select a provider, expand the approved universe, build an
   evaluation panel, create new diagnostics, run backtests, fetch or commit raw

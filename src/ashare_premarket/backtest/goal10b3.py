@@ -248,6 +248,7 @@ ALLOWED_BACKTEST_OUTPUTS = {
     SYMBOL_METRICS_PATH,
     HORIZON_COVERAGE_PATH,
     GROUP_IMBALANCE_PATH,
+    "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
     "outputs/backtest/goal10c_position_band_input_snapshot.csv",
     "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
     "outputs/backtest/goal10c_position_band_group_metrics.csv",

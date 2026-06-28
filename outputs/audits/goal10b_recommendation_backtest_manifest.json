@@ -95,6 +95,7 @@
     "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
     "outputs/backtest/goal10c_position_band_group_metrics.csv",
     "outputs/backtest/goal10c_position_band_input_snapshot.csv",
+    "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
     "outputs/audits/goal10b_recommendation_backtest_report.md",
     "outputs/audits/goal10b_recommendation_backtest_manifest.json",
     "outputs/audits/goal10b_recommendation_backtest_audit.md",

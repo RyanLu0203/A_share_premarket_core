@@ -121,6 +121,11 @@ GOAL-DATA-PROVIDER-02B panel rows: `6000`.
 GOAL-DATA-PROVIDER-02B unique symbols: `50`.
 GOAL-DATA-PROVIDER-02B unique trade dates: `120`.
 GOAL-DATA-PROVIDER-02B panel contract status: `source_backed_evaluation_panel_ready_for_dc03`.
+GOAL-RISK-TIERING-01 risk tiering status: `PASS_WITH_WARNINGS`.
+GOAL-RISK-TIERING-01 audit status: `PASS`.
+GOAL-RISK-TIERING-01 risk-tiered rows: `6000`.
+GOAL-RISK-TIERING-01 bucket distribution: `{'HIGH_RISK_REVIEW_ONLY': 278, 'INSUFFICIENT_EVIDENCE_REVIEW_ONLY': 10, 'LOW_RISK_REVIEW_ONLY': 2891, 'MEDIUM_RISK_REVIEW_ONLY': 2821}`.
+GOAL-RISK-TIERING-01 signal classification: `risk_tiering_signal_weak_or_unreliable`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -144,17 +149,21 @@ GOAL-DATA-PROVIDER-02B workflow status: `implemented_review_only`.
 GOAL-DATA-PANEL-02 workflow status: `locked_future`.
 GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `implemented_review_only`.
 GOAL-10B.3 workflow status: `implemented_review_only`.
+GOAL-RISK-TIERING-01 workflow status: `implemented_review_only`.
+GOAL-REC-TIERING-01 workflow status: `locked_future`.
+GOAL-10B.4 workflow status: `locked_future`.
+GOAL-POSITION-BAND-VALIDATION-01 workflow status: `locked_future`.
 GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, and GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics, and GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.
 Known warnings are source-coverage gaps, `CLASS_D_UNCLEAR_KEEP_DOCUMENTED` missing historical GOAL-05/06 source docs, GOAL-06D calibration/stability/provider concentration warnings, and GOAL-06D.1 bounded weak-baseline warnings.
 GOAL-06C.5/GOAL-06C.6 warnings are documented source limitations. GOAL-06C.7 has reached `engineering_pilot`; GOAL-06D and GOAL-06D.1 are implemented review-only; GOAL-07A is design-only and does not unlock calculation.
-GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, GOAL-09 may produce only non-actionable review-only position-band diagnostic rows, GOAL-09.1 may classify warnings for future dashboard design readiness only, GOAL-V1-INTEGRITY-01 may verify lineage/structure only before any explicit GOAL-DASHBOARD-00 design contract request, GOAL-10A may define future backtest contracts only without performance rows, GOAL-10B may compute only review-only non-actionable recommendation diagnostic forward-return metrics, and GOAL-10B.3 may compute only non-actionable DC03 recommendation revalidation diagnostics.
+GOAL-07A.1 reviews GOAL-07A design readiness only; GOAL-07B.0 may mark GOAL-07B future_review_only eligible or preserve its implemented review-only diagnostic state, GOAL-07B may produce review-only non-actionable risk diagnostics, GOAL-08A may define names-only design contracts with zero recommendation rows, GOAL-STORAGE-01 hardens storage without unlocking GOAL-08B by itself, GOAL-08B.0 may mark GOAL-08B review-only eligible or preserve its implemented diagnostic state, GOAL-08B may produce only non-actionable review-only recommendation diagnostic rows, GOAL-09.0 may mark GOAL-09 position-band diagnostics future_review_only eligible, GOAL-09 may produce only non-actionable review-only position-band diagnostic rows, GOAL-09.1 may classify warnings for future dashboard design readiness only, GOAL-V1-INTEGRITY-01 may verify lineage/structure only before any explicit GOAL-DASHBOARD-00 design contract request, GOAL-10A may define future backtest contracts only without performance rows, GOAL-10B may compute only review-only non-actionable recommendation diagnostic forward-return metrics, GOAL-10B.3 may compute only non-actionable DC03 recommendation revalidation diagnostics, and GOAL-RISK-TIERING-01 may compute only separate non-actionable risk tier diagnostics.
 
 Protected regression commands:
 - `python scripts/audit_existing_modules.py`

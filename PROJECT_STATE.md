@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-27
+Last updated: 2026-06-28
 
 ## Current Stage
 
@@ -202,6 +202,17 @@ position-band validation. It creates no BUY/SELL/HOLD output, target price,
 position size, weight, order, portfolio return, equity curve, dashboard,
 trading path, production behavior, broker output, local lake file,
 factor-mining output, or DQN/RL output.
+GOAL-RISK-TIERING-01 is implemented as a review-only risk severity and numeric
+score tiering gate (`PASS_WITH_WARNINGS`). It consumes only DC03 risk
+diagnostics, the GOAL-DATA-PROVIDER-02B source-backed panel, and GOAL-10B.3
+imbalance evidence, and writes a separate 6000-row non-actionable risk-tiered
+diagnostic artifact. Bucket distribution is 2891 LOW, 2821 MEDIUM, 278 HIGH,
+and 10 INSUFFICIENT_EVIDENCE review-only rows; the 10-row insufficient bucket
+keeps the result at `risk_tiering_signal_weak_or_unreliable`. Score
+construction excludes `forward_return_*`, `benchmark_excess_return_*`, and
+`label_ready_*`; those fields are used only for post-hoc group evaluation.
+Canonical GOAL-07B and DC03 risk diagnostics are not overwritten.
+GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
 portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active

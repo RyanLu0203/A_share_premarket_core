@@ -52,6 +52,10 @@ flowchart TD
     P02B -. "evaluation panel remains locked" .-> PANEL02["GOAL-DATA-PANEL-02 Evaluation Panel<br/>(locked_future)"]
     P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     DC03 -. "review-only revalidation" .-> T10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    T10B3 -. "risk tiering" .-> RISK01["GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    RISK01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
+    T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
     V1 -. "dashboard UI locked" .-> D1["Dashboard / Daily Report UI<br/>(locked_future)"]
     M2 -. "planned locked" .-> V2["V2 Factor Research<br/>(planned_locked; inactive in V1)"]
@@ -121,9 +125,15 @@ artifacts or unlock backtests, dashboards, trading, production, local-lake,
 broker, factor-mining, or DQN/RL outputs. GOAL-10B.3 is implemented only as
 review-only DC03 recommendation revalidation diagnostics and records weak /
 unreliable signal evidence due group imbalance and unavailable numeric-score
-IC/RankIC. GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and
-downstream execution stages remain locked future work; no dashboard files,
-visual reports, frontend, or UI output exist. V2 factor
+IC/RankIC. GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering is
+implemented only as review-only separate non-actionable risk-tier diagnostics;
+it excludes future returns from score construction, uses forward returns only
+post-hoc, preserves canonical GOAL-07B/DC03 risk artifacts, and records weak /
+unreliable tiering evidence due the small insufficient-evidence bucket.
+GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
+execution stages remain locked future work; no dashboard files, visual reports,
+frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, infrastructure-only, locked, planned-locked, and
