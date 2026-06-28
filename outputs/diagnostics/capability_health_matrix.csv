@@ -74,3 +74,4 @@ goal_data_provider02b_source_backed_evaluation_panel,GOAL-DATA-PROVIDER-02B revi
 goal_v1_diagnostic_coverage03_source_backed_multi_symbol_diagnostics,GOAL-V1-DIAGNOSTIC-COVERAGE-03 review-only source-backed diagnostic coverage,GOAL-V1-DIAGNOSTIC-COVERAGE-03,PASS,ashare_premarket.diagnostics.goal_v1_diagnostic_coverage03,Keep active
 goal10b3_dc03_recommendation_revalidation,GOAL-10B.3 review-only DC03 recommendation revalidation,GOAL-10B.3,PASS,ashare_premarket.backtest.goal10b3,Keep active
 goal_risk_tiering01_risk_severity_numeric_score,GOAL-RISK-TIERING-01 review-only risk severity numeric score tiering,GOAL-RISK-TIERING-01,PASS,ashare_premarket.risk_tiering.goal_risk_tiering01,Keep active
+goal_risk_tiering011_downside_risk_repair,GOAL-RISK-TIERING-01.1 review-only downside risk repair,GOAL-RISK-TIERING-01.1,PASS,ashare_premarket.risk_tiering.goal_risk_tiering011,Keep active

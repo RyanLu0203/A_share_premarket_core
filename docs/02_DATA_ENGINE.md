@@ -121,6 +121,17 @@ canonical GOAL-07B and DC03 risk artifacts, and does not fetch data, write
 local lake files, create recommendation rows, position rows, portfolios,
 dashboard outputs, trading paths, production storage, broker output,
 factor-mining output, or DQN/RL output.
+GOAL-RISK-TIERING-01.1 writes only separate review-only downside-risk repair
+diagnostics under `outputs/diagnostics/`, `outputs/backtest/`, `configs/risk/`,
+`docs/risk/`, and `outputs/audits/`. It consumes committed GOAL-RISK-TIERING-01,
+DC03, and GOAL-DATA-PROVIDER-02B evidence only. It reconstructs deterministic
+component contributions, separates volatility/momentum flags from downside
+score construction, excludes future returns and label readiness fields from the
+score, uses future returns only for post-hoc group metrics, preserves
+GOAL-RISK-TIERING-01 and DC03 artifacts, and does not fetch data, write local
+lake files, create recommendation rows, position rows, portfolios, dashboard
+outputs, trading paths, production storage, broker output, factor-mining
+output, or DQN/RL output.
 
 ## Active Contracts
 
@@ -165,6 +176,9 @@ factor-mining output, or DQN/RL output.
   under `outputs/diagnostics/`, `configs/diagnostics/`, `docs/diagnostics/`,
   and `outputs/audits/` only.
 - GOAL-RISK-TIERING-01 risk-tier diagnostic evidence under
+  `outputs/diagnostics/`, `outputs/backtest/`, `configs/risk/`, `docs/risk/`,
+  and `outputs/audits/` only.
+- GOAL-RISK-TIERING-01.1 downside-risk repair diagnostic evidence under
   `outputs/diagnostics/`, `outputs/backtest/`, `configs/risk/`, `docs/risk/`,
   and `outputs/audits/` only.
 
@@ -236,6 +250,12 @@ factor-mining output, or DQN/RL output.
   portfolio returns, equity curves, dashboards, local-lake data, trading,
   production, broker, factor-mining, or DQN/RL outputs. Future returns must
   remain out of risk score construction.
+- Do not treat GOAL-RISK-TIERING-01.1 downside-risk repair diagnostics as
+  permission to overwrite GOAL-RISK-TIERING-01 or DC03 artifacts, create
+  recommendation rows, actual positions, sizing, weights, orders, portfolio
+  returns, equity curves, dashboards, local-lake data, trading, production,
+  broker, factor-mining, or DQN/RL outputs. Future returns must remain out of
+  downside-risk score construction.
 - Do not treat GOAL-DATA-PROVIDER-02A provider capability metadata as
   permission to select a provider, expand the approved universe, build an
   evaluation panel, create new diagnostics, run backtests, fetch or commit raw

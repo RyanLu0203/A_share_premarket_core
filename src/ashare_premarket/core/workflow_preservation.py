@@ -591,6 +591,47 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_risk_tiering01"
+    if _goal_risk_tiering011_valid(root):
+        from ashare_premarket.risk_tiering.goal_risk_tiering011 import (
+            GOAL10B4_WORKFLOW_ID,
+            GOAL10D_WORKFLOW_ID,
+            GOAL_REC_TIERING01_WORKFLOW_ID,
+            POSITION_BAND_VALIDATION_WORKFLOW_ID,
+            WORKFLOW_ID as GOAL_RISK_TIERING011_WORKFLOW_ID,
+            goal_risk_tiering011_implemented_workflow_patch,
+            locked_goal10b4_patch,
+            locked_goal10d_patch as locked_goal10d_after_goal_risk_tiering011_patch,
+            locked_goal_rec_tiering01_patch,
+            locked_position_band_validation_patch,
+        )
+
+        if GOAL_RISK_TIERING011_WORKFLOW_ID in by_id:
+            by_id[GOAL_RISK_TIERING011_WORKFLOW_ID].update(goal_risk_tiering011_implemented_workflow_patch())
+        if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
+            by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
+        if GOAL10B4_WORKFLOW_ID in by_id:
+            by_id[GOAL10B4_WORKFLOW_ID].update(locked_goal10b4_patch())
+        if POSITION_BAND_VALIDATION_WORKFLOW_ID in by_id:
+            by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
+        if GOAL10D_WORKFLOW_ID in by_id:
+            by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_after_goal_risk_tiering011_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_risk_tiering011"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -685,6 +726,12 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_risk_tiering01_valid(root):
         payload["goal_risk_tiering01_risk_severity_numeric_score_gate"] = "implemented_review_only"
+        payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
+        payload["goal10b4_recommendation_backtest_revalidation"] = False
+        payload["goal_position_band_validation01_position_band_validation_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_risk_tiering011_valid(root):
+        payload["goal_risk_tiering011_downside_risk_repair_gate"] = "implemented_review_only"
         payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
         payload["goal10b4_recommendation_backtest_revalidation"] = False
         payload["goal_position_band_validation01_position_band_validation_gate"] = False
@@ -887,6 +934,15 @@ def _goal_risk_tiering01_valid(root: Path) -> bool:
         from ashare_premarket.risk_tiering.goal_risk_tiering01 import goal_risk_tiering01_valid_evidence
 
         return goal_risk_tiering01_valid_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_risk_tiering011_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.risk_tiering.goal_risk_tiering011 import goal_risk_tiering011_valid_evidence
+
+        return goal_risk_tiering011_valid_evidence(root)
     except Exception:
         return False
 

@@ -82,6 +82,7 @@ Implemented review-only:
 - GOAL-10B.3 DC03 Recommendation Revalidation Gate (`PASS_WITH_WARNINGS`)
 - GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering Gate
   (`PASS_WITH_WARNINGS`)
+- GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 

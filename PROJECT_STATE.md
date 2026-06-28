@@ -212,6 +212,18 @@ keeps the result at `risk_tiering_signal_weak_or_unreliable`. Score
 construction excludes `forward_return_*`, `benchmark_excess_return_*`, and
 `label_ready_*`; those fields are used only for post-hoc group evaluation.
 Canonical GOAL-07B and DC03 risk diagnostics are not overwritten.
+GOAL-RISK-TIERING-01.1 is implemented as a review-only risk-score
+directionality and downside-risk repair gate (`PASS_WITH_WARNINGS`). It
+consumes only GOAL-RISK-TIERING-01 diagnostics/distribution/forward metrics,
+DC03 risk diagnostics, and the GOAL-DATA-PROVIDER-02B source-backed panel, then
+writes separate non-actionable downside-risk diagnostics, component
+contribution, distribution, and post-hoc forward-return metric evidence. It
+separates volatility/momentum and abnormal movement flags from the downside
+score, excludes `forward_return_*`, `benchmark_excess_return_*`, and
+`label_ready_*` from score construction, uses future returns only after bucket
+assignment for post-hoc evaluation, and records
+`downside_risk_tiering_signal_weak_or_unreliable`. GOAL-RISK-TIERING-01 and
+DC03 artifacts are not overwritten.
 GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
 portfolio backtest promotion, paper/live trading, broker, production,

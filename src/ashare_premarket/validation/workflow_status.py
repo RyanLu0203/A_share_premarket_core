@@ -83,6 +83,9 @@ GOAL10B3_ALLOWED_NEXT = "fix_goal10b3_revalidation_warnings_before_position_band
 GOAL_RISK_TIERING01_WORKFLOW_ID = "goal_risk_tiering01_risk_severity_numeric_score_gate"
 GOAL_RISK_TIERING01_ALLOWED_NEXT_WEAK = "repair_goal_risk_tiering01_rules_before_goal_rec_tiering01"
 GOAL_RISK_TIERING01_ALLOWED_NEXT_AVAILABLE = "request_goal_rec_tiering01_recommendation_score_tiering_gate"
+GOAL_RISK_TIERING011_WORKFLOW_ID = "goal_risk_tiering011_downside_risk_repair_gate"
+GOAL_RISK_TIERING011_ALLOWED_NEXT_WEAK = "review_deterministic_downside_risk_rules_before_goal_rec_tiering01"
+GOAL_RISK_TIERING011_ALLOWED_NEXT_AVAILABLE = "request_goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -148,6 +151,8 @@ def run_workflow_status_audit(root: Path) -> bool:
         failures.append("full roadmap does not label DQN/RL as deleted_from_active_mainline")
     if "GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering" not in full_roadmap or "implemented_review_only" not in full_roadmap:
         failures.append("full roadmap does not label GOAL-RISK-TIERING-01 risk tiering as implemented_review_only")
+    if "GOAL-RISK-TIERING-01.1 Downside Risk Repair" not in full_roadmap or "implemented_review_only" not in full_roadmap:
+        failures.append("full roadmap does not label GOAL-RISK-TIERING-01.1 downside risk repair as implemented_review_only")
 
     by_id = {row["workflow_id"]: row for row in rows}
     goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
@@ -378,6 +383,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_risk_tiering01_report = _read(root / "outputs/audits/goal_risk_tiering01_risk_tiering_report.md")
     goal_risk_tiering01_manifest = _read(root / "outputs/audits/goal_risk_tiering01_risk_tiering_manifest.json")
     goal_risk_tiering01_audit = _read(root / "outputs/audits/goal_risk_tiering01_risk_tiering_audit.md")
+    goal_risk_tiering011 = by_id.get(GOAL_RISK_TIERING011_WORKFLOW_ID, {})
+    goal_risk_tiering011_status = goal_risk_tiering011.get("status")
+    goal_risk_tiering011_report = _read(root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_report.md")
+    goal_risk_tiering011_manifest = _read(root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_manifest.json")
+    goal_risk_tiering011_audit = _read(root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_audit.md")
     goal_rec_tiering01 = by_id.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     goal10b4 = by_id.get(GOAL10B4_WORKFLOW_ID, {})
     position_band_validation = by_id.get(POSITION_BAND_VALIDATION_WORKFLOW_ID, {})
@@ -464,6 +474,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_risk_tiering01_status == "implemented_review_only"
         and _goal_risk_tiering01_readiness_implemented(goal_risk_tiering01_report)
         and "Status: `PASS`" in goal_risk_tiering01_audit
+    )
+    goal_risk_tiering011_evidence_ready = (
+        bool(goal_risk_tiering011)
+        and goal_risk_tiering011_status == "implemented_review_only"
+        and _goal_risk_tiering011_readiness_implemented(goal_risk_tiering011_report)
+        and "Status: `PASS`" in goal_risk_tiering011_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -2167,7 +2183,11 @@ def run_workflow_status_audit(root: Path) -> bool:
                 if required_false not in goal_risk_tiering01_manifest:
                     failures.append(f"GOAL-RISK-TIERING-01 manifest missing false boundary flag: {required_false}")
             for workflow_id, row, expected_dependency in [
-                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_RISK_TIERING01_WORKFLOW_ID),
+                (
+                    GOAL_REC_TIERING01_WORKFLOW_ID,
+                    goal_rec_tiering01,
+                    GOAL_RISK_TIERING011_WORKFLOW_ID if goal_risk_tiering011 else GOAL_RISK_TIERING01_WORKFLOW_ID,
+                ),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
             ]:
@@ -2181,6 +2201,106 @@ def run_workflow_status_audit(root: Path) -> bool:
         else:
             if goal_risk_tiering01.get("status") != "locked_future" or goal_risk_tiering01.get("implemented_in_repo") != "false":
                 failures.append("GOAL-RISK-TIERING-01 must remain locked_future until valid evidence exists")
+    if goal_risk_tiering011:
+        if goal_risk_tiering011_evidence_ready:
+            if not goal_risk_tiering01_evidence_ready:
+                failures.append("GOAL-RISK-TIERING-01.1 requires GOAL-RISK-TIERING-01 implemented_review_only evidence")
+            if goal_risk_tiering011.get("status") != "implemented_review_only":
+                failures.append("GOAL-RISK-TIERING-01.1 must be implemented_review_only when valid evidence exists")
+            if goal_risk_tiering011.get("implemented_in_repo") != "true":
+                failures.append("GOAL-RISK-TIERING-01.1 review-only row must be marked implemented")
+            if goal_risk_tiering011.get("allowed_next_action") not in {
+                GOAL_RISK_TIERING011_ALLOWED_NEXT_WEAK,
+                GOAL_RISK_TIERING011_ALLOWED_NEXT_AVAILABLE,
+            }:
+                failures.append("GOAL-RISK-TIERING-01.1 allowed_next_action is invalid")
+            if goal_risk_tiering011.get("depends_on") != GOAL_RISK_TIERING01_WORKFLOW_ID:
+                failures.append("GOAL-RISK-TIERING-01.1 must depend on GOAL-RISK-TIERING-01")
+            for required_text in [
+                '"mode": "review_only_risk_score_directionality_downside_repair_gate"',
+                '"downside_risk_row_count": 6000',
+                '"unique_symbols": 50',
+                '"unique_trade_dates": 120',
+                '"score_construction_excludes_future_returns": true',
+                '"future_returns_used_only_for_post_hoc_evaluation": true',
+                '"no_lookahead_score_construction_check": true',
+                '"component_reconstruction_available": true',
+                '"downside_bucket_variation_available": true',
+                '"original_high_bucket_volatility_momentum_dominated": true',
+                '"volatility_momentum_separated_from_downside_score": true',
+                '"goal_rec_tiering01_status_after_goal_risk_tiering011": "locked_future"',
+                '"goal10b4_status_after_goal_risk_tiering011": "locked_future"',
+                '"position_band_validation_status_after_goal_risk_tiering011": "locked_future"',
+                '"goal10d_status_after_goal_risk_tiering011": "locked_future"',
+                '"dashboard_daily_report_status_after_goal_risk_tiering011": "locked_future"',
+                '"portfolio_backtest_status_after_goal_risk_tiering011": "locked_future"',
+            ]:
+                if required_text not in goal_risk_tiering011_manifest:
+                    failures.append(f"GOAL-RISK-TIERING-01.1 manifest missing required marker: {required_text}")
+            if (
+                '"signal_classification": "downside_risk_tiering_signal_available"' not in goal_risk_tiering011_manifest
+                and '"signal_classification": "downside_risk_tiering_signal_weak_or_unreliable"' not in goal_risk_tiering011_manifest
+                and '"signal_classification": "downside_risk_tiering_not_evaluable"' not in goal_risk_tiering011_manifest
+            ):
+                failures.append("GOAL-RISK-TIERING-01.1 manifest missing signal classification")
+            for required_false in [
+                '"goal_risk_tiering01_outputs_overwritten": false',
+                '"dc03_risk_diagnostics_overwritten": false',
+                '"recommendation_outputs_created": false',
+                '"goal08b_recommendation_rows_created": false',
+                '"goal09_position_band_rows_created": false',
+                '"position_outputs_created": false',
+                '"buy_sell_hold_outputs_generated": false',
+                '"target_prices_generated": false',
+                '"actual_position_sizing_generated": false',
+                '"order_quantities_generated": false',
+                '"target_weights_generated": false',
+                '"portfolio_weights_generated": false',
+                '"portfolio_returns_generated": false',
+                '"equity_curves_generated": false',
+                '"dashboard_outputs_generated": false',
+                '"dashboard_files_generated": false',
+                '"html_generated": false',
+                '"streamlit_generated": false',
+                '"frontend_code_generated": false',
+                '"visual_reports_generated": false',
+                '"backtests_run": false',
+                '"backtest_execution_run": false',
+                '"signal_backtests_run": false',
+                '"portfolio_backtests_run": false',
+                '"goal_rec_tiering01_run": false',
+                '"goal10b4_run": false',
+                '"position_band_validation_run": false',
+                '"new_provider_data_fetched": false',
+                '"local_lake_files_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"outputs_samples_used": false',
+                '"demo_fixture_used_as_primary_evidence": false',
+                '"future_returns_used_in_score": false',
+                '"score_weights_tuned_to_forward_returns": false',
+                '"downstream_execution_unlocked_by_this_goal": false',
+                '"goal_rec_tiering01_unlocked_by_this_goal": false',
+                '"goal10b4_unlocked_by_this_goal": false',
+                '"goal10d_unlocked_by_this_goal": false',
+            ]:
+                if required_false not in goal_risk_tiering011_manifest:
+                    failures.append(f"GOAL-RISK-TIERING-01.1 manifest missing false boundary flag: {required_false}")
+            for workflow_id, row, expected_dependency in [
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_RISK_TIERING011_WORKFLOW_ID),
+                (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
+                (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
+            ]:
+                if row.get("status") != "locked_future":
+                    failures.append(f"{workflow_id} must remain locked_future after GOAL-RISK-TIERING-01.1")
+                if row.get("implemented_in_repo") != "false":
+                    failures.append(f"{workflow_id} must not be implemented after GOAL-RISK-TIERING-01.1")
+                if row.get("depends_on") != expected_dependency:
+                    failures.append(f"{workflow_id} dependency is invalid after GOAL-RISK-TIERING-01.1")
+            _validate_locked_execution_downstream(failures, by_id, context="GOAL-RISK-TIERING-01.1")
+        else:
+            if goal_risk_tiering011.get("status") != "locked_future" or goal_risk_tiering011.get("implemented_in_repo") != "false":
+                failures.append("GOAL-RISK-TIERING-01.1 must remain locked_future until valid evidence exists")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -2252,11 +2372,12 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 status: `{goal_v1_diagnostic_coverage03.get('status', 'missing')}`.",
                 f"GOAL-10B.3 status: `{goal10b3.get('status', 'missing')}`.",
                 f"GOAL-RISK-TIERING-01 status: `{goal_risk_tiering01.get('status', 'missing')}`.",
+                f"GOAL-RISK-TIERING-01.1 status: `{goal_risk_tiering011.get('status', 'missing')}`.",
                 f"GOAL-REC-TIERING-01 status: `{goal_rec_tiering01.get('status', 'missing')}`.",
                 f"GOAL-10B.4 status: `{goal10b4.get('status', 'missing')}`.",
                 f"GOAL-POSITION-BAND-VALIDATION-01 status: `{position_band_validation.get('status', 'missing')}`.",
                 f"GOAL-10D status: `{goal10d.get('status', 'missing')}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence; GOAL-10B.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS coverage repair diagnostic evidence; GOAL-DATA-LABEL-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS forward-return label coverage evidence; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS multi-symbol non-actionable diagnostic evidence; GOAL-DATA-PROVIDER-02A may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS provider capability probe evidence; GOAL-DATA-PROVIDER-02A.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS network opt-in smoke-test evidence; GOAL-RISK-TIERING-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable risk tiering evidence.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence; GOAL-10B.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS coverage repair diagnostic evidence; GOAL-DATA-LABEL-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS forward-return label coverage evidence; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS multi-symbol non-actionable diagnostic evidence; GOAL-DATA-PROVIDER-02A may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS provider capability probe evidence; GOAL-DATA-PROVIDER-02A.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS network opt-in smoke-test evidence; GOAL-RISK-TIERING-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable risk tiering evidence; GOAL-RISK-TIERING-01.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable downside-risk repair evidence.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, GOAL-09.1 dashboard-readiness warning review, GOAL-10B recommendation diagnostics backtest, GOAL-10B.1 coverage repair diagnostics, GOAL-DATA-LABEL-01 forward-return label coverage, GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostic coverage, GOAL-DATA-PROVIDER-02A provider capability metadata, and GOAL-DATA-PROVIDER-02A.1 provider smoke-test metadata are review-only when implemented; GOAL-V1-INTEGRITY-01 is infrastructure-only artifact-lineage governance; GOAL-10A is design-only backtest contract governance. Actual positions, dashboard output, paper/live trading, production, portfolio backtests, performance rows, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -2515,11 +2636,27 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                     failures.append("goal_risk_tiering01_risk_severity_numeric_score_gate must remain unimplemented while locked_future")
                 if row["depends_on"] != GOAL10B3_WORKFLOW_ID:
                     failures.append("goal_risk_tiering01_risk_severity_numeric_score_gate locked row must depend on GOAL-10B.3")
+        if workflow_id == GOAL_RISK_TIERING011_WORKFLOW_ID:
+            if status not in {"locked_future", "implemented_review_only"}:
+                failures.append("goal_risk_tiering011_downside_risk_repair_gate must be locked_future or implemented_review_only")
+            if status == "implemented_review_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_risk_tiering011_downside_risk_repair_gate implemented_review_only must be marked implemented")
+                if row["allowed_next_action"] not in {GOAL_RISK_TIERING011_ALLOWED_NEXT_WEAK, GOAL_RISK_TIERING011_ALLOWED_NEXT_AVAILABLE}:
+                    failures.append("goal_risk_tiering011_downside_risk_repair_gate allowed_next_action is invalid")
+                if row["depends_on"] != GOAL_RISK_TIERING01_WORKFLOW_ID:
+                    failures.append("goal_risk_tiering011_downside_risk_repair_gate implemented row must depend on GOAL-RISK-TIERING-01")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_risk_tiering011_downside_risk_repair_gate must remain unimplemented while locked_future")
+                if row["depends_on"] != GOAL_RISK_TIERING01_WORKFLOW_ID:
+                    failures.append("goal_risk_tiering011_downside_risk_repair_gate locked row must depend on GOAL-RISK-TIERING-01")
         if workflow_id == GOAL_REC_TIERING01_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal_rec_tiering01_recommendation_score_tiering_gate must remain locked_future and unimplemented")
-            if row["depends_on"] != GOAL_RISK_TIERING01_WORKFLOW_ID:
-                failures.append("goal_rec_tiering01_recommendation_score_tiering_gate must depend on GOAL-RISK-TIERING-01")
+            expected_risk_dependency = GOAL_RISK_TIERING011_WORKFLOW_ID if GOAL_RISK_TIERING011_WORKFLOW_ID in by_id else GOAL_RISK_TIERING01_WORKFLOW_ID
+            if row["depends_on"] != expected_risk_dependency:
+                failures.append("goal_rec_tiering01_recommendation_score_tiering_gate must depend on the latest risk-tiering repair gate")
         if workflow_id == GOAL10B4_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal10b4_recommendation_backtest_revalidation must remain locked_future and unimplemented")
@@ -2649,7 +2786,9 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL10B3_WORKFLOW_ID:
         next_goal = "GOAL-RISK-TIERING-01 risk severity numeric score tiering is implemented review-only when valid evidence exists"
     elif row["workflow_id"] == GOAL_RISK_TIERING01_WORKFLOW_ID:
-        next_goal = "Repair risk-tiering signal warnings before GOAL-REC-TIERING-01"
+        next_goal = "Run or preserve GOAL-RISK-TIERING-01.1 downside-risk repair before GOAL-REC-TIERING-01"
+    elif row["workflow_id"] == GOAL_RISK_TIERING011_WORKFLOW_ID:
+        next_goal = "Review downside-risk signal warnings before GOAL-REC-TIERING-01"
     elif row["workflow_id"] == GOAL_REC_TIERING01_WORKFLOW_ID:
         next_goal = "Remain locked until explicit GOAL-REC-TIERING-01 request after risk-tiering evidence is accepted"
     elif row["workflow_id"] == GOAL10B4_WORKFLOW_ID:
@@ -2874,6 +3013,13 @@ def _goal_risk_tiering01_readiness_implemented(readiness: str) -> bool:
     )
 
 
+def _goal_risk_tiering011_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate: PASS" in readiness
+        or "GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
 def _validate_goal10b2_goal10c_state_after_diagnostic_chain(
     failures: list[str],
     goal10b2: dict[str, str],
@@ -2962,6 +3108,7 @@ def _unexpected_goal10b_backtest_outputs(root: Path) -> list[str]:
         "outputs/backtest/goal10b3_horizon_coverage.csv",
         "outputs/backtest/goal10b3_group_imbalance_diagnostics.csv",
         "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
+        "outputs/backtest/goal_risk_tiering011_downside_risk_forward_return_metrics.csv",
         "outputs/backtest/goal10c_position_band_input_snapshot.csv",
         "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
         "outputs/backtest/goal10c_position_band_group_metrics.csv",

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-28 - GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate
+
+- Implemented GOAL-RISK-TIERING-01.1 only as a review-only risk-score
+  directionality and downside-risk repair gate over committed
+  GOAL-RISK-TIERING-01, DC03, and GOAL-DATA-PROVIDER-02B evidence.
+- Added separate non-actionable downside-risk diagnostics, component
+  contribution summary, distribution summary, post-hoc forward-return metric
+  output, report, manifest, audit, contract, docs, scripts, tests, and workflow
+  governance.
+- Separated volatility/momentum and abnormal movement flags from the downside
+  score while keeping `forward_return_*`, `benchmark_excess_return_*`, and
+  `label_ready_*` fields out of score construction.
+- Recorded `PASS_WITH_WARNINGS` with
+  `downside_risk_tiering_signal_weak_or_unreliable` rather than forcing a
+  positive signal.
+- Preserved GOAL-RISK-TIERING-01 and DC03 outputs and kept
+  GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-28 - GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering Gate
 
 - Implemented GOAL-RISK-TIERING-01 only as a review-only numeric risk score

@@ -44,7 +44,8 @@ flowchart TD
     P02B -. "source-backed diagnostics" .-> DC03["GOAL-V1-DIAGNOSTIC-COVERAGE-03 Source-Backed Diagnostics<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     DC03 -. "review-only revalidation" .-> T10B3["GOAL-10B.3 DC03 Recommendation Revalidation<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     T10B3 -. "risk tiering" .-> RISK01["GOAL-RISK-TIERING-01 Risk Severity Numeric Score Tiering<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
-    RISK01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    RISK01 -. "downside repair" .-> RISK011["GOAL-RISK-TIERING-01.1 Downside Risk Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
+    RISK011 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -131,7 +132,12 @@ IC/RankIC. GOAL-RISK-TIERING-01 is implemented only as review-only separate
 non-actionable risk severity numeric score tiering diagnostics; it excludes
 future returns from score construction, uses them only post-hoc, preserves
 canonical GOAL-07B/DC03 risk artifacts, and records weak / unreliable tiering
-evidence due the small insufficient-evidence bucket. GOAL-REC-TIERING-01,
+evidence due the small insufficient-evidence bucket. GOAL-RISK-TIERING-01.1
+Downside Risk Repair is implemented only as review-only separate
+non-actionable downside-risk repair diagnostics; it reconstructs component
+contributions, separates volatility/momentum flags, excludes future returns
+from score construction, and records weak / unreliable downside-risk signal
+evidence. GOAL-REC-TIERING-01,
 GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and
 GOAL-10D remain locked_future.
 V2 factor research is planned but

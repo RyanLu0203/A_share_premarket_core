@@ -126,6 +126,11 @@ GOAL-RISK-TIERING-01 audit status: `PASS`.
 GOAL-RISK-TIERING-01 risk-tiered rows: `6000`.
 GOAL-RISK-TIERING-01 bucket distribution: `{'HIGH_RISK_REVIEW_ONLY': 278, 'INSUFFICIENT_EVIDENCE_REVIEW_ONLY': 10, 'LOW_RISK_REVIEW_ONLY': 2891, 'MEDIUM_RISK_REVIEW_ONLY': 2821}`.
 GOAL-RISK-TIERING-01 signal classification: `risk_tiering_signal_weak_or_unreliable`.
+GOAL-RISK-TIERING-01.1 downside repair status: `PASS_WITH_WARNINGS`.
+GOAL-RISK-TIERING-01.1 audit status: `PASS`.
+GOAL-RISK-TIERING-01.1 downside-risk rows: `6000`.
+GOAL-RISK-TIERING-01.1 bucket distribution: `{'HIGH_DOWNSIDE_RISK_REVIEW_ONLY': 239, 'INSUFFICIENT_DOWNSIDE_EVIDENCE_REVIEW_ONLY': 10, 'LOW_DOWNSIDE_RISK_REVIEW_ONLY': 3864, 'MEDIUM_DOWNSIDE_RISK_REVIEW_ONLY': 1887}`.
+GOAL-RISK-TIERING-01.1 signal classification: `downside_risk_tiering_signal_weak_or_unreliable`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -150,6 +155,7 @@ GOAL-DATA-PANEL-02 workflow status: `locked_future`.
 GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `implemented_review_only`.
 GOAL-10B.3 workflow status: `implemented_review_only`.
 GOAL-RISK-TIERING-01 workflow status: `implemented_review_only`.
+GOAL-RISK-TIERING-01.1 workflow status: `implemented_review_only`.
 GOAL-REC-TIERING-01 workflow status: `locked_future`.
 GOAL-10B.4 workflow status: `locked_future`.
 GOAL-POSITION-BAND-VALIDATION-01 workflow status: `locked_future`.
@@ -157,7 +163,7 @@ GOAL-10D workflow status: `locked_future`.
 Dashboard lock status: `locked_future`.
 Paper/live trading lock status: `locked_future;locked_future`.
 Production lock status: `locked_future;locked_future`.
-Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics, and GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics.
+Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics, GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics, and GOAL-RISK-TIERING-01.1 may produce only separate non-actionable downside-risk repair diagnostics.
 AKShare available: `true`.
 Network ingestion opt-in active: `false`.
 Source-backed bundle manifest: ``PASS``.

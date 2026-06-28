@@ -100,6 +100,11 @@
   (`PASS_WITH_WARNINGS`; implemented_review_only separate non-actionable
   risk-tier diagnostics from DC03 plus Provider02B evidence only; future
   returns excluded from score construction).
+- GOAL-RISK-TIERING-01.1 downside risk repair
+  (`PASS_WITH_WARNINGS`; implemented_review_only separate non-actionable
+  downside-risk diagnostics from GOAL-RISK-TIERING-01 plus DC03/Provider02B
+  evidence only; volatility/momentum separated and future returns excluded
+  from score construction).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -158,7 +163,9 @@ and preserves canonical GOAL-07B/08B/09 artifacts. GOAL-10B.3 now implements
 only review-only DC03 recommendation revalidation diagnostics and records
 `recommendation_revalidation_signal_weak_or_unreliable`; GOAL-RISK-TIERING-01
 now implements only separate non-actionable numeric risk tiering diagnostics,
-records `risk_tiering_signal_weak_or_unreliable`, and leaves
+records `risk_tiering_signal_weak_or_unreliable`; GOAL-RISK-TIERING-01.1 now
+implements only separate non-actionable downside-risk repair diagnostics,
+records `downside_risk_tiering_signal_weak_or_unreliable`, and leaves
 GOAL-REC-TIERING-01 for a future explicit gate before GOAL-10B.4 or any
 position-band validation. GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain

@@ -193,6 +193,7 @@ ALLOWED_BACKTEST_OUTPUTS = {
     "outputs/backtest/goal10b3_horizon_coverage.csv",
     "outputs/backtest/goal10b3_group_imbalance_diagnostics.csv",
     "outputs/backtest/goal_risk_tiering01_risk_tier_forward_return_metrics.csv",
+    "outputs/backtest/goal_risk_tiering011_downside_risk_forward_return_metrics.csv",
     "outputs/backtest/goal10c_position_band_input_snapshot.csv",
     "outputs/backtest/goal10c_cost_slippage_sensitivity.csv",
     "outputs/backtest/goal10c_position_band_group_metrics.csv",

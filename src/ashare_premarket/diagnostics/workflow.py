@@ -163,6 +163,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal_risk_tiering01_status = _goal_risk_tiering01_status(root)
     goal_risk_tiering01_manifest = _goal_risk_tiering01_manifest(root)
     goal_risk_tiering01_audit_status = _audit_status(root / "outputs/audits/goal_risk_tiering01_risk_tiering_audit.md")
+    goal_risk_tiering011_status = _goal_risk_tiering011_status(root)
+    goal_risk_tiering011_manifest = _goal_risk_tiering011_manifest(root)
+    goal_risk_tiering011_audit_status = _audit_status(root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -302,6 +305,11 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-RISK-TIERING-01 risk-tiered rows: `{goal_risk_tiering01_manifest.get('risk_tiered_row_count', 0)}`.",
                 f"GOAL-RISK-TIERING-01 bucket distribution: `{goal_risk_tiering01_manifest.get('risk_score_bucket_distribution', {})}`.",
                 f"GOAL-RISK-TIERING-01 signal classification: `{goal_risk_tiering01_manifest.get('signal_classification', 'not yet generated')}`.",
+                f"GOAL-RISK-TIERING-01.1 downside repair status: `{goal_risk_tiering011_status}`.",
+                f"GOAL-RISK-TIERING-01.1 audit status: `{goal_risk_tiering011_audit_status}`.",
+                f"GOAL-RISK-TIERING-01.1 downside-risk rows: `{goal_risk_tiering011_manifest.get('downside_risk_row_count', 0)}`.",
+                f"GOAL-RISK-TIERING-01.1 bucket distribution: `{goal_risk_tiering011_manifest.get('downside_risk_bucket_distribution', {})}`.",
+                f"GOAL-RISK-TIERING-01.1 signal classification: `{goal_risk_tiering011_manifest.get('signal_classification', 'not yet generated')}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -326,6 +334,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-V1-DIAGNOSTIC-COVERAGE-03 workflow status: `{downstream_status.get('goal_v1_diagnostic_coverage03_multi_provider_diagnostics', 'missing')}`.",
                 f"GOAL-10B.3 workflow status: `{downstream_status.get('goal10b3_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-RISK-TIERING-01 workflow status: `{downstream_status.get('goal_risk_tiering01_risk_severity_numeric_score_gate', 'missing')}`.",
+                f"GOAL-RISK-TIERING-01.1 workflow status: `{downstream_status.get('goal_risk_tiering011_downside_risk_repair_gate', 'missing')}`.",
                 f"GOAL-REC-TIERING-01 workflow status: `{downstream_status.get('goal_rec_tiering01_recommendation_score_tiering_gate', 'missing')}`.",
                 f"GOAL-10B.4 workflow status: `{downstream_status.get('goal10b4_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-POSITION-BAND-VALIDATION-01 workflow status: `{downstream_status.get('goal_position_band_validation01_position_band_validation_gate', 'missing')}`.",
@@ -333,7 +342,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"Dashboard lock status: `{downstream_status.get('dashboard_daily_report', 'missing')}`.",
                 f"Paper/live trading lock status: `{downstream_status.get('paper_trading_journal', 'missing')};{downstream_status.get('broker_live_trading', 'missing')}`.",
                 f"Production lock status: `{downstream_status.get('production_db_writes', 'missing')};{downstream_status.get('production_model_promotion', 'missing')}`.",
-                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics, and GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics.",
+                "Downstream execution lock status: `locked_future_or_deleted_from_active_mainline`; GOAL-09 may produce review-only non-actionable position-band diagnostics only, GOAL-09.1 may produce warning/readiness evidence only, GOAL-V1-INTEGRITY-01 may produce only artifact-lineage integrity evidence, GOAL-10A may define only future backtest contracts without running a backtest, GOAL-10B may produce only non-actionable review-only forward-return diagnostic metrics, GOAL-10B.1 may produce only review-only coverage repair diagnostics, GOAL-DATA-LABEL-01 may produce only forward-return label coverage evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only separate non-actionable diagnostic coverage rows, GOAL-DATA-PROVIDER-02A may produce only provider capability metadata, GOAL-DATA-PROVIDER-02A.1 may produce only opt-in provider smoke-test metadata, GOAL-DATA-PROVIDER-02B may produce only bounded source-backed panel evidence, GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostics, GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics, GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics, and GOAL-RISK-TIERING-01.1 may produce only separate non-actionable downside-risk repair diagnostics.",
                 f"AKShare available: `{str(akshare_available()).lower()}`.",
                 f"Network ingestion opt-in active: `{str(network_enabled(False)).lower()}`.",
                 f"Source-backed bundle manifest: `{source_bundle_status}`.",
@@ -492,8 +501,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "32. For GOAL-V1-DIAGNOSTIC-COVERAGE-03, run `python scripts/run_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py` and `python scripts/audit_goal_v1_diagnostic_coverage03_source_backed_diagnostics_gate.py`; it may create only non-actionable diagnostic coverage from the committed 02B panel.",
                 "33. For GOAL-10B.3, run `python scripts/run_goal10b3_dc03_recommendation_revalidation_gate.py` and `python scripts/audit_goal10b3_dc03_recommendation_revalidation_gate.py`; it may create only non-actionable DC03 recommendation revalidation diagnostics.",
                 "34. For GOAL-RISK-TIERING-01, run `python scripts/run_goal_risk_tiering01_risk_severity_numeric_score_gate.py` and `python scripts/audit_goal_risk_tiering01_risk_severity_numeric_score_gate.py`; it may create only separate non-actionable risk-tier diagnostics.",
-                "35. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "36. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
+                "35. For GOAL-RISK-TIERING-01.1, run `python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py` and `python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py`; it may create only separate non-actionable downside-risk repair diagnostics.",
+                "36. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "37. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -1131,6 +1141,30 @@ def _goal_risk_tiering01_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal_risk_tiering011_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_report.md"
+    if not report.exists():
+        return "not yet generated"
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-RISK-TIERING-01.1 Downside Risk Repair Gate: PASS" in text:
+        return "PASS"
+    return "unknown"
+
+
+def _goal_risk_tiering011_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_risk_tiering011_downside_risk_repair_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -1191,6 +1225,7 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal_v1_diagnostic_coverage03_multi_provider_diagnostics",
             "goal10b3_recommendation_backtest_revalidation",
             "goal_risk_tiering01_risk_severity_numeric_score_gate",
+            "goal_risk_tiering011_downside_risk_repair_gate",
             "goal_rec_tiering01_recommendation_score_tiering_gate",
             "goal10b4_recommendation_backtest_revalidation",
             "goal_position_band_validation01_position_band_validation_gate",
