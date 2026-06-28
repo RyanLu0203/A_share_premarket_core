@@ -162,7 +162,14 @@ This file is long-term project memory for Codex and other coding agents.
   It creates no actionable recommendations, positions, portfolio outputs,
   dashboard/frontend files, trading, production, local-lake, broker,
   factor-mining, or DQN/RL outputs.
-- GOAL-ALPHA-FACTOR-CANDIDATE-01 remains `locked_future`.
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only research-only alpha factor candidate
+  values from committed Provider02B, MVP, Quant Research, and risk-tiering
+  evidence; no future returns, benchmark-excess returns, or label-ready fields
+  are used in construction. It creates no recommendations, positions,
+  portfolios, dashboards, trading, production, local-lake, broker,
+  factor-mining, DQN/RL outputs, or predictive-validity claims.
+- GOAL-QUANT-RESEARCH-02 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -337,11 +344,13 @@ before GOAL-REC-TIERING-01.
 GOAL-MVP-01 is a research-only premarket diagnostic terminal over committed
 Provider02B, DC03, GOAL-RISK-TIERING-01, GOAL-RISK-TIERING-01.1, and
 GOAL-QUANT-RESEARCH-01 evidence. It may maintain the Markdown report,
-supporting CSVs, manifests, docs, and audits only. It must not create
-actionable recommendations, positions, portfolio outputs, dashboard/frontend
-files, trading, production, local-lake, broker, factor-mining, or DQN/RL
-outputs. GOAL-ALPHA-FACTOR-CANDIDATE-01 remains locked until explicitly
-requested.
+supporting CSVs, manifests, docs, and audits only. GOAL-ALPHA-FACTOR-CANDIDATE-01
+is research-only alpha candidate construction; it may maintain candidate
+registry/panel/coverage/warning artifacts, docs, config, and audits only. It
+must not evaluate predictive validity or create actionable recommendations,
+positions, portfolio outputs, dashboard/frontend files, trading, production,
+local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-QUANT-RESEARCH-02
+remains locked until explicitly requested.
 
 ## GOAL-06D.1 Agent Note
 

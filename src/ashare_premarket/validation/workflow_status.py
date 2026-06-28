@@ -33,7 +33,7 @@ DOWNSTREAM_LOCKED_IDS = {
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
     "goal_rec_tiering01_recommendation_score_tiering_gate",
-    "goal_alpha_factor_candidate01_research_gate",
+    "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
     "goal10b4_recommendation_backtest_revalidation",
     "goal_position_band_validation01_position_band_validation_gate",
 }
@@ -95,6 +95,8 @@ GOAL_QUANT_RESEARCH01_ALLOWED_NEXT_AVAILABLE = "request_explicit_goal_rec_tierin
 GOAL_MVP01_WORKFLOW_ID = "goal_mvp01_premarket_research_terminal_gate"
 GOAL_MVP01_ALLOWED_NEXT = "request_goal_alpha_factor_candidate01_before_recommendation_tiering"
 GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID = "goal_alpha_factor_candidate01_research_gate"
+GOAL_ALPHA_FACTOR_CANDIDATE01_ALLOWED_NEXT = "request_goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
+GOAL_QUANT_RESEARCH02_WORKFLOW_ID = "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -166,6 +168,8 @@ def run_workflow_status_audit(root: Path) -> bool:
         failures.append("full roadmap does not label GOAL-QUANT-RESEARCH-01 factor research lab as implemented_research_only")
     if "GOAL-MVP-01 Premarket Research Diagnostic Terminal" not in full_roadmap or "implemented_mvp_research_only" not in full_roadmap:
         failures.append("full roadmap does not label GOAL-MVP-01 premarket terminal as implemented_mvp_research_only")
+    if "GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate" not in full_roadmap or "implemented_research_only" not in full_roadmap:
+        failures.append("full roadmap does not label GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha candidate research as implemented_research_only")
 
     by_id = {row["workflow_id"]: row for row in rows}
     goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
@@ -412,6 +416,11 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_mvp01_manifest = _read(root / "outputs/audits/goal_mvp01_premarket_terminal_manifest.json")
     goal_mvp01_audit = _read(root / "outputs/audits/goal_mvp01_premarket_terminal_audit.md")
     goal_alpha_factor_candidate01 = by_id.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {})
+    goal_alpha_factor_candidate01_status = goal_alpha_factor_candidate01.get("status")
+    goal_alpha_factor_candidate01_report = _read(root / "outputs/audits/goal_alpha_factor_candidate01_report.md")
+    goal_alpha_factor_candidate01_manifest = _read(root / "outputs/audits/goal_alpha_factor_candidate01_manifest.json")
+    goal_alpha_factor_candidate01_audit = _read(root / "outputs/audits/goal_alpha_factor_candidate01_audit.md")
+    goal_quant_research02 = by_id.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
     goal_rec_tiering01 = by_id.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     goal10b4 = by_id.get(GOAL10B4_WORKFLOW_ID, {})
     position_band_validation = by_id.get(POSITION_BAND_VALIDATION_WORKFLOW_ID, {})
@@ -516,6 +525,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_mvp01_status == "implemented_mvp_research_only"
         and _goal_mvp01_readiness_implemented(goal_mvp01_report)
         and "Status: `PASS`" in goal_mvp01_audit
+    )
+    goal_alpha_factor_candidate01_evidence_ready = (
+        bool(goal_alpha_factor_candidate01)
+        and goal_alpha_factor_candidate01_status == "implemented_research_only"
+        and _goal_alpha_factor_candidate01_readiness_implemented(goal_alpha_factor_candidate01_report)
+        and "Status: `PASS`" in goal_alpha_factor_candidate01_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -2222,7 +2237,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 (
                     GOAL_REC_TIERING01_WORKFLOW_ID,
                     goal_rec_tiering01,
-                    GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+                    GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+                    if goal_alpha_factor_candidate01_evidence_ready
+                    else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
                     if goal_mvp01
                     else GOAL_QUANT_RESEARCH01_WORKFLOW_ID
                     if goal_quant_research01
@@ -2332,7 +2349,9 @@ def run_workflow_status_audit(root: Path) -> bool:
                 (
                     GOAL_REC_TIERING01_WORKFLOW_ID,
                     goal_rec_tiering01,
-                    GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+                    GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+                    if goal_alpha_factor_candidate01_evidence_ready
+                    else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
                     if goal_mvp01
                     else GOAL_QUANT_RESEARCH01_WORKFLOW_ID
                     if goal_quant_research01
@@ -2426,7 +2445,11 @@ def run_workflow_status_audit(root: Path) -> bool:
                 (
                     GOAL_REC_TIERING01_WORKFLOW_ID,
                     goal_rec_tiering01,
-                    GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID if goal_mvp01 else GOAL_QUANT_RESEARCH01_WORKFLOW_ID,
+                    GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+                    if goal_alpha_factor_candidate01_evidence_ready
+                    else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+                    if goal_mvp01
+                    else GOAL_QUANT_RESEARCH01_WORKFLOW_ID,
                 ),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
@@ -2511,14 +2534,30 @@ def run_workflow_status_audit(root: Path) -> bool:
             ]:
                 if required_false not in goal_mvp01_manifest:
                     failures.append(f"GOAL-MVP-01 manifest missing false boundary flag: {required_false}")
-            if goal_alpha_factor_candidate01.get("status") != "locked_future":
-                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must remain locked_future after GOAL-MVP-01")
-            if goal_alpha_factor_candidate01.get("implemented_in_repo") != "false":
-                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must not be marked implemented after GOAL-MVP-01")
+            if goal_alpha_factor_candidate01_evidence_ready:
+                if goal_alpha_factor_candidate01.get("implemented_in_repo") != "true":
+                    failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 implemented row must be marked implemented")
+            else:
+                if goal_alpha_factor_candidate01.get("status") != "locked_future":
+                    failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must remain locked_future after GOAL-MVP-01 until alpha evidence exists")
+                if goal_alpha_factor_candidate01.get("implemented_in_repo") != "false":
+                    failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must not be marked implemented without alpha evidence")
             if goal_alpha_factor_candidate01.get("depends_on") != GOAL_MVP01_WORKFLOW_ID:
                 failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must depend on GOAL-MVP-01")
+            rec_dependency_after_mvp = (
+                GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+                if goal_alpha_factor_candidate01_evidence_ready
+                else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+            )
+            if goal_alpha_factor_candidate01_evidence_ready:
+                if goal_quant_research02.get("status") != "locked_future":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must remain locked_future after alpha candidate construction")
+                if goal_quant_research02.get("implemented_in_repo") != "false":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must not be implemented after alpha candidate construction")
+                if goal_quant_research02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+                    failures.append("GOAL-QUANT-RESEARCH-02 must depend on GOAL-ALPHA-FACTOR-CANDIDATE-01")
             for workflow_id, row, expected_dependency in [
-                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, rec_dependency_after_mvp),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
             ]:
@@ -2532,6 +2571,93 @@ def run_workflow_status_audit(root: Path) -> bool:
         else:
             if goal_mvp01.get("status") != "locked_future" or goal_mvp01.get("implemented_in_repo") != "false":
                 failures.append("GOAL-MVP-01 must remain locked_future until valid evidence exists")
+    if goal_alpha_factor_candidate01:
+        if goal_alpha_factor_candidate01_evidence_ready:
+            if not goal_mvp01_evidence_ready:
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 requires GOAL-MVP-01 implemented_mvp_research_only evidence")
+            if goal_alpha_factor_candidate01.get("status") != "implemented_research_only":
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must be implemented_research_only when valid evidence exists")
+            if goal_alpha_factor_candidate01.get("implemented_in_repo") != "true":
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 row must be marked implemented")
+            if goal_alpha_factor_candidate01.get("allowed_next_action") != GOAL_ALPHA_FACTOR_CANDIDATE01_ALLOWED_NEXT:
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 allowed_next_action is invalid")
+            if goal_alpha_factor_candidate01.get("depends_on") != GOAL_MVP01_WORKFLOW_ID:
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must depend on GOAL-MVP-01")
+            for required_text in [
+                '"mode": "research_only_alpha_factor_candidate_construction_gate"',
+                '"candidate_registry_row_count": 13',
+                '"constructed_candidate_count": 13',
+                '"candidate_panel_row_count": 78000',
+                '"unique_symbols": 50',
+                '"unique_trade_dates": 120',
+                '"source_backed_lineage_verified": true',
+                '"alpha_candidate_registry_created": true',
+                '"alpha_candidate_panel_created": true',
+                '"coverage_summary_created": true',
+                '"construction_warnings_created": true',
+                '"no_lookahead_construction_passed": true',
+                '"goal_quant_research02_locked_future": true',
+                '"goal_rec_tiering01_locked_future": true',
+                '"goal10b4_locked_future": true',
+                '"position_band_validation_locked_future": true',
+                '"goal10d_locked_future": true',
+                '"dashboard_daily_report_locked_future": true',
+            ]:
+                if required_text not in goal_alpha_factor_candidate01_manifest:
+                    failures.append(f"GOAL-ALPHA-FACTOR-CANDIDATE-01 manifest missing required marker: {required_text}")
+            for required_false in [
+                '"recommendation_outputs_created": false',
+                '"position_rows_created": false',
+                '"position_band_rows_created": false',
+                '"directional_trade_labels_generated": false',
+                '"target_prices_generated": false',
+                '"actual_position_sizing_generated": false',
+                '"target_weights_generated": false',
+                '"portfolio_weights_generated": false',
+                '"order_quantities_generated": false',
+                '"portfolio_returns_generated": false',
+                '"equity_curves_generated": false',
+                '"dashboard_outputs_generated": false',
+                '"dashboard_files_generated": false',
+                '"html_generated": false',
+                '"streamlit_generated": false',
+                '"frontend_code_generated": false',
+                '"visual_reports_generated": false',
+                '"trading_outputs_created": false',
+                '"broker_outputs_created": false',
+                '"production_outputs_created": false',
+                '"local_lake_outputs_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"goal_quant_research02_run": false',
+                '"goal_rec_tiering01_run": false',
+                '"goal10b4_run": false',
+                '"position_band_validation_run": false',
+                '"live_provider_fetches_run": false',
+                '"future_returns_used_in_alpha_construction": false',
+                '"benchmark_excess_returns_used_in_alpha_construction": false',
+                '"label_ready_fields_used_in_alpha_construction": false',
+                '"predictive_validity_claimed": false',
+                '"factor_promoted_to_recommendation_tiering": false',
+            ]:
+                if required_false not in goal_alpha_factor_candidate01_manifest:
+                    failures.append(f"GOAL-ALPHA-FACTOR-CANDIDATE-01 manifest missing false boundary flag: {required_false}")
+            for workflow_id, row, expected_dependency in [
+                (GOAL_QUANT_RESEARCH02_WORKFLOW_ID, goal_quant_research02, GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH02_WORKFLOW_ID),
+                (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
+                (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
+            ]:
+                if row.get("status") != "locked_future":
+                    failures.append(f"{workflow_id} must remain locked_future after GOAL-ALPHA-FACTOR-CANDIDATE-01")
+                if row.get("implemented_in_repo") != "false":
+                    failures.append(f"{workflow_id} must not be implemented after GOAL-ALPHA-FACTOR-CANDIDATE-01")
+                if row.get("depends_on") != expected_dependency:
+                    failures.append(f"{workflow_id} dependency is invalid after GOAL-ALPHA-FACTOR-CANDIDATE-01")
+            _validate_locked_execution_downstream(failures, by_id, context="GOAL-ALPHA-FACTOR-CANDIDATE-01")
+        else:
+            if goal_alpha_factor_candidate01.get("status") != "locked_future" or goal_alpha_factor_candidate01.get("implemented_in_repo") != "false":
+                failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must remain locked_future until valid evidence exists")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -2916,15 +3042,30 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                 if row["depends_on"] != GOAL_QUANT_RESEARCH01_WORKFLOW_ID:
                     failures.append("goal_mvp01_premarket_research_terminal_gate locked row must depend on GOAL-QUANT-RESEARCH-01")
         if workflow_id == GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal_alpha_factor_candidate01_research_gate must remain locked_future and unimplemented")
+            if status not in {"locked_future", "implemented_research_only"}:
+                failures.append("goal_alpha_factor_candidate01_research_gate must be locked_future or implemented_research_only")
+            if status == "implemented_research_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_alpha_factor_candidate01_research_gate implemented_research_only must be marked implemented")
+                if row["allowed_next_action"] != GOAL_ALPHA_FACTOR_CANDIDATE01_ALLOWED_NEXT:
+                    failures.append("goal_alpha_factor_candidate01_research_gate allowed_next_action is invalid")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_alpha_factor_candidate01_research_gate must remain unimplemented while locked_future")
             if row["depends_on"] != GOAL_MVP01_WORKFLOW_ID:
                 failures.append("goal_alpha_factor_candidate01_research_gate must depend on GOAL-MVP-01")
+        if workflow_id == GOAL_QUANT_RESEARCH02_WORKFLOW_ID:
+            if status != "locked_future" or row["implemented_in_repo"] != "false":
+                failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must remain locked_future and unimplemented")
+            if row["depends_on"] != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+                failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must depend on GOAL-ALPHA-FACTOR-CANDIDATE-01")
         if workflow_id == GOAL_REC_TIERING01_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal_rec_tiering01_recommendation_score_tiering_gate must remain locked_future and unimplemented")
             expected_risk_dependency = (
-                GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+                GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+                if GOAL_QUANT_RESEARCH02_WORKFLOW_ID in by_id
+                else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
                 if GOAL_MVP01_WORKFLOW_ID in by_id
                 else GOAL_QUANT_RESEARCH01_WORKFLOW_ID
                 if GOAL_QUANT_RESEARCH01_WORKFLOW_ID in by_id
@@ -3077,9 +3218,11 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_QUANT_RESEARCH01_WORKFLOW_ID:
         next_goal = "GOAL-MVP-01 premarket research terminal summarizes committed evidence before alpha-factor candidate research"
     elif row["workflow_id"] == GOAL_MVP01_WORKFLOW_ID:
-        next_goal = "GOAL-ALPHA-FACTOR-CANDIDATE-01 remains locked until explicitly requested"
+        next_goal = "GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha candidate research is implemented when evidence exists"
     elif row["workflow_id"] == GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
-        next_goal = "Remain locked before GOAL-REC-TIERING-01 until explicit alpha-factor candidate research passes"
+        next_goal = "GOAL-QUANT-RESEARCH-02 remains locked until explicit alpha-candidate validity evaluation is requested"
+    elif row["workflow_id"] == GOAL_QUANT_RESEARCH02_WORKFLOW_ID:
+        next_goal = "Remain locked before GOAL-REC-TIERING-01 until explicit GOAL-QUANT-RESEARCH-02 passes"
     elif row["workflow_id"] == GOAL_REC_TIERING01_WORKFLOW_ID:
         next_goal = "Remain locked until explicit GOAL-REC-TIERING-01 request after alpha-factor candidate evidence is accepted"
     elif row["workflow_id"] == GOAL10B4_WORKFLOW_ID:
@@ -3322,6 +3465,13 @@ def _goal_mvp01_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate: PASS" in readiness
         or "GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_alpha_factor_candidate01_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-ALPHA-FACTOR-CANDIDATE-01 Research Grade Alpha Candidate Construction Gate: PASS" in readiness
+        or "GOAL-ALPHA-FACTOR-CANDIDATE-01 Research Grade Alpha Candidate Construction Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

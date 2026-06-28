@@ -77,3 +77,4 @@ goal_risk_tiering01_risk_severity_numeric_score,GOAL-RISK-TIERING-01 review-only
 goal_risk_tiering011_downside_risk_repair,GOAL-RISK-TIERING-01.1 review-only downside risk repair,GOAL-RISK-TIERING-01.1,PASS,ashare_premarket.risk_tiering.goal_risk_tiering011,Keep active
 goal_quant_research01_factor_research_lab,GOAL-QUANT-RESEARCH-01 research-only factor research lab,GOAL-QUANT-RESEARCH-01,PASS,ashare_premarket.research.goal_quant_research01,Keep active
 goal_mvp01_premarket_research_terminal,GOAL-MVP-01 research-only premarket diagnostic terminal,GOAL-MVP-01,PASS,ashare_premarket.mvp.goal_mvp01,Keep active
+goal_alpha_factor_candidate01_research_gate,GOAL-ALPHA-FACTOR-CANDIDATE-01 research-only alpha candidate construction,GOAL-ALPHA-FACTOR-CANDIDATE-01,PASS,ashare_premarket.research.goal_alpha_factor_candidate01,Keep active

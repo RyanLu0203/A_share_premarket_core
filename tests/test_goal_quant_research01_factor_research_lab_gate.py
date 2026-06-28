@@ -90,6 +90,7 @@ def test_goal_quant_research01_preserves_boundaries_and_workflow_locks() -> None
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
         "goal_quant_research01_factor_research_lab_gate",
         "goal_alpha_factor_candidate01_research_gate",
+        "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
     }
     for workflow_id in [
         "goal10b4_recommendation_backtest_revalidation",

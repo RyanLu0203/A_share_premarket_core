@@ -1,0 +1,14 @@
+factor_id,row_count,valid_factor_value_count,missing_factor_value_count,unique_symbols,unique_trade_dates,date_min,date_max,quantile_count,bucket_count,dominant_bucket_share,minimum_bucket_size,construction_status,no_lookahead_status,required_column_status
+alpha_benchmark_relative_strength_20d,6000,5000,1000,50,120,2025-11-19,2026-05-21,5,4,0.3333333333,1000,constructed,passed_current_or_past_only,available
+alpha_benchmark_relative_strength_5d,6000,5750,250,50,120,2025-11-19,2026-05-21,5,4,0.3833333333,250,constructed,passed_current_or_past_only,available
+alpha_downside_vol_adjusted_strength_20d,6000,5000,1000,50,120,2025-11-19,2026-05-21,5,4,0.3333333333,1000,constructed,passed_current_or_past_only,available
+alpha_intraday_recovery_pressure,6000,5989,11,50,120,2025-11-19,2026-05-21,5,4,0.4000000000,11,constructed,passed_current_or_past_only,available
+alpha_intraday_weakness_pressure,6000,5989,11,50,120,2025-11-19,2026-05-21,5,4,0.4000000000,11,constructed,passed_current_or_past_only,available
+alpha_liquidity_pressure_5d,6000,5740,260,50,120,2025-11-19,2026-05-21,5,4,0.3833333333,260,constructed,passed_current_or_past_only,available
+alpha_price_volume_confirmation_5d,6000,5740,260,50,120,2025-11-19,2026-05-21,5,4,0.3833333333,260,constructed,passed_current_or_past_only,available
+alpha_risk_adjusted_relative_strength,6000,5000,1000,50,120,2025-11-19,2026-05-21,5,4,0.3333333333,1000,constructed,passed_current_or_past_only,available
+alpha_short_reversal_1d,6000,6000,0,50,120,2025-11-19,2026-05-21,5,3,0.4000000000,1200,constructed,passed_current_or_past_only,available
+alpha_short_reversal_5d,6000,5750,250,50,120,2025-11-19,2026-05-21,5,4,0.3833333333,250,constructed,passed_current_or_past_only,available
+alpha_turnover_pressure_20d,6000,4990,1010,50,120,2025-11-19,2026-05-21,5,4,0.3333333333,1000,constructed,passed_current_or_past_only,available
+alpha_vol_adj_momentum_20d,6000,5000,1000,50,120,2025-11-19,2026-05-21,5,4,0.3333333333,1000,constructed,passed_current_or_past_only,available
+alpha_vol_adj_momentum_5d,6000,5744,256,50,120,2025-11-19,2026-05-21,5,4,0.3833333333,256,constructed,passed_current_or_past_only,available

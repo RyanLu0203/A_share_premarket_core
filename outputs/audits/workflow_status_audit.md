@@ -2,7 +2,7 @@
 
 Workflow Status Audit: PASS
 
-Rows checked: `68`
+Rows checked: `69`
 Failures: `0`
 Warnings: `0`
 
@@ -45,7 +45,7 @@ GOAL-RISK-TIERING-01 status: `implemented_review_only`.
 GOAL-RISK-TIERING-01.1 status: `implemented_review_only`.
 GOAL-QUANT-RESEARCH-01 status: `implemented_research_only`.
 GOAL-MVP-01 status: `implemented_mvp_research_only`.
-GOAL-ALPHA-FACTOR-CANDIDATE-01 status: `locked_future`.
+GOAL-ALPHA-FACTOR-CANDIDATE-01 status: `implemented_research_only`.
 GOAL-REC-TIERING-01 status: `locked_future`.
 GOAL-10B.4 status: `locked_future`.
 GOAL-POSITION-BAND-VALIDATION-01 status: `locked_future`.

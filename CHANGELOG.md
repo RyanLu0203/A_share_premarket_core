@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-28 - GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Candidate Construction
+
+- Implemented GOAL-ALPHA-FACTOR-CANDIDATE-01 only as research-only alpha
+  candidate construction from committed Provider02B, MVP, Quant Research, and
+  risk-tiering evidence.
+- Added candidate registry, normalized factor candidate panel, coverage
+  summary, construction warnings, contract, docs, runner, audit, tests,
+  report, manifest, and workflow governance.
+- Kept future returns, benchmark-excess returns, and label-ready fields out of
+  construction, and made GOAL-QUANT-RESEARCH-02 the locked next evaluation
+  gate before recommendation tiering.
+- Kept GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-28 - GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate
 
 - Implemented GOAL-MVP-01 only as a research-only premarket diagnostic terminal

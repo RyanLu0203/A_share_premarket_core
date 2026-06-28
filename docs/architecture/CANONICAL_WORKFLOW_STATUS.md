@@ -96,6 +96,8 @@ Implemented research-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate
   (`PASS_WITH_WARNINGS`)
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate
+  (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -120,7 +122,7 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
-- GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research
+- GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation
 - GOAL-REC-TIERING-01 Recommendation Score Tiering
 - GOAL-DATA-PANEL-02 Evaluation Panel
 - GOAL-10B.4 Recommendation Revalidation

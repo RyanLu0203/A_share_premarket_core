@@ -1,0 +1,40 @@
+{
+  "goal_id": "GOAL-ALPHA-FACTOR-CANDIDATE-01",
+  "mode": "research_only_alpha_factor_candidate_construction_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "candidate_values_only": true,
+  "allowed_inputs": [
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/mvp/goal_mvp01_symbol_diagnostic_table.csv",
+    "outputs/mvp/goal_mvp01_review_queue.csv",
+    "outputs/research/goal_quant_research01_factor_registry.csv",
+    "outputs/research/goal_quant_research01_score_validity_classification.csv",
+    "outputs/diagnostics/goal_risk_tiering011_downside_risk_diagnostics.csv",
+    "outputs/diagnostics/goal_risk_tiering01_risk_tiered_diagnostics.csv"
+  ],
+  "allowed_outputs": [
+    "outputs/research/goal_alpha_factor_candidate01_candidate_registry.csv",
+    "outputs/research/goal_alpha_factor_candidate01_factor_candidate_panel.csv",
+    "outputs/research/goal_alpha_factor_candidate01_coverage_summary.csv",
+    "outputs/research/goal_alpha_factor_candidate01_construction_warnings.csv",
+    "outputs/audits/goal_alpha_factor_candidate01_report.md",
+    "outputs/audits/goal_alpha_factor_candidate01_manifest.json",
+    "outputs/audits/goal_alpha_factor_candidate01_audit.md",
+    "docs/research/GOAL_ALPHA_FACTOR_CANDIDATE01_RESEARCH_GRADE_ALPHA_CANDIDATE_CONSTRUCTION_GATE.md",
+    "configs/research/goal_alpha_factor_candidate01_contract.yaml"
+  ],
+  "candidate_registry_schema": ["factor_id", "factor_family", "factor_name", "economic_hypothesis", "expected_direction", "required_columns", "construction_formula_plain_english", "construction_formula_expression", "no_lookahead_status", "uses_forward_returns_in_construction", "uses_benchmark_excess_returns_in_construction", "uses_label_ready_fields_in_construction", "source_input_artifacts", "construction_status", "rejection_or_missing_reason", "intended_future_evaluation_goal", "non_actionable_disclaimer"],
+  "candidate_panel_schema": ["trade_date", "symbol", "factor_id", "factor_family", "factor_value", "factor_value_raw", "factor_value_normalized_cross_sectional", "factor_quantile", "factor_bucket", "expected_direction", "construction_status", "no_lookahead_status", "required_column_status", "source_provider", "universe_mode", "panel_contract_status", "risk_score_bucket", "downside_risk_bucket", "mvp_review_queue_category", "mvp_review_priority_level", "diagnostic_mode", "non_actionable_disclaimer"],
+  "coverage_summary_schema": ["factor_id", "row_count", "valid_factor_value_count", "missing_factor_value_count", "unique_symbols", "unique_trade_dates", "date_min", "date_max", "quantile_count", "bucket_count", "dominant_bucket_share", "minimum_bucket_size", "construction_status", "no_lookahead_status", "required_column_status"],
+  "forbidden_construction_inputs": ["forward_return_*", "benchmark_excess_return_*", "label_ready_*"],
+  "downstream_locks": {
+    "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate": "locked_future",
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

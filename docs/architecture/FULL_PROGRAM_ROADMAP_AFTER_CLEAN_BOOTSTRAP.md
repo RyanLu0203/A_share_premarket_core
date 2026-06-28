@@ -47,8 +47,9 @@ flowchart TD
     RISK01 -. "downside repair" .-> RISK011["GOAL-RISK-TIERING-01.1 Downside Risk Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     RISK011 -. "research-only factor lab" .-> QRESEARCH01["GOAL-QUANT-RESEARCH-01 Factor Research Lab<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
-    MVP01 -. "locked alpha research" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01<br/>(locked_future)"]
-    ALPHA01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    MVP01 -. "research-only alpha candidates" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    ALPHA01 -. "locked validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(locked_future)"]
+    QRESEARCH02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -147,11 +148,13 @@ not create recommendation rows, positions, portfolios, dashboards, trading,
 production, local-lake, broker, factor-mining, or DQN/RL outputs.
 GOAL-MVP-01 Premarket Research Diagnostic Terminal is implemented only as
 committed-evidence replay over Provider02B, DC03, risk-tiering, downside-risk,
-and factor-validity evidence. It writes research reports and bounded CSV
-review queues only, uses latest committed date `2026-05-21`, and creates no
-actionable recommendation, position, portfolio, dashboard/frontend, trading,
-production, local-lake, broker, factor-mining, or DQN/RL output.
-GOAL-ALPHA-FACTOR-CANDIDATE-01, GOAL-REC-TIERING-01,
+and factor-validity evidence. GOAL-ALPHA-FACTOR-CANDIDATE-01 is implemented
+only as research-only alpha candidate construction over committed Provider02B,
+MVP, Quant Research, and risk-tiering evidence. It writes candidate factor
+values and coverage evidence only, does not use future labels in construction,
+and creates no recommendation, position, portfolio, dashboard/frontend,
+trading, production, local-lake, broker, factor-mining, DQN/RL output, or
+predictive-validity claim. GOAL-QUANT-RESEARCH-02, GOAL-REC-TIERING-01,
 GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and
 GOAL-10D remain locked_future.
 V2 factor research is planned but

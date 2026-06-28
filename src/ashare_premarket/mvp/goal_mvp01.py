@@ -23,6 +23,7 @@ BLOCKED = "BLOCKED"
 
 GOAL_QUANT_RESEARCH01_WORKFLOW_ID = "goal_quant_research01_factor_research_lab_gate"
 GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID = "goal_alpha_factor_candidate01_research_gate"
+GOAL_QUANT_RESEARCH02_WORKFLOW_ID = "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -373,20 +374,28 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
 
     gate = workflow.get(WORKFLOW_ID, {})
     alpha = workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {})
+    quant02 = workflow.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
+    alpha_implemented = alpha.get("status") == "implemented_research_only" and alpha.get("implemented_in_repo") == "true"
     if gate.get("status") != "implemented_mvp_research_only":
         failures.append("goal_mvp01_workflow_not_implemented_mvp_research_only")
     if gate.get("implemented_in_repo") != "true":
         failures.append("goal_mvp01_workflow_not_marked_implemented")
     if gate.get("depends_on") != GOAL_QUANT_RESEARCH01_WORKFLOW_ID:
         failures.append("goal_mvp01_dependency_invalid")
-    if alpha.get("status") != "locked_future" or alpha.get("implemented_in_repo") != "false":
-        failures.append("goal_alpha_factor_candidate01_not_locked_future")
+    if not alpha_implemented and (alpha.get("status") != "locked_future" or alpha.get("implemented_in_repo") != "false"):
+        failures.append("goal_alpha_factor_candidate01_not_locked_or_implemented")
     if alpha.get("depends_on") != WORKFLOW_ID:
         failures.append("goal_alpha_factor_candidate01_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_mvp01")
-    if rec.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+    expected_rec_dependency = GOAL_QUANT_RESEARCH02_WORKFLOW_ID if alpha_implemented else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+    if alpha_implemented:
+        if quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
+            failures.append("goal_quant_research02_not_locked_after_alpha_candidate")
+        if quant02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+            failures.append("goal_quant_research02_dependency_invalid")
+    if rec.get("depends_on") != expected_rec_dependency:
         failures.append("goal_rec_tiering01_not_rebased_on_alpha_candidate")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,
@@ -1152,15 +1161,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_workflow_states(root, by_id)
     if result["status"] in {PASS, PASS_WITH_WARNINGS} and WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(goal_mvp01_implemented_workflow_patch(str(result["status"])))
-        by_id[GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID].update(locked_goal_alpha_factor_candidate01_patch())
-        if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
-            by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
-        if GOAL10B4_WORKFLOW_ID in by_id:
-            by_id[GOAL10B4_WORKFLOW_ID].update(locked_goal10b4_patch())
-        if POSITION_BAND_VALIDATION_WORKFLOW_ID in by_id:
-            by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
-        if GOAL10D_WORKFLOW_ID in by_id:
-            by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 
@@ -1176,6 +1177,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_capabilities(root, payload)
     if result["status"] in {PASS, PASS_WITH_WARNINGS}:
         payload[WORKFLOW_ID] = "implemented_mvp_research_only"
+        preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

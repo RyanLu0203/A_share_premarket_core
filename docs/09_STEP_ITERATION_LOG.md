@@ -1,5 +1,31 @@
 # 09 Step Iteration Log
 
+## 2026-06-28 - GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Candidate Construction
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-ALPHA-FACTOR-CANDIDATE-01 research-only alpha candidate
+  construction gate over committed Provider02B, MVP, Quant Research, and
+  risk-tiering evidence.
+- Generated the candidate registry, normalized factor candidate panel,
+  coverage summary, construction warnings, contract, docs, report, manifest,
+  audit, scripts, tests, and workflow governance.
+- Preserved no-lookahead construction by excluding future returns,
+  benchmark-excess returns, and label-ready fields from candidate construction.
+- Preserved GOAL-QUANT-RESEARCH-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, Dashboard / Daily Report UI, portfolio
+  backtests, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL as locked.
+
+Evidence:
+
+- `outputs/research/goal_alpha_factor_candidate01_candidate_registry.csv`
+- `outputs/research/goal_alpha_factor_candidate01_factor_candidate_panel.csv`
+- `outputs/audits/goal_alpha_factor_candidate01_report.md`
+- `outputs/audits/goal_alpha_factor_candidate01_audit.md`
+
 ## 2026-06-28 - GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate
 
 Status: `PASS_WITH_WARNINGS`.

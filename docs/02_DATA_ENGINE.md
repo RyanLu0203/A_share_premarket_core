@@ -152,6 +152,16 @@ summary, and manifests. It does not fetch data, write local lake files, create
 recommendation rows, position rows, portfolios, dashboard/frontend outputs,
 trading paths, production storage, broker output, factor-mining output, or
 DQN/RL output.
+GOAL-ALPHA-FACTOR-CANDIDATE-01 writes only research-only alpha candidate
+construction evidence under `outputs/research/`, `configs/research/`,
+`docs/research/`, and `outputs/audits/`. It consumes committed Provider02B,
+MVP, Quant Research, and risk-tiering evidence only; excludes future returns,
+benchmark-excess returns, and label-ready fields from construction; and creates
+candidate values, coverage summaries, and construction warnings only. It does
+not fetch data, write local lake files, create recommendation rows, position
+rows, portfolios, dashboard/frontend outputs, trading paths, production
+storage, broker output, factor-mining output, DQN/RL output, or predictive
+validity claims.
 
 ## Active Contracts
 
@@ -205,6 +215,9 @@ DQN/RL output.
   `configs/research/`, `docs/research/`, and `outputs/audits/` only.
 - GOAL-MVP-01 premarket terminal evidence under `outputs/mvp/`,
   `configs/mvp/`, `docs/mvp/`, and `outputs/audits/` only.
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha candidate evidence under
+  `outputs/research/`, `configs/research/`, `docs/research/`, and
+  `outputs/audits/` only.
 
 ## Source Evidence Warnings
 

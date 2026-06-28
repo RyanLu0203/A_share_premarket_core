@@ -32,7 +32,8 @@ GOAL-10B.3 review-only DC03 recommendation revalidation diagnostics,
 GOAL-RISK-TIERING-01 review-only risk severity numeric score tiering, and
 GOAL-RISK-TIERING-01.1 review-only downside-risk repair, plus
 GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics, and
-GOAL-MVP-01 research-only premarket diagnostic terminal evidence.
+GOAL-MVP-01 research-only premarket diagnostic terminal evidence, plus
+GOAL-ALPHA-FACTOR-CANDIDATE-01 research-only alpha candidate construction.
 
 ## Repository Roles
 
@@ -137,6 +138,8 @@ python scripts/run_goal_quant_research01_factor_research_lab_gate.py
 python scripts/audit_goal_quant_research01_factor_research_lab_gate.py
 python scripts/run_goal_mvp01_premarket_research_terminal_gate.py
 python scripts/audit_goal_mvp01_premarket_research_terminal_gate.py
+python scripts/run_goal_alpha_factor_candidate01_gate.py
+python scripts/audit_goal_alpha_factor_candidate01_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -210,8 +213,9 @@ flowchart TD
     RISK01 -. "downside repair" .-> RISK011["GOAL-RISK-TIERING-01.1 Downside Risk Repair<br/>(implemented_review_only; PASS_WITH_WARNINGS)"]
     RISK011 -. "research-only factor lab" .-> QRESEARCH01["GOAL-QUANT-RESEARCH-01 Factor Research Lab<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
-    MVP01 -. "locked alpha research" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01<br/>(locked_future)"]
-    ALPHA01 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    MVP01 -. "research-only alpha candidates" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    ALPHA01 -. "locked validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(locked_future)"]
+    QRESEARCH02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -320,13 +324,15 @@ position, portfolio, dashboard, trading, production, local-lake, broker,
 factor-mining, or DQN/RL outputs.
 GOAL-MVP-01 is implemented only as a research-only premarket diagnostic
 terminal over committed Provider02B, DC03, risk-tiering, downside-risk, and
-QUANT evidence. It writes a Markdown report, symbol diagnostic table, review
-queue, factor-validity summary, market-context summary, and manifests only.
-It creates no actionable recommendations, positions, portfolio outputs,
-dashboard/frontend files, trading, production, local-lake, factor-mining,
-broker, or DQN/RL outputs. GOAL-ALPHA-FACTOR-CANDIDATE-01,
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, and GOAL-10D remain `locked_future`.
+QUANT evidence. GOAL-ALPHA-FACTOR-CANDIDATE-01 is implemented only as
+research-only alpha candidate construction from committed evidence. It writes
+candidate factor registry, normalized candidate panel, coverage, warning,
+contract, docs, manifest, report, and audit evidence only. It creates no
+recommendations, positions, portfolio outputs, dashboard/frontend files,
+trading, production, local-lake, factor-mining, broker, DQN/RL outputs, or
+predictive-validity claims. GOAL-QUANT-RESEARCH-02, GOAL-REC-TIERING-01,
+GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 

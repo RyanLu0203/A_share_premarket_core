@@ -68,5 +68,8 @@ def test_goal_mvp01_runner_audit_outputs_and_boundaries() -> None:
     workflow_rows = _read_csv("configs/project/workflow_status.csv")
     by_id = {row["workflow_id"]: row for row in workflow_rows}
     assert by_id["goal_mvp01_premarket_research_terminal_gate"]["status"] == "implemented_mvp_research_only"
-    assert by_id["goal_alpha_factor_candidate01_research_gate"]["status"] == "locked_future"
+    assert by_id["goal_alpha_factor_candidate01_research_gate"]["status"] in {
+        "locked_future",
+        "implemented_research_only",
+    }
     assert by_id["goal_rec_tiering01_recommendation_score_tiering_gate"]["status"] == "locked_future"
