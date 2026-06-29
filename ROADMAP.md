@@ -120,6 +120,11 @@
   committed evidence only; no predictive-validity evaluation, recommendation,
   position, portfolio, dashboard, trading, production, local-lake,
   factor-mining, broker, or DQN/RL outputs).
+- GOAL-QUANT-RESEARCH-02 alpha-candidate factor validity evaluation
+  (`PASS_WITH_WARNINGS`; implemented_research_only 78,000-row alpha evaluation
+  panel, coverage, bucket metrics, IC/RankIC, monotonicity, rolling stability,
+  horizon consistency, score-validity classification, and trial registry from
+  committed evidence only; ready factor count 0).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -188,9 +193,13 @@ GOAL-RISK-TIERING-01, and GOAL-RISK-TIERING-01.1 evidence. GOAL-MVP-01 now
 implements only a research-only premarket diagnostic terminal from committed
 evidence replay. GOAL-ALPHA-FACTOR-CANDIDATE-01 now implements only
 research-only candidate alpha construction from committed Provider02B, MVP,
-Quant Research, and risk-tiering evidence. GOAL-QUANT-RESEARCH-02,
-GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
-GOAL-DATA-PANEL-02, and GOAL-10D remain locked.
+Quant Research, and risk-tiering evidence. GOAL-QUANT-RESEARCH-02 now
+implements only research-only alpha candidate validity evaluation from
+committed evidence, finds ready factor count 0, and recommends
+GOAL-ALPHA-FACTOR-CANDIDATE-02 or GOAL-ALPHA-RESEARCH-REFINEMENT-01 before
+recommendation tiering. GOAL-REC-TIERING-01, GOAL-10B.4,
+GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
+locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -210,7 +219,6 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
-- GOAL-QUANT-RESEARCH-02 alpha-candidate factor validity evaluation.
 - GOAL-REC-TIERING-01 recommendation score tiering.
 - GOAL-10B.4 recommendation revalidation after tiering.
 - GOAL-POSITION-BAND-VALIDATION-01 position-band validation.

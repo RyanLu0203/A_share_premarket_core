@@ -175,6 +175,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
     goal_alpha_factor_candidate01_status = _goal_alpha_factor_candidate01_status(root)
     goal_alpha_factor_candidate01_manifest = _goal_alpha_factor_candidate01_manifest(root)
     goal_alpha_factor_candidate01_audit_status = _audit_status(root / "outputs/audits/goal_alpha_factor_candidate01_audit.md")
+    goal_quant_research02_status = _goal_quant_research02_status(root)
+    goal_quant_research02_manifest = _goal_quant_research02_manifest(root)
+    goal_quant_research02_audit_status = _audit_status(root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_audit.md")
     downstream_status = _downstream_lock_status(root)
     v2_factor_status = _v2_factor_status(root)
     provider_ladder = _provider_ladder_status(root)
@@ -334,6 +337,10 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-ALPHA-FACTOR-CANDIDATE-01 audit status: `{goal_alpha_factor_candidate01_audit_status}`.",
                 f"GOAL-ALPHA-FACTOR-CANDIDATE-01 candidate count: `{goal_alpha_factor_candidate01_manifest.get('constructed_candidate_count', 0)}`.",
                 f"GOAL-ALPHA-FACTOR-CANDIDATE-01 candidate panel rows: `{goal_alpha_factor_candidate01_manifest.get('candidate_panel_row_count', 0)}`.",
+                f"GOAL-QUANT-RESEARCH-02 alpha evaluation status: `{goal_quant_research02_status}`.",
+                f"GOAL-QUANT-RESEARCH-02 audit status: `{goal_quant_research02_audit_status}`.",
+                f"GOAL-QUANT-RESEARCH-02 evaluated factor count: `{goal_quant_research02_manifest.get('evaluated_factor_count', 0)}`.",
+                f"GOAL-QUANT-RESEARCH-02 ready factor count: `{goal_quant_research02_manifest.get('ready_factor_count', 0)}`.",
                 f"V2 factor placeholder status: `{v2_factor_status}`.",
                 f"GOAL-07B workflow status: `{downstream_status.get('goal07b_risk_overlay_calculation', 'missing')}`.",
                 f"GOAL-08A workflow status: `{downstream_status.get('goal08a_recommendation_contract_design_gate', 'missing')}`.",
@@ -362,6 +369,7 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 f"GOAL-QUANT-RESEARCH-01 workflow status: `{downstream_status.get('goal_quant_research01_factor_research_lab_gate', 'missing')}`.",
                 f"GOAL-MVP-01 workflow status: `{downstream_status.get('goal_mvp01_premarket_research_terminal_gate', 'missing')}`.",
                 f"GOAL-ALPHA-FACTOR-CANDIDATE-01 workflow status: `{downstream_status.get('goal_alpha_factor_candidate01_research_gate', 'missing')}`.",
+                f"GOAL-QUANT-RESEARCH-02 workflow status: `{downstream_status.get('goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate', 'missing')}`.",
                 f"GOAL-REC-TIERING-01 workflow status: `{downstream_status.get('goal_rec_tiering01_recommendation_score_tiering_gate', 'missing')}`.",
                 f"GOAL-10B.4 workflow status: `{downstream_status.get('goal10b4_recommendation_backtest_revalidation', 'missing')}`.",
                 f"GOAL-POSITION-BAND-VALIDATION-01 workflow status: `{downstream_status.get('goal_position_band_validation01_position_band_validation_gate', 'missing')}`.",
@@ -532,8 +540,9 @@ def run_workflow_diagnostics(root: Path) -> bool:
                 "36. For GOAL-QUANT-RESEARCH-01, run `python scripts/run_goal_quant_research01_factor_research_lab_gate.py` and `python scripts/audit_goal_quant_research01_factor_research_lab_gate.py`; it may create only research-only factor validity diagnostics and must not create recommendation, position, portfolio, dashboard, trading, production, local-lake, factor-mining, broker, or DQN/RL outputs.",
                 "37. For GOAL-MVP-01, run `python scripts/run_goal_mvp01_premarket_research_terminal_gate.py` and `python scripts/audit_goal_mvp01_premarket_research_terminal_gate.py`; it may create only research-only terminal reports and review queues from committed evidence replay.",
                 "38. For GOAL-ALPHA-FACTOR-CANDIDATE-01, run `python scripts/run_goal_alpha_factor_candidate01_gate.py` and `python scripts/audit_goal_alpha_factor_candidate01_gate.py`; it may create only research-only candidate factor values from committed evidence and must not evaluate predictive validity or create recommendation, position, portfolio, dashboard, trading, production, local-lake, factor-mining, broker, or DQN/RL outputs.",
-                "39. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
-                "40. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
+                "39. For GOAL-QUANT-RESEARCH-02, run `python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py` and `python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py`; it may create only research-only alpha validity diagnostics and must not create recommendation, position, portfolio, dashboard, trading, production, local-lake, factor-mining, broker, or DQN/RL outputs.",
+                "40. V2 factor research is planned but inactive; do not create factor mining, IC/RankIC mining, factor libraries, or factor outputs in V1.",
+                "41. Do not unlock recommendation execution, actual positions, position sizing, dashboard, paper/live trading, production writes, model promotion, portfolio backtests, factor mining, broker, local-lake, or DQN/RL.",
                 "",
             ]
         ),
@@ -1267,6 +1276,30 @@ def _goal_alpha_factor_candidate01_manifest(root: Path) -> dict[str, object]:
         return {}
 
 
+def _goal_quant_research02_status(root: Path) -> str:
+    report = root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_report.md"
+    if not report.exists():
+        return _workflow_status(root, "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate")
+    text = report.read_text(encoding="utf-8")
+    if "GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation Gate: BLOCKED" in text:
+        return "BLOCKED"
+    if "GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation Gate: PASS_WITH_WARNINGS" in text:
+        return "PASS_WITH_WARNINGS"
+    if "GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation Gate: PASS" in text:
+        return "PASS"
+    return _workflow_status(root, "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate")
+
+
+def _goal_quant_research02_manifest(root: Path) -> dict[str, object]:
+    path = root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_manifest.json"
+    if not path.exists():
+        return {}
+    try:
+        return read_json(path)
+    except Exception:
+        return {}
+
+
 def _goal06d1_selected_baseline(root: Path) -> str:
     report = root / "outputs/audits/goal06d1_readiness_report.md"
     if not report.exists():
@@ -1331,6 +1364,7 @@ def _downstream_lock_status(root: Path) -> dict[str, str]:
             "goal_quant_research01_factor_research_lab_gate",
             "goal_mvp01_premarket_research_terminal_gate",
             "goal_alpha_factor_candidate01_research_gate",
+            "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
             "goal_rec_tiering01_recommendation_score_tiering_gate",
             "goal10b4_recommendation_backtest_revalidation",
             "goal_position_band_validation01_position_band_validation_gate",

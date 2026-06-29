@@ -584,9 +584,10 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_quant_research")
+    quant02_valid_for_dependency = _goal_quant_research02_valid(root)
     expected_rec_dependency = (
         GOAL_QUANT_RESEARCH02_WORKFLOW_ID
-        if workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
+        if quant02_valid_for_dependency or workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
         else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
         if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only"
         else WORKFLOW_ID
@@ -595,7 +596,11 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
         failures.append("goal_rec_tiering01_not_rebased_on_quant_research")
     if workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only":
         quant02 = workflow.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
-        if quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
+        quant02_valid = _goal_quant_research02_valid(root)
+        if quant02_valid:
+            if quant02.get("status") != "implemented_research_only" or quant02.get("implemented_in_repo") != "true":
+                failures.append("goal_quant_research02_valid_but_not_implemented")
+        elif quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
             failures.append("goal_quant_research02_not_locked_after_alpha_candidate")
         if quant02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
             failures.append("goal_quant_research02_dependency_invalid")
@@ -1759,3 +1764,12 @@ def _read_json(path: Path) -> dict[str, object]:
 
 def _report_pass_or_warn(report: str) -> bool:
     return "GOAL-QUANT-RESEARCH-01 Factor Research Lab: PASS" in report or "GOAL-QUANT-RESEARCH-01 Factor Research Lab: PASS_WITH_WARNINGS" in report
+
+
+def _goal_quant_research02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research02 import goal_quant_research02_valid_evidence
+
+        return goal_quant_research02_valid_evidence(root)
+    except Exception:
+        return False

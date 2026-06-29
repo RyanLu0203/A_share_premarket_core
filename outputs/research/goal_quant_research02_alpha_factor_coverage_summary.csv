@@ -1,0 +1,14 @@
+factor_id,row_count,valid_factor_value_count,missing_factor_value_count,unique_symbols,unique_trade_dates,quantile_count,bucket_count,dominant_bucket_share,minimum_bucket_size,duplicate_key_count,construction_status,no_lookahead_status,evaluation_readiness_status
+alpha_short_reversal_1d,6000,6000,0,50,120,5,3,0.4000000000,1200,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_short_reversal_5d,6000,5750,250,50,120,5,4,0.3833333333,250,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_benchmark_relative_strength_5d,6000,5750,250,50,120,5,4,0.3833333333,250,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_benchmark_relative_strength_20d,6000,5000,1000,50,120,5,4,0.3333333333,1000,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_vol_adj_momentum_5d,6000,5744,256,50,120,5,4,0.3833333333,256,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_vol_adj_momentum_20d,6000,5000,1000,50,120,5,4,0.3333333333,1000,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_liquidity_pressure_5d,6000,5740,260,50,120,5,4,0.3833333333,260,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_turnover_pressure_20d,6000,4990,1010,50,120,5,4,0.3333333333,1000,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_price_volume_confirmation_5d,6000,5740,260,50,120,5,4,0.3833333333,260,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_downside_vol_adjusted_strength_20d,6000,5000,1000,50,120,5,4,0.3333333333,1000,0,constructed,passed_current_or_past_only,evaluation_ready
+alpha_intraday_recovery_pressure,6000,5989,11,50,120,5,4,0.4000000000,11,0,constructed,passed_current_or_past_only,evaluation_ready_with_warnings
+alpha_intraday_weakness_pressure,6000,5989,11,50,120,5,4,0.4000000000,11,0,constructed,passed_current_or_past_only,evaluation_ready_with_warnings
+alpha_risk_adjusted_relative_strength,6000,5000,1000,50,120,5,4,0.3333333333,1000,0,constructed,passed_current_or_past_only,evaluation_ready

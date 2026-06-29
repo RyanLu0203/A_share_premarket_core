@@ -162,6 +162,15 @@ not fetch data, write local lake files, create recommendation rows, position
 rows, portfolios, dashboard/frontend outputs, trading paths, production
 storage, broker output, factor-mining output, DQN/RL output, or predictive
 validity claims.
+GOAL-QUANT-RESEARCH-02 writes only research-only alpha candidate validity
+evaluation evidence under `outputs/research/`, `configs/research/`,
+`docs/research/`, and `outputs/audits/`. It consumes committed
+GOAL-ALPHA-FACTOR-CANDIDATE-01, Provider02B, MVP, and GOAL-QUANT-RESEARCH-01
+evidence only. Forward-return and benchmark-excess-return fields are used only
+post-hoc after factor values and buckets already exist. It creates no
+recommendation rows, position rows, portfolios, dashboard/frontend outputs,
+trading paths, production storage, broker output, local-lake output,
+factor-mining output, DQN/RL output, or production predictive-validity claims.
 
 ## Active Contracts
 
@@ -216,6 +225,9 @@ validity claims.
 - GOAL-MVP-01 premarket terminal evidence under `outputs/mvp/`,
   `configs/mvp/`, `docs/mvp/`, and `outputs/audits/` only.
 - GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha candidate evidence under
+  `outputs/research/`, `configs/research/`, `docs/research/`, and
+  `outputs/audits/` only.
+- GOAL-QUANT-RESEARCH-02 alpha validity evaluation evidence under
   `outputs/research/`, `configs/research/`, `docs/research/`, and
   `outputs/audits/` only.
 

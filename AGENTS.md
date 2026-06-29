@@ -169,7 +169,15 @@ This file is long-term project memory for Codex and other coding agents.
   are used in construction. It creates no recommendations, positions,
   portfolios, dashboards, trading, production, local-lake, broker,
   factor-mining, DQN/RL outputs, or predictive-validity claims.
-- GOAL-QUANT-RESEARCH-02 remains `locked_future`.
+- GOAL-QUANT-RESEARCH-02 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It evaluates the 13 alpha candidates using committed
+  GOAL-ALPHA-FACTOR-CANDIDATE-01 and Provider02B evidence only, uses forward
+  returns and benchmark-excess returns only post-hoc, records ready factor
+  count 0, and recommends GOAL-ALPHA-FACTOR-CANDIDATE-02 or
+  GOAL-ALPHA-RESEARCH-REFINEMENT-01 before recommendation tiering. It creates
+  no recommendations, positions, portfolios, dashboards, trading, production,
+  local-lake, broker, factor-mining, DQN/RL outputs, or production
+  predictive-validity claims.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -280,6 +288,12 @@ python scripts/run_goal_risk_tiering011_downside_risk_repair_gate.py
 python scripts/audit_goal_risk_tiering011_downside_risk_repair_gate.py
 python scripts/run_goal_quant_research01_factor_research_lab_gate.py
 python scripts/audit_goal_quant_research01_factor_research_lab_gate.py
+python scripts/run_goal_mvp01_premarket_research_terminal_gate.py
+python scripts/audit_goal_mvp01_premarket_research_terminal_gate.py
+python scripts/run_goal_alpha_factor_candidate01_gate.py
+python scripts/audit_goal_alpha_factor_candidate01_gate.py
+python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py
+python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -346,11 +360,13 @@ Provider02B, DC03, GOAL-RISK-TIERING-01, GOAL-RISK-TIERING-01.1, and
 GOAL-QUANT-RESEARCH-01 evidence. It may maintain the Markdown report,
 supporting CSVs, manifests, docs, and audits only. GOAL-ALPHA-FACTOR-CANDIDATE-01
 is research-only alpha candidate construction; it may maintain candidate
-registry/panel/coverage/warning artifacts, docs, config, and audits only. It
-must not evaluate predictive validity or create actionable recommendations,
+registry/panel/coverage/warning artifacts, docs, config, and audits only.
+GOAL-QUANT-RESEARCH-02 is research-only alpha candidate validity evaluation
+and may maintain only evaluation panel, coverage, bucket, IC/RankIC,
+monotonicity, stability, horizon, score-validity, trial-registry, docs,
+config, and audit artifacts. It must not create actionable recommendations,
 positions, portfolio outputs, dashboard/frontend files, trading, production,
-local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-QUANT-RESEARCH-02
-remains locked until explicitly requested.
+local-lake, broker, factor-mining, or DQN/RL outputs.
 
 ## GOAL-06D.1 Agent Note
 

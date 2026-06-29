@@ -146,6 +146,10 @@ GOAL-ALPHA-FACTOR-CANDIDATE-01 status: `PASS_WITH_WARNINGS`.
 GOAL-ALPHA-FACTOR-CANDIDATE-01 audit status: `PASS`.
 GOAL-ALPHA-FACTOR-CANDIDATE-01 candidate count: `13`.
 GOAL-ALPHA-FACTOR-CANDIDATE-01 candidate panel rows: `78000`.
+GOAL-QUANT-RESEARCH-02 alpha evaluation status: `PASS_WITH_WARNINGS`.
+GOAL-QUANT-RESEARCH-02 audit status: `PASS`.
+GOAL-QUANT-RESEARCH-02 evaluated factor count: `13`.
+GOAL-QUANT-RESEARCH-02 ready factor count: `0`.
 V2 factor placeholder status: `planned_locked_disabled`.
 GOAL-07B workflow status: `implemented_review_only`.
 GOAL-08A workflow status: `implemented_design_only`.
@@ -174,6 +178,7 @@ GOAL-RISK-TIERING-01.1 workflow status: `implemented_review_only`.
 GOAL-QUANT-RESEARCH-01 workflow status: `implemented_research_only`.
 GOAL-MVP-01 workflow status: `implemented_mvp_research_only`.
 GOAL-ALPHA-FACTOR-CANDIDATE-01 workflow status: `implemented_research_only`.
+GOAL-QUANT-RESEARCH-02 workflow status: `implemented_research_only`.
 GOAL-REC-TIERING-01 workflow status: `locked_future`.
 GOAL-10B.4 workflow status: `locked_future`.
 GOAL-POSITION-BAND-VALIDATION-01 workflow status: `locked_future`.

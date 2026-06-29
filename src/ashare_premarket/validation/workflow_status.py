@@ -33,7 +33,6 @@ DOWNSTREAM_LOCKED_IDS = {
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
     "goal_rec_tiering01_recommendation_score_tiering_gate",
-    "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
     "goal10b4_recommendation_backtest_revalidation",
     "goal_position_band_validation01_position_band_validation_gate",
 }
@@ -97,6 +96,8 @@ GOAL_MVP01_ALLOWED_NEXT = "request_goal_alpha_factor_candidate01_before_recommen
 GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID = "goal_alpha_factor_candidate01_research_gate"
 GOAL_ALPHA_FACTOR_CANDIDATE01_ALLOWED_NEXT = "request_goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
 GOAL_QUANT_RESEARCH02_WORKFLOW_ID = "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
+GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_WEAK = "request_goal_alpha_factor_candidate02_or_alpha_research_refinement01"
+GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_AVAILABLE = "request_explicit_goal_rec_tiering01_after_quant_research02_candidate_review"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -421,6 +422,10 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_alpha_factor_candidate01_manifest = _read(root / "outputs/audits/goal_alpha_factor_candidate01_manifest.json")
     goal_alpha_factor_candidate01_audit = _read(root / "outputs/audits/goal_alpha_factor_candidate01_audit.md")
     goal_quant_research02 = by_id.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
+    goal_quant_research02_status = goal_quant_research02.get("status")
+    goal_quant_research02_report = _read(root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_report.md")
+    goal_quant_research02_manifest = _read(root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_manifest.json")
+    goal_quant_research02_audit = _read(root / "outputs/audits/goal_quant_research02_alpha_factor_evaluation_audit.md")
     goal_rec_tiering01 = by_id.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     goal10b4 = by_id.get(GOAL10B4_WORKFLOW_ID, {})
     position_band_validation = by_id.get(POSITION_BAND_VALIDATION_WORKFLOW_ID, {})
@@ -531,6 +536,12 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_alpha_factor_candidate01_status == "implemented_research_only"
         and _goal_alpha_factor_candidate01_readiness_implemented(goal_alpha_factor_candidate01_report)
         and "Status: `PASS`" in goal_alpha_factor_candidate01_audit
+    )
+    goal_quant_research02_evidence_ready = (
+        bool(goal_quant_research02)
+        and goal_quant_research02_status == "implemented_research_only"
+        and _goal_quant_research02_readiness_implemented(goal_quant_research02_report)
+        and "Status: `PASS`" in goal_quant_research02_audit
     )
     goal10c_expected_dependency = (
         GOAL10B2_WORKFLOW_ID
@@ -2550,10 +2561,10 @@ def run_workflow_status_audit(root: Path) -> bool:
                 else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
             )
             if goal_alpha_factor_candidate01_evidence_ready:
-                if goal_quant_research02.get("status") != "locked_future":
-                    failures.append("GOAL-QUANT-RESEARCH-02 must remain locked_future after alpha candidate construction")
-                if goal_quant_research02.get("implemented_in_repo") != "false":
-                    failures.append("GOAL-QUANT-RESEARCH-02 must not be implemented after alpha candidate construction")
+                if not goal_quant_research02_evidence_ready and goal_quant_research02.get("status") != "locked_future":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must remain locked_future after alpha candidate construction until valid GOAL-QUANT-RESEARCH-02 evidence exists")
+                if not goal_quant_research02_evidence_ready and goal_quant_research02.get("implemented_in_repo") != "false":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must not be implemented without GOAL-QUANT-RESEARCH-02 evidence")
                 if goal_quant_research02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
                     failures.append("GOAL-QUANT-RESEARCH-02 must depend on GOAL-ALPHA-FACTOR-CANDIDATE-01")
             for workflow_id, row, expected_dependency in [
@@ -2643,7 +2654,6 @@ def run_workflow_status_audit(root: Path) -> bool:
                 if required_false not in goal_alpha_factor_candidate01_manifest:
                     failures.append(f"GOAL-ALPHA-FACTOR-CANDIDATE-01 manifest missing false boundary flag: {required_false}")
             for workflow_id, row, expected_dependency in [
-                (GOAL_QUANT_RESEARCH02_WORKFLOW_ID, goal_quant_research02, GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID),
                 (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH02_WORKFLOW_ID),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
@@ -2654,10 +2664,124 @@ def run_workflow_status_audit(root: Path) -> bool:
                     failures.append(f"{workflow_id} must not be implemented after GOAL-ALPHA-FACTOR-CANDIDATE-01")
                 if row.get("depends_on") != expected_dependency:
                     failures.append(f"{workflow_id} dependency is invalid after GOAL-ALPHA-FACTOR-CANDIDATE-01")
+            if goal_quant_research02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+                failures.append("GOAL-QUANT-RESEARCH-02 dependency is invalid after GOAL-ALPHA-FACTOR-CANDIDATE-01")
+            if goal_quant_research02_evidence_ready:
+                if goal_quant_research02.get("status") != "implemented_research_only":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must be implemented_research_only when valid evidence exists")
+                if goal_quant_research02.get("implemented_in_repo") != "true":
+                    failures.append("GOAL-QUANT-RESEARCH-02 implemented row must be marked implemented")
+            else:
+                if goal_quant_research02.get("status") != "locked_future":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must remain locked_future until valid evidence exists")
+                if goal_quant_research02.get("implemented_in_repo") != "false":
+                    failures.append("GOAL-QUANT-RESEARCH-02 must not be marked implemented without evidence")
             _validate_locked_execution_downstream(failures, by_id, context="GOAL-ALPHA-FACTOR-CANDIDATE-01")
         else:
             if goal_alpha_factor_candidate01.get("status") != "locked_future" or goal_alpha_factor_candidate01.get("implemented_in_repo") != "false":
                 failures.append("GOAL-ALPHA-FACTOR-CANDIDATE-01 must remain locked_future until valid evidence exists")
+    if goal_quant_research02:
+        if goal_quant_research02_evidence_ready:
+            if not goal_alpha_factor_candidate01_evidence_ready:
+                failures.append("GOAL-QUANT-RESEARCH-02 requires GOAL-ALPHA-FACTOR-CANDIDATE-01 implemented_research_only evidence")
+            if goal_quant_research02.get("status") != "implemented_research_only":
+                failures.append("GOAL-QUANT-RESEARCH-02 must be implemented_research_only when valid evidence exists")
+            if goal_quant_research02.get("implemented_in_repo") != "true":
+                failures.append("GOAL-QUANT-RESEARCH-02 row must be marked implemented")
+            if goal_quant_research02.get("allowed_next_action") not in {
+                GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_WEAK,
+                GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_AVAILABLE,
+            }:
+                failures.append("GOAL-QUANT-RESEARCH-02 allowed_next_action is invalid")
+            if goal_quant_research02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
+                failures.append("GOAL-QUANT-RESEARCH-02 must depend on GOAL-ALPHA-FACTOR-CANDIDATE-01")
+            for required_text in [
+                '"mode": "research_only_alpha_candidate_factor_validity_evaluation_gate"',
+                '"evaluated_factor_count": 13',
+                '"source_alpha_panel_row_count": 78000',
+                '"source_provider02b_row_count": 6000',
+                '"alpha_evaluation_panel_row_count": 78000',
+                '"unique_symbols": 50',
+                '"unique_trade_dates": 120',
+                '"alpha_evaluation_panel_created": true',
+                '"coverage_summary_created": true',
+                '"bucket_metrics_created": true',
+                '"ic_rankic_summary_created": true',
+                '"monotonicity_summary_created": true',
+                '"rolling_stability_summary_created": true',
+                '"horizon_consistency_summary_created": true',
+                '"score_validity_classification_created": true',
+                '"trial_registry_created": true',
+                '"source_backed_lineage_verified": true',
+                '"future_returns_used_only_for_posthoc_evaluation": true',
+                '"benchmark_excess_returns_used_only_for_posthoc_evaluation": true',
+                '"no_lookahead_evaluation_passed": true',
+                '"goal_rec_tiering01_locked_future": true',
+                '"goal10b4_locked_future": true',
+                '"position_band_validation_locked_future": true',
+                '"goal10d_locked_future": true',
+                '"dashboard_daily_report_locked_future": true',
+            ]:
+                if required_text not in goal_quant_research02_manifest:
+                    failures.append(f"GOAL-QUANT-RESEARCH-02 manifest missing required marker: {required_text}")
+            if (
+                '"overall_score_validity_status": "no_factor_ready_for_rec_tiering"' not in goal_quant_research02_manifest
+                and '"overall_score_validity_status": "factor_candidate_for_rec_tiering_available"' not in goal_quant_research02_manifest
+            ):
+                failures.append("GOAL-QUANT-RESEARCH-02 manifest missing score validity status")
+            for required_false in [
+                '"recommendation_outputs_created": false',
+                '"recommendation_rows_created": false',
+                '"position_rows_created": false',
+                '"position_band_rows_created": false',
+                '"directional_trade_labels_generated": false',
+                '"buy_sell_hold_outputs_generated": false',
+                '"target_prices_generated": false',
+                '"actual_position_sizing_generated": false',
+                '"target_weights_generated": false',
+                '"portfolio_weights_generated": false',
+                '"order_quantities_generated": false',
+                '"portfolio_returns_generated": false',
+                '"equity_curves_generated": false',
+                '"dashboard_outputs_generated": false',
+                '"dashboard_files_generated": false',
+                '"html_generated": false',
+                '"streamlit_generated": false',
+                '"frontend_code_generated": false',
+                '"visual_reports_generated": false',
+                '"trading_outputs_created": false',
+                '"broker_outputs_created": false',
+                '"production_outputs_created": false',
+                '"local_lake_outputs_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"goal_rec_tiering01_run": false',
+                '"goal10b4_run": false',
+                '"position_band_validation_run": false',
+                '"goal10d_run": false',
+                '"live_provider_fetches_run": false',
+                '"future_returns_used_in_factor_construction": false',
+                '"benchmark_excess_returns_used_in_factor_construction": false',
+                '"label_ready_fields_used_in_factor_construction": false',
+                '"production_predictive_validity_claimed": false',
+            ]:
+                if required_false not in goal_quant_research02_manifest:
+                    failures.append(f"GOAL-QUANT-RESEARCH-02 manifest missing false boundary flag: {required_false}")
+            for workflow_id, row, expected_dependency in [
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH02_WORKFLOW_ID),
+                (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
+                (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
+            ]:
+                if row.get("status") != "locked_future":
+                    failures.append(f"{workflow_id} must remain locked_future after GOAL-QUANT-RESEARCH-02")
+                if row.get("implemented_in_repo") != "false":
+                    failures.append(f"{workflow_id} must not be implemented after GOAL-QUANT-RESEARCH-02")
+                if row.get("depends_on") != expected_dependency:
+                    failures.append(f"{workflow_id} dependency is invalid after GOAL-QUANT-RESEARCH-02")
+            _validate_locked_execution_downstream(failures, by_id, context="GOAL-QUANT-RESEARCH-02")
+        else:
+            if goal_quant_research02.get("status") != "locked_future" or goal_quant_research02.get("implemented_in_repo") != "false":
+                failures.append("GOAL-QUANT-RESEARCH-02 must remain locked_future until valid evidence exists")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -3055,8 +3179,19 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
             if row["depends_on"] != GOAL_MVP01_WORKFLOW_ID:
                 failures.append("goal_alpha_factor_candidate01_research_gate must depend on GOAL-MVP-01")
         if workflow_id == GOAL_QUANT_RESEARCH02_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must remain locked_future and unimplemented")
+            if status not in {"locked_future", "implemented_research_only"}:
+                failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must be locked_future or implemented_research_only")
+            if status == "implemented_research_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate implemented_research_only must be marked implemented")
+                if row["allowed_next_action"] not in {
+                    GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_WEAK,
+                    GOAL_QUANT_RESEARCH02_ALLOWED_NEXT_AVAILABLE,
+                }:
+                    failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate allowed_next_action is invalid")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must remain unimplemented while locked_future")
             if row["depends_on"] != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
                 failures.append("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate must depend on GOAL-ALPHA-FACTOR-CANDIDATE-01")
         if workflow_id == GOAL_REC_TIERING01_WORKFLOW_ID:
@@ -3472,6 +3607,13 @@ def _goal_alpha_factor_candidate01_readiness_implemented(readiness: str) -> bool
     return (
         "GOAL-ALPHA-FACTOR-CANDIDATE-01 Research Grade Alpha Candidate Construction Gate: PASS" in readiness
         or "GOAL-ALPHA-FACTOR-CANDIDATE-01 Research Grade Alpha Candidate Construction Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_quant_research02_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation Gate: PASS" in readiness
+        or "GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

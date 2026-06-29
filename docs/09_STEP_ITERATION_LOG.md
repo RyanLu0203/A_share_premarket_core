@@ -1,5 +1,35 @@
 # 09 Step Iteration Log
 
+## 2026-06-28 - GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Evaluation
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-QUANT-RESEARCH-02 research-only alpha candidate validity
+  evaluation gate over committed GOAL-ALPHA-FACTOR-CANDIDATE-01, Provider02B,
+  MVP, and GOAL-QUANT-RESEARCH-01 evidence.
+- Generated the alpha evaluation panel, factor coverage summary, bucket
+  metrics, IC/RankIC, monotonicity, rolling stability, horizon consistency,
+  score-validity classification, trial registry, contract, docs, report,
+  manifest, audit, scripts, tests, and workflow governance.
+- Used Provider02B forward-return and benchmark-excess-return fields only
+  after factor values, quantiles, and buckets already existed.
+- Classified ready factor count as `0`, so the recommended next step is
+  GOAL-ALPHA-FACTOR-CANDIDATE-02 or GOAL-ALPHA-RESEARCH-REFINEMENT-01 before
+  any recommendation tiering.
+- Preserved GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+  GOAL-10D, Dashboard / Daily Report UI, portfolio backtests, trading,
+  production, broker, local-lake, factor-mining, and DQN/RL as locked.
+
+Evidence:
+
+- `outputs/research/goal_quant_research02_alpha_evaluation_panel.csv`
+- `outputs/research/goal_quant_research02_alpha_factor_score_validity_classification.csv`
+- `outputs/research/goal_quant_research02_trial_registry.csv`
+- `outputs/audits/goal_quant_research02_alpha_factor_evaluation_report.md`
+- `outputs/audits/goal_quant_research02_alpha_factor_evaluation_audit.md`
+
 ## 2026-06-28 - GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Candidate Construction
 
 Status: `PASS_WITH_WARNINGS`.

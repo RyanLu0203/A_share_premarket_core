@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-28 - GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Evaluation
+
+- Implemented GOAL-QUANT-RESEARCH-02 only as a research-only validity
+  evaluation gate over committed GOAL-ALPHA-FACTOR-CANDIDATE-01 and
+  Provider02B evidence.
+- Added the 78,000-row alpha evaluation panel, factor coverage summary, bucket
+  metrics, IC/RankIC, monotonicity, rolling stability, horizon consistency,
+  score-validity classification, trial registry, contract, docs, runner, audit,
+  tests, report, manifest, and workflow governance.
+- Used forward returns and benchmark-excess returns only after alpha candidate
+  construction for post-hoc evaluation; no factor formula was tuned to future
+  outcomes.
+- Recorded `PASS_WITH_WARNINGS` with ready factor count 0 and recommended
+  GOAL-ALPHA-FACTOR-CANDIDATE-02 or GOAL-ALPHA-RESEARCH-REFINEMENT-01 before
+  recommendation tiering.
+- Kept GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-28 - GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Candidate Construction
 
 - Implemented GOAL-ALPHA-FACTOR-CANDIDATE-01 only as research-only alpha

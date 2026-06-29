@@ -78,5 +78,8 @@ def test_goal_alpha_factor_candidate01_runner_preserves_research_only_boundaries
     workflow = _workflow()
     assert workflow["goal_alpha_factor_candidate01_research_gate"]["status"] == "implemented_research_only"
     assert workflow["goal_alpha_factor_candidate01_research_gate"]["implemented_in_repo"] == "true"
-    assert workflow["goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"]["status"] == "locked_future"
+    assert workflow["goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"]["status"] in {
+        "locked_future",
+        "implemented_research_only",
+    }
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"

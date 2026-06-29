@@ -347,6 +347,7 @@ def audit_goal_alpha_factor_candidate01_gate(root: Path) -> bool:
     gate = workflow.get(WORKFLOW_ID, {})
     quant02 = workflow.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
+    quant02_valid = _goal_quant_research02_valid(root)
     if gate.get("status") != "implemented_research_only":
         failures.append("goal_alpha_factor_candidate01_workflow_not_implemented_research_only")
     if gate.get("implemented_in_repo") != "true":
@@ -355,7 +356,10 @@ def audit_goal_alpha_factor_candidate01_gate(root: Path) -> bool:
         failures.append("goal_alpha_factor_candidate01_dependency_invalid")
     if gate.get("allowed_next_action") != ALLOWED_NEXT:
         failures.append("goal_alpha_factor_candidate01_allowed_next_invalid")
-    if quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
+    if quant02_valid:
+        if quant02.get("status") != "implemented_research_only" or quant02.get("implemented_in_repo") != "true":
+            failures.append("goal_quant_research02_valid_but_not_implemented")
+    elif quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
         failures.append("goal_quant_research02_not_locked_future")
     if quant02.get("depends_on") != WORKFLOW_ID:
         failures.append("goal_quant_research02_dependency_invalid")
@@ -1048,6 +1052,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
         if GOAL10D_WORKFLOW_ID in by_id:
             by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 
@@ -1063,6 +1068,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_capabilities(root, payload)
     if result["status"] in {PASS, PASS_WITH_WARNINGS}:
         payload[WORKFLOW_ID] = "implemented_research_only"
+        preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 
@@ -1308,3 +1314,12 @@ def _read_json(path: Path) -> dict[str, object]:
         return read_json(path)
     except Exception:
         return {}
+
+
+def _goal_quant_research02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research02 import goal_quant_research02_valid_evidence
+
+        return goal_quant_research02_valid_evidence(root)
+    except Exception:
+        return False

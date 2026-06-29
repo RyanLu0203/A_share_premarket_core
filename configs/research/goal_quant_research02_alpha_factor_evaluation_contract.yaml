@@ -1,0 +1,54 @@
+{
+  "goal_id": "GOAL-QUANT-RESEARCH-02",
+  "mode": "research_only_alpha_candidate_factor_validity_evaluation_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "allowed_inputs": [
+    "outputs/research/goal_alpha_factor_candidate01_candidate_registry.csv",
+    "outputs/research/goal_alpha_factor_candidate01_factor_candidate_panel.csv",
+    "outputs/research/goal_alpha_factor_candidate01_coverage_summary.csv",
+    "outputs/research/goal_alpha_factor_candidate01_construction_warnings.csv",
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/mvp/goal_mvp01_symbol_diagnostic_table.csv",
+    "outputs/mvp/goal_mvp01_review_queue.csv",
+    "outputs/research/goal_quant_research01_factor_registry.csv",
+    "outputs/research/goal_quant_research01_score_validity_classification.csv",
+    "outputs/research/goal_quant_research01_trial_registry.csv"
+  ],
+  "allowed_outputs": [
+    "outputs/research/goal_quant_research02_alpha_evaluation_panel.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_coverage_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_bucket_metrics.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_ic_rankic_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_monotonicity_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_rolling_stability_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_horizon_consistency_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_score_validity_classification.csv",
+    "outputs/research/goal_quant_research02_trial_registry.csv",
+    "outputs/audits/goal_quant_research02_alpha_factor_evaluation_report.md",
+    "outputs/audits/goal_quant_research02_alpha_factor_evaluation_manifest.json",
+    "outputs/audits/goal_quant_research02_alpha_factor_evaluation_audit.md",
+    "docs/research/GOAL_QUANT_RESEARCH02_ALPHA_CANDIDATE_FACTOR_VALIDITY_EVALUATION_GATE.md",
+    "configs/research/goal_quant_research02_alpha_factor_evaluation_contract.yaml"
+  ],
+  "evaluation_panel_schema": ["trade_date", "symbol", "factor_id", "factor_family", "factor_value", "factor_value_normalized_cross_sectional", "factor_quantile", "factor_bucket", "expected_direction", "forward_return_1d", "forward_return_5d", "forward_return_20d", "benchmark_excess_return_1d", "benchmark_excess_return_5d", "benchmark_excess_return_20d", "source_provider", "universe_mode", "panel_contract_status", "risk_score_bucket", "downside_risk_bucket", "mvp_review_queue_category", "mvp_review_priority_level", "no_lookahead_status", "diagnostic_mode", "non_actionable_disclaimer"],
+  "score_validity_schema": ["factor_id", "factor_family", "no_lookahead_status", "bucket_status", "ic_rankic_status", "monotonicity_status", "rolling_stability_status", "horizon_consistency_status", "score_validity_classification", "accepted_for_downstream", "candidate_for_rec_tiering", "rejection_reason", "recommended_next_action"],
+  "posthoc_label_policy": "forward_return_and_benchmark_excess_fields_may_only_be_used_after_candidate_values_are_constructed",
+  "anti_overfitting_policy": [
+    "do_not_tune_factor_formulas_to_forward_returns",
+    "record_every_alpha_candidate_trial",
+    "do_not_promote_one_horizon_only",
+    "require_stability_checks",
+    "require_no_lookahead_audit",
+    "do_not_promote_collapsed_bucket_factors",
+    "do_not_use_portfolio_returns_or_equity_curves"
+  ],
+  "downstream_locks": {
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

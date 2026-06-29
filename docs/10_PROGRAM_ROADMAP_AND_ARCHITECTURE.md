@@ -57,7 +57,7 @@ flowchart TD
     RISK011 -. "research-only factor lab" .-> QRESEARCH01["GOAL-QUANT-RESEARCH-01 Factor Research Lab<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
     MVP01 -. "research-only alpha candidates" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    ALPHA01 -. "locked validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(locked_future)"]
+    ALPHA01 -. "research-only validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
@@ -151,9 +151,14 @@ Provider02B, MVP, Quant Research, and risk-tiering evidence. It creates
 candidate values only, excludes future labels from construction, and creates
 no recommendations, positions, portfolios, dashboard/frontend files, trading,
 production, local-lake, broker, factor-mining, DQN/RL output, or predictive
-validity claims. GOAL-QUANT-RESEARCH-02, GOAL-REC-TIERING-01, GOAL-10B.4,
-GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard /
-Daily Report UI, and downstream execution stages remain locked future work;
+validity claims. GOAL-QUANT-RESEARCH-02 is implemented only as research-only
+alpha candidate validity evaluation from committed evidence. It writes
+evaluation, coverage, bucket, IC/RankIC, monotonicity, stability, horizon,
+score-validity, and trial-registry diagnostics only, records ready factor count
+0, and recommends alpha refinement before recommendation tiering.
+GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
+execution stages remain locked future work;
 no dashboard files, visual reports, frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

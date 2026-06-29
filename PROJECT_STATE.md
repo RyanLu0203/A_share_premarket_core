@@ -257,11 +257,23 @@ from factor construction. It creates no recommendation rows, position rows,
 portfolio outputs, dashboard/frontend files, trading paths, production
 behavior, local-lake files, broker outputs, factor-mining outputs, DQN/RL
 outputs, or predictive-validity claims.
-GOAL-QUANT-RESEARCH-02, GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
-portfolio backtest promotion, paper/live trading, broker, production,
-local-lake, factor-mining, and DQN/RL remain locked or deleted from active
-mainline.
+GOAL-QUANT-RESEARCH-02 is implemented as a research-only alpha candidate
+factor validity evaluation gate (`PASS_WITH_WARNINGS`). It consumes committed
+GOAL-ALPHA-FACTOR-CANDIDATE-01 and Provider02B evidence, writes a 78000-row
+alpha evaluation panel plus coverage, bucket, IC/RankIC, monotonicity, rolling
+stability, horizon consistency, score-validity, trial-registry, contract, docs,
+manifest, report, and audit evidence. Forward returns and benchmark-excess
+returns are used only post-hoc after factor values already exist. Ready factor
+count is `0`, so the recommended next step is GOAL-ALPHA-FACTOR-CANDIDATE-02
+or GOAL-ALPHA-RESEARCH-REFINEMENT-01 before recommendation tiering. It creates
+no recommendation rows, position rows, portfolio outputs, dashboard/frontend
+files, trading paths, production behavior, local-lake files, broker outputs,
+factor-mining outputs, DQN/RL outputs, or production predictive-validity
+claims.
+GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02,
+GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtest
+promotion, paper/live trading, broker, production, local-lake, factor-mining,
+and DQN/RL remain locked or deleted from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support

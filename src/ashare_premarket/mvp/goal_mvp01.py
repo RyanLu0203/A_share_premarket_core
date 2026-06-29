@@ -377,6 +377,7 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
     quant02 = workflow.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     alpha_implemented = alpha.get("status") == "implemented_research_only" and alpha.get("implemented_in_repo") == "true"
+    quant02_valid = _goal_quant_research02_valid(root)
     if gate.get("status") != "implemented_mvp_research_only":
         failures.append("goal_mvp01_workflow_not_implemented_mvp_research_only")
     if gate.get("implemented_in_repo") != "true":
@@ -389,9 +390,12 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
         failures.append("goal_alpha_factor_candidate01_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_mvp01")
-    expected_rec_dependency = GOAL_QUANT_RESEARCH02_WORKFLOW_ID if alpha_implemented else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+    expected_rec_dependency = GOAL_QUANT_RESEARCH02_WORKFLOW_ID if (quant02_valid or alpha_implemented) else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
     if alpha_implemented:
-        if quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
+        if quant02_valid:
+            if quant02.get("status") != "implemented_research_only" or quant02.get("implemented_in_repo") != "true":
+                failures.append("goal_quant_research02_valid_but_not_implemented")
+        elif quant02.get("status") != "locked_future" or quant02.get("implemented_in_repo") != "false":
             failures.append("goal_quant_research02_not_locked_after_alpha_candidate")
         if quant02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
             failures.append("goal_quant_research02_dependency_invalid")
@@ -1345,3 +1349,12 @@ def _read_json(path: Path) -> dict[str, object]:
         return read_json(path)
     except Exception:
         return {}
+
+
+def _goal_quant_research02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research02 import goal_quant_research02_valid_evidence
+
+        return goal_quant_research02_valid_evidence(root)
+    except Exception:
+        return False
