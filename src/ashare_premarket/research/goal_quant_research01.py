@@ -584,18 +584,19 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_quant_research")
-    quant02_valid_for_dependency = _goal_quant_research02_valid(root)
-    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "locked_future":
-        expected_rec_dependency = "goal_alpha_factor_candidate02_refined_variants_research_gate"
-    else:
-        expected_rec_dependency = (
-            GOAL_QUANT_RESEARCH02_WORKFLOW_ID
-            if quant02_valid_for_dependency or workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
-            else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
-            if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only"
-            else WORKFLOW_ID
-        )
-    if rec.get("depends_on") != expected_rec_dependency:
+    valid_rec_dependencies = {WORKFLOW_ID}
+    if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only":
+        valid_rec_dependencies.add(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID)
+    if (
+        _goal_quant_research02_valid(root)
+        or workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
+    ):
+        valid_rec_dependencies.add(GOAL_QUANT_RESEARCH02_WORKFLOW_ID)
+    if workflow.get("goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_alpha_factor_candidate02_refined_variants_research_gate")
+    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate")
+    if rec.get("depends_on") not in valid_rec_dependencies:
         failures.append("goal_rec_tiering01_not_rebased_on_quant_research")
     if workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only":
         quant02 = workflow.get(GOAL_QUANT_RESEARCH02_WORKFLOW_ID, {})

@@ -281,11 +281,24 @@ refined factor panel, recommendation rows, position rows, portfolio outputs,
 dashboard/frontend files, trading paths, production behavior, local-lake files,
 broker outputs, factor-mining outputs, DQN/RL outputs, or predictive-validity
 claims.
-GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
-position-band validation, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily
-Report UI, signal and portfolio backtest promotion, paper/live trading,
-broker, production, local-lake, factor-mining, and DQN/RL remain locked or
-deleted from active mainline.
+GOAL-ALPHA-FACTOR-CANDIDATE-02 is implemented as a research-only refined alpha
+candidate construction gate (`PASS_WITH_WARNINGS`). It consumes only committed
+GOAL-ALPHA-RESEARCH-REFINEMENT-01, GOAL-ALPHA-FACTOR-CANDIDATE-01, Quant02,
+Provider02B, MVP, and risk-tiering evidence, writes a 30-row refined candidate
+registry, 180000-row refined candidate panel, 30-row coverage summary,
+74-row construction warning table, 4-row intraday redefinition status, 30-row
+trial registry, contract, docs, report, manifest, and audit evidence. It uses
+only current-or-past committed inputs, keeps future returns, benchmark-excess
+returns, and label-ready fields out of construction, marks all downstream
+acceptance flags false, and creates no predictive-validity evaluation,
+recommendation rows, position rows, portfolio outputs, dashboard/frontend
+files, trading paths, production behavior, local-lake files, broker outputs,
+factor-mining outputs, DQN/RL outputs, or promotion claims.
+GOAL-QUANT-RESEARCH-03, GOAL-REC-TIERING-01, GOAL-10B.4, position-band
+validation, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
+and portfolio backtest promotion, paper/live trading, broker, production,
+local-lake, factor-mining, and DQN/RL remain locked or deleted from active
+mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support

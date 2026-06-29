@@ -218,7 +218,17 @@ recommendation execution, position work, or dashboard work.
   recommendations, positions, portfolios, dashboards, trading, production,
   local-lake, broker, factor-mining, DQN/RL outputs, or predictive-validity
   claims.
-- GOAL-ALPHA-FACTOR-CANDIDATE-02 remains `locked_future`.
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only refined alpha candidate values from
+  committed Alpha Refinement 01, Alpha Candidate 01, Quant02, Provider02B,
+  MVP, and risk-tiering evidence; no future returns, benchmark-excess returns,
+  or label-ready fields are used in construction. It records 30 refined
+  candidates, 180000 refined panel rows, 74 construction warnings, and all
+  downstream acceptance flags false. It creates no predictive-validity
+  evaluation, recommendations, positions, portfolios, dashboards, trading,
+  production, local-lake, broker, factor-mining, DQN/RL outputs, or promotion
+  claims.
+- GOAL-QUANT-RESEARCH-03 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -428,6 +438,13 @@ artifacts. It must not construct or evaluate refined factor panels, promote a
 factor, or create recommendations, positions, portfolio outputs,
 dashboard/frontend files, trading, production, local-lake, broker,
 factor-mining, or DQN/RL outputs.
+GOAL-ALPHA-FACTOR-CANDIDATE-02 is research-only refined alpha candidate
+construction. It may maintain only refined candidate registry, panel,
+coverage, warning, intraday-status, trial-registry, docs, config, report,
+manifest, and audit artifacts. It must not evaluate predictive validity, run
+GOAL-QUANT-RESEARCH-03, promote a factor, or create recommendations,
+positions, portfolio outputs, dashboard/frontend files, trading, production,
+local-lake, broker, factor-mining, or DQN/RL outputs.
 
 ## GOAL-06D.1 Agent Note
 

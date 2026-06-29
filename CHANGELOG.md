@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-29 - GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction
+
+- Implemented GOAL-ALPHA-FACTOR-CANDIDATE-02 only as a research-only refined
+  alpha candidate construction gate over committed Alpha Refinement 01, Alpha
+  Candidate 01, Quant02, Provider02B, MVP, and risk-tiering evidence.
+- Added refined candidate registry, 180000-row refined candidate panel,
+  coverage summary, construction warnings, intraday redefinition status,
+  trial registry, contract, docs, runner, audit, tests, report, manifest, and
+  workflow governance.
+- Recorded `PASS_WITH_WARNINGS` with 30 constructed refined candidates,
+  30 coverage rows, 74 construction warnings, 4 intraday redefinition status
+  rows, and all downstream acceptance flags false.
+- Kept future returns, benchmark-excess returns, label-ready fields, and
+  post-hoc performance out of refined candidate construction.
+- Kept GOAL-QUANT-RESEARCH-03, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, dashboards, trading, production, broker,
+  local-lake, factor-mining, and DQN/RL locked.
+
 ## 2026-06-29 - GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability Refinement
 
 - Implemented GOAL-ALPHA-RESEARCH-REFINEMENT-01 only as a research-only

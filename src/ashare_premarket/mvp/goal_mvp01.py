@@ -390,10 +390,13 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
         failures.append("goal_alpha_factor_candidate01_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_mvp01")
-    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "locked_future":
-        expected_rec_dependency = "goal_alpha_factor_candidate02_refined_variants_research_gate"
-    else:
-        expected_rec_dependency = GOAL_QUANT_RESEARCH02_WORKFLOW_ID if (quant02_valid or alpha_implemented) else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+    valid_rec_dependencies = {GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID}
+    if quant02_valid or alpha_implemented:
+        valid_rec_dependencies.add(GOAL_QUANT_RESEARCH02_WORKFLOW_ID)
+    if workflow.get("goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_alpha_factor_candidate02_refined_variants_research_gate")
+    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate")
     if alpha_implemented:
         if quant02_valid:
             if quant02.get("status") != "implemented_research_only" or quant02.get("implemented_in_repo") != "true":
@@ -402,7 +405,7 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
             failures.append("goal_quant_research02_not_locked_after_alpha_candidate")
         if quant02.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID:
             failures.append("goal_quant_research02_dependency_invalid")
-    if rec.get("depends_on") != expected_rec_dependency:
+    if rec.get("depends_on") not in valid_rec_dependencies:
         failures.append("goal_rec_tiering01_not_rebased_on_alpha_candidate")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,

@@ -78,7 +78,16 @@ def test_goal_alpha_research_refinement01_runner_preserves_boundaries() -> None:
     workflow = _workflow()
     assert workflow["goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate"]["status"] == "implemented_research_only"
     assert workflow["goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate"]["depends_on"] == "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
-    assert workflow["goal_alpha_factor_candidate02_refined_variants_research_gate"]["status"] == "locked_future"
+    assert workflow["goal_alpha_factor_candidate02_refined_variants_research_gate"]["status"] in {
+        "locked_future",
+        "implemented_research_only",
+    }
     assert workflow["goal_alpha_factor_candidate02_refined_variants_research_gate"]["depends_on"] == "goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate"
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["status"] == "locked_future"
-    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_alpha_factor_candidate02_refined_variants_research_gate"
+    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
+        "goal_alpha_factor_candidate02_refined_variants_research_gate",
+        "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
+    }
+    if workflow["goal_alpha_factor_candidate02_refined_variants_research_gate"]["status"] == "implemented_research_only":
+        assert workflow["goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"]["status"] == "locked_future"
+        assert workflow["goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"]["depends_on"] == "goal_alpha_factor_candidate02_refined_variants_research_gate"

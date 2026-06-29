@@ -1,5 +1,37 @@
 # 09 Step Iteration Log
 
+## 2026-06-29 - GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-ALPHA-FACTOR-CANDIDATE-02 research-only refined alpha
+  candidate construction gate over committed Alpha Refinement 01, Alpha
+  Candidate 01, Quant02, Provider02B, MVP, and risk-tiering evidence.
+- Generated refined candidate registry, refined candidate panel, coverage
+  summary, construction warnings, intraday redefinition status, trial registry,
+  contract, docs, report, manifest, audit, scripts, tests, and workflow
+  governance.
+- Constructed 30 refined candidate definitions over 180000 refined panel rows,
+  with 30 coverage rows, 74 construction warnings, and 4 intraday redefinition
+  status rows.
+- Preserved no-lookahead construction by excluding future returns,
+  benchmark-excess returns, label-ready fields, and post-hoc performance from
+  formula construction.
+- Preserved GOAL-QUANT-RESEARCH-03, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, Dashboard / Daily Report UI, portfolio
+  backtests, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL as locked.
+
+Evidence:
+
+- `outputs/research/goal_alpha_factor_candidate02_refined_candidate_registry.csv`
+- `outputs/research/goal_alpha_factor_candidate02_refined_candidate_panel.csv`
+- `outputs/research/goal_alpha_factor_candidate02_construction_warnings.csv`
+- `outputs/audits/goal_alpha_factor_candidate02_report.md`
+- `outputs/audits/goal_alpha_factor_candidate02_audit.md`
+
 ## 2026-06-29 - GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement
 
 Status: `PASS_WITH_WARNINGS`.

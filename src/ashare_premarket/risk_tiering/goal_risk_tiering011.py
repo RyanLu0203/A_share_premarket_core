@@ -428,6 +428,8 @@ def audit_goal_risk_tiering011_downside_risk_repair_gate(root: Path) -> bool:
         valid_rec_dependencies.add("goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate")
     if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "locked_future":
         valid_rec_dependencies.add("goal_alpha_factor_candidate02_refined_variants_research_gate")
+    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate")
     if workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {}).get("depends_on") not in valid_rec_dependencies:
         failures.append("goal_rec_tiering01_not_rebased_on_goal_risk_tiering011")
     failures.extend(f"forbidden_output_present:{path}" for path in _forbidden_outputs_present(root))

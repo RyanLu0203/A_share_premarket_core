@@ -78,4 +78,5 @@ def test_goal_quant_research02_runner_preserves_research_only_boundaries() -> No
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
         "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
         "goal_alpha_factor_candidate02_refined_variants_research_gate",
+        "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
     }

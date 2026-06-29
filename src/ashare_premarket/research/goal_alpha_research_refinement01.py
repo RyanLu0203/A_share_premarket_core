@@ -377,13 +377,19 @@ def audit_goal_alpha_research_refinement01_gate(root: Path) -> bool:
         failures.append("goal_alpha_research_refinement01_workflow_not_marked_implemented")
     if gate.get("depends_on") != GOAL_QUANT_RESEARCH02_WORKFLOW_ID:
         failures.append("goal_alpha_research_refinement01_dependency_invalid")
-    if alpha02.get("status") != "locked_future" or alpha02.get("implemented_in_repo") != "false":
+    if alpha02.get("status") == "implemented_research_only":
+        if alpha02.get("implemented_in_repo") != "true":
+            failures.append("goal_alpha_factor_candidate02_implemented_flag_invalid")
+    elif alpha02.get("status") != "locked_future" or alpha02.get("implemented_in_repo") != "false":
         failures.append("goal_alpha_factor_candidate02_not_locked_future")
     if alpha02.get("depends_on") != WORKFLOW_ID:
         failures.append("goal_alpha_factor_candidate02_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_future")
-    if rec.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID:
+    if rec.get("depends_on") not in {
+        GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID,
+        "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
+    }:
         failures.append("goal_rec_tiering01_dependency_invalid")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,
@@ -1126,6 +1132,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         by_id[GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID].update(locked_goal_alpha_factor_candidate02_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 
