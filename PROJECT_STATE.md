@@ -270,10 +270,22 @@ no recommendation rows, position rows, portfolio outputs, dashboard/frontend
 files, trading paths, production behavior, local-lake files, broker outputs,
 factor-mining outputs, DQN/RL outputs, or production predictive-validity
 claims.
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02,
-GOAL-10D, Dashboard / Daily Report UI, signal and portfolio backtest
-promotion, paper/live trading, broker, production, local-lake, factor-mining,
-and DQN/RL remain locked or deleted from active mainline.
+GOAL-ALPHA-RESEARCH-REFINEMENT-01 is implemented as a research-only rolling
+stability and candidate refinement gate (`PASS_WITH_WARNINGS`). It consumes
+only committed Quant02, Alpha Candidate 01, Provider02B, and MVP evidence,
+diagnoses 6 promising rolling-unstable alpha candidates, writes 120
+conditional-stability rows, 30 proposed refined candidate design rows, 4
+intraday redefinition rows, and 34 trial-registry update rows. All proposed
+designs are marked not evaluated and not accepted downstream. It creates no
+refined factor panel, recommendation rows, position rows, portfolio outputs,
+dashboard/frontend files, trading paths, production behavior, local-lake files,
+broker outputs, factor-mining outputs, DQN/RL outputs, or predictive-validity
+claims.
+GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+position-band validation, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily
+Report UI, signal and portfolio backtest promotion, paper/live trading,
+broker, production, local-lake, factor-mining, and DQN/RL remain locked or
+deleted from active mainline.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support

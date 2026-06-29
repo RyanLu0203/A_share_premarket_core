@@ -100,6 +100,8 @@ Implemented research-only:
   (`PASS_WITH_WARNINGS`)
 - GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Validity Evaluation
   (`PASS_WITH_WARNINGS`)
+- GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement
+  Gate (`PASS_WITH_WARNINGS`)
 
 Implemented design-only:
 
@@ -124,6 +126,7 @@ Locked future:
 
 - Actual position recommendations, position sizing, portfolio weights, and
   order quantities
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Variant Construction
 - GOAL-REC-TIERING-01 Recommendation Score Tiering
 - GOAL-DATA-PANEL-02 Evaluation Panel
 - GOAL-10B.4 Recommendation Revalidation

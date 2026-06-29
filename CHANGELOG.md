@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-06-29 - GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability Refinement
+
+- Implemented GOAL-ALPHA-RESEARCH-REFINEMENT-01 only as a research-only
+  rolling-stability attribution and candidate refinement design gate over
+  committed Quant02, Alpha Candidate 01, Provider02B, and MVP evidence.
+- Added instability attribution, conditional stability summary, refined
+  candidate design definitions, intraday redefinition plan, trial-registry
+  update, contract, docs, runner, audit, tests, report, manifest, and workflow
+  governance.
+- Recorded `PASS_WITH_WARNINGS` with 6 promising candidates diagnosed, 30
+  proposed refined design rows, 4 intraday redefinition rows, and 34
+  trial-registry update rows.
+- Kept all refined candidate designs not evaluated and not accepted downstream;
+  no refined factor panel, recommendations, positions, portfolios, dashboards,
+  trading, production, local-lake, broker, factor-mining, or DQN/RL outputs
+  were created.
+- Kept GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, dashboards, trading, production, broker,
+  local-lake, factor-mining, and DQN/RL locked.
+
 ## 2026-06-28 - GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Evaluation
 
 - Implemented GOAL-QUANT-RESEARCH-02 only as a research-only validity

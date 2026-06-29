@@ -485,7 +485,10 @@ def audit_goal_quant_research02_alpha_factor_evaluation_gate(root: Path) -> bool
         failures.append("goal_quant_research02_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_future")
-    if rec.get("depends_on") != WORKFLOW_ID:
+    if rec.get("depends_on") not in {
+        WORKFLOW_ID,
+        "goal_alpha_factor_candidate02_refined_variants_research_gate",
+    }:
         failures.append("goal_rec_tiering01_dependency_invalid")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,
@@ -1285,6 +1288,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         by_id[WORKFLOW_ID].update(goal_quant_research02_implemented_workflow_patch(str(result["status"]), ready))
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch(result))
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 
@@ -1300,6 +1304,7 @@ def _update_locked_capabilities(root: Path, result: dict[str, object]) -> None:
     if result["status"] in {PASS, PASS_WITH_WARNINGS}:
         payload[WORKFLOW_ID] = "implemented_research_only"
         payload[GOAL_REC_TIERING01_WORKFLOW_ID] = False
+    preserve_later_review_only_capabilities(root, payload)
     write_json(path, payload)
 
 

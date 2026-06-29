@@ -171,6 +171,16 @@ post-hoc after factor values and buckets already exist. It creates no
 recommendation rows, position rows, portfolios, dashboard/frontend outputs,
 trading paths, production storage, broker output, local-lake output,
 factor-mining output, DQN/RL output, or production predictive-validity claims.
+GOAL-ALPHA-RESEARCH-REFINEMENT-01 writes only research-only rolling-stability
+attribution and candidate refinement design evidence under `outputs/research/`,
+`configs/research/`, `docs/research/`, and `outputs/audits/`. It consumes
+committed Quant02, Alpha Candidate 01, Provider02B, and MVP evidence only. It
+may use forward-return and benchmark-excess-return fields only for post-hoc
+diagnostic attribution after source factor values already exist, and it does
+not use them in refined factor construction. It creates no refined factor
+panel, recommendation rows, position rows, portfolios, dashboard/frontend
+outputs, trading paths, production storage, broker output, local-lake output,
+factor-mining output, DQN/RL output, or predictive-validity claims.
 
 ## Active Contracts
 

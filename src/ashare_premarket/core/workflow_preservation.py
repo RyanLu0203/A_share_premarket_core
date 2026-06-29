@@ -691,7 +691,10 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
         if GOAL_MVP01_WORKFLOW_ID in by_id:
             by_id[GOAL_MVP01_WORKFLOW_ID].update(goal_mvp01_implemented_workflow_patch())
-        if GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID in by_id:
+        if (
+            GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID in by_id
+            and by_id[GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID].get("status") != "implemented_research_only"
+        ):
             by_id[GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID].update(locked_goal_alpha_factor_candidate01_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
@@ -738,7 +741,10 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
             by_id[GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID].update(
                 goal_alpha_factor_candidate01_implemented_workflow_patch()
             )
-        if GOAL_QUANT_RESEARCH02_WORKFLOW_ID in by_id:
+        if (
+            GOAL_QUANT_RESEARCH02_WORKFLOW_ID in by_id
+            and by_id[GOAL_QUANT_RESEARCH02_WORKFLOW_ID].get("status") != "implemented_research_only"
+        ):
             by_id[GOAL_QUANT_RESEARCH02_WORKFLOW_ID].update(locked_goal_quant_research02_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
@@ -806,6 +812,53 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_quant_research02"
+    if _goal_alpha_research_refinement01_valid(root):
+        from ashare_premarket.research.goal_alpha_research_refinement01 import (
+            GOAL10B4_WORKFLOW_ID,
+            GOAL10D_WORKFLOW_ID,
+            GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID,
+            GOAL_REC_TIERING01_WORKFLOW_ID,
+            POSITION_BAND_VALIDATION_WORKFLOW_ID,
+            WORKFLOW_ID as GOAL_ALPHA_RESEARCH_REFINEMENT01_WORKFLOW_ID,
+            goal_alpha_research_refinement01_implemented_workflow_patch,
+            locked_goal10b4_patch,
+            locked_goal10d_patch,
+            locked_goal_alpha_factor_candidate02_patch,
+            locked_goal_rec_tiering01_patch,
+            locked_position_band_validation_patch,
+        )
+
+        if GOAL_ALPHA_RESEARCH_REFINEMENT01_WORKFLOW_ID in by_id:
+            by_id[GOAL_ALPHA_RESEARCH_REFINEMENT01_WORKFLOW_ID].update(
+                goal_alpha_research_refinement01_implemented_workflow_patch()
+            )
+        if GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID in by_id:
+            by_id[GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID].update(locked_goal_alpha_factor_candidate02_patch())
+        if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
+            by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
+        if GOAL10B4_WORKFLOW_ID in by_id:
+            by_id[GOAL10B4_WORKFLOW_ID].update(locked_goal10b4_patch())
+        if POSITION_BAND_VALIDATION_WORKFLOW_ID in by_id:
+            by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
+        if GOAL10D_WORKFLOW_ID in by_id:
+            by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_alpha_research_refinement01"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -932,6 +985,13 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_quant_research02_valid(root):
         payload["goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"] = "implemented_research_only"
+        payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
+        payload["goal10b4_recommendation_backtest_revalidation"] = False
+        payload["goal_position_band_validation01_position_band_validation_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_alpha_research_refinement01_valid(root):
+        payload["goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate"] = "implemented_research_only"
+        payload["goal_alpha_factor_candidate02_refined_variants_research_gate"] = False
         payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
         payload["goal10b4_recommendation_backtest_revalidation"] = False
         payload["goal_position_band_validation01_position_band_validation_gate"] = False
@@ -1179,6 +1239,17 @@ def _goal_quant_research02_valid(root: Path) -> bool:
         from ashare_premarket.research.goal_quant_research02 import goal_quant_research02_valid_evidence
 
         return goal_quant_research02_valid_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_alpha_research_refinement01_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_alpha_research_refinement01 import (
+            goal_alpha_research_refinement01_valid_evidence,
+        )
+
+        return goal_alpha_research_refinement01_valid_evidence(root)
     except Exception:
         return False
 

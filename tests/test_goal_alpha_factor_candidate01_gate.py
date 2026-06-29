@@ -82,4 +82,7 @@ def test_goal_alpha_factor_candidate01_runner_preserves_research_only_boundaries
         "locked_future",
         "implemented_research_only",
     }
-    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate"
+    assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] in {
+        "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
+        "goal_alpha_factor_candidate02_refined_variants_research_gate",
+    }

@@ -22,6 +22,8 @@
   "goal10c_backtest_cost_slippage_sensitivity_gate": "implemented_review_only",
   "goal10d_backtest_failure_attribution_gate": false,
   "goal_alpha_factor_candidate01_research_gate": "implemented_research_only",
+  "goal_alpha_factor_candidate02_refined_variants_research_gate": false,
+  "goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate": "implemented_research_only",
   "goal_data_label01_forward_return_label_coverage_expansion": "implemented_review_only",
   "goal_data_panel02_evaluation_panel_gate": false,
   "goal_data_provider02a1_network_opt_in_provider_smoke_test": "implemented_review_only",

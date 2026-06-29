@@ -1,5 +1,34 @@
 # 09 Step Iteration Log
 
+## 2026-06-29 - GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-ALPHA-RESEARCH-REFINEMENT-01 research-only rolling-stability
+  and candidate refinement gate over committed Quant02, Alpha Candidate 01,
+  Provider02B, and MVP evidence.
+- Generated instability attribution, conditional stability slicing, refined
+  candidate design definitions, intraday redefinition plans, trial-registry
+  updates, contract, docs, report, manifest, audit, scripts, tests, and
+  workflow governance.
+- Diagnosed 6 promising rolling-unstable alpha candidates and wrote 30
+  proposed refined design rows plus 34 trial-registry update rows, all marked
+  not evaluated and not accepted downstream.
+- Preserved GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, Dashboard / Daily Report UI, portfolio
+  backtests, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL as locked.
+
+Evidence:
+
+- `outputs/research/goal_alpha_research_refinement01_instability_attribution.csv`
+- `outputs/research/goal_alpha_research_refinement01_refined_candidate_designs.csv`
+- `outputs/research/goal_alpha_research_refinement01_trial_registry_update.csv`
+- `outputs/audits/goal_alpha_research_refinement01_report.md`
+- `outputs/audits/goal_alpha_research_refinement01_audit.md`
+
 ## 2026-06-28 - GOAL-QUANT-RESEARCH-02 Alpha Candidate Factor Evaluation
 
 Status: `PASS_WITH_WARNINGS`.

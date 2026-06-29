@@ -35,7 +35,8 @@ GOAL-QUANT-RESEARCH-01 research-only factor validity diagnostics, and
 GOAL-MVP-01 research-only premarket diagnostic terminal evidence, plus
 GOAL-ALPHA-FACTOR-CANDIDATE-01 research-only alpha candidate construction, and
 GOAL-QUANT-RESEARCH-02 research-only alpha candidate factor validity
-evaluation.
+evaluation, plus GOAL-ALPHA-RESEARCH-REFINEMENT-01 research-only rolling
+stability attribution and refined candidate design planning.
 
 ## Repository Roles
 
@@ -144,6 +145,8 @@ python scripts/run_goal_alpha_factor_candidate01_gate.py
 python scripts/audit_goal_alpha_factor_candidate01_gate.py
 python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py
 python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py
+python scripts/run_goal_alpha_research_refinement01_gate.py
+python scripts/audit_goal_alpha_research_refinement01_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -219,7 +222,9 @@ flowchart TD
     QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
     MVP01 -. "research-only alpha candidates" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     ALPHA01 -. "research-only validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    QRESEARCH02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    QRESEARCH02 -. "rolling-stability refinement" .-> REFINE01["GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    REFINE01 -. "refined variants remain locked" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Variant Construction<br/>(locked_future)"]
+    ALPHA02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -338,8 +343,14 @@ predictive-validity claims. GOAL-QUANT-RESEARCH-02 is implemented only as
 research-only alpha candidate validity evaluation from committed evidence. It
 uses forward returns and benchmark-excess returns only post-hoc, writes
 evaluation diagnostics and trial records only, and finds ready factor count 0.
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02,
-and GOAL-10D remain `locked_future`.
+GOAL-ALPHA-RESEARCH-REFINEMENT-01 is implemented only as research-only
+rolling-stability attribution and refined candidate design planning from
+committed Quant02, Alpha Candidate 01, Provider02B, and MVP evidence. It
+diagnoses 6 promising candidates, writes 30 refined design rows and 34
+trial-registry update rows, and does not construct or evaluate refined factor
+panels. GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 
@@ -454,6 +465,8 @@ review-only validation wrappers:
 - `python scripts/audit_goal_alpha_factor_candidate01_gate.py`
 - `python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py`
 - `python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py`
+- `python scripts/run_goal_alpha_research_refinement01_gate.py`
+- `python scripts/audit_goal_alpha_research_refinement01_gate.py`
 - `python scripts/build_engineering_pilot_universe.py`
 - `python scripts/build_source_backed_local_bundle.py`
 - `python scripts/audit_source_backed_local_bundle.py`

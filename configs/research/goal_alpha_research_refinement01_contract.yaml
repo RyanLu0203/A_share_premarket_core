@@ -1,0 +1,46 @@
+{
+  "goal_id": "GOAL-ALPHA-RESEARCH-REFINEMENT-01",
+  "mode": "research_only_rolling_stability_and_candidate_refinement_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "allowed_inputs": [
+    "outputs/research/goal_quant_research02_alpha_evaluation_panel.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_score_validity_classification.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_ic_rankic_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_monotonicity_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_rolling_stability_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_horizon_consistency_summary.csv",
+    "outputs/research/goal_quant_research02_alpha_factor_bucket_metrics.csv",
+    "outputs/research/goal_quant_research02_trial_registry.csv",
+    "outputs/research/goal_alpha_factor_candidate01_candidate_registry.csv",
+    "outputs/research/goal_alpha_factor_candidate01_factor_candidate_panel.csv",
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv",
+    "outputs/mvp/goal_mvp01_symbol_diagnostic_table.csv",
+    "outputs/mvp/goal_mvp01_review_queue.csv"
+  ],
+  "allowed_outputs": [
+    "outputs/research/goal_alpha_research_refinement01_instability_attribution.csv",
+    "outputs/research/goal_alpha_research_refinement01_conditional_stability_summary.csv",
+    "outputs/research/goal_alpha_research_refinement01_refined_candidate_designs.csv",
+    "outputs/research/goal_alpha_research_refinement01_intraday_redefinition_plan.csv",
+    "outputs/research/goal_alpha_research_refinement01_trial_registry_update.csv",
+    "outputs/audits/goal_alpha_research_refinement01_report.md",
+    "outputs/audits/goal_alpha_research_refinement01_manifest.json",
+    "outputs/audits/goal_alpha_research_refinement01_audit.md",
+    "docs/research/GOAL_ALPHA_RESEARCH_REFINEMENT01_ROLLING_STABILITY_AND_CANDIDATE_REFINEMENT_GATE.md",
+    "configs/research/goal_alpha_research_refinement01_contract.yaml"
+  ],
+  "instability_attribution_schema": ["factor_id", "factor_family", "aligned_20d_window_count", "inverse_20d_window_count", "aligned_40d_window_count", "inverse_40d_window_count", "first_half_direction", "second_half_direction", "calendar_month_direction_summary", "sign_flip_count", "sign_flip_windows", "instability_type", "instability_evidence", "not_evaluated_status"],
+  "refined_design_schema": ["refined_factor_id", "source_factor_id", "refinement_type", "economic_hypothesis", "deterministic_rule_description", "required_columns", "no_lookahead_policy", "expected_direction", "reason_for_refinement", "not_evaluated_status"],
+  "refinement_policy": "design_definitions_only_no_refined_factor_panel_no_predictive_validity_claim",
+  "no_lookahead_policy": "slicing_groups_and_refinement_rules_use_only_current_or_past_committed_diagnostics_no_forward_returns_in_construction",
+  "downstream_locks": {
+    "goal_alpha_factor_candidate02_refined_variants_research_gate": "locked_future",
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

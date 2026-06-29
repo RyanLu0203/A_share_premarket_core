@@ -209,6 +209,16 @@ recommendation execution, position work, or dashboard work.
   no recommendations, positions, portfolios, dashboards, trading, production,
   local-lake, broker, factor-mining, DQN/RL outputs, or production
   predictive-validity claims.
+- GOAL-ALPHA-RESEARCH-REFINEMENT-01 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only rolling-stability attribution,
+  conditional stability summaries, refined candidate design definitions,
+  intraday redefinition plans, trial-registry updates, docs, config, report,
+  manifest, and audit evidence from committed Quant02, Alpha Candidate 01,
+  Provider02B, and MVP evidence. It creates no refined factor panel,
+  recommendations, positions, portfolios, dashboards, trading, production,
+  local-lake, broker, factor-mining, DQN/RL outputs, or predictive-validity
+  claims.
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.
@@ -310,6 +320,8 @@ python scripts/run_goal_alpha_factor_candidate01_gate.py
 python scripts/audit_goal_alpha_factor_candidate01_gate.py
 python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py
 python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py
+python scripts/run_goal_alpha_research_refinement01_gate.py
+python scripts/audit_goal_alpha_research_refinement01_gate.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/audit_stage6c_expanded_validation.py
@@ -388,8 +400,11 @@ unless a later explicit gate allows it.
   recommendation-tiering unlock, production predictive validity, or an
   actionable signal. GOAL-MVP-01 is a research-only terminal over committed
   evidence replay; it is not a recommendation, position, portfolio, dashboard,
-  trading, production, or factor-mining unlock. GOAL-DATA-PANEL-02, GOAL-10D,
-  actual positions, dashboards, and execution remain locked.
+  trading, production, or factor-mining unlock. GOAL-ALPHA-RESEARCH-REFINEMENT-01
+  is research-only design planning over committed evidence; it is not refined
+  factor construction, recommendation tiering, production predictive validity,
+  or an actionable signal. GOAL-DATA-PANEL-02, GOAL-10D, actual positions,
+  dashboards, and execution remain locked.
 
 ## GOAL-MVP-01 Agent Note
 
@@ -405,6 +420,14 @@ monotonicity, stability, horizon, score-validity, trial-registry, docs,
 config, and audit artifacts. It must not create actionable recommendations,
 positions, portfolio outputs, dashboard/frontend files, trading, production,
 local-lake, broker, factor-mining, or DQN/RL outputs.
+GOAL-ALPHA-RESEARCH-REFINEMENT-01 is research-only rolling-stability
+attribution and refined candidate design planning. It may maintain only
+instability attribution, conditional stability, refined design, intraday
+redefinition, trial-registry update, docs, config, report, manifest, and audit
+artifacts. It must not construct or evaluate refined factor panels, promote a
+factor, or create recommendations, positions, portfolio outputs,
+dashboard/frontend files, trading, production, local-lake, broker,
+factor-mining, or DQN/RL outputs.
 
 ## GOAL-06D.1 Agent Note
 

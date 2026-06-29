@@ -58,7 +58,9 @@ flowchart TD
     QRESEARCH01 -. "research-only terminal" .-> MVP01["GOAL-MVP-01 Premarket Research Diagnostic Terminal<br/>(implemented_mvp_research_only; PASS_WITH_WARNINGS)"]
     MVP01 -. "research-only alpha candidates" .-> ALPHA01["GOAL-ALPHA-FACTOR-CANDIDATE-01 Alpha Factor Candidate Research Gate<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     ALPHA01 -. "research-only validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    QRESEARCH02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    QRESEARCH02 -. "rolling-stability refinement" .-> REFINE01["GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    REFINE01 -. "refined variants remain locked" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Variant Construction<br/>(locked_future)"]
+    ALPHA02 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -156,7 +158,12 @@ alpha candidate validity evaluation from committed evidence. It writes
 evaluation, coverage, bucket, IC/RankIC, monotonicity, stability, horizon,
 score-validity, and trial-registry diagnostics only, records ready factor count
 0, and recommends alpha refinement before recommendation tiering.
-GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-ALPHA-RESEARCH-REFINEMENT-01 is implemented only as research-only
+rolling-stability attribution and refined candidate design planning from
+committed evidence. It defines proposed refined candidates only, creates no
+refined factor panel, and does not evaluate or promote predictive validity.
+GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
+GOAL-POSITION-BAND-VALIDATION-01,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
 execution stages remain locked future work;
 no dashboard files, visual reports, frontend, or UI output exist. V2 factor

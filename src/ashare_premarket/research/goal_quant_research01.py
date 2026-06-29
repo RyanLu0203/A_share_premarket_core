@@ -585,13 +585,16 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_after_quant_research")
     quant02_valid_for_dependency = _goal_quant_research02_valid(root)
-    expected_rec_dependency = (
-        GOAL_QUANT_RESEARCH02_WORKFLOW_ID
-        if quant02_valid_for_dependency or workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
-        else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
-        if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only"
-        else WORKFLOW_ID
-    )
+    if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "locked_future":
+        expected_rec_dependency = "goal_alpha_factor_candidate02_refined_variants_research_gate"
+    else:
+        expected_rec_dependency = (
+            GOAL_QUANT_RESEARCH02_WORKFLOW_ID
+            if quant02_valid_for_dependency or workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only"
+            else GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID
+            if workflow.get(GOAL_MVP01_WORKFLOW_ID, {}).get("status") == "implemented_mvp_research_only"
+            else WORKFLOW_ID
+        )
     if rec.get("depends_on") != expected_rec_dependency:
         failures.append("goal_rec_tiering01_not_rebased_on_quant_research")
     if workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only":

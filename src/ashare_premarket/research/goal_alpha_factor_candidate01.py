@@ -365,7 +365,10 @@ def audit_goal_alpha_factor_candidate01_gate(root: Path) -> bool:
         failures.append("goal_quant_research02_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("goal_rec_tiering01_not_locked_future")
-    if rec.get("depends_on") != GOAL_QUANT_RESEARCH02_WORKFLOW_ID:
+    if rec.get("depends_on") not in {
+        GOAL_QUANT_RESEARCH02_WORKFLOW_ID,
+        "goal_alpha_factor_candidate02_refined_variants_research_gate",
+    }:
         failures.append("goal_rec_tiering01_not_rebased_on_goal_quant_research02")
     for workflow_id in [
         GOAL10B4_WORKFLOW_ID,

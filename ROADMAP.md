@@ -125,6 +125,11 @@
   panel, coverage, bucket metrics, IC/RankIC, monotonicity, rolling stability,
   horizon consistency, score-validity classification, and trial registry from
   committed evidence only; ready factor count 0).
+- GOAL-ALPHA-RESEARCH-REFINEMENT-01 rolling stability and candidate refinement
+  (`PASS_WITH_WARNINGS`; implemented_research_only instability attribution,
+  conditional stability slicing, refined candidate design definitions,
+  intraday redefinition plan, and trial-registry update from committed evidence
+  only; no refined factor panel or predictive-validity claim).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -197,7 +202,11 @@ Quant Research, and risk-tiering evidence. GOAL-QUANT-RESEARCH-02 now
 implements only research-only alpha candidate validity evaluation from
 committed evidence, finds ready factor count 0, and recommends
 GOAL-ALPHA-FACTOR-CANDIDATE-02 or GOAL-ALPHA-RESEARCH-REFINEMENT-01 before
-recommendation tiering. GOAL-REC-TIERING-01, GOAL-10B.4,
+recommendation tiering. GOAL-ALPHA-RESEARCH-REFINEMENT-01 now implements only
+research-only rolling-stability attribution and refined candidate design
+planning from committed evidence, diagnoses 6 promising candidates, writes 30
+refined design rows, and leaves every design not evaluated and not accepted
+downstream. GOAL-ALPHA-FACTOR-CANDIDATE-02, GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
 locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
@@ -219,6 +228,7 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 refined variant construction.
 - GOAL-REC-TIERING-01 recommendation score tiering.
 - GOAL-10B.4 recommendation revalidation after tiering.
 - GOAL-POSITION-BAND-VALIDATION-01 position-band validation.
