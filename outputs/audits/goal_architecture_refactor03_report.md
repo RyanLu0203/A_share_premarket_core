@@ -12,7 +12,7 @@ Quant03 and Regime01 added large deterministic research artifacts; future provid
 Quant03 ready factor count remains 0. Regime01 remains PASS_WITH_WARNINGS with 120 date rows, 6000 symbol rows, and 180000 bridge rows.
 
 ## 4. Existing architecture inventory
-Inventory rows: `123`.
+Inventory rows: `125`.
 
 ## 5. Duplicate runner/audit/schema/lineage patterns found
 Duplicate pattern rows: `12`.

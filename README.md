@@ -3,6 +3,11 @@
 Clean private active repository for the A-share pre-market alpha diagnosis and
 risk-aware position-building decision support system.
 
+Current Codex Max entrypoint: `project-current`.
+Stable Arch03 rollback branch: `checkpoint/arch03-stable-310559`.
+Stable Arch03 rollback tag: `checkpoint-arch03-stable-310559`.
+Stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
+
 This is not an automatic trading bot and does not provide investment advice. It
 is a deterministic, review-only research workflow for PIT-safe data contracts,
 label construction, feature-label merging, leakage checks, baseline scoring, the

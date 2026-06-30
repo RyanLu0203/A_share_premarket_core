@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-30 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 Stable Snapshot
+
+- Added governance-only checkpoint documentation, snapshot outputs, and a
+  read-only audit script for the Arch03 stable checkpoint.
+- Created stable rollback refs for
+  `310559ae18bbf203e795c1d66bc7181a6b11c14a`: `project-current`,
+  `checkpoint/arch03-stable-310559`, and
+  `checkpoint-arch03-stable-310559`.
+- Created and verified the local bundle backup at
+  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+- Preserved scientific outputs, ready factor count 0, workflow locks, and all
+  downstream execution prohibitions.
+
 ## 2026-06-30 - GOAL-ARCHITECTURE-REFACTOR-03 Provider Modularization
 
 - Implemented GOAL-ARCHITECTURE-REFACTOR-03 only as an engineering

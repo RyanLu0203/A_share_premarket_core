@@ -1,5 +1,26 @@
 # Roadmap
 
+## Current Checkpoint
+
+- GOAL-REPOSITORY-CHECKPOINT-01 Arch03 stable snapshot is the current
+  governance checkpoint.
+- Stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
+- Authoritative entrypoint branch: `project-current`.
+- Frozen checkpoint branch: `checkpoint/arch03-stable-310559`.
+- Annotated checkpoint tag: `checkpoint-arch03-stable-310559`.
+- Local bundle backup:
+  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+
+Future path:
+
+1. GOAL-CODEX-OPERATING-SYSTEM-01.
+2. GOAL-DATA-EXPANSION-RESEARCH-01.
+3. GOAL-QUANT-RESEARCH-04.
+4. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
+
+All locked downstream stages remain locked: dashboard/frontend, trading,
+broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
+
 ## Implemented Active
 
 - Project operating system.

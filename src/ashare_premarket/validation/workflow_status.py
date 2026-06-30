@@ -9,6 +9,7 @@ ALLOWED_STATUSES = {
     "implemented_review_only",
     "implemented_design_only",
     "implemented_infrastructure_only",
+    "implemented_governance_only",
     "implemented_research_only",
     "implemented_engineering_research_support",
     "implemented_mvp_research_only",
@@ -3930,7 +3931,7 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
             failures.append(f"{workflow_id} must remain locked_future")
         if workflow_id == "dqn_rl_mainline" and status != "deleted_from_active_mainline":
             failures.append("dqn_rl_mainline must remain deleted_from_active_mainline")
-        if row["implemented_in_repo"] == "true" and status not in {"implemented_active", "implemented_review_only", "implemented_design_only", "implemented_infrastructure_only", "implemented_research_only", "implemented_engineering_research_support", "implemented_mvp_research_only"}:
+        if row["implemented_in_repo"] == "true" and status not in {"implemented_active", "implemented_review_only", "implemented_design_only", "implemented_infrastructure_only", "implemented_governance_only", "implemented_research_only", "implemented_engineering_research_support", "implemented_mvp_research_only"}:
             failures.append(f"{workflow_id} is marked implemented but has future/deleted status")
     return failures
 
@@ -3953,6 +3954,10 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
         edge_type = "dotted_infrastructure_only"
         can_promote = False
         blocker = "already implemented infrastructure-only; downstream execution remains locked"
+    elif status == "implemented_governance_only":
+        edge_type = "dotted_governance_only"
+        can_promote = False
+        blocker = "already implemented governance-only; downstream execution remains locked"
     elif status == "implemented_research_only":
         edge_type = "dotted_research_only"
         can_promote = False

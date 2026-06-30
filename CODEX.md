@@ -1,5 +1,22 @@
 # CODEX Project Memory
 
+## Codex Max Entrypoint
+
+Codex Max should read `CODEX.md` first.
+
+- Authoritative current branch: `project-current`
+- Current stable checkpoint branch: `checkpoint/arch03-stable-310559`
+- Current stable checkpoint tag: `checkpoint-arch03-stable-310559`
+- Current stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`
+- Local bundle backup:
+  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+
+Codex Max must not start from stale main unless explicitly instructed. Codex
+Max must not unlock downstream goals. The frozen checkpoint branch and tag
+remain the rollback point for Arch03. `project-current` is the entrypoint branch
+and may fast-forward to governance-only documentation commits so a fresh clone
+has these instructions.
+
 ## Mission
 
 Maintain a clean, PIT-safe, review-only A-share pre-market workflow through

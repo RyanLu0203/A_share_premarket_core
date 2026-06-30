@@ -2,6 +2,26 @@
 
 Last updated: 2026-06-30
 
+## Stable Repository Checkpoint
+
+GOAL-REPOSITORY-CHECKPOINT-01 is implemented as a governance-only checkpoint
+gate for the Arch03 stable point.
+
+- Current stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`
+- Authoritative Codex Max entrypoint branch: `project-current`
+- Frozen checkpoint branch: `checkpoint/arch03-stable-310559`
+- Annotated checkpoint tag: `checkpoint-arch03-stable-310559`
+- Local bundle backup:
+  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+- Latest factor status: ready factor count remains 0.
+- Latest regime status: Regime01 implemented.
+- Latest architecture status: Arch03 implemented.
+- Provider/source catalog status: AKShare source catalog 70 rows; provider
+  registry network disabled by default.
+- Next planned governance goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
+- Next research/data goal after governance:
+  `GOAL-DATA-EXPANSION-RESEARCH-01`.
+
 ## Current Stage
 
 Status: `PASS_WITH_WARNINGS` for GOAL-07A design-only risk overlay governance.

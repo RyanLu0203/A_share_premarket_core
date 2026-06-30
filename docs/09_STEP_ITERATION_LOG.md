@@ -1,5 +1,21 @@
 # 09 Step Iteration Log
 
+## 2026-06-30 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 Stable Snapshot
+
+- Added the GOAL-REPOSITORY-CHECKPOINT-01 governance-only checkpoint gate.
+- Created stable recovery refs for commit
+  `310559ae18bbf203e795c1d66bc7181a6b11c14a`: `project-current`,
+  `checkpoint/arch03-stable-310559`, and
+  `checkpoint-arch03-stable-310559`.
+- Created and verified local bundle backup
+  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+- Added Codex Max entrypoint docs, rollback playbook, repository checkpoint
+  documentation, current project snapshots, git-ref evidence, and a read-only
+  audit script.
+- Preserved scientific outputs, ready factor count 0, DataExpansion/Quant04/Rec
+  Tiering locks, dashboard/frontend locks, and all trading, broker, production,
+  local-lake, factor-mining, and DQN/RL prohibitions.
+
 ## 2026-06-30 - GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog and Provider Modularization
 
 - Added the GOAL-ARCHITECTURE-REFACTOR-03 engineering research-support gate.

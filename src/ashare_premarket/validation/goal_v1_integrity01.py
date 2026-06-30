@@ -101,6 +101,7 @@ ALLOWED_STATUSES = {
     "implemented_active",
     "implemented_review_only",
     "implemented_design_only",
+    "implemented_governance_only",
     "implemented_infrastructure_only",
     "implemented_research_only",
     "implemented_mvp_research_only",
