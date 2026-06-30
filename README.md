@@ -36,7 +36,10 @@ GOAL-MVP-01 research-only premarket diagnostic terminal evidence, plus
 GOAL-ALPHA-FACTOR-CANDIDATE-01 research-only alpha candidate construction, and
 GOAL-QUANT-RESEARCH-02 research-only alpha candidate factor validity
 evaluation, plus GOAL-ALPHA-RESEARCH-REFINEMENT-01 research-only rolling
-stability attribution and refined candidate design planning.
+stability attribution and refined candidate design planning, GOAL-ALPHA-
+FACTOR-CANDIDATE-02 research-only refined alpha candidate construction,
+GOAL-QUANT-RESEARCH-03 research-only refined alpha validity evaluation, and
+GOAL-REGIME-LABEL-RESEARCH-01 research-only market regime label construction.
 
 ## Repository Roles
 
@@ -147,6 +150,12 @@ python scripts/run_goal_quant_research02_alpha_factor_evaluation_gate.py
 python scripts/audit_goal_quant_research02_alpha_factor_evaluation_gate.py
 python scripts/run_goal_alpha_research_refinement01_gate.py
 python scripts/audit_goal_alpha_research_refinement01_gate.py
+python scripts/run_goal_alpha_factor_candidate02_gate.py
+python scripts/audit_goal_alpha_factor_candidate02_gate.py
+python scripts/run_goal_quant_research03_refined_alpha_evaluation_gate.py
+python scripts/audit_goal_quant_research03_refined_alpha_evaluation_gate.py
+python scripts/run_goal_regime_label_research01_gate.py
+python scripts/audit_goal_regime_label_research01_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -225,7 +234,9 @@ flowchart TD
     QRESEARCH02 -. "rolling-stability refinement" .-> REFINE01["GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REFINE01 -. "research-only refined candidates" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    QRESEARCH03 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    REGIME01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
+    QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -359,7 +370,13 @@ local-lake, factor-mining, broker, or DQN/RL outputs. GOAL-QUANT-RESEARCH-03,
 is implemented only as research-only refined alpha factor validity evaluation.
 It evaluates 30 refined factors over partitioned committed-evidence rows,
 records ready factor count 0 with partial improvement available, and uses
-forward returns and benchmark-excess returns only post-hoc. GOAL-REC-TIERING-01,
+forward returns and benchmark-excess returns only post-hoc. GOAL-REGIME-LABEL-
+RESEARCH-01 is implemented only as research-only market regime label
+construction from committed Provider02B, Quant03, Candidate02, MVP, and
+risk-tiering evidence. It writes no-lookahead date regimes, symbol regime
+context, and factor-regime bridge context only, and excludes future returns,
+benchmark-excess forward returns, label-ready fields, and post-hoc factor
+performance from label construction. GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01,
 GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
 `locked_future`.
 

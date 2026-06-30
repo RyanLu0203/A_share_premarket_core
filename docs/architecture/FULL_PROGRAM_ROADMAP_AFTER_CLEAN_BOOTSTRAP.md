@@ -52,7 +52,9 @@ flowchart TD
     QRESEARCH02 -. "rolling-stability refinement" .-> REFINE01["GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REFINE01 -. "research-only refined candidates" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    QRESEARCH03 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    REGIME01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
+    QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     T10C -. "locked future" .-> T10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -173,9 +175,14 @@ is implemented only as research-only refined alpha factor validity evaluation
 from committed evidence. It writes partitioned evaluation rows and diagnostics,
 records ready factor count 0, and does not create recommendations, positions,
 portfolios, dashboards, trading, production, local-lake, broker, factor-mining,
-or DQN/RL outputs. GOAL-REC-TIERING-01, GOAL-10B.4,
-GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
-locked_future.
+or DQN/RL outputs. GOAL-REGIME-LABEL-RESEARCH-01 is implemented only as
+research-only no-lookahead market regime label construction from committed
+Provider02B, Quant03, Candidate02, MVP, and risk-tiering evidence. It creates
+date, symbol, and factor-regime bridge context only, with no market timing,
+recommendation, position, portfolio, dashboard, trading, production, local-lake,
+broker, factor-mining, or DQN/RL outputs. GOAL-QUANT-RESEARCH-04,
+GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-DATA-PANEL-02, and GOAL-10D remain locked_future.
 V2 factor research is planned but
 inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,

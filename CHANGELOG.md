@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-30 - GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Labels
+
+- Implemented GOAL-REGIME-LABEL-RESEARCH-01 only as a research-only
+  no-lookahead market regime label construction gate from committed Provider02B,
+  Quant03, Candidate02, MVP, and risk-tiering evidence.
+- Added date-level regime labels, symbol-level regime context, factor-regime
+  bridge, coverage, transition, warning, contract, report, manifest, audit,
+  docs, scripts, source module, and tests.
+- Kept future returns, benchmark-excess forward returns, label-ready fields,
+  and post-hoc factor performance out of label construction.
+- Kept GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, dashboard/frontend, trading, production,
+  broker, local-lake, factor-mining, and DQN/RL locked.
+
 ## 2026-06-30 - GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Evaluation
 
 - Implemented GOAL-QUANT-RESEARCH-03 only as a research-only refined alpha

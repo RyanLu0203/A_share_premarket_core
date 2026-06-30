@@ -202,6 +202,17 @@ and it creates no recommendation rows, position rows, portfolios,
 dashboard/frontend outputs, trading paths, production storage, broker output,
 local-lake output, factor-mining output, DQN/RL output, or production
 predictive-validity claims.
+GOAL-REGIME-LABEL-RESEARCH-01 writes only research-only market regime label
+construction evidence under `outputs/research/`, `configs/research/`,
+`docs/research/`, and `outputs/audits/`. It consumes committed Provider02B,
+Quant03, Candidate02, MVP, and risk-tiering evidence only. It uses current-date
+or trailing benchmark trend, benchmark volatility, cross-sectional breadth,
+dispersion, liquidity, downside-risk, and composite regime rules, and excludes
+future returns, benchmark-excess forward returns, label-ready fields, and
+post-hoc factor performance from label construction. It creates no market
+timing signal, recommendation rows, position rows, portfolios, dashboard/
+frontend outputs, trading paths, production storage, broker output, local-lake
+output, factor-mining output, DQN/RL output, or predictive-validity claims.
 
 ## Active Contracts
 
@@ -269,6 +280,9 @@ predictive-validity claims.
   `outputs/audits/` only.
 - GOAL-QUANT-RESEARCH-03 refined alpha validity evaluation evidence under
   `outputs/research/`, `configs/research/`, `docs/research/`, and
+  `outputs/audits/` only.
+- GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction evidence
+  under `outputs/research/`, `configs/research/`, `docs/research/`, and
   `outputs/audits/` only.
 
 ## Source Evidence Warnings

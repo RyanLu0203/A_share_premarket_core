@@ -1,0 +1,24 @@
+warning_code,regime_dimension,affected_label,row_count,details
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,1,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,2,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,3,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,4,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,5,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,6,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,7,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,8,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,9,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,10,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,11,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,12,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,13,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,14,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,15,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,16,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,17,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,18,Fewer than 20 current-or-past benchmark returns are available.
+insufficient_trailing_window,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,19,Fewer than 20 current-or-past benchmark returns are available.
+regime_dimension_not_constructed,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,19,At least one date has insufficient evidence for this dimension.
+regime_dimension_not_constructed,composite,insufficient_composite_regime_evidence_review_only,19,At least one date has insufficient evidence for this dimension.
+unstable_regime_transition,breadth,multiple,78,Regime transitions on more than half of adjacent date pairs.
+unstable_regime_transition,dispersion,multiple,76,Regime transitions on more than half of adjacent date pairs.

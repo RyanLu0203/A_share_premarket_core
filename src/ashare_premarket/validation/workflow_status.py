@@ -33,6 +33,7 @@ DOWNSTREAM_LOCKED_IDS = {
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
     "goal_rec_tiering01_recommendation_score_tiering_gate",
+    "goal_quant_research04_regime_conditional_factor_evaluation_gate",
     "goal10b4_recommendation_backtest_revalidation",
     "goal_position_band_validation01_position_band_validation_gate",
 }
@@ -105,6 +106,10 @@ GOAL_ALPHA_FACTOR_CANDIDATE02_ALLOWED_NEXT = "request_goal_quant_research03_refi
 GOAL_QUANT_RESEARCH03_WORKFLOW_ID = "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"
 GOAL_QUANT_RESEARCH03_ALLOWED_NEXT_READY = "request_explicit_goal_rec_tiering01_after_goal_quant_research03_ready_factor"
 GOAL_QUANT_RESEARCH03_ALLOWED_NEXT_WEAK = "request_goal_data_expansion_or_regime_label_research_before_more_alpha_expansion"
+GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID = "goal_regime_label_research01_market_regime_label_construction_gate"
+GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_READY = "request_goal_quant_research04_regime_conditional_factor_evaluation_gate"
+GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_SPARSE = "request_goal_data_expansion_research01_before_regime_conditional_factor_evaluation"
+GOAL_QUANT_RESEARCH04_WORKFLOW_ID = "goal_quant_research04_regime_conditional_factor_evaluation_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -450,6 +455,12 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_quant_research03_report = _read(root / "outputs/audits/goal_quant_research03_refined_alpha_evaluation_report.md")
     goal_quant_research03_manifest = _read(root / "outputs/audits/goal_quant_research03_refined_alpha_evaluation_manifest.json")
     goal_quant_research03_audit = _read(root / "outputs/audits/goal_quant_research03_refined_alpha_evaluation_audit.md")
+    goal_regime_label_research01 = by_id.get(GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID, {})
+    goal_regime_label_research01_status = goal_regime_label_research01.get("status")
+    goal_regime_label_research01_report = _read(root / "outputs/audits/goal_regime_label_research01_report.md")
+    goal_regime_label_research01_manifest = _read(root / "outputs/audits/goal_regime_label_research01_manifest.json")
+    goal_regime_label_research01_audit = _read(root / "outputs/audits/goal_regime_label_research01_audit.md")
+    goal_quant_research04 = by_id.get(GOAL_QUANT_RESEARCH04_WORKFLOW_ID, {})
     goal_rec_tiering01 = by_id.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     goal10b4 = by_id.get(GOAL10B4_WORKFLOW_ID, {})
     position_band_validation = by_id.get(POSITION_BAND_VALIDATION_WORKFLOW_ID, {})
@@ -585,7 +596,15 @@ def run_workflow_status_audit(root: Path) -> bool:
         and _goal_quant_research03_readiness_implemented(goal_quant_research03_report)
         and "Status: `PASS`" in goal_quant_research03_audit
     )
-    if goal_alpha_factor_candidate02_evidence_ready or goal_quant_research03:
+    goal_regime_label_research01_evidence_ready = (
+        bool(goal_regime_label_research01)
+        and goal_regime_label_research01_status == "implemented_research_only"
+        and _goal_regime_label_research01_readiness_implemented(goal_regime_label_research01_report)
+        and "Status: `PASS`" in goal_regime_label_research01_audit
+    )
+    if goal_regime_label_research01_evidence_ready or goal_regime_label_research01 or goal_quant_research04:
+        expected_rec_dependency_for_research_chain = GOAL_QUANT_RESEARCH04_WORKFLOW_ID
+    elif goal_alpha_factor_candidate02_evidence_ready or goal_quant_research03:
         expected_rec_dependency_for_research_chain = GOAL_QUANT_RESEARCH03_WORKFLOW_ID
     elif goal_alpha_research_refinement01_evidence_ready or goal_alpha_factor_candidate02:
         expected_rec_dependency_for_research_chain = GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID
@@ -3002,7 +3021,7 @@ def run_workflow_status_audit(root: Path) -> bool:
                     failures.append(f"GOAL-ALPHA-FACTOR-CANDIDATE-02 manifest missing false boundary flag: {required_false}")
             for workflow_id, row, expected_dependency in [
                 (GOAL_QUANT_RESEARCH03_WORKFLOW_ID, goal_quant_research03, GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID),
-                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH03_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, expected_rec_dependency_for_research_chain),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
             ]:
@@ -3121,7 +3140,7 @@ def run_workflow_status_audit(root: Path) -> bool:
                 if required_false not in goal_quant_research03_manifest:
                     failures.append(f"GOAL-QUANT-RESEARCH-03 manifest missing false boundary flag: {required_false}")
             for workflow_id, row, expected_dependency in [
-                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH03_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, expected_rec_dependency_for_research_chain),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
                 (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
             ]:
@@ -3137,6 +3156,119 @@ def run_workflow_status_audit(root: Path) -> bool:
                 failures.append("GOAL-QUANT-RESEARCH-03 must remain locked_future until valid evidence exists")
             if goal_quant_research03.get("depends_on") != GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID:
                 failures.append("GOAL-QUANT-RESEARCH-03 must depend on GOAL-ALPHA-FACTOR-CANDIDATE-02")
+    if goal_regime_label_research01:
+        if goal_regime_label_research01_evidence_ready:
+            if not goal_quant_research03_evidence_ready:
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 requires GOAL-QUANT-RESEARCH-03 implemented_research_only evidence")
+            if goal_regime_label_research01.get("status") != "implemented_research_only":
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 must be implemented_research_only when valid evidence exists")
+            if goal_regime_label_research01.get("implemented_in_repo") != "true":
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 row must be marked implemented")
+            if goal_regime_label_research01.get("allowed_next_action") not in {
+                GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_READY,
+                GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_SPARSE,
+            }:
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 allowed_next_action is invalid")
+            if goal_regime_label_research01.get("depends_on") != GOAL_QUANT_RESEARCH03_WORKFLOW_ID:
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 must depend on GOAL-QUANT-RESEARCH-03")
+            for required_text in [
+                '"mode": "research_only_market_regime_label_construction_gate"',
+                '"date_regime_row_count": 120',
+                '"symbol_regime_context_row_count": 6000',
+                '"factor_regime_bridge_row_count": 180000',
+                '"date_level_regime_table_created": true',
+                '"symbol_regime_context_created": true',
+                '"regime_coverage_summary_created": true',
+                '"regime_transition_summary_created": true',
+                '"factor_regime_bridge_created": true',
+                '"construction_warnings_created": true',
+                '"source_backed_lineage_verified": true',
+                '"used_committed_provider02b_evidence_only": true',
+                '"used_committed_quant03_evidence_only": true',
+                '"used_committed_candidate02_evidence_only": true',
+                '"used_committed_mvp01_evidence_only": true',
+                '"used_committed_risk_tiering_evidence_only": true',
+                '"no_lookahead_construction_passed": true',
+                '"artifact_size_policy_passed": true',
+                '"goal_quant_research04_locked_future": true',
+                '"goal_rec_tiering01_locked_future": true',
+                '"goal10b4_locked_future": true',
+                '"position_band_validation_locked_future": true',
+                '"goal10d_locked_future": true',
+                '"dashboard_daily_report_locked_future": true',
+            ]:
+                if required_text not in goal_regime_label_research01_manifest:
+                    failures.append(f"GOAL-REGIME-LABEL-RESEARCH-01 manifest missing required marker: {required_text}")
+            for required_false in [
+                '"future_returns_used_in_label_construction": false',
+                '"benchmark_excess_forward_returns_used_in_label_construction": false',
+                '"label_ready_fields_used_in_label_construction": false',
+                '"posthoc_factor_performance_used_in_label_construction": false',
+                '"recommendation_rows_created": false',
+                '"position_rows_created": false',
+                '"position_band_rows_created": false',
+                '"buy_sell_hold_outputs_generated": false',
+                '"target_prices_generated": false',
+                '"actual_position_sizing_generated": false',
+                '"target_weights_generated": false',
+                '"portfolio_weights_generated": false',
+                '"order_quantities_generated": false',
+                '"portfolio_returns_generated": false',
+                '"equity_curves_generated": false',
+                '"dashboard_outputs_generated": false',
+                '"dashboard_files_generated": false',
+                '"html_generated": false',
+                '"streamlit_generated": false',
+                '"frontend_code_generated": false',
+                '"visual_reports_generated": false',
+                '"trading_outputs_created": false',
+                '"broker_outputs_created": false',
+                '"production_outputs_created": false',
+                '"local_lake_outputs_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"live_provider_fetches_run": false',
+                '"goal_quant_research04_run": false',
+                '"goal_rec_tiering01_run": false',
+                '"goal10b4_run": false',
+                '"position_band_validation_run": false',
+                '"goal10d_run": false',
+                '"regime_definitions_tuned_to_future_returns": false',
+                '"regime_labels_altered_by_factor_performance": false',
+                '"market_timing_validity_claimed": false',
+                '"factor_promoted_to_recommendation_tiering": false',
+                '"demo_fixture_used": false',
+                '"outputs_samples_used": false',
+                '"stale_goal10b_evidence_used": false',
+                '"stale_dc02_evidence_used": false',
+            ]:
+                if required_false not in goal_regime_label_research01_manifest:
+                    failures.append(f"GOAL-REGIME-LABEL-RESEARCH-01 manifest missing false boundary flag: {required_false}")
+            for workflow_id, row, expected_dependency in [
+                (GOAL_QUANT_RESEARCH04_WORKFLOW_ID, goal_quant_research04, GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH04_WORKFLOW_ID),
+                (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
+                (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
+            ]:
+                if row.get("status") != "locked_future":
+                    failures.append(f"{workflow_id} must remain locked_future after GOAL-REGIME-LABEL-RESEARCH-01")
+                if row.get("implemented_in_repo") != "false":
+                    failures.append(f"{workflow_id} must not be implemented after GOAL-REGIME-LABEL-RESEARCH-01")
+                if row.get("depends_on") != expected_dependency:
+                    failures.append(f"{workflow_id} dependency is invalid after GOAL-REGIME-LABEL-RESEARCH-01")
+            _validate_locked_execution_downstream(failures, by_id, context="GOAL-REGIME-LABEL-RESEARCH-01")
+        else:
+            if goal_regime_label_research01.get("status") != "locked_future" or goal_regime_label_research01.get("implemented_in_repo") != "false":
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 must remain locked_future until valid evidence exists")
+            if goal_regime_label_research01.get("depends_on") != GOAL_QUANT_RESEARCH03_WORKFLOW_ID:
+                failures.append("GOAL-REGIME-LABEL-RESEARCH-01 must depend on GOAL-QUANT-RESEARCH-03")
+    if goal_quant_research04:
+        if goal_quant_research04.get("status") != "locked_future":
+            failures.append("GOAL-QUANT-RESEARCH-04 must remain locked_future after GOAL-REGIME-LABEL-RESEARCH-01")
+        if goal_quant_research04.get("implemented_in_repo") != "false":
+            failures.append("GOAL-QUANT-RESEARCH-04 must not be implemented")
+        if goal_quant_research04.get("depends_on") != GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
+            failures.append("GOAL-QUANT-RESEARCH-04 must depend on GOAL-REGIME-LABEL-RESEARCH-01")
     if goal10d.get("status") != "locked_future":
         failures.append("GOAL-10D must remain locked_future after GOAL-10C")
     if goal10d.get("implemented_in_repo") != "false":
@@ -3215,11 +3347,14 @@ def run_workflow_status_audit(root: Path) -> bool:
                 f"GOAL-QUANT-RESEARCH-02 status: `{goal_quant_research02.get('status', 'missing')}`.",
                 f"GOAL-ALPHA-RESEARCH-REFINEMENT-01 status: `{goal_alpha_research_refinement01.get('status', 'missing')}`.",
                 f"GOAL-ALPHA-FACTOR-CANDIDATE-02 status: `{goal_alpha_factor_candidate02.get('status', 'missing')}`.",
+                f"GOAL-QUANT-RESEARCH-03 status: `{goal_quant_research03.get('status', 'missing')}`.",
+                f"GOAL-REGIME-LABEL-RESEARCH-01 status: `{goal_regime_label_research01.get('status', 'missing')}`.",
+                f"GOAL-QUANT-RESEARCH-04 status: `{goal_quant_research04.get('status', 'missing')}`.",
                 f"GOAL-REC-TIERING-01 status: `{goal_rec_tiering01.get('status', 'missing')}`.",
                 f"GOAL-10B.4 status: `{goal10b4.get('status', 'missing')}`.",
                 f"GOAL-POSITION-BAND-VALIDATION-01 status: `{position_band_validation.get('status', 'missing')}`.",
                 f"GOAL-10D status: `{goal10d.get('status', 'missing')}`.",
-                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence; GOAL-10B.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS coverage repair diagnostic evidence; GOAL-DATA-LABEL-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS forward-return label coverage evidence; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS multi-symbol non-actionable diagnostic evidence; GOAL-DATA-PROVIDER-02A may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS provider capability probe evidence; GOAL-DATA-PROVIDER-02A.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS network opt-in smoke-test evidence; GOAL-RISK-TIERING-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable risk tiering evidence; GOAL-RISK-TIERING-01.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable downside-risk repair evidence; GOAL-QUANT-RESEARCH-01 may be `implemented_research_only` only with PASS/PASS_WITH_WARNINGS research-only factor lab evidence; GOAL-MVP-01 may be `implemented_mvp_research_only` only with PASS/PASS_WITH_WARNINGS research-only terminal evidence; GOAL-ALPHA-RESEARCH-REFINEMENT-01 may be `implemented_research_only` only with PASS/PASS_WITH_WARNINGS rolling-stability attribution and candidate-refinement design evidence.",
+                "GOAL-06D may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS readiness evidence; GOAL-07A may be `implemented_design_only` only with design-only evidence; GOAL-07B may be `future_review_only` only after GOAL-07B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS diagnostic-only calculation report; GOAL-08A may be `implemented_design_only` only with names-only contract evidence and zero recommendation rows; GOAL-STORAGE-01 may be `implemented_infrastructure_only` only with local research lake hardening evidence; GOAL-08B may be `future_review_only` eligible only after GOAL-08B.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable diagnostic report; GOAL-09 may be `future_review_only` eligible only after GOAL-09.0 evidence and `implemented_review_only` only with a PASS/PASS_WITH_WARNINGS non-actionable position-band diagnostic report; GOAL-09.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS warning review and dashboard-readiness evidence; GOAL-V1-INTEGRITY-01 may be `implemented_infrastructure_only` only with PASS/PASS_WITH_WARNINGS artifact-lineage and structure evidence; GOAL-10A may be `implemented_design_only` only with PASS/PASS_WITH_WARNINGS backtest contract design evidence; GOAL-10B may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable recommendation diagnostics backtest evidence; GOAL-10B.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS coverage repair diagnostic evidence; GOAL-DATA-LABEL-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS forward-return label coverage evidence; GOAL-V1-DIAGNOSTIC-COVERAGE-02 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS multi-symbol non-actionable diagnostic evidence; GOAL-DATA-PROVIDER-02A may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS provider capability probe evidence; GOAL-DATA-PROVIDER-02A.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS network opt-in smoke-test evidence; GOAL-RISK-TIERING-01 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable risk tiering evidence; GOAL-RISK-TIERING-01.1 may be `implemented_review_only` only with PASS/PASS_WITH_WARNINGS non-actionable downside-risk repair evidence; GOAL-QUANT-RESEARCH-01 may be `implemented_research_only` only with PASS/PASS_WITH_WARNINGS research-only factor lab evidence; GOAL-MVP-01 may be `implemented_mvp_research_only` only with PASS/PASS_WITH_WARNINGS research-only terminal evidence; GOAL-ALPHA-RESEARCH-REFINEMENT-01 may be `implemented_research_only` only with PASS/PASS_WITH_WARNINGS rolling-stability attribution and candidate-refinement design evidence; GOAL-REGIME-LABEL-RESEARCH-01 may be `implemented_research_only` only with PASS/PASS_WITH_WARNINGS no-lookahead market regime label construction evidence.",
                 "GOAL-06C and later are not represented as `implemented_active`.",
                 "GOAL-07B risk overlay diagnostics, GOAL-08B recommendation diagnostics, GOAL-09 position-band diagnostics, GOAL-09.1 dashboard-readiness warning review, GOAL-10B recommendation diagnostics backtest, GOAL-10B.1 coverage repair diagnostics, GOAL-DATA-LABEL-01 forward-return label coverage, GOAL-V1-DIAGNOSTIC-COVERAGE-02 multi-symbol diagnostic coverage, GOAL-DATA-PROVIDER-02A provider capability metadata, GOAL-DATA-PROVIDER-02A.1 provider smoke-test metadata, GOAL-QUANT-RESEARCH-01 factor validity diagnostics, GOAL-MVP-01 terminal evidence, GOAL-ALPHA-FACTOR-CANDIDATE-01 candidate construction, GOAL-QUANT-RESEARCH-02 factor validity diagnostics, and GOAL-ALPHA-RESEARCH-REFINEMENT-01 rolling-stability refinement designs are non-actionable/research-only when implemented; GOAL-V1-INTEGRITY-01 is infrastructure-only artifact-lineage governance; GOAL-10A is design-only backtest contract governance. Actual recommendations, positions, dashboard output, paper/live trading, production, portfolio backtests, performance rows, factor-mining, broker, local-lake, and DQN/RL remain locked or deleted from active mainline.",
                 "",
@@ -3594,10 +3729,35 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
                     failures.append("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate must remain unimplemented while locked_future")
             if row["depends_on"] != GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID:
                 failures.append("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate must depend on GOAL-ALPHA-FACTOR-CANDIDATE-02")
+        if workflow_id == GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
+            if status not in {"locked_future", "implemented_research_only"}:
+                failures.append("goal_regime_label_research01_market_regime_label_construction_gate must be locked_future or implemented_research_only")
+            if status == "implemented_research_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_regime_label_research01_market_regime_label_construction_gate implemented_research_only must be marked implemented")
+                if row["allowed_next_action"] not in {
+                    GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_READY,
+                    GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_SPARSE,
+                }:
+                    failures.append("goal_regime_label_research01_market_regime_label_construction_gate allowed_next_action is invalid")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_regime_label_research01_market_regime_label_construction_gate must remain unimplemented while locked_future")
+            if row["depends_on"] != GOAL_QUANT_RESEARCH03_WORKFLOW_ID:
+                failures.append("goal_regime_label_research01_market_regime_label_construction_gate must depend on GOAL-QUANT-RESEARCH-03")
+        if workflow_id == GOAL_QUANT_RESEARCH04_WORKFLOW_ID:
+            if status != "locked_future" or row["implemented_in_repo"] != "false":
+                failures.append("goal_quant_research04_regime_conditional_factor_evaluation_gate must remain locked_future and unimplemented")
+            if row["depends_on"] != GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
+                failures.append("goal_quant_research04_regime_conditional_factor_evaluation_gate must depend on GOAL-REGIME-LABEL-RESEARCH-01")
         if workflow_id == GOAL_REC_TIERING01_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal_rec_tiering01_recommendation_score_tiering_gate must remain locked_future and unimplemented")
-            if GOAL_QUANT_RESEARCH03_WORKFLOW_ID in by_id:
+            if GOAL_QUANT_RESEARCH04_WORKFLOW_ID in by_id:
+                expected_risk_dependency = GOAL_QUANT_RESEARCH04_WORKFLOW_ID
+            elif GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID in by_id:
+                expected_risk_dependency = GOAL_QUANT_RESEARCH04_WORKFLOW_ID
+            elif GOAL_QUANT_RESEARCH03_WORKFLOW_ID in by_id:
                 expected_risk_dependency = GOAL_QUANT_RESEARCH03_WORKFLOW_ID
             elif GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID in by_id:
                 expected_risk_dependency = GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID
@@ -3770,9 +3930,13 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_ALPHA_FACTOR_CANDIDATE02_WORKFLOW_ID:
         next_goal = "GOAL-QUANT-RESEARCH-03 refined-alpha validity evaluation is implemented when valid evidence exists"
     elif row["workflow_id"] == GOAL_QUANT_RESEARCH03_WORKFLOW_ID:
-        next_goal = "GOAL-REC-TIERING-01 remains locked until an explicit tiering gate is requested after Quant03 readiness"
+        next_goal = "GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction is the implemented research-only successor before Quant04"
+    elif row["workflow_id"] == GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
+        next_goal = "GOAL-QUANT-RESEARCH-04 remains locked until an explicit regime-conditional factor evaluation request"
+    elif row["workflow_id"] == GOAL_QUANT_RESEARCH04_WORKFLOW_ID:
+        next_goal = "Remain locked until explicit GOAL-QUANT-RESEARCH-04 request after Regime01 evidence is accepted"
     elif row["workflow_id"] == GOAL_REC_TIERING01_WORKFLOW_ID:
-        next_goal = "Remain locked until explicit GOAL-REC-TIERING-01 request after refined alpha candidate evidence is accepted"
+        next_goal = "Remain locked until explicit GOAL-REC-TIERING-01 request after regime-conditional factor evidence is accepted"
     elif row["workflow_id"] == GOAL10B4_WORKFLOW_ID:
         next_goal = "Remain locked until GOAL-REC-TIERING-01 passes and an explicit GOAL-10B.4 request is made"
     elif row["workflow_id"] == POSITION_BAND_VALIDATION_WORKFLOW_ID:
@@ -4048,6 +4212,13 @@ def _goal_quant_research03_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation Gate: PASS" in readiness
         or "GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation Gate: PASS_WITH_WARNINGS" in readiness
+    )
+
+
+def _goal_regime_label_research01_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction Gate: PASS" in readiness
+        or "GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 

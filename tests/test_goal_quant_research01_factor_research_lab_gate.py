@@ -93,6 +93,7 @@ def test_goal_quant_research01_preserves_boundaries_and_workflow_locks() -> None
         "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate",
         "goal_alpha_factor_candidate02_refined_variants_research_gate",
         "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
+        "goal_quant_research04_regime_conditional_factor_evaluation_gate",
     }
     for workflow_id in [
         "goal10b4_recommendation_backtest_revalidation",

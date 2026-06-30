@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-28
+Last updated: 2026-06-30
 
 ## Current Stage
 
@@ -306,7 +306,21 @@ after refined values and buckets already exist. It creates no recommendation
 rows, position rows, portfolio outputs, dashboard/frontend files, trading
 paths, production behavior, local-lake files, broker outputs, factor-mining
 outputs, DQN/RL outputs, or production predictive-validity claims.
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+GOAL-REGIME-LABEL-RESEARCH-01 is implemented as a research-only market regime
+label construction gate (`PASS_WITH_WARNINGS`). It consumes committed
+Provider02B, Quant03, Candidate02, MVP, and risk-tiering evidence only, writes
+120 date-level regime labels, 6000 symbol-level regime context rows, a
+180000-row factor-regime bridge, coverage, transition, warning, contract,
+docs, report, manifest, and audit evidence. Regime labels use current-date or
+trailing benchmark trend, benchmark volatility, cross-sectional breadth,
+dispersion, liquidity, downside-risk, and composite regime rules only. Future
+returns, benchmark-excess forward returns, label-ready fields, and post-hoc
+factor performance are excluded from label construction. It creates no market
+timing signal, recommendation rows, position rows, portfolio outputs,
+dashboard/frontend files, trading paths, production behavior, local-lake files,
+broker outputs, factor-mining outputs, DQN/RL outputs, or predictive-validity
+claims.
+GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
 and portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active
@@ -403,6 +417,9 @@ Implemented and protected:
 - GOAL-DATA-PROVIDER-02B bounded source-backed evaluation panel evidence only
 - GOAL-V1-DIAGNOSTIC-COVERAGE-03 source-backed non-actionable diagnostic
   coverage from the 02B panel only
+- GOAL-REGIME-LABEL-RESEARCH-01 research-only no-lookahead market regime label
+  construction from committed Provider02B, Quant03, Candidate02, MVP, and
+  risk-tiering evidence only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -505,6 +522,23 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`; `implemented_research_only`; research-only factor
   validity diagnostics over committed Provider02B/DC03/risk-tiering evidence
   only; no factor ready for recommendation tiering)
+- GOAL-MVP-01 premarket research diagnostic terminal (`PASS_WITH_WARNINGS`;
+  `implemented_mvp_research_only`; committed-evidence replay only)
+- GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha factor candidate construction
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; no predictive-validity
+  evaluation)
+- GOAL-QUANT-RESEARCH-02 alpha candidate validity evaluation
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; ready factor count 0)
+- GOAL-ALPHA-RESEARCH-REFINEMENT-01 rolling-stability attribution and refined
+  candidate design planning (`PASS_WITH_WARNINGS`; `implemented_research_only`)
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 refined alpha candidate construction
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; 180000 refined panel
+  rows and all downstream acceptance flags false)
+- GOAL-QUANT-RESEARCH-03 refined alpha validity evaluation
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; ready factor count 0)
+- GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; date, symbol, and
+  factor-regime bridge context only)
 
 Implemented design-only:
 
@@ -528,6 +562,7 @@ Still locked:
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
 - GOAL-DATA-PANEL-02 evaluation panel build
+- GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
 - GOAL-10D failure attribution
 - dashboard
 - paper trading

@@ -489,6 +489,7 @@ def audit_goal_quant_research02_alpha_factor_evaluation_gate(root: Path) -> bool
         WORKFLOW_ID,
         "goal_alpha_factor_candidate02_refined_variants_research_gate",
         "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
+        "goal_quant_research04_regime_conditional_factor_evaluation_gate",
     }:
         failures.append("goal_rec_tiering01_dependency_invalid")
     for workflow_id in [

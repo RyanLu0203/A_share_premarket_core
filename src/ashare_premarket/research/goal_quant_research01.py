@@ -596,6 +596,8 @@ def audit_goal_quant_research01_factor_research_lab_gate(root: Path) -> bool:
         valid_rec_dependencies.add("goal_alpha_factor_candidate02_refined_variants_research_gate")
     if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "implemented_research_only":
         valid_rec_dependencies.add("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate")
+    if workflow.get("goal_regime_label_research01_market_regime_label_construction_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research04_regime_conditional_factor_evaluation_gate")
     if rec.get("depends_on") not in valid_rec_dependencies:
         failures.append("goal_rec_tiering01_not_rebased_on_quant_research")
     if workflow.get(GOAL_ALPHA_FACTOR_CANDIDATE01_WORKFLOW_ID, {}).get("status") == "implemented_research_only":

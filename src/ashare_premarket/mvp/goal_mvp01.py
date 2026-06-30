@@ -397,6 +397,8 @@ def audit_goal_mvp01_premarket_research_terminal_gate(root: Path) -> bool:
         valid_rec_dependencies.add("goal_alpha_factor_candidate02_refined_variants_research_gate")
     if workflow.get("goal_alpha_factor_candidate02_refined_variants_research_gate", {}).get("status") == "implemented_research_only":
         valid_rec_dependencies.add("goal_quant_research03_refined_alpha_factor_validity_evaluation_gate")
+    if workflow.get("goal_regime_label_research01_market_regime_label_construction_gate", {}).get("status") == "implemented_research_only":
+        valid_rec_dependencies.add("goal_quant_research04_regime_conditional_factor_evaluation_gate")
     if alpha_implemented:
         if quant02_valid:
             if quant02.get("status") != "implemented_research_only" or quant02.get("implemented_in_repo") != "true":
