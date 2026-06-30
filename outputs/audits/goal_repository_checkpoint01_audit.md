@@ -12,5 +12,3 @@ Bundle path: `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bu
 ## Failures
 
 ## Warnings
-- local project-current still points to stable commit; fast-forward after governance docs commit is expected
-- remote project-current still points to stable commit; fast-forward after governance docs commit is expected
