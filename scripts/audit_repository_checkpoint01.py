@@ -75,33 +75,40 @@ def main() -> int:
 
 
 def _check_source_branch(failures: list[str]) -> None:
-    if not _git_ok(["rev-parse", "--verify", SOURCE_BRANCH]):
-        failures.append(f"source branch missing locally: {SOURCE_BRANCH}")
-    if not _git_ok(["merge-base", "--is-ancestor", STABLE_COMMIT, SOURCE_BRANCH]):
-        failures.append(f"source branch does not contain stable commit: {SOURCE_BRANCH}")
+    local_source_ref = _first_local_ref(SOURCE_BRANCH)
+    if not local_source_ref:
+        failures.append(f"source branch missing locally/remotely fetched: {SOURCE_BRANCH}")
+    elif not _git_ok(["merge-base", "--is-ancestor", STABLE_COMMIT, local_source_ref]):
+        failures.append(f"source branch does not contain stable commit: {local_source_ref}")
     remote = _remote_ref(f"refs/heads/{SOURCE_BRANCH}")
     if not remote:
         failures.append(f"source branch missing remotely: {SOURCE_BRANCH}")
-    elif not _git_ok(["merge-base", "--is-ancestor", STABLE_COMMIT, f"origin/{SOURCE_BRANCH}"]):
+    elif local_source_ref and not _git_ok(["merge-base", "--is-ancestor", STABLE_COMMIT, local_source_ref]):
         failures.append(f"remote source branch does not contain stable commit: {SOURCE_BRANCH}")
 
 
 def _check_refs(failures: list[str], warnings: list[str]) -> None:
-    checkpoint_local = _git(["rev-parse", CHECKPOINT_BRANCH])
+    checkpoint_local_ref = _first_local_ref(CHECKPOINT_BRANCH)
+    checkpoint_local = _git(["rev-parse", checkpoint_local_ref]) if checkpoint_local_ref else ""
     checkpoint_remote = _remote_ref(f"refs/heads/{CHECKPOINT_BRANCH}")
-    if checkpoint_local != STABLE_COMMIT:
+    if checkpoint_local and checkpoint_local != STABLE_COMMIT:
         failures.append(f"local checkpoint branch target mismatch: {checkpoint_local}")
+    if not checkpoint_local and not checkpoint_remote:
+        failures.append(f"checkpoint branch missing locally/remotely: {CHECKPOINT_BRANCH}")
     if checkpoint_remote != STABLE_COMMIT:
         failures.append(f"remote checkpoint branch target mismatch: {checkpoint_remote}")
 
     tag_local = _git(["rev-parse", f"{CHECKPOINT_TAG}^{{}}"])
     tag_remote = _remote_ref(f"refs/tags/{CHECKPOINT_TAG}^{{}}")
-    if tag_local != STABLE_COMMIT:
+    if tag_local and tag_local != STABLE_COMMIT:
         failures.append(f"local checkpoint tag target mismatch: {tag_local}")
+    if not tag_local and not tag_remote:
+        failures.append(f"checkpoint tag missing locally/remotely: {CHECKPOINT_TAG}")
     if tag_remote != STABLE_COMMIT:
         failures.append(f"remote checkpoint tag target mismatch: {tag_remote}")
 
-    project_local = _git(["rev-parse", PROJECT_CURRENT_BRANCH])
+    project_local_ref = _first_local_ref(PROJECT_CURRENT_BRANCH)
+    project_local = _git(["rev-parse", project_local_ref]) if project_local_ref else ""
     project_remote = _remote_ref(f"refs/heads/{PROJECT_CURRENT_BRANCH}")
     for label, target in [("local", project_local), ("remote", project_remote)]:
         if not target:
@@ -236,6 +243,13 @@ def _remote_ref(ref: str) -> str:
 def _git(args: list[str]) -> str:
     result = subprocess.run(["git", *args], cwd=ROOT, text=True, capture_output=True)
     return result.stdout.strip() if result.returncode == 0 else ""
+
+
+def _first_local_ref(ref_name: str) -> str:
+    for candidate in [ref_name, f"origin/{ref_name}"]:
+        if _git_ok(["rev-parse", "--verify", candidate]):
+            return candidate
+    return ""
 
 
 def _git_ok(args: list[str]) -> bool:
