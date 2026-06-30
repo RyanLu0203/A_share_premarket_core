@@ -33,7 +33,7 @@
   "goal_position_band_validation01_position_band_validation_gate": false,
   "goal_quant_research01_factor_research_lab_gate": "implemented_research_only",
   "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate": "implemented_research_only",
-  "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate": false,
+  "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate": "implemented_research_only",
   "goal_rec_tiering01_recommendation_score_tiering_gate": false,
   "goal_risk_tiering011_downside_risk_repair_gate": "implemented_review_only",
   "goal_risk_tiering01_risk_severity_numeric_score_gate": "implemented_review_only",

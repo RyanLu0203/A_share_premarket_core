@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-06-30 - GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Evaluation
+
+- Implemented GOAL-QUANT-RESEARCH-03 only as a research-only refined alpha
+  factor validity evaluation gate over committed Candidate02, Quant02,
+  Provider02B, MVP, risk-tiering, and DC03 evidence.
+- Added partitioned refined evaluation panel files, panel index, coverage,
+  bucket, IC/RankIC, monotonicity, rolling-stability, horizon-consistency,
+  improvement, score-validity, trial-registry, contract, docs, runner, audit,
+  tests, report, manifest, and workflow governance.
+- Recorded `PASS_WITH_WARNINGS` with 30 refined factors evaluated, 0 factors
+  ready for recommendation tiering, and
+  `no_refined_factor_ready_but_partial_improvement_available`.
+- Used forward-return and benchmark-excess-return fields only after refined
+  factor values, quantiles, and buckets already existed for post-hoc
+  evaluation.
+- Kept GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-29 - GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction
 
 - Implemented GOAL-ALPHA-FACTOR-CANDIDATE-02 only as a research-only refined

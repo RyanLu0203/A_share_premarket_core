@@ -1,5 +1,37 @@
 # 09 Step Iteration Log
 
+## 2026-06-30 - GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the GOAL-QUANT-RESEARCH-03 research-only refined alpha factor validity
+  evaluation gate over committed Candidate02, Quant02, Provider02B, MVP,
+  risk-tiering, and DC03 evidence.
+- Generated partitioned refined evaluation panel files, a panel index,
+  coverage summary, bucket metrics, IC/RankIC summary, monotonicity summary,
+  rolling-stability summary, horizon-consistency summary, improvement summary,
+  score-validity classification, trial registry, contract, docs, report,
+  manifest, audit, scripts, tests, and workflow governance.
+- Evaluated all 30 Candidate02 refined factors while keeping ready factor count
+  at `0` and recording partial improvement as insufficient for
+  recommendation-tiering eligibility.
+- Preserved no-lookahead evaluation by using forward-return and
+  benchmark-excess-return fields only after refined factor values, quantiles,
+  and buckets already existed.
+- Preserved GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+  GOAL-10D, Dashboard / Daily Report UI, portfolio backtests, trading,
+  production, broker, local-lake, factor-mining, and DQN/RL as locked.
+
+Evidence:
+
+- `outputs/research/goal_quant_research03_refined_evaluation_panel_index.csv`
+- `outputs/research/goal_quant_research03_refined_factor_score_validity_classification.csv`
+- `outputs/research/goal_quant_research03_trial_registry.csv`
+- `outputs/audits/goal_quant_research03_refined_alpha_evaluation_report.md`
+- `outputs/audits/goal_quant_research03_refined_alpha_evaluation_audit.md`
+
 ## 2026-06-29 - GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction
 
 Status: `PASS_WITH_WARNINGS`.

@@ -209,9 +209,13 @@ refined design rows, and leaves every design not evaluated and not accepted
 downstream. GOAL-ALPHA-FACTOR-CANDIDATE-02 now implements only research-only
 refined alpha candidate construction from committed evidence, writes 30
 refined candidates and 180000 refined panel rows, and leaves every downstream
-acceptance flag false. GOAL-QUANT-RESEARCH-03, GOAL-REC-TIERING-01,
-GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and
-GOAL-10D remain locked.
+acceptance flag false. GOAL-QUANT-RESEARCH-03 now implements only
+research-only refined alpha factor validity evaluation from committed evidence,
+evaluates 30 refined factors over partitioned rows, records ready factor count
+0 with partial improvement available, and leaves every downstream acceptance
+flag false. GOAL-REC-TIERING-01, GOAL-10B.4,
+GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
+locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
 Dashboard / Daily Report UI remains `locked_future`.
 No actionable recommendation execution, actual position output, dashboard,
@@ -231,7 +235,6 @@ workflow diagrams before any future block is promoted.
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
 - GOAL-DATA-PANEL-02 evaluation panel build.
-- GOAL-QUANT-RESEARCH-03 refined alpha factor validity evaluation.
 - GOAL-REC-TIERING-01 recommendation score tiering.
 - GOAL-10B.4 recommendation revalidation after tiering.
 - GOAL-POSITION-BAND-VALIDATION-01 position-band validation.

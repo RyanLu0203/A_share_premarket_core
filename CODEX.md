@@ -228,7 +228,15 @@ recommendation execution, position work, or dashboard work.
   evaluation, recommendations, positions, portfolios, dashboards, trading,
   production, local-lake, broker, factor-mining, DQN/RL outputs, or promotion
   claims.
-- GOAL-QUANT-RESEARCH-03 remains `locked_future`.
+- GOAL-QUANT-RESEARCH-03 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It evaluates only the 30 refined Candidate02 factors
+  over committed Provider02B/MVP/Quant02/risk-tiering evidence, writes
+  partitioned refined evaluation rows plus coverage, bucket, IC/RankIC,
+  monotonicity, rolling-stability, horizon-consistency, improvement,
+  score-validity, and trial-registry diagnostics, records ready factor count 0,
+  and creates no recommendations, positions, portfolios, dashboards, trading,
+  production, local-lake, broker, factor-mining, DQN/RL outputs, or production
+  predictive-validity claims.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.

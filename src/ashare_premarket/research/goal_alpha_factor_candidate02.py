@@ -31,7 +31,7 @@ GOAL10C_WORKFLOW_ID = "goal10c_backtest_cost_slippage_sensitivity_gate"
 
 ALLOWED_NEXT = "request_goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"
 NEXT_GOAL = "GOAL-QUANT-RESEARCH-03-REFINED-ALPHA-FACTOR-VALIDITY-EVALUATION-GATE"
-NON_ACTIONABLE = "research_only_not_trade_instruction"
+NON_ACTIONABLE = "research_only"
 NO_LOOKAHEAD = "passed_current_or_past_only"
 DEFAULT_EXPECTED_DIRECTION = "higher_positive"
 PANEL_UNIVERSE_MODE = "p02b_universe"
@@ -403,7 +403,11 @@ def audit_goal_alpha_factor_candidate02_gate(root: Path) -> bool:
         failures.append("workflow_dependency_invalid")
     if gate.get("allowed_next_action") != ALLOWED_NEXT:
         failures.append("workflow_allowed_next_invalid")
-    if quant03.get("status") != "locked_future" or quant03.get("implemented_in_repo") != "false":
+    quant03_implemented = _goal_quant_research03_valid(root)
+    if quant03_implemented:
+        if quant03.get("status") != "implemented_research_only" or quant03.get("implemented_in_repo") != "true":
+            failures.append("goal_quant_research03_valid_but_not_implemented_research_only")
+    elif quant03.get("status") != "locked_future" or quant03.get("implemented_in_repo") != "false":
         failures.append("goal_quant_research03_not_locked_future")
     if quant03.get("depends_on") != WORKFLOW_ID:
         failures.append("goal_quant_research03_dependency_invalid")
@@ -1236,6 +1240,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     path = root / "configs/project/workflow_status.csv"
     rows = read_csv(path)
     by_id = {row["workflow_id"]: row for row in rows}
+    quant03_implemented = _goal_quant_research03_valid(root)
     if WORKFLOW_ID not in by_id:
         insert_at = next((idx + 1 for idx, row in enumerate(rows) if row["workflow_id"] == GOAL_ALPHA_RESEARCH_REFINEMENT01_WORKFLOW_ID), len(rows))
         rows.insert(insert_at, {"workflow_id": WORKFLOW_ID})
@@ -1245,7 +1250,8 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         rows.insert(insert_at, {"workflow_id": GOAL_QUANT_RESEARCH03_WORKFLOW_ID})
         by_id = {row["workflow_id"]: row for row in rows}
     by_id[WORKFLOW_ID].update(goal_alpha_factor_candidate02_implemented_workflow_patch(str(result["status"])))
-    by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
+    if not quant03_implemented:
+        by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
     if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
         by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
     if GOAL10B4_WORKFLOW_ID in by_id:
@@ -1274,12 +1280,14 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_workflow_states(root, by_id)
     if result["status"] in {PASS, PASS_WITH_WARNINGS} and WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(goal_alpha_factor_candidate02_implemented_workflow_patch(str(result["status"])))
-        by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
+        if not quant03_implemented:
+            by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
         preserve_later_review_only_workflow_states(root, by_id)
         by_id[WORKFLOW_ID].update(goal_alpha_factor_candidate02_implemented_workflow_patch(str(result["status"])))
-        by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
+        if not quant03_implemented:
+            by_id[GOAL_QUANT_RESEARCH03_WORKFLOW_ID].update(locked_goal_quant_research03_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
         if GOAL10B4_WORKFLOW_ID in by_id:
@@ -1288,6 +1296,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
         if GOAL10D_WORKFLOW_ID in by_id:
             by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 
@@ -1454,3 +1463,12 @@ def _read_json(path: Path) -> dict[str, object]:
         return read_json(path)
     except Exception:
         return {}
+
+
+def _goal_quant_research03_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research03 import goal_quant_research03_valid_evidence
+
+        return goal_quant_research03_valid_evidence(root)
+    except Exception:
+        return False

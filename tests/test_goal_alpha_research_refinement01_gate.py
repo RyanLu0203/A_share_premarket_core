@@ -89,5 +89,8 @@ def test_goal_alpha_research_refinement01_runner_preserves_boundaries() -> None:
         "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate",
     }
     if workflow["goal_alpha_factor_candidate02_refined_variants_research_gate"]["status"] == "implemented_research_only":
-        assert workflow["goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"]["status"] == "locked_future"
+        assert workflow["goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"]["status"] in {
+            "locked_future",
+            "implemented_research_only",
+        }
         assert workflow["goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"]["depends_on"] == "goal_alpha_factor_candidate02_refined_variants_research_gate"

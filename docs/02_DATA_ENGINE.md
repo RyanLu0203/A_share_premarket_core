@@ -181,6 +181,27 @@ not use them in refined factor construction. It creates no refined factor
 panel, recommendation rows, position rows, portfolios, dashboard/frontend
 outputs, trading paths, production storage, broker output, local-lake output,
 factor-mining output, DQN/RL output, or predictive-validity claims.
+GOAL-ALPHA-FACTOR-CANDIDATE-02 writes only research-only refined alpha
+candidate construction evidence under `outputs/research/`,
+`configs/research/`, `docs/research/`, and `outputs/audits/`. It consumes
+committed Alpha Refinement 01, Alpha Candidate 01, Quant02, Provider02B, MVP,
+and risk-tiering evidence only. It excludes future returns,
+benchmark-excess-return fields, and label-ready fields from refined candidate
+construction and creates no post-hoc validity evaluation, recommendation rows,
+position rows, portfolios, dashboard/frontend outputs, trading paths,
+production storage, broker output, local-lake output, factor-mining output,
+DQN/RL output, or predictive-validity claims.
+GOAL-QUANT-RESEARCH-03 writes only research-only refined alpha validity
+evaluation evidence under `outputs/research/`, `configs/research/`,
+`docs/research/`, and `outputs/audits/`. It consumes committed Candidate02,
+Quant02, Provider02B, MVP, risk-tiering, and DC03 evidence only. Forward-return
+and benchmark-excess-return fields are used only post-hoc after refined factor
+values, quantiles, and buckets already exist. Its refined evaluation panel is
+partitioned when needed so no committed artifact exceeds the 95 MiB policy,
+and it creates no recommendation rows, position rows, portfolios,
+dashboard/frontend outputs, trading paths, production storage, broker output,
+local-lake output, factor-mining output, DQN/RL output, or production
+predictive-validity claims.
 
 ## Active Contracts
 
@@ -238,6 +259,15 @@ factor-mining output, DQN/RL output, or predictive-validity claims.
   `outputs/research/`, `configs/research/`, `docs/research/`, and
   `outputs/audits/` only.
 - GOAL-QUANT-RESEARCH-02 alpha validity evaluation evidence under
+  `outputs/research/`, `configs/research/`, `docs/research/`, and
+  `outputs/audits/` only.
+- GOAL-ALPHA-RESEARCH-REFINEMENT-01 rolling-stability attribution and refined
+  candidate design evidence under `outputs/research/`, `configs/research/`,
+  `docs/research/`, and `outputs/audits/` only.
+- GOAL-ALPHA-FACTOR-CANDIDATE-02 refined alpha candidate construction evidence
+  under `outputs/research/`, `configs/research/`, `docs/research/`, and
+  `outputs/audits/` only.
+- GOAL-QUANT-RESEARCH-03 refined alpha validity evaluation evidence under
   `outputs/research/`, `configs/research/`, `docs/research/`, and
   `outputs/audits/` only.
 

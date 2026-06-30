@@ -224,7 +224,7 @@ flowchart TD
     ALPHA01 -. "research-only validity evaluation" .-> QRESEARCH02["GOAL-QUANT-RESEARCH-02 Alpha Candidate Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH02 -. "rolling-stability refinement" .-> REFINE01["GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REFINE01 -. "research-only refined candidates" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    ALPHA02 -. "locked future evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(locked_future)"]
+    ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH03 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
@@ -356,8 +356,12 @@ redefinition status, trial-registry, contract, docs, manifest, report, and
 audit evidence only; it does not evaluate predictive validity or create
 recommendation, position, portfolio, dashboard, trading, production,
 local-lake, factor-mining, broker, or DQN/RL outputs. GOAL-QUANT-RESEARCH-03,
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02,
-and GOAL-10D remain `locked_future`.
+is implemented only as research-only refined alpha factor validity evaluation.
+It evaluates 30 refined factors over partitioned committed-evidence rows,
+records ready factor count 0 with partial improvement available, and uses
+forward returns and benchmark-excess returns only post-hoc. GOAL-REC-TIERING-01,
+GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 

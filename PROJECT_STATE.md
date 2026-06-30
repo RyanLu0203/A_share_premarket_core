@@ -294,8 +294,20 @@ acceptance flags false, and creates no predictive-validity evaluation,
 recommendation rows, position rows, portfolio outputs, dashboard/frontend
 files, trading paths, production behavior, local-lake files, broker outputs,
 factor-mining outputs, DQN/RL outputs, or promotion claims.
-GOAL-QUANT-RESEARCH-03, GOAL-REC-TIERING-01, GOAL-10B.4, position-band
-validation, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
+GOAL-QUANT-RESEARCH-03 is implemented as a research-only refined alpha factor
+validity evaluation gate (`PASS_WITH_WARNINGS`). It consumes only committed
+Candidate02, Quant02, Provider02B, MVP, and risk-tiering evidence, evaluates
+30 refined factors over 180000 partitioned evaluation rows, writes coverage,
+bucket, IC/RankIC, monotonicity, rolling-stability, horizon-consistency,
+improvement, score-validity, trial-registry, contract, docs, report, manifest,
+and audit evidence, and records ready factor count `0` with partial improvement
+available. Forward returns and benchmark-excess returns are used only post-hoc
+after refined values and buckets already exist. It creates no recommendation
+rows, position rows, portfolio outputs, dashboard/frontend files, trading
+paths, production behavior, local-lake files, broker outputs, factor-mining
+outputs, DQN/RL outputs, or production predictive-validity claims.
+GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
 and portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active
 mainline.

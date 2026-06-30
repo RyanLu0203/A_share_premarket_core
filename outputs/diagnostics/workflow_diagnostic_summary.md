@@ -191,7 +191,7 @@ GOAL-ALPHA-FACTOR-CANDIDATE-01 workflow status: `implemented_research_only`.
 GOAL-QUANT-RESEARCH-02 workflow status: `implemented_research_only`.
 GOAL-ALPHA-RESEARCH-REFINEMENT-01 workflow status: `implemented_research_only`.
 GOAL-ALPHA-FACTOR-CANDIDATE-02 workflow status: `implemented_research_only`.
-GOAL-QUANT-RESEARCH-03 workflow status: `locked_future`.
+GOAL-QUANT-RESEARCH-03 workflow status: `implemented_research_only`.
 GOAL-REC-TIERING-01 workflow status: `locked_future`.
 GOAL-10B.4 workflow status: `locked_future`.
 GOAL-POSITION-BAND-VALIDATION-01 workflow status: `locked_future`.
