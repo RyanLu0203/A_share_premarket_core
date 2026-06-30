@@ -66,6 +66,8 @@ python scripts/run_goal_quant_research03_refined_alpha_evaluation_gate.py,PASS,l
 python scripts/audit_goal_quant_research03_refined_alpha_evaluation_gate.py,PASS,local_only,
 python scripts/run_goal_regime_label_research01_gate.py,PASS,local_only,
 python scripts/audit_goal_regime_label_research01_gate.py,PASS,local_only,
+python scripts/run_goal_architecture_refactor03_gate.py,PASS,local_only,
+python scripts/audit_goal_architecture_refactor03_gate.py,PASS,local_only,
 python scripts/audit_workflow_status.py,PASS,local_only,
 python scripts/run_safety_gate.py,PASS,local_only,
 python scripts/run_adapter_audit.py,PASS,local_only,

@@ -246,6 +246,16 @@ recommendation execution, position work, or dashboard work.
   construction. It creates no market timing signal, recommendations, positions,
   portfolios, dashboards, trading, production, local-lake, broker,
   factor-mining, DQN/RL outputs, or predictive-validity claims.
+- GOAL-ARCHITECTURE-REFACTOR-03 is implemented_engineering_research_support and
+  currently `PASS_WITH_WARNINGS`. It creates only AKShare source catalog,
+  provider registry, architecture inventory, duplicate-pattern inventory,
+  modularization plan, common audit/runner/contract/provider helpers, docs,
+  report, manifest, and audit evidence. It creates no full live AKShare data
+  fetch, local-lake data, scientific output change, alpha factor,
+  recommendation, position, portfolio output, dashboard/frontend file, trading,
+  production, broker, factor-mining, DQN/RL output, or predictive-validity
+  claim.
+- GOAL-DATA-EXPANSION-RESEARCH-01 remains `locked_future`.
 - GOAL-QUANT-RESEARCH-04 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
@@ -469,6 +479,14 @@ transition, warning, docs, config, report, manifest, and audit artifacts. It
 must not create market timing signals, recommendations, positions, portfolio
 outputs, dashboard/frontend files, trading, production, local-lake, broker,
 factor-mining, or DQN/RL outputs.
+GOAL-ARCHITECTURE-REFACTOR-03 is engineering research-support only. It may
+maintain AKShare source catalog, provider registry, architecture inventory,
+duplicate-pattern inventory, modularization plan, common helpers, docs,
+config, report, manifest, and audit artifacts only. It must not fetch full live
+datasets, write local-lake data, change scientific outputs, construct alpha
+factors, create recommendations, positions, portfolio outputs,
+dashboard/frontend files, trading, production, broker, factor-mining, or
+DQN/RL outputs. GOAL-DATA-EXPANSION-RESEARCH-01 remains locked.
 
 ## GOAL-06D.1 Agent Note
 

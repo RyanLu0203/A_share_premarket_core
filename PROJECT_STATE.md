@@ -320,9 +320,20 @@ timing signal, recommendation rows, position rows, portfolio outputs,
 dashboard/frontend files, trading paths, production behavior, local-lake files,
 broker outputs, factor-mining outputs, DQN/RL outputs, or predictive-validity
 claims.
-GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
-and portfolio backtest promotion, paper/live trading, broker, production,
+GOAL-ARCHITECTURE-REFACTOR-03 is implemented as an engineering research-support
+AKShare source catalog and provider modularization gate (`PASS_WITH_WARNINGS`).
+It writes provider registry metadata, AKShare source catalog metadata,
+architecture inventory, duplicate-pattern inventory, modularization plan,
+common audit/runner/contract/provider helper modules, docs, report, manifest,
+and audit evidence only. It does not fetch full live AKShare datasets, write
+local-lake data, change scientific outputs, create alpha factors, create
+recommendations, create positions, create portfolio output, create
+dashboard/frontend files, trade, write production data, integrate brokers,
+activate factor-mining, or create DQN/RL outputs.
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
+GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
+portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active
 mainline.
 
@@ -420,6 +431,9 @@ Implemented and protected:
 - GOAL-REGIME-LABEL-RESEARCH-01 research-only no-lookahead market regime label
   construction from committed Provider02B, Quant03, Candidate02, MVP, and
   risk-tiering evidence only
+- GOAL-ARCHITECTURE-REFACTOR-03 engineering research-support AKShare source
+  catalog, provider registry, architecture inventory, and common helper
+  foundation only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -540,6 +554,13 @@ Implemented review-only:
   (`PASS_WITH_WARNINGS`; `implemented_research_only`; date, symbol, and
   factor-regime bridge context only)
 
+Implemented engineering research-support:
+
+- GOAL-ARCHITECTURE-REFACTOR-03 AKShare source catalog and provider
+  modularization gate (`PASS_WITH_WARNINGS`;
+  `implemented_engineering_research_support`; provider/source catalog,
+  registry, inventory, common helper, docs, manifest, and audit artifacts only)
+
 Implemented design-only:
 
 - GOAL-07A risk overlay design gate (`PASS_WITH_WARNINGS`; contracts, schemas,
@@ -561,6 +582,7 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
+- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion
 - GOAL-DATA-PANEL-02 evaluation panel build
 - GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
 - GOAL-10D failure attribution

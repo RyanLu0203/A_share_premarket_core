@@ -23,6 +23,8 @@ BLOCKED = "BLOCKED"
 
 GOAL_QUANT_RESEARCH03_WORKFLOW_ID = "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate"
 GOAL_QUANT_RESEARCH04_WORKFLOW_ID = "goal_quant_research04_regime_conditional_factor_evaluation_gate"
+GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID = "goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"
+GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID = "goal_data_expansion_research01_market_regime_data_expansion_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
 POSITION_BAND_VALIDATION_WORKFLOW_ID = "goal_position_band_validation01_position_band_validation_gate"
@@ -364,6 +366,8 @@ def audit_goal_regime_label_research01_gate(root: Path) -> bool:
     workflow = {row["workflow_id"]: row for row in read_csv(root / "configs/project/workflow_status.csv")}
     gate = workflow.get(WORKFLOW_ID, {})
     q04 = workflow.get(GOAL_QUANT_RESEARCH04_WORKFLOW_ID, {})
+    architecture_refactor03 = workflow.get(GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID, {})
+    data_expansion01 = workflow.get(GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, {})
     rec = workflow.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     if gate.get("status") != "implemented_research_only" or gate.get("implemented_in_repo") != "true":
         failures.append("workflow_regime_label_research01_not_implemented_research_only")
@@ -371,7 +375,8 @@ def audit_goal_regime_label_research01_gate(root: Path) -> bool:
         failures.append("workflow_regime_label_research01_dependency_invalid")
     if q04.get("status") != "locked_future" or q04.get("implemented_in_repo") != "false":
         failures.append("workflow_goal_quant_research04_not_locked_future")
-    if q04.get("depends_on") != WORKFLOW_ID:
+    expected_q04_dependency = GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID if architecture_refactor03 or data_expansion01 else WORKFLOW_ID
+    if q04.get("depends_on") != expected_q04_dependency:
         failures.append("workflow_goal_quant_research04_dependency_invalid")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("workflow_goal_rec_tiering01_not_locked_future")
@@ -1127,6 +1132,7 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
             by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
         if GOAL10D_WORKFLOW_ID in by_id:
             by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+    preserve_later_review_only_workflow_states(root, by_id)
     write_csv(path, rows)
 
 

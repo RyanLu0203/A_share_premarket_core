@@ -39,7 +39,9 @@ evaluation, plus GOAL-ALPHA-RESEARCH-REFINEMENT-01 research-only rolling
 stability attribution and refined candidate design planning, GOAL-ALPHA-
 FACTOR-CANDIDATE-02 research-only refined alpha candidate construction,
 GOAL-QUANT-RESEARCH-03 research-only refined alpha validity evaluation, and
-GOAL-REGIME-LABEL-RESEARCH-01 research-only market regime label construction.
+GOAL-REGIME-LABEL-RESEARCH-01 research-only market regime label construction,
+and GOAL-ARCHITECTURE-REFACTOR-03 engineering research-support AKShare source
+catalog and provider modularization.
 
 ## Repository Roles
 
@@ -156,6 +158,8 @@ python scripts/run_goal_quant_research03_refined_alpha_evaluation_gate.py
 python scripts/audit_goal_quant_research03_refined_alpha_evaluation_gate.py
 python scripts/run_goal_regime_label_research01_gate.py
 python scripts/audit_goal_regime_label_research01_gate.py
+python scripts/run_goal_architecture_refactor03_gate.py
+python scripts/audit_goal_architecture_refactor03_gate.py
 python scripts/rebuild_stage6c_from_engineering_panel.py
 python scripts/run_goal06c6_source_backed_engineering_pilot_bundle.py
 python scripts/run_e2e_trunk_verification_through_goal06b.py
@@ -235,7 +239,9 @@ flowchart TD
     REFINE01 -. "research-only refined candidates" .-> ALPHA02["GOAL-ALPHA-FACTOR-CANDIDATE-02 Refined Alpha Candidate Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    REGIME01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
+    REGIME01 -. "engineering support" .-> ARCH03["GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog + Provider Modularization<br/>(implemented_engineering_research_support; PASS_WITH_WARNINGS)"]
+    ARCH03 -. "locked future" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(locked_future)"]
+    DATAEXP01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
     QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
@@ -376,9 +382,14 @@ construction from committed Provider02B, Quant03, Candidate02, MVP, and
 risk-tiering evidence. It writes no-lookahead date regimes, symbol regime
 context, and factor-regime bridge context only, and excludes future returns,
 benchmark-excess forward returns, label-ready fields, and post-hoc factor
-performance from label construction. GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01,
-GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
-`locked_future`.
+performance from label construction. GOAL-ARCHITECTURE-REFACTOR-03 is
+implemented only as engineering research-support provider catalog and
+modularization metadata; it creates no scientific output changes, data
+expansion, recommendations, positions, dashboards, trading, production,
+local-lake, broker, factor-mining, or DQN/RL outputs.
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
+GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+GOAL-DATA-PANEL-02, and GOAL-10D remain `locked_future`.
 
 ## Required Public Commands
 

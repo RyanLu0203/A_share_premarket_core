@@ -1000,6 +1000,55 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[workflow_id]["implemented_in_repo"] = "false"
         if "dashboard_daily_report" in by_id:
             by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_regime_label_research01"
+    if _goal_architecture_refactor03_valid(root):
+        from ashare_premarket.architecture.goal_architecture_refactor03 import (
+            GOAL10B4_WORKFLOW_ID,
+            GOAL10D_WORKFLOW_ID,
+            GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID,
+            GOAL_QUANT_RESEARCH04_WORKFLOW_ID,
+            GOAL_REC_TIERING01_WORKFLOW_ID,
+            POSITION_BAND_VALIDATION_WORKFLOW_ID,
+            WORKFLOW_ID as GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID,
+            implemented_workflow_patch,
+            locked_goal10b4_patch,
+            locked_goal10d_patch,
+            locked_goal_data_expansion_research01_patch,
+            locked_goal_quant_research04_patch,
+            locked_goal_rec_tiering01_patch,
+            locked_position_band_validation_patch,
+        )
+
+        if GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID in by_id:
+            by_id[GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID].update(implemented_workflow_patch())
+        if GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID in by_id:
+            by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(locked_goal_data_expansion_research01_patch())
+        if GOAL_QUANT_RESEARCH04_WORKFLOW_ID in by_id:
+            by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
+        if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
+            by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
+        if GOAL10B4_WORKFLOW_ID in by_id:
+            by_id[GOAL10B4_WORKFLOW_ID].update(locked_goal10b4_patch())
+        if POSITION_BAND_VALIDATION_WORKFLOW_ID in by_id:
+            by_id[POSITION_BAND_VALIDATION_WORKFLOW_ID].update(locked_position_band_validation_patch())
+        if GOAL10D_WORKFLOW_ID in by_id:
+            by_id[GOAL10D_WORKFLOW_ID].update(locked_goal10d_patch())
+        for workflow_id in [
+            "dashboard_daily_report",
+            "signal_backtest",
+            "portfolio_backtest",
+            "cost_slippage_sensitivity",
+            "paper_trading_journal",
+            "failure_attribution",
+            "production_hardening",
+            "broker_live_trading",
+            "production_db_writes",
+            "production_model_promotion",
+        ]:
+            if workflow_id in by_id:
+                by_id[workflow_id]["status"] = "locked_future"
+                by_id[workflow_id]["implemented_in_repo"] = "false"
+        if "dashboard_daily_report" in by_id:
+            by_id["dashboard_daily_report"]["allowed_next_action"] = "remain_locked_not_unlocked_by_goal_architecture_refactor03"
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
@@ -1153,6 +1202,14 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal10d_backtest_failure_attribution_gate"] = False
     if _goal_regime_label_research01_valid(root):
         payload["goal_regime_label_research01_market_regime_label_construction_gate"] = "implemented_research_only"
+        payload["goal_quant_research04_regime_conditional_factor_evaluation_gate"] = False
+        payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
+        payload["goal10b4_recommendation_backtest_revalidation"] = False
+        payload["goal_position_band_validation01_position_band_validation_gate"] = False
+        payload["goal10d_backtest_failure_attribution_gate"] = False
+    if _goal_architecture_refactor03_valid(root):
+        payload["goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"] = "implemented_engineering_research_support"
+        payload["goal_data_expansion_research01_market_regime_data_expansion_gate"] = False
         payload["goal_quant_research04_regime_conditional_factor_evaluation_gate"] = False
         payload["goal_rec_tiering01_recommendation_score_tiering_gate"] = False
         payload["goal10b4_recommendation_backtest_revalidation"] = False
@@ -1439,6 +1496,15 @@ def _goal_regime_label_research01_valid(root: Path) -> bool:
         from ashare_premarket.research.goal_regime_label_research01 import goal_regime_label_research01_valid_evidence
 
         return goal_regime_label_research01_valid_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_architecture_refactor03_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.architecture.goal_architecture_refactor03 import goal_architecture_refactor03_valid_evidence
+
+        return goal_architecture_refactor03_valid_evidence(root)
     except Exception:
         return False
 

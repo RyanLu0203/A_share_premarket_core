@@ -9,6 +9,7 @@ from pathlib import Path
 from ashare_premarket.core.constants import PUBLIC_COMMANDS, REQUIRED_OUTPUTS, REGRESSION_COMMANDS
 from ashare_premarket.core.io import read_json, write_csv, write_text
 from ashare_premarket.core.workflow import CLASS_A_CAPABILITIES
+from ashare_premarket.architecture.goal_architecture_refactor03 import audit_goal_architecture_refactor03_gate, run_goal_architecture_refactor03_gate
 from ashare_premarket.backtest.goal10b import audit_goal10b_recommendation_backtest_review_only, run_goal10b_recommendation_backtest_review_only
 from ashare_premarket.backtest.goal10b1 import audit_goal10b1_backtest_coverage_repair_gate, run_goal10b1_backtest_coverage_repair_gate
 from ashare_premarket.backtest.goal10b2 import audit_goal10b2_recommendation_backtest_revalidation, run_goal10b2_recommendation_backtest_revalidation
@@ -193,6 +194,7 @@ def run_e2e_validation(root: Path) -> bool:
         ("goal_alpha_factor_candidate02_gate", run_goal_alpha_factor_candidate02_gate(root) and audit_goal_alpha_factor_candidate02_gate(root)),
         ("goal_quant_research03_refined_alpha_evaluation_gate", run_goal_quant_research03_refined_alpha_evaluation_gate(root) and audit_goal_quant_research03_refined_alpha_evaluation_gate(root)),
         ("goal_regime_label_research01_gate", run_goal_regime_label_research01_gate(root) and audit_goal_regime_label_research01_gate(root)),
+        ("goal_architecture_refactor03_provider_catalog_modularization_gate", run_goal_architecture_refactor03_gate(root) and audit_goal_architecture_refactor03_gate(root)),
         ("goal06d_blocked_or_review_only_after_engineering_pilot", _goal06d_gate_satisfied(root)),
         ("workflow_status_audit_passes", run_workflow_status_audit(root)),
         ("safety_gate_passes", run_safety_gate(root)),
@@ -330,6 +332,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_quant_research03_refined_alpha_evaluation_gate.py", [sys.executable, "scripts/audit_goal_quant_research03_refined_alpha_evaluation_gate.py"]),
         ("python scripts/run_goal_regime_label_research01_gate.py", [sys.executable, "scripts/run_goal_regime_label_research01_gate.py"]),
         ("python scripts/audit_goal_regime_label_research01_gate.py", [sys.executable, "scripts/audit_goal_regime_label_research01_gate.py"]),
+        ("python scripts/run_goal_architecture_refactor03_gate.py", [sys.executable, "scripts/run_goal_architecture_refactor03_gate.py"]),
+        ("python scripts/audit_goal_architecture_refactor03_gate.py", [sys.executable, "scripts/audit_goal_architecture_refactor03_gate.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),

@@ -143,6 +143,10 @@
   symbol-level regime context, and factor-regime bridge from committed
   evidence only; no market timing, recommendations, positions, backtests, UI,
   trading, production, local-lake, factor-mining, broker, or DQN/RL outputs).
+- GOAL-ARCHITECTURE-REFACTOR-03 AKShare source catalog and provider
+  modularization (`PASS_WITH_WARNINGS`;
+  implemented_engineering_research_support provider/source catalog, registry,
+  inventory, common helper, docs, manifest, and audit artifacts only).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -230,7 +234,10 @@ flag false. GOAL-REGIME-LABEL-RESEARCH-01 now implements only research-only
 market regime label construction from committed Provider02B, Quant03,
 Candidate02, MVP, and risk-tiering evidence; it writes date, symbol, and
 factor-regime bridge context only and excludes future returns and post-hoc
-factor performance from construction. GOAL-QUANT-RESEARCH-04,
+factor performance from construction. GOAL-ARCHITECTURE-REFACTOR-03 now
+implements only engineering research-support provider catalog and
+modularization metadata and creates no data expansion or scientific output
+changes. GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
 GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
 locked.
@@ -252,6 +259,7 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
+- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion.
 - GOAL-DATA-PANEL-02 evaluation panel build.
 - GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation.
 - GOAL-REC-TIERING-01 recommendation score tiering.

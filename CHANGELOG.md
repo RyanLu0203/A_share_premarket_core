@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-30 - GOAL-ARCHITECTURE-REFACTOR-03 Provider Modularization
+
+- Implemented GOAL-ARCHITECTURE-REFACTOR-03 only as an engineering
+  research-support AKShare source catalog and provider modularization gate.
+- Added AKShare source catalog metadata, provider registry metadata,
+  architecture inventory, duplicate-pattern inventory, modularization plan,
+  common audit/runner/contract/provider helper modules, docs, report,
+  manifest, audit, scripts, and tests.
+- Kept the gate metadata-only: no full live AKShare fetch, local-lake write,
+  scientific output change, alpha factor, recommendation, position, portfolio
+  output, dashboard/frontend file, trading, production, broker,
+  factor-mining, or DQN/RL output was created.
+- Added GOAL-DATA-EXPANSION-RESEARCH-01 as `locked_future` and kept
+  GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4,
+  position-band validation, GOAL-10D, dashboard/frontend, trading, production,
+  broker, local-lake, factor-mining, and DQN/RL locked.
+
 ## 2026-06-30 - GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Labels
 
 - Implemented GOAL-REGIME-LABEL-RESEARCH-01 only as a research-only

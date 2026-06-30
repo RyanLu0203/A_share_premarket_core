@@ -210,6 +210,21 @@ or trailing benchmark trend, benchmark volatility, cross-sectional breadth,
 dispersion, liquidity, downside-risk, and composite regime rules, and excludes
 future returns, benchmark-excess forward returns, label-ready fields, and
 post-hoc factor performance from label construction. It creates no market
+timing signal, recommendation rows, position rows, portfolio outputs,
+dashboard/frontend files, trading paths, production storage, broker output,
+local-lake output, factor-mining output, DQN/RL output, or predictive-validity
+claim.
+GOAL-ARCHITECTURE-REFACTOR-03 writes only provider/source catalog and
+architecture modularization metadata under `configs/providers/`,
+`outputs/providers/`, `configs/architecture/`, `docs/architecture/`, and
+`outputs/audits/`. It catalogues AKShare source candidates, provider registry
+roles, common audit/runner/contract/provider helper surfaces, module inventory,
+duplicate patterns, and a future modularization plan. It does not fetch full
+live AKShare datasets, write local-lake data, change scientific outputs,
+construct alpha factors, create diagnostics, recommendations, positions,
+portfolio output, dashboard/frontend files, trading paths, production storage,
+broker output, factor-mining output, or DQN/RL output. GOAL-DATA-EXPANSION-
+RESEARCH-01 remains a locked future gate.
 timing signal, recommendation rows, position rows, portfolios, dashboard/
 frontend outputs, trading paths, production storage, broker output, local-lake
 output, factor-mining output, DQN/RL output, or predictive-validity claims.
@@ -284,6 +299,10 @@ output, factor-mining output, DQN/RL output, or predictive-validity claims.
 - GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction evidence
   under `outputs/research/`, `configs/research/`, `docs/research/`, and
   `outputs/audits/` only.
+- GOAL-ARCHITECTURE-REFACTOR-03 source catalog, provider registry, module
+  inventory, duplicate-pattern inventory, and modularization plan evidence
+  under `configs/providers/`, `outputs/providers/`, `configs/architecture/`,
+  `docs/architecture/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 

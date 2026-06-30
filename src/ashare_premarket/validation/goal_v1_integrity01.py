@@ -104,6 +104,7 @@ ALLOWED_STATUSES = {
     "implemented_infrastructure_only",
     "implemented_research_only",
     "implemented_mvp_research_only",
+    "implemented_engineering_research_support",
     "locked_future",
     "deleted_from_active_mainline",
     "planned_locked",

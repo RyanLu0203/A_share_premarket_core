@@ -1,0 +1,152 @@
+from __future__ import annotations
+
+from ashare_premarket.providers.contracts.base import ProviderRegistryEntry
+
+REGISTRY_FIELDS = [
+    "provider_id",
+    "provider_name",
+    "current_role",
+    "planned_role",
+    "provider_priority",
+    "fallback_policy",
+    "source_concentration_warning_policy",
+    "network_opt_in_policy",
+    "network_default",
+    "offline_replay_policy",
+    "schema_drift_policy",
+    "provider_health_policy",
+    "rate_limit_backoff_policy",
+    "raw_data_commit_policy",
+    "local_cache_policy",
+    "forbidden_production_write_policy",
+    "no_live_trading_policy",
+    "no_broker_policy",
+    "implementation_status",
+    "notes",
+]
+
+
+def provider_registry_rows() -> list[dict[str, str]]:
+    return [
+        {
+            "provider_id": "baostock",
+            "provider_name": "Baostock",
+            "current_role": "committed_provider02b_primary_source_for_bounded_source_backed_panel",
+            "planned_role": "offline_replay_and_crosscheck_baseline_for_future_market_regime_expansion",
+            "provider_priority": "P0_current_committed_primary",
+            "fallback_policy": "fallback_to_local_committed_evidence_when_network_disabled_or_provider_unavailable",
+            "source_concentration_warning_policy": "warn_when_single_provider_supplies_final_panel_without_crosscheck",
+            "network_opt_in_policy": "network_disabled_by_default_requires_ASHARE_ALLOW_NETWORK_INGESTION=1",
+            "network_default": "disabled",
+            "offline_replay_policy": "committed Provider02B evidence remains replayable without live network access",
+            "schema_drift_policy": "canonical_schema_validation_required_before any promoted data expansion",
+            "provider_health_policy": "health metadata only unless explicit provider smoke-test goal is active",
+            "rate_limit_backoff_policy": "bounded retries with backoff only in opt-in provider goals",
+            "raw_data_commit_policy": "raw_payloads_never_committed",
+            "local_cache_policy": "local cache allowed only under ignored data root or local runtime area",
+            "forbidden_production_write_policy": "production_db_writes_forbidden",
+            "no_live_trading_policy": "live_trading_forbidden",
+            "no_broker_policy": "broker_integration_forbidden",
+            "implementation_status": "implemented_committed_evidence_provider",
+            "notes": "Provider02B panel already uses committed source-backed evidence; no live fetch is performed by Architecture Refactor 03.",
+        },
+        {
+            "provider_id": "akshare",
+            "provider_name": "AKShare",
+            "current_role": "configured_optional_direct_provider_and_provider02a_smoke_test_subject",
+            "planned_role": "expanded_catalog_source_for_future_P0_P1_market_regime_data_expansion",
+            "provider_priority": "P1_planned_expansion_provider",
+            "fallback_policy": "fallback_to_baostock_or_committed_local_import_when AKShare unavailable",
+            "source_concentration_warning_policy": "warn_when AKShare is sole source for regime data without crosscheck",
+            "network_opt_in_policy": "network_disabled_by_default_requires_ASHARE_ALLOW_NETWORK_INGESTION=1",
+            "network_default": "disabled",
+            "offline_replay_policy": "future data expansion must commit bounded normalized summaries, not raw payloads",
+            "schema_drift_policy": "function-level schema contract and drift audit required before use",
+            "provider_health_policy": "import-level and metadata-only checks allowed; live calls require explicit opt-in goal",
+            "rate_limit_backoff_policy": "respect provider rate limits; retry only small approved P0/P1 requests",
+            "raw_data_commit_policy": "raw_payloads_never_committed",
+            "local_cache_policy": "cache under ignored local data root only when explicitly authorized",
+            "forbidden_production_write_policy": "production_db_writes_forbidden",
+            "no_live_trading_policy": "live_trading_forbidden",
+            "no_broker_policy": "broker_integration_forbidden",
+            "implementation_status": "cataloged_planned_provider",
+            "notes": "Cataloged for future data expansion; Architecture Refactor 03 does not fetch full AKShare datasets.",
+        },
+        {
+            "provider_id": "local_import",
+            "provider_name": "Local Import Fallback",
+            "current_role": "bounded_committed_fixture_and_evidence_replay_fallback",
+            "planned_role": "offline_replay_fallback_for_schema_and_lineage_tests",
+            "provider_priority": "P2_fallback",
+            "fallback_policy": "used only when committed evidence or explicitly supplied bounded files exist",
+            "source_concentration_warning_policy": "warn_if_local_import_replaces_source_backed_provider_without provenance",
+            "network_opt_in_policy": "no_network_required",
+            "network_default": "disabled",
+            "offline_replay_policy": "preferred for tests and fresh-clone verification",
+            "schema_drift_policy": "must match canonical schema registry",
+            "provider_health_policy": "file existence, schema, and checksum checks only",
+            "rate_limit_backoff_policy": "not_applicable",
+            "raw_data_commit_policy": "only sanitized bounded review-facing evidence may be committed",
+            "local_cache_policy": "local-only cache must remain ignored",
+            "forbidden_production_write_policy": "production_db_writes_forbidden",
+            "no_live_trading_policy": "live_trading_forbidden",
+            "no_broker_policy": "broker_integration_forbidden",
+            "implementation_status": "implemented_fallback",
+            "notes": "Supports deterministic validation when live providers are disabled.",
+        },
+        {
+            "provider_id": "tushare_pro",
+            "provider_name": "Tushare Pro",
+            "current_role": "provider02a1_optional_smoke_test_only",
+            "planned_role": "future_review_only_crosscheck_if_tokened_access_is_explicitly_authorized",
+            "provider_priority": "P3_optional_tokened_crosscheck",
+            "fallback_policy": "skip_when_token_missing_or_opt_in_absent",
+            "source_concentration_warning_policy": "never make sole final evidence source without review",
+            "network_opt_in_policy": "requires_ASHARE_ALLOW_NETWORK_INGESTION=1_and_ASHARE_ALLOW_TUSHARE=1_and_TUSHARE_TOKEN",
+            "network_default": "disabled",
+            "offline_replay_policy": "no tokened replay data committed",
+            "schema_drift_policy": "schema and permission drift must be classified explicitly",
+            "provider_health_policy": "smoke-test metadata only",
+            "rate_limit_backoff_policy": "respect quota and permission failures",
+            "raw_data_commit_policy": "raw_payloads_and_tokens_never_committed",
+            "local_cache_policy": "no tokened cache in repo",
+            "forbidden_production_write_policy": "production_db_writes_forbidden",
+            "no_live_trading_policy": "live_trading_forbidden",
+            "no_broker_policy": "broker_integration_forbidden",
+            "implementation_status": "optional_smoke_test_only",
+            "notes": "Architecture Refactor 03 does not inspect or require Tushare credentials.",
+        },
+    ]
+
+
+def provider_registry_entries() -> list[ProviderRegistryEntry]:
+    return [
+        ProviderRegistryEntry(
+            provider_id=row["provider_id"],
+            provider_name=row["provider_name"],
+            current_role=row["current_role"],
+            planned_role=row["planned_role"],
+            provider_priority=row["provider_priority"],
+            network_opt_in_policy=row["network_opt_in_policy"],
+            offline_replay_policy=row["offline_replay_policy"],
+            raw_data_commit_policy=row["raw_data_commit_policy"],
+        )
+        for row in provider_registry_rows()
+    ]
+
+
+def provider_registry_config() -> dict[str, object]:
+    return {
+        "registry_id": "goal_architecture_refactor03_provider_registry",
+        "mode": "engineering_research_support_provider_registry",
+        "network_default": "disabled",
+        "providers": provider_registry_rows(),
+        "global_policies": {
+            "network_opt_in": "live provider access requires explicit environment opt-ins and goal authorization",
+            "raw_data_commit": "raw provider payloads are never committed",
+            "local_cache": "provider caches belong only under ignored local data roots",
+            "production_write": "production writes are forbidden",
+            "live_trading": "broker and live trading interfaces are forbidden",
+            "offline_replay": "fresh clone validation must work from committed metadata and bounded evidence",
+        },
+    }
