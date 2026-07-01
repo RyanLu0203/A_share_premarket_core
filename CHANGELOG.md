@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-30 - GOAL-CODEX-OPERATING-SYSTEM-01 Remote Windows GitHub-Only Governance Gate
+
+- Added the governance-only remote Windows GitHub-only Codex Max
+  operating-system gate.
+- Defined User, Main Codex, and Codex Max authority boundaries, branch policy,
+  GitHub-only source policy, Windows compatibility policy, review protocol,
+  handoff template, locked boundaries, destructive-change policy, and
+  authoritative state files.
+- Added GitHub PR/issue templates and CODEOWNERS for governed review.
+- Added audit/helper scripts for Codex OS validation, destructive-change
+  checks, GitHub-only source checks, Windows compatibility checks, project
+  snapshot generation, and branch-state checks.
+- Kept ready factor count at 0 and preserved DataExpansion, Quant04, Rec
+  Tiering, GOAL-10B.4, position validation, GOAL-10D, dashboard/frontend,
+  trading, broker, production, portfolio backtest, local-lake, factor-mining,
+  and DQN/RL locks.
+
 ## 2026-06-30 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 Stable Snapshot
 
 - Added governance-only checkpoint documentation, snapshot outputs, and a

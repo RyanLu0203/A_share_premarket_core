@@ -1,0 +1,32 @@
+# Governance and project state
+README.md @RyanLu0203
+CODEX.md @RyanLu0203
+AGENTS.md @RyanLu0203
+PROJECT_STATE.md @RyanLu0203
+ROADMAP.md @RyanLu0203
+configs/project/workflow_status.csv @RyanLu0203
+configs/** @RyanLu0203
+docs/architecture/** @RyanLu0203
+docs/governance/** @RyanLu0203
+docs/research/** @RyanLu0203
+
+# Validation and audits
+scripts/run_program_validation_profile.py @RyanLu0203
+scripts/run_safety_gate.py @RyanLu0203
+scripts/audit_workflow_status.py @RyanLu0203
+scripts/run_adapter_audit.py @RyanLu0203
+scripts/audit_repository_checkpoint01.py @RyanLu0203
+scripts/audit_codex_operating_system01.py @RyanLu0203
+scripts/audit_github_only_source_policy.py @RyanLu0203
+scripts/audit_windows_compatibility_policy.py @RyanLu0203
+scripts/audit_destructive_changes.py @RyanLu0203
+scripts/generate_project_snapshot.py @RyanLu0203
+scripts/check_latest_branch_state.py @RyanLu0203
+
+# Source and committed evidence
+src/ashare_premarket/** @RyanLu0203
+outputs/audits/** @RyanLu0203
+outputs/research/** @RyanLu0203
+outputs/providers/** @RyanLu0203
+outputs/mvp/** @RyanLu0203
+outputs/diagnostics/** @RyanLu0203

@@ -2,6 +2,44 @@
 
 Last updated: 2026-06-30
 
+## Codex Operating System Gate
+
+GOAL-CODEX-OPERATING-SYSTEM-01 is implemented as a governance-only Codex Max
+onboarding and Git operating-system gate.
+
+- Authoritative remote branch: `project-current`.
+- Latest confirmed remote commit:
+  `e216aac7cac188f401e970a03defca73b11aa449`.
+- Remote checkpoint branch: `checkpoint/arch03-stable-310559`.
+- Remote checkpoint tag: `checkpoint-arch03-stable-310559`.
+- Stable checkpoint commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
+- Local bundle backup is user-private only and is not a Codex Max dependency.
+- Current scientific status: review-only/research-only evidence remains
+  unchanged; no scientific output or conclusion is changed by this gate.
+- Ready factor count: `0`.
+- Latest regime status: Regime01 implemented.
+- Latest architecture status: Arch03 implemented.
+- Provider/source catalog status: AKShare source catalog 70 rows; provider
+  registry network disabled by default.
+- Current blockers: no factor is ready for recommendation tiering; downstream
+  recommendation tiering, position validation, dashboards, trading,
+  production, local-lake, factor-mining, and DQN/RL remain locked.
+- Next allowed governance goal:
+  `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
+- Next allowed Codex Max smoke goal:
+  `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
+- Next allowed data/research goal after the smoke test:
+  `GOAL-DATA-EXPANSION-RESEARCH-01`.
+- Locked downstream stages: GOAL-QUANT-RESEARCH-04 until DataExpansion or
+  explicit user approval, GOAL-REC-TIERING-01 until `ready_factor_count > 0`
+  and explicit user approval, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboard/frontend, trading, broker, production, portfolio backtest,
+  local-lake, factor-mining, and DQN/RL.
+- Codex Max remote Windows GitHub-only constraint: Codex Max may use only
+  GitHub repository code, docs, configs, committed outputs/audits, and remote
+  branches/tags. It must not rely on local Mac paths, local bundles, local
+  provider caches, local-lake data, or uncommitted local state.
+
 ## Stable Repository Checkpoint
 
 GOAL-REPOSITORY-CHECKPOINT-01 is implemented as a governance-only checkpoint
@@ -11,8 +49,8 @@ gate for the Arch03 stable point.
 - Authoritative Codex Max entrypoint branch: `project-current`
 - Frozen checkpoint branch: `checkpoint/arch03-stable-310559`
 - Annotated checkpoint tag: `checkpoint-arch03-stable-310559`
-- Local bundle backup:
-  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+- User-private local bundle backup exists outside GitHub; it is not a Codex
+  Max onboarding input or validation dependency.
 - Latest factor status: ready factor count remains 0.
 - Latest regime status: Regime01 implemented.
 - Latest architecture status: Arch03 implemented.

@@ -13,6 +13,89 @@ This file is long-term project memory for Codex and other coding agents.
   cache payloads, full news text, notebooks, production model artifacts,
   dashboards, or private logs.
 
+## Codex Operating System Roles
+
+- User: final authority for goal selection, merge decisions, downstream
+  unlocks, destructive changes, and scientific conclusion changes.
+- Main Codex: program brain, reviewer, integrator, workflow controller, and
+  consistency checker.
+- Codex Max: remote Windows-compatible high-capacity executor for explicitly
+  assigned goals only.
+
+Authority model:
+
+- Codex Max may execute assigned goals but may not choose the next goal
+  independently.
+- Codex Max may not unlock `locked_future`, `planned_locked`, or deleted
+  stages.
+- Codex Max may not delete committed evidence, rewrite scientific conclusions,
+  bypass Main Codex review, or override user decisions.
+- GitHub is durable project truth only after committed and reviewed updates.
+
+Branch policy:
+
+- Authoritative entry branch: `project-current`.
+- Codex Max work branch: `codex-max/<goal-id>` unless explicitly authorized
+  otherwise.
+- Stable rollback branch: `checkpoint/arch03-stable-310559`.
+- Stable rollback tag: `checkpoint-arch03-stable-310559`.
+- Do not start from stale `main` unless explicitly instructed.
+
+GitHub-only source policy:
+
+- Codex Max may use only GitHub repository code, docs, configs, committed
+  outputs/audits, and remote branches/tags as authoritative sources.
+- Codex Max must not rely on local Mac paths, local bundle backups, local
+  provider caches, local data lake paths, local uncommitted files, or
+  local-only environment variables.
+
+Remote-only artifact policy:
+
+- Any future data expansion must write bounded, audited, GitHub-committed
+  artifacts and obey file-size limits.
+- Provider registry network remains disabled by default unless a future
+  assigned goal explicitly allows network opt-in.
+
+Windows-compatible execution policy:
+
+- Required Codex Max scripts must use cross-platform Python, `pathlib`, UTF-8
+  text, and `python -m` style validation where possible.
+- Do not require bash-only commands, `chmod`, symlink behavior, POSIX-only
+  absolute paths, or case-sensitive filesystem assumptions for Codex Max.
+
+Commit and push policy:
+
+- Commit only files required by the assigned goal.
+- Push the assigned branch for review.
+- Do not force push, rewrite history, or commit local bundle backups,
+  credentials, private logs, raw payloads, notebooks, databases, caches, or
+  oversized files.
+
+Review policy:
+
+- Main Codex reviews Codex Max output for branch lineage, workflow status,
+  project state consistency, locked boundaries, forbidden outputs, evidence
+  deletion, validation, scans, and handoff completeness before recommending
+  merge, changes, rejection, or a user decision.
+
+Locked-boundary policy:
+
+- DataExpansion, Quant04, Rec Tiering, GOAL-10B.4, position validation,
+  GOAL-10D, dashboard/frontend, trading, broker, production, portfolio
+  backtest, local-lake, factor-mining, and DQN/RL remain locked until explicit
+  future user-approved gates.
+
+Destructive-change policy:
+
+- Deleting source, tests, docs, configs, committed evidence, audit outputs, or
+  workflow rows requires explicit user approval before implementation.
+
+Handoff policy:
+
+- Use `docs/governance/HANDOFF_TEMPLATE.md` for Codex Max handoffs.
+- Report validation commands, scans, fresh-clone status when required,
+  boundary confirmations, and any item needing a user decision.
+
 ## Current System Truth
 
 - Approved symbols: `002475.SZ`, `600036.SH`.

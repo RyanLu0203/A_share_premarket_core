@@ -34,7 +34,7 @@
   "mode": "engineering_research_support_provider_modularization_gate",
   "modularization_plan_count": 6,
   "modularization_plan_created": true,
-  "module_inventory_count": 125,
+  "module_inventory_count": 126,
   "network_policy": "disabled_by_default",
   "observed_top_level_categories": [
     "A_share_core_market_data",

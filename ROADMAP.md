@@ -8,18 +8,40 @@
 - Authoritative entrypoint branch: `project-current`.
 - Frozen checkpoint branch: `checkpoint/arch03-stable-310559`.
 - Annotated checkpoint tag: `checkpoint-arch03-stable-310559`.
-- Local bundle backup:
-  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+- User-private local bundle backup exists outside GitHub; it is not a Codex
+  Max dependency.
 
 Future path:
 
 1. GOAL-CODEX-OPERATING-SYSTEM-01.
-2. GOAL-DATA-EXPANSION-RESEARCH-01.
-3. GOAL-QUANT-RESEARCH-04.
-4. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
+2. GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE.
+3. GOAL-DATA-EXPANSION-RESEARCH-01.
+4. GOAL-QUANT-RESEARCH-04.
+5. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
 
 All locked downstream stages remain locked: dashboard/frontend, trading,
 broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
+
+## Codex Operating System Path
+
+- Current checkpoint node: GOAL-REPOSITORY-CHECKPOINT-01 at stable rollback
+  commit `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
+- Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
+- First Codex Max smoke goal:
+  `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
+- Next data goal:
+  `GOAL-DATA-EXPANSION-RESEARCH-01`.
+- Future research goal:
+  `GOAL-QUANT-RESEARCH-04`.
+- Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user
+  approval.
+- Dashboard unlock condition: explicit user approval for a future dashboard
+  design/contract gate.
+- Trading, broker, and production remain locked.
+- Rollback reference: branch `checkpoint/arch03-stable-310559`, tag
+  `checkpoint-arch03-stable-310559`.
+- Local bundle backup is a user-private rollback backup only, not a Codex Max
+  dependency.
 
 ## Implemented Active
 

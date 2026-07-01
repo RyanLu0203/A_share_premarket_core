@@ -1,5 +1,22 @@
 # 09 Step Iteration Log
 
+## 2026-06-30 - GOAL-CODEX-OPERATING-SYSTEM-01 Remote Windows GitHub-Only Governance Gate
+
+- Added the GOAL-CODEX-OPERATING-SYSTEM-01 governance-only operating-system
+  gate for remote Windows-compatible Codex Max onboarding.
+- Established the three-role model: User as final authority, Main Codex as
+  reviewer/integrator/workflow controller, and Codex Max as executor for
+  explicitly assigned goals only.
+- Added governance docs for onboarding, GitHub-only source policy, Windows
+  compatibility, remote operating protocol, review protocol, goal queue,
+  acceptance standard, locked boundaries, destructive-change policy, branch/PR
+  policy, handoff, state updates, and authoritative state files.
+- Added GitHub templates, CODEOWNERS, audit scripts, project snapshot outputs,
+  and governance inventory evidence.
+- Preserved scientific outputs, ready factor count 0, downstream locks,
+  checkpoint rollback refs, and all trading, broker, production, local-lake,
+  factor-mining, and DQN/RL prohibitions.
+
 ## 2026-06-30 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 Stable Snapshot
 
 - Added the GOAL-REPOSITORY-CHECKPOINT-01 governance-only checkpoint gate.

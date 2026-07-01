@@ -1,0 +1,31 @@
+file_path,governance_area,required_for_codex_max,required_for_main_codex_review,required_for_user_authority,github_only_relevance,windows_compatibility_relevance,status,notes
+CODEX.md,entrypoint,true,true,true,true,true,updated,Primary entrypoint states remote branch commit refs GitHub-only and handoff rules.
+AGENTS.md,agent_roles,true,true,true,true,true,updated,Defines User Main Codex and Codex Max authority plus branch review and destructive-change policies.
+PROJECT_STATE.md,state,true,true,true,true,true,updated,Summarizes remote branch commit checkpoint refs scientific status ready factor count blockers and locked stages.
+ROADMAP.md,roadmap,true,true,true,true,true,updated,Defines current governance step smoke goal data goal future research goal unlock conditions and remote rollback refs.
+configs/project/workflow_status.csv,workflow,true,true,true,true,false,updated,Promotes GOAL-CODEX-OPERATING-SYSTEM-01 and keeps downstream goals locked.
+docs/governance/NEW_CODEX_ONBOARDING.md,onboarding,true,true,false,true,true,added,Defines required reading order and remote startup.
+docs/governance/CODEX_MAX_REMOTE_WINDOWS_PROTOCOL.md,remote_protocol,true,true,false,true,true,added,Defines remote Windows GitHub-only Codex Max workflow.
+docs/governance/CODEX_MAX_OPERATING_PROTOCOL.md,operating_protocol,true,true,false,true,true,added,Defines assigned-goal execution and handoff rules.
+docs/governance/MAIN_CODEX_REVIEW_PROTOCOL.md,review,false,true,true,true,true,added,Defines review checks and outcomes.
+docs/governance/PROJECT_AUTHORITY_MODEL.md,authority,true,true,true,true,false,added,Defines User Main Codex and Codex Max authority.
+docs/governance/GITHUB_ONLY_SOURCE_POLICY.md,source_policy,true,true,true,true,false,added,Defines GitHub-only source and evidence policy.
+docs/governance/WINDOWS_COMPATIBILITY_POLICY.md,windows_policy,true,true,false,false,true,added,Defines cross-platform path and command policy.
+docs/governance/GOAL_QUEUE.md,goal_queue,true,true,true,true,false,added,Defines smoke data research and locked downstream queue.
+docs/governance/GOAL_ACCEPTANCE_STANDARD.md,acceptance,true,true,true,true,true,added,Defines validation and evidence standard.
+docs/governance/DESTRUCTIVE_CHANGE_POLICY.md,destructive_change,true,true,true,true,false,added,Defines explicit approval requirement for destructive changes.
+docs/governance/BRANCHING_AND_PR_POLICY.md,branch_pr,true,true,true,true,true,added,Defines project-current codex-max branch and PR policy.
+docs/governance/HANDOFF_TEMPLATE.md,handoff,true,true,false,true,true,added,Defines standardized handoff fields.
+docs/governance/LOCKED_BOUNDARIES.md,locked_boundaries,true,true,true,true,false,added,Defines locked downstream stages and forbidden outputs.
+docs/governance/CODEX_MAX_SMOKE_TEST_PLAN.md,smoke_plan,true,true,true,true,true,added,Defines next Codex Max smoke test.
+docs/governance/PROJECT_STATE_UPDATE_POLICY.md,state_update,true,true,true,true,false,added,Defines project state consistency rules.
+docs/governance/AUTHORITATIVE_STATE_FILES.md,state_files,true,true,true,true,true,added,Lists authoritative state files.
+docs/governance/REMOTE_CHECKPOINT_AND_ROLLBACK_POLICY.md,rollback,true,true,true,true,true,added,Defines remote checkpoint rollback and user-private local bundle status.
+.github/PULL_REQUEST_TEMPLATE.md,github_review,true,true,true,true,true,added,Requires goal branch source validation boundary and handoff disclosures.
+.github/CODEOWNERS,github_review,false,true,true,true,false,added,Requires review for governed files.
+scripts/audit_codex_operating_system01.py,audit,true,true,true,true,true,added,Validates Codex OS governance artifacts and locks.
+scripts/audit_github_only_source_policy.py,audit,true,true,false,true,false,added,Scans for forbidden Codex Max local dependencies.
+scripts/audit_windows_compatibility_policy.py,audit,true,true,false,false,true,added,Scans for Windows compatibility issues.
+scripts/audit_destructive_changes.py,audit,true,true,true,true,false,added,Detects destructive changes and unexpected unlocks.
+scripts/generate_project_snapshot.py,snapshot,true,true,true,true,true,added,Generates current project snapshot.
+scripts/check_latest_branch_state.py,audit,true,true,false,true,true,added,Checks branch upstream cleanliness refs and stale main warnings.

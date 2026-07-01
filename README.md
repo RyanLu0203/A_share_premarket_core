@@ -4,9 +4,20 @@ Clean private active repository for the A-share pre-market alpha diagnosis and
 risk-aware position-building decision support system.
 
 Current Codex Max entrypoint: `project-current`.
+Latest confirmed pre-governance commit:
+`e216aac7cac188f401e970a03defca73b11aa449`.
 Stable Arch03 rollback branch: `checkpoint/arch03-stable-310559`.
 Stable Arch03 rollback tag: `checkpoint-arch03-stable-310559`.
 Stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
+
+GOAL-CODEX-OPERATING-SYSTEM-01 defines the controlled remote Codex Max
+onboarding model: User is final authority, Main Codex is
+reviewer/integrator/workflow controller, and Codex Max is an executor for
+explicitly assigned goals only. Codex Max must use GitHub committed artifacts
+only, must be Windows-compatible, must read `CODEX.md` first, must not start
+from stale `main` unless explicitly instructed, and must not rely on local Mac
+paths, local bundle backups, local caches, local data lakes, or uncommitted
+local state.
 
 This is not an automatic trading bot and does not provide investment advice. It
 is a deterministic, review-only research workflow for PIT-safe data contracts,

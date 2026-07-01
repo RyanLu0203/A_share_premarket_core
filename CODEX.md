@@ -1,5 +1,97 @@
 # CODEX Project Memory
 
+## Codex Operating System
+
+Authoritative remote repository: `RyanLu0203/A_share_premarket_core`.
+
+Authoritative remote branch: `project-current`.
+Latest confirmed remote commit before this governance gate:
+`e216aac7cac188f401e970a03defca73b11aa449`.
+
+Remote rollback checkpoint:
+
+- Branch: `checkpoint/arch03-stable-310559`
+- Tag: `checkpoint-arch03-stable-310559`
+- Commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`
+
+The local bundle backup is user-private only. Codex Max must not use it as an
+input, requirement, validation dependency, or onboarding dependency.
+
+Project purpose: maintain a deterministic, PIT-safe, review-only A-share
+premarket research workflow. It is not an automatic trading bot and does not
+provide investment advice.
+
+Current implemented goals include Provider02B, DC03, GOAL-10B.3, Risk01 /
+Risk011, Quant01, MVP01, Alpha Candidate 01, Quant02, Alpha Refinement 01,
+Alpha Candidate 02, Quant03, Regime01, Arch03, and
+GOAL-REPOSITORY-CHECKPOINT-01. Ready factor count remains `0`.
+
+Current locked goals and stages include
+GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE,
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
+GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-10D, dashboard/frontend, trading, broker, production, portfolio
+backtest, local-lake, factor-mining, and DQN/RL.
+
+Required reading order:
+
+1. `CODEX.md`
+2. `PROJECT_STATE.md`
+3. `ROADMAP.md`
+4. `configs/project/workflow_status.csv`
+5. `docs/governance/PROJECT_AUTHORITY_MODEL.md`
+6. `docs/governance/GITHUB_ONLY_SOURCE_POLICY.md`
+7. `docs/governance/WINDOWS_COMPATIBILITY_POLICY.md`
+8. `docs/governance/CODEX_MAX_REMOTE_WINDOWS_PROTOCOL.md`
+9. `docs/governance/CODEX_MAX_OPERATING_PROTOCOL.md`
+10. `docs/governance/GOAL_QUEUE.md`
+11. `docs/governance/LOCKED_BOUNDARIES.md`
+12. `docs/governance/GOAL_ACCEPTANCE_STANDARD.md`
+
+Next allowed goals:
+
+1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
+2. `GOAL-DATA-EXPANSION-RESEARCH-01`
+3. `GOAL-QUANT-RESEARCH-04`, only after DataExpansion or explicit user
+   approval
+
+Baseline validation commands:
+
+```bash
+python -m compileall -q .
+python -m pytest tests -q
+python scripts/run_program_validation_profile.py
+python scripts/run_safety_gate.py
+python scripts/run_adapter_audit.py
+python scripts/run_workflow_diagnostics.py
+python scripts/audit_workflow_status.py
+```
+
+Forbidden actions: do not change scientific outputs, factor classifications,
+ready factor count, workflow locks, provider evidence, or previous goal
+conclusions; do not fetch live data unless explicitly authorized; do not create
+recommendation, position, target price, order quantity, portfolio return,
+equity curve, dashboard/frontend, trading, broker, production, local-lake,
+factor-mining, or DQN/RL outputs; do not delete committed evidence; do not
+force push or rewrite history.
+
+Handoff requirements: every Codex Max handoff must include goal ID, branch,
+base commit, final commit, changed files, outputs, validation commands,
+workflow-status changes, locked-boundary confirmation, forbidden-output scan,
+destructive-change disclosure, fresh-clone status when required, and review
+questions.
+
+Codex Max must clone or checkout `project-current`, must use only
+GitHub-committed artifacts as data/evidence, must not rely on `/Users/luxinyu`
+or any local Mac path, must not rely on local bundle backup, must not rely on
+local caches or local data lake paths, must not fetch live data unless an
+assigned future goal explicitly allows network opt-in, must keep provider
+registry network disabled by default, and must push work to a
+`codex-max/<goal-id>` branch unless explicitly authorized otherwise. Main Codex
+reviews Codex Max output before user approval.
+
+Do not start from stale `main` unless explicitly instructed.
+
 ## Codex Max Entrypoint
 
 Codex Max should read `CODEX.md` first.
@@ -8,8 +100,8 @@ Codex Max should read `CODEX.md` first.
 - Current stable checkpoint branch: `checkpoint/arch03-stable-310559`
 - Current stable checkpoint tag: `checkpoint-arch03-stable-310559`
 - Current stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`
-- Local bundle backup:
-  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+- User-private local bundle backup exists outside GitHub, but Codex Max must
+  not rely on it.
 
 Codex Max must not start from stale main unless explicitly instructed. Codex
 Max must not unlock downstream goals. The frozen checkpoint branch and tag

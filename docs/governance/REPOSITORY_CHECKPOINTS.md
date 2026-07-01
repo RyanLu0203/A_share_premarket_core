@@ -10,13 +10,12 @@
 - Annotated checkpoint tag: `checkpoint-arch03-stable-310559`
 - Date generated: `2026-06-30`
 - Validation status: `PASS_WITH_WARNINGS`
-- Local bundle path: `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
-- Bundle verification status: `PASS`
+- User-private local bundle backup status: `PASS`
 
 The frozen checkpoint branch and annotated tag point to the exact Arch03 stable
 commit. `project-current` was first created at that commit and is then allowed
 to fast-forward to the governance documentation entrypoint commit so future
-Codex Max sessions can clone the entrypoint docs directly.
+Codex Max sessions can clone the entrypoint docs directly from GitHub.
 
 ## Rollback Command
 
@@ -32,13 +31,9 @@ git fetch origin --tags
 git switch -c recovery/arch03-stable checkpoint-arch03-stable-310559
 ```
 
-Bundle-based recovery:
-
-```bash
-git clone /Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle A_share_premarket_core_recovery
-cd A_share_premarket_core_recovery
-git switch -c recovery/arch03-stable checkpoint/arch03-stable-310559
-```
+The local bundle backup exists only as a user-private backup outside GitHub. It
+is not accessible to Codex Max and is not part of Codex Max onboarding or
+validation.
 
 ## Notes
 

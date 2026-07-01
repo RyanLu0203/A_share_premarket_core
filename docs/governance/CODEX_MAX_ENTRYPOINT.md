@@ -8,7 +8,10 @@ git switch project-current
 ```
 
 Codex Max must read `CODEX.md` first, then `PROJECT_STATE.md`, `ROADMAP.md`,
-and `docs/governance/REPOSITORY_CHECKPOINTS.md`.
+`docs/governance/GITHUB_ONLY_SOURCE_POLICY.md`,
+`docs/governance/WINDOWS_COMPATIBILITY_POLICY.md`,
+`docs/governance/CODEX_MAX_REMOTE_WINDOWS_PROTOCOL.md`, and
+`docs/governance/REPOSITORY_CHECKPOINTS.md`.
 
 ## Current Branch Policy
 
@@ -25,6 +28,8 @@ remain the immutable rollback point.
 ## Boundaries
 
 Codex Max must not start from stale `main` unless explicitly instructed.
+Codex Max must not rely on local Mac paths, local bundle backups, local
+provider caches, local-lake data, or uncommitted local state.
 Codex Max must not unlock DataExpansion, Quant04, Rec Tiering, GOAL-10B.4,
 position-band validation, GOAL-10D, dashboard/frontend, trading, broker,
 production, local-lake, factor-mining, or DQN/RL without a future explicit goal.

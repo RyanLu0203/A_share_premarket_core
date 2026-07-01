@@ -32,14 +32,12 @@ git fetch origin --tags
 git switch -c recovery/arch03-stable-tag checkpoint-arch03-stable-310559
 ```
 
-## Restore From The Local Bundle
+## User-Private Local Bundle
 
-```bash
-git bundle verify /Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle
-git clone /Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle A_share_premarket_core_recovery
-cd A_share_premarket_core_recovery
-git switch -c recovery/arch03-stable checkpoint/arch03-stable-310559
-```
+The user may privately use the local bundle backup outside GitHub. The bundle
+is not accessible to Codex Max and is not part of Codex Max onboarding,
+validation, or rollback requirements. Codex Max rollback uses only the remote
+checkpoint branch or remote checkpoint tag.
 
 ## Warnings
 
