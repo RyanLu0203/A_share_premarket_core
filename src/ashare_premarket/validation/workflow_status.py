@@ -4468,9 +4468,9 @@ def _unexpected_goal10b_backtest_outputs(root: Path) -> list[str]:
         "outputs/backtest/goal10c_position_band_group_metrics.csv",
     }
     return [
-        str(item.relative_to(root))
+        item.relative_to(root).as_posix()
         for item in sorted(path.glob("*"))
-        if str(item.relative_to(root)) not in allowed
+        if item.relative_to(root).as_posix() not in allowed
     ]
 
 

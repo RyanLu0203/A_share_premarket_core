@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS_RESERVED = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+
+UNSAFE_RELATIVE_TO_PATTERN = re.compile(r"str\(\s*[\w.\[\]]+\.relative_to\(")
+SOURCE_SCAN_DIRS = ["src", "scripts"]
 
 SCAN_FILES = [
     "CODEX.md",
@@ -49,6 +53,8 @@ def main() -> int:
             if stem in WINDOWS_RESERVED:
                 failures.append(f"Windows-reserved governance filename: {path.relative_to(ROOT)}")
 
+    _scan_source_path_comparisons(failures)
+
     if failures:
         print("Windows compatibility policy audit: BLOCKED")
         for failure in failures:
@@ -56,6 +62,32 @@ def main() -> int:
         return 1
     print("Windows compatibility policy audit: PASS")
     return 0
+
+
+def _scan_source_path_comparisons(failures: list[str]) -> None:
+    """Flag str(Path.relative_to(...)) repo-path strings that break forward-slash comparisons on Windows."""
+    this_file = Path(__file__).resolve()
+    for scan_dir in SOURCE_SCAN_DIRS:
+        base = ROOT / scan_dir
+        if not base.exists():
+            continue
+        for path in sorted(base.rglob("*.py")):
+            if path.resolve() == this_file or "__pycache__" in path.parts:
+                continue
+            try:
+                lines = path.read_text(encoding="utf-8").splitlines()
+            except UnicodeDecodeError:
+                failures.append(f"{path.relative_to(ROOT).as_posix()} is not valid UTF-8")
+                continue
+            for lineno, line in enumerate(lines, start=1):
+                if not UNSAFE_RELATIVE_TO_PATTERN.search(line):
+                    continue
+                if "as_posix" in line or '.replace("\\\\", "/")' in line:
+                    continue
+                failures.append(
+                    f"{path.relative_to(ROOT).as_posix()}:{lineno} unsafe str(Path.relative_to(...)) repo-path string;"
+                    " use ashare_premarket.core.paths.rel() or .as_posix() for repo-relative comparisons"
+                )
 
 
 def _scan_text(path: Path, failures: list[str]) -> None:
