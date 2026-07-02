@@ -272,7 +272,17 @@ recommendation execution, position work, or dashboard work.
   recommendation, position, portfolio output, dashboard/frontend file, trading,
   production, broker, factor-mining, DQN/RL output, or predictive-validity
   claim.
-- GOAL-DATA-EXPANSION-RESEARCH-01 remains `locked_future`.
+- GOAL-DATA-EXPANSION-RESEARCH-01 is implemented_research_only and currently
+  `PASS_WITH_WARNINGS`. It creates only bounded source-selection,
+  provider-health, market-regime context, data-quality, warning, contract,
+  docs, report, manifest, and audit artifacts from approved P0/P1 AKShare
+  catalog sources and committed replay evidence. It defaults to offline
+  dry-run mode, requires `ASHARE_ALLOW_AKSHARE_NETWORK=1` for any bounded live
+  AKShare attempt, and creates no factor evaluation, recommendations,
+  positions, portfolio returns, equity curves, dashboards, trading,
+  production, local-lake data, raw provider payloads, broker, factor-mining,
+  DQN/RL outputs, or predictive-validity claims.
+- GOAL-REGIME-LABEL-RESEARCH-02 remains `locked_future`.
 - GOAL-QUANT-RESEARCH-04 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
@@ -503,7 +513,12 @@ config, report, manifest, and audit artifacts only. It must not fetch full live
 datasets, write local-lake data, change scientific outputs, construct alpha
 factors, create recommendations, positions, portfolio outputs,
 dashboard/frontend files, trading, production, broker, factor-mining, or
-DQN/RL outputs. GOAL-DATA-EXPANSION-RESEARCH-01 remains locked.
+DQN/RL outputs. GOAL-DATA-EXPANSION-RESEARCH-01 is research-only bounded
+market-regime data expansion; it may maintain only source-selection,
+provider-health, market-regime context, data-quality, warning, contract, docs,
+report, manifest, and audit artifacts from approved P0/P1 catalog sources and
+committed replay evidence. GOAL-REGIME-LABEL-RESEARCH-02 and Quant04 remain
+locked.
 
 ## GOAL-06D.1 Agent Note
 

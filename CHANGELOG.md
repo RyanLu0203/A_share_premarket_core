@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-02 - GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion
+
+- Implemented GOAL-DATA-EXPANSION-RESEARCH-01 only as a bounded research-only
+  market-regime data expansion gate from approved P0/P1 AKShare source-catalog
+  rows and committed replay evidence.
+- Added source-selection, provider-health, trading-calendar/status,
+  broad-index, sector/concept, liquidity/capital-flow, symbol-event,
+  expanded date-regime, expanded symbol-context, data-quality, warning,
+  contract, docs, report, manifest, audit, scripts, provider helper modules,
+  and tests.
+- Kept the default run mode offline dry-run; bounded live AKShare access
+  requires `ASHARE_ALLOW_AKSHARE_NETWORK=1`.
+- Kept GOAL-REGIME-LABEL-RESEARCH-02, GOAL-QUANT-RESEARCH-04,
+  GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation, GOAL-10D,
+  dashboard/frontend, trading, production, broker, local-lake, factor-mining,
+  and DQN/RL locked.
+
 ## 2026-06-30 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 Stable Snapshot
 
 - Added governance-only checkpoint documentation, snapshot outputs, and a

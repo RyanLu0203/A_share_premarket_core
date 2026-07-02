@@ -13,10 +13,11 @@
 
 Future path:
 
-1. GOAL-CODEX-OPERATING-SYSTEM-01.
-2. GOAL-DATA-EXPANSION-RESEARCH-01.
-3. GOAL-QUANT-RESEARCH-04.
-4. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
+1. GOAL-REGIME-LABEL-RESEARCH-02 expanded market-regime label refinement, or
+   GOAL-DATA-PROVIDER-HEALTH-02 if provider availability proves too sparse.
+2. GOAL-QUANT-RESEARCH-04 only after Regime02 integration or an explicit
+   decision that Regime02 is unnecessary.
+3. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
 
 All locked downstream stages remain locked: dashboard/frontend, trading,
 broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
@@ -168,6 +169,13 @@ broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
   modularization (`PASS_WITH_WARNINGS`;
   implemented_engineering_research_support provider/source catalog, registry,
   inventory, common helper, docs, manifest, and audit artifacts only).
+- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion
+  (`PASS_WITH_WARNINGS`; implemented_research_only bounded source-selection,
+  provider-health, market-regime context, data-quality, warning, contract,
+  docs, manifest, and audit artifacts only; no factor evaluation,
+  recommendations, positions, portfolios, dashboard/frontend, trading,
+  production, local-lake, raw provider payloads, broker, factor-mining, or
+  DQN/RL outputs).
 - Verification, validation, regression, safety, adapter, and diagnostics gates.
 - GOAL-HYGIENE-01 deterministic runtime artifact policy.
 - GOAL-DOCS-01 canonical workflow status governance.
@@ -257,9 +265,11 @@ Candidate02, MVP, and risk-tiering evidence; it writes date, symbol, and
 factor-regime bridge context only and excludes future returns and post-hoc
 factor performance from construction. GOAL-ARCHITECTURE-REFACTOR-03 now
 implements only engineering research-support provider catalog and
-modularization metadata and creates no data expansion or scientific output
-changes. GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4,
+modularization metadata and creates no scientific output changes.
+GOAL-DATA-EXPANSION-RESEARCH-01 now implements only bounded research-only
+market-regime data expansion from approved P0/P1 AKShare catalog sources and
+committed replay evidence. GOAL-REGIME-LABEL-RESEARCH-02,
+GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
 locked.
 GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
@@ -280,7 +290,7 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
-- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion.
+- GOAL-REGIME-LABEL-RESEARCH-02 expanded market regime label refinement.
 - GOAL-DATA-PANEL-02 evaluation panel build.
 - GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation.
 - GOAL-REC-TIERING-01 recommendation score tiering.

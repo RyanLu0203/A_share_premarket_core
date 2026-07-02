@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-30
+Last updated: 2026-07-02
 
 ## Stable Repository Checkpoint
 
@@ -16,11 +16,13 @@ gate for the Arch03 stable point.
 - Latest factor status: ready factor count remains 0.
 - Latest regime status: Regime01 implemented.
 - Latest architecture status: Arch03 implemented.
+- Latest data expansion status: GOAL-DATA-EXPANSION-RESEARCH-01 implemented
+  research-only with `PASS_WITH_WARNINGS`.
 - Provider/source catalog status: AKShare source catalog 70 rows; provider
   registry network disabled by default.
 - Next planned governance goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
-- Next research/data goal after governance:
-  `GOAL-DATA-EXPANSION-RESEARCH-01`.
+- Next research/data goal after DataExpansion01:
+  `GOAL-REGIME-LABEL-RESEARCH-02`.
 
 ## Current Stage
 
@@ -350,10 +352,21 @@ local-lake data, change scientific outputs, create alpha factors, create
 recommendations, create positions, create portfolio output, create
 dashboard/frontend files, trade, write production data, integrate brokers,
 activate factor-mining, or create DQN/RL outputs.
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
-portfolio backtest promotion, paper/live trading, broker, production,
+GOAL-DATA-EXPANSION-RESEARCH-01 is implemented as a bounded research-only
+market-regime data expansion gate (`PASS_WITH_WARNINGS`). It selects 29
+approved P0/P1 AKShare source-catalog rows, records 29 provider-health rows in
+offline dry-run mode, and writes bounded committed-replay context only: 6000
+trading-calendar/status rows, 360 broad-index rows, 360 sector/concept rows,
+120 liquidity/capital-flow rows, 10 symbol-event rows, 120 expanded date-regime
+feature rows, 6000 expanded symbol-context rows, data-quality summary,
+construction warnings, contract, docs, report, manifest, and audit evidence.
+It creates no alpha factors, factor evaluation, recommendations, positions,
+portfolio returns, equity curves, dashboard/frontend files, trading paths,
+production behavior, local-lake data, raw provider payloads, broker output,
+factor-mining output, or DQN/RL output. GOAL-REGIME-LABEL-RESEARCH-02,
+GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4, position-band
+validation, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal
+and portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active
 mainline.
 
@@ -454,6 +467,9 @@ Implemented and protected:
 - GOAL-ARCHITECTURE-REFACTOR-03 engineering research-support AKShare source
   catalog, provider registry, architecture inventory, and common helper
   foundation only
+- GOAL-DATA-EXPANSION-RESEARCH-01 research-only market-regime data expansion
+  from approved P0/P1 AKShare catalog sources and committed replay evidence
+  only
 - verification, validation, regression, safety, adapter, and diagnostics gates
 - canonical workflow status governance and workflow status audit
 
@@ -573,6 +589,10 @@ Implemented review-only:
 - GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction
   (`PASS_WITH_WARNINGS`; `implemented_research_only`; date, symbol, and
   factor-regime bridge context only)
+- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion gate
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; bounded source
+  selection, provider-health, market-regime context, data-quality, warning,
+  contract, docs, manifest, and audit artifacts only)
 
 Implemented engineering research-support:
 
@@ -602,7 +622,7 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
-- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion
+- GOAL-REGIME-LABEL-RESEARCH-02 expanded market regime label refinement
 - GOAL-DATA-PANEL-02 evaluation panel build
 - GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
 - GOAL-10D failure attribution

@@ -223,8 +223,19 @@ duplicate patterns, and a future modularization plan. It does not fetch full
 live AKShare datasets, write local-lake data, change scientific outputs,
 construct alpha factors, create diagnostics, recommendations, positions,
 portfolio output, dashboard/frontend files, trading paths, production storage,
-broker output, factor-mining output, or DQN/RL output. GOAL-DATA-EXPANSION-
-RESEARCH-01 remains a locked future gate.
+broker output, factor-mining output, or DQN/RL output.
+GOAL-DATA-EXPANSION-RESEARCH-01 writes only bounded research-only market-regime
+data expansion artifacts under
+`outputs/data_expansion/goal_data_expansion_research01/`,
+`configs/research/`, `docs/research/`, and `outputs/audits/`. It selects
+approved P0/P1 AKShare catalog sources, records provider-health status, and
+constructs committed-replay trading-calendar/status, broad-index,
+sector/concept, liquidity/capital-flow, symbol-event, expanded date-regime,
+expanded symbol-context, data-quality, and warning artifacts. It defaults to
+offline dry-run mode, requires `ASHARE_ALLOW_AKSHARE_NETWORK=1` for any
+bounded live AKShare attempt, and creates no raw provider payloads, local-lake
+data, factor evaluation, recommendation, position, portfolio, dashboard,
+trading, production, broker, factor-mining, or DQN/RL output.
 timing signal, recommendation rows, position rows, portfolios, dashboard/
 frontend outputs, trading paths, production storage, broker output, local-lake
 output, factor-mining output, DQN/RL output, or predictive-validity claims.
@@ -303,6 +314,9 @@ output, factor-mining output, DQN/RL output, or predictive-validity claims.
   inventory, duplicate-pattern inventory, and modularization plan evidence
   under `configs/providers/`, `outputs/providers/`, `configs/architecture/`,
   `docs/architecture/`, and `outputs/audits/` only.
+- GOAL-DATA-EXPANSION-RESEARCH-01 market-regime data expansion evidence under
+  `outputs/data_expansion/goal_data_expansion_research01/`,
+  `configs/research/`, `docs/research/`, and `outputs/audits/` only.
 
 ## Source Evidence Warnings
 

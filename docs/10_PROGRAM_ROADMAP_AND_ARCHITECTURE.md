@@ -63,8 +63,9 @@ flowchart TD
     ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REGIME01 -. "engineering support" .-> ARCH03["GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog + Provider Modularization<br/>(implemented_engineering_research_support; PASS_WITH_WARNINGS)"]
-    ARCH03 -. "locked future" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(locked_future)"]
-    DATAEXP01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
+    ARCH03 -. "research-only data expansion" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
+    DATAEXP01 -. "locked future regime refinement" .-> REGIME02["GOAL-REGIME-LABEL-RESEARCH-02 Expanded Market Regime Label Refinement<br/>(locked_future)"]
+    DATAEXP01 -. "locked future after Regime02 or waiver" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
     QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     T10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
@@ -186,11 +187,15 @@ provider registry, architecture inventory, and common helper metadata; it
 creates no data expansion, scientific output changes, recommendations,
 positions, portfolio output, dashboard/frontend files, trading, production,
 local-lake, broker, factor-mining, or DQN/RL outputs.
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4,
-GOAL-POSITION-BAND-VALIDATION-01,
-GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
-execution stages remain locked future work;
+GOAL-DATA-EXPANSION-RESEARCH-01 is implemented only as research-only bounded
+market-regime data expansion from approved P0/P1 AKShare catalog sources and
+committed replay evidence. It creates no factor evaluation, recommendations,
+positions, portfolio returns, equity curves, dashboard/frontend files, trading,
+production, local-lake data, raw provider payloads, broker output,
+factor-mining, or DQN/RL output. GOAL-REGIME-LABEL-RESEARCH-02,
+GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4,
+GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, GOAL-10D, Dashboard /
+Daily Report UI, and downstream execution stages remain locked future work;
 no dashboard files, visual reports, frontend, or UI output exist. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,

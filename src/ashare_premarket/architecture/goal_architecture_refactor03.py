@@ -122,7 +122,6 @@ MODULARIZATION_PLAN_FIELDS = [
 ]
 
 LOCKED_WORKFLOW_IDS = [
-    GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID,
     GOAL_QUANT_RESEARCH04_WORKFLOW_ID,
     GOAL_REC_TIERING01_WORKFLOW_ID,
     GOAL10B4_WORKFLOW_ID,
@@ -241,6 +240,13 @@ def audit_goal_architecture_refactor03_gate(root: Path) -> bool:
     failures.extend(scan_artifact_sizes(root, OUTPUTS))
     failures.extend(scan_token_secret_leakage(root, OUTPUTS))
     failures.extend(workflow_lock_failures(workflow, LOCKED_WORKFLOW_IDS))
+    data_expansion_status = workflow.get(GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, {}).get("status")
+    data_expansion_implemented = _goal_data_expansion_research01_valid(root)
+    if data_expansion_implemented:
+        if data_expansion_status != "implemented_research_only":
+            failures.append("data_expansion_research01_valid_evidence_but_workflow_not_implemented")
+    elif data_expansion_status != "locked_future":
+        failures.append("data_expansion_research01_must_remain_locked_without_valid_evidence")
     if workflow.get(WORKFLOW_ID, {}).get("status") != "implemented_engineering_research_support":
         failures.append("architecture_refactor03_workflow_status_invalid")
     if workflow.get(GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
@@ -261,6 +267,7 @@ def evaluate_goal_architecture_refactor03(root: Path) -> dict[str, object]:
     warnings = _warnings(catalog_rows, duplicate_rows)
     status = PASS_WITH_WARNINGS if warnings else PASS
     output_artifacts = OUTPUTS
+    data_expansion_implemented = _goal_data_expansion_research01_valid(root)
     manifest = build_manifest(
         RunContext(root=root, goal_id=GOAL_ID, mode=MODE),
         status,
@@ -309,7 +316,8 @@ def evaluate_goal_architecture_refactor03(root: Path) -> dict[str, object]:
         future_returns_used_in_provider_catalog_logic=False,
         tokens_or_secrets_persisted=False,
         scientific_outputs_changed=False,
-        goal_data_expansion_research01_locked_future=True,
+        goal_data_expansion_research01_locked_future=not data_expansion_implemented,
+        goal_data_expansion_research01_implemented_research_only=data_expansion_implemented,
         goal_quant_research04_locked_future=True,
         goal_rec_tiering01_locked_future=True,
         goal10b4_locked_future=True,
@@ -508,7 +516,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         rows.insert(insert_at, {"workflow_id": GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID})
         by_id = {row["workflow_id"]: row for row in rows}
     by_id[WORKFLOW_ID].update(implemented_workflow_patch())
-    by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(locked_goal_data_expansion_research01_patch())
+    if _goal_data_expansion_research01_valid(root):
+        from ashare_premarket.data_expansion.goal_data_expansion_research01 import implemented_workflow_patch as data_expansion_workflow_patch
+
+        by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(data_expansion_workflow_patch())
+    else:
+        by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(locked_goal_data_expansion_research01_patch())
     if GOAL_QUANT_RESEARCH04_WORKFLOW_ID in by_id:
         by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
     if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
@@ -760,6 +773,14 @@ def _write_audit(root: Path, failures: list[str], status: str) -> None:
 def _workflow_rows(root: Path) -> dict[str, dict[str, str]]:
     path = root / "configs/project/workflow_status.csv"
     return {row["workflow_id"]: row for row in read_csv(path)} if path.exists() else {}
+
+
+def _goal_data_expansion_research01_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.data_expansion.goal_data_expansion_research01 import goal_data_expansion_research01_valid_evidence
+    except Exception:
+        return False
+    return goal_data_expansion_research01_valid_evidence(root)
 
 
 def _warnings(catalog_rows: list[dict[str, str]], duplicate_rows: list[dict[str, object]]) -> list[str]:
