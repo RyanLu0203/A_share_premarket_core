@@ -1426,9 +1426,9 @@ def _unexpected_backtest_outputs(root: Path) -> list[str]:
     if not path.exists():
         return []
     return sorted(
-        str(item.relative_to(root))
+        item.relative_to(root).as_posix()
         for item in path.glob("*")
-        if item.is_file() and str(item.relative_to(root)) not in ALLOWED_BACKTEST_OUTPUTS
+        if item.is_file() and item.relative_to(root).as_posix() not in ALLOWED_BACKTEST_OUTPUTS
     )
 
 

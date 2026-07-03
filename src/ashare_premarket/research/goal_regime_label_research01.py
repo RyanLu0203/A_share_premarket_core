@@ -1328,7 +1328,7 @@ def _warning(code: object, dimension: object, label: object, row_count: object, 
 
 def _oversized_outputs(root: Path) -> list[tuple[str, int]]:
     outputs = [root / path for path in OUTPUTS if (root / path).exists()]
-    return [(str(path.relative_to(root)), path.stat().st_size) for path in outputs if path.stat().st_size >= SIZE_LIMIT_BYTES]
+    return [(path.relative_to(root).as_posix(), path.stat().st_size) for path in outputs if path.stat().st_size >= SIZE_LIMIT_BYTES]
 
 
 def _max_existing_output_size(root: Path) -> int:
