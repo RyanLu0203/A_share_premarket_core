@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AI collaboration workflow
+    url: https://github.com/RyanLu0203/A_share_premarket_core/blob/project-current/docs/governance/AI_COLLABORATION_WORKFLOW.md
+    about: How humans and AI agents collaborate through Issues and Pull Requests on this repository.
+  - name: Agent role matrix
+    url: https://github.com/RyanLu0203/A_share_premarket_core/blob/project-current/docs/governance/AGENT_ROLE_MATRIX.md
+    about: Who may do what — User, Main Codex, Codex Max, reviewer agents.
