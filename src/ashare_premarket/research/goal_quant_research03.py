@@ -1722,7 +1722,7 @@ def _panel_part_paths(root: Path) -> list[str]:
     parts = root / PANEL_PARTS_DIR
     if not parts.exists():
         return []
-    return [str(path.relative_to(root)) for path in sorted(parts.glob("*.csv"))]
+    return [path.relative_to(root).as_posix() for path in sorted(parts.glob("*.csv"))]
 
 
 def _expected_refined_factor_ids(root: Path) -> set[str]:

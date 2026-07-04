@@ -622,7 +622,6 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
-- GOAL-REGIME-LABEL-RESEARCH-02 expanded market regime label refinement
 - GOAL-DATA-PANEL-02 evaluation panel build
 - GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
 - GOAL-10D failure attribution

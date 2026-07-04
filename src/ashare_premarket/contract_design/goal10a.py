@@ -1013,9 +1013,9 @@ def _unexpected_backtest_outputs(root: Path) -> list[str]:
     if not path.exists():
         return []
     return [
-        str(item.relative_to(root))
+        item.relative_to(root).as_posix()
         for item in sorted(path.glob("*"))
-        if str(item.relative_to(root)) not in ALLOWED_GOAL10B_BACKTEST_OUTPUTS
+        if item.relative_to(root).as_posix() not in ALLOWED_GOAL10B_BACKTEST_OUTPUTS
     ]
 
 

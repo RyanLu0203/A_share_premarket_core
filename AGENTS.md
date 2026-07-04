@@ -234,7 +234,7 @@ This file is long-term project memory for Codex and other coding agents.
   positions, portfolio returns, equity curves, dashboards, trading,
   production, local-lake data, raw provider payloads, broker, factor-mining,
   DQN/RL outputs, or predictive-validity claims.
-- GOAL-REGIME-LABEL-RESEARCH-02 remains `locked_future`.
+- GOAL-REGIME-LABEL-RESEARCH-02 is `implemented_research_only` (expanded market regime label refinement over committed DataExpansion01 evidence; no factor evaluation).
 - GOAL-QUANT-RESEARCH-04 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.

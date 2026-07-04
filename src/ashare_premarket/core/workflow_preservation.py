@@ -1027,6 +1027,11 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
                 by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(data_expansion_workflow_patch())
             else:
                 by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(locked_goal_data_expansion_research01_patch())
+        regime02_workflow_id = "goal_regime_label_research02_expanded_market_regime_label_refinement_gate"
+        if regime02_workflow_id in by_id and _goal_data_expansion_research01_valid(root) and _goal_regime_label_research02_valid(root):
+            from ashare_premarket.research.goal_regime_label_research02 import implemented_workflow_patch as regime02_workflow_patch
+
+            by_id[regime02_workflow_id].update(regime02_workflow_patch())
         if GOAL_QUANT_RESEARCH04_WORKFLOW_ID in by_id:
             by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
@@ -1216,7 +1221,8 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
         payload["goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"] = "implemented_engineering_research_support"
         if _goal_data_expansion_research01_valid(root):
             payload["goal_data_expansion_research01_market_regime_data_expansion_gate"] = "implemented_research_only"
-            payload["goal_regime_label_research02_expanded_market_regime_label_refinement_gate"] = False
+            if _goal_regime_label_research02_valid(root):
+                payload["goal_regime_label_research02_expanded_market_regime_label_refinement_gate"] = "implemented_research_only"
         else:
             payload["goal_data_expansion_research01_market_regime_data_expansion_gate"] = False
         payload["goal_quant_research04_regime_conditional_factor_evaluation_gate"] = False
@@ -1523,6 +1529,15 @@ def _goal_data_expansion_research01_valid(root: Path) -> bool:
         from ashare_premarket.data_expansion.goal_data_expansion_research01 import goal_data_expansion_research01_valid_evidence
 
         return goal_data_expansion_research01_valid_evidence(root)
+    except Exception:
+        return False
+
+
+def _goal_regime_label_research02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_regime_label_research02 import goal_regime_label_research02_valid_evidence
+
+        return goal_regime_label_research02_valid_evidence(root)
     except Exception:
         return False
 

@@ -41,6 +41,6 @@ def write_partitioned_csv(root: Path, base_dir: str, partition_field: str, rows:
     for partition_value, partition_rows in sorted(partitions.items()):
         path = root / base_dir / f"{partition_field}={partition_value}.csv"
         write_csv(path, partition_rows, fieldnames)
-        written.append(str(path.relative_to(root)))
+        written.append(path.relative_to(root).as_posix())
     return written
 

@@ -39,7 +39,7 @@
   "goal_quant_research04_regime_conditional_factor_evaluation_gate": false,
   "goal_rec_tiering01_recommendation_score_tiering_gate": false,
   "goal_regime_label_research01_market_regime_label_construction_gate": "implemented_research_only",
-  "goal_regime_label_research02_expanded_market_regime_label_refinement_gate": false,
+  "goal_regime_label_research02_expanded_market_regime_label_refinement_gate": "implemented_research_only",
   "goal_risk_tiering011_downside_risk_repair_gate": "implemented_review_only",
   "goal_risk_tiering01_risk_severity_numeric_score_gate": "implemented_review_only",
   "goal_storage01_local_research_lake_hardening_gate": "implemented_infrastructure_only",

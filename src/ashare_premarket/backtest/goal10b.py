@@ -1163,11 +1163,11 @@ def _unexpected_backtest_outputs(root: Path) -> list[str]:
     path = root / BACKTEST_DIR
     if not path.exists():
         return []
-    allowed = {str(Path(item)) for item in ALLOWED_BACKTEST_OUTPUTS}
+    allowed = {Path(item).as_posix() for item in ALLOWED_BACKTEST_OUTPUTS}
     return [
-        str(item.relative_to(root))
+        item.relative_to(root).as_posix()
         for item in sorted(path.glob("*"))
-        if str(item.relative_to(root)) not in allowed
+        if item.relative_to(root).as_posix() not in allowed
     ]
 
 

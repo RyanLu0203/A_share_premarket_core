@@ -55,7 +55,7 @@ flowchart TD
     QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REGIME01 -. "engineering support" .-> ARCH03["GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog + Provider Modularization<br/>(implemented_engineering_research_support; PASS_WITH_WARNINGS)"]
     ARCH03 -. "research-only data expansion" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
-    DATAEXP01 -. "locked future regime refinement" .-> REGIME02["GOAL-REGIME-LABEL-RESEARCH-02 Expanded Market Regime Label Refinement<br/>(locked_future)"]
+    DATAEXP01 -. "locked future regime refinement" .-> REGIME02["GOAL-REGIME-LABEL-RESEARCH-02 Expanded Market Regime Label Refinement<br/>(implemented_research_only)"]
     DATAEXP01 -. "locked future after Regime02 or waiver" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
     QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> T10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]

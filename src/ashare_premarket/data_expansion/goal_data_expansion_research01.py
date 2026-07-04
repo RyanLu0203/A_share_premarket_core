@@ -777,7 +777,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         rows.insert(insert_at, {"workflow_id": REGIME02_WORKFLOW_ID})
         by_id = {row["workflow_id"]: row for row in rows}
     by_id[WORKFLOW_ID].update(implemented_workflow_patch())
-    by_id[REGIME02_WORKFLOW_ID].update(locked_regime02_patch())
+    if _goal_regime_label_research02_valid(root):
+        from ashare_premarket.research.goal_regime_label_research02 import implemented_workflow_patch as regime02_implemented_patch
+
+        by_id[REGIME02_WORKFLOW_ID].update(regime02_implemented_patch())
+    else:
+        by_id[REGIME02_WORKFLOW_ID].update(locked_regime02_patch())
     if QUANT04_WORKFLOW_ID in by_id:
         by_id[QUANT04_WORKFLOW_ID].update(locked_quant04_patch())
     if REC_TIERING_WORKFLOW_ID in by_id:
@@ -805,11 +810,20 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     write_csv(path, rows)
 
 
+def _goal_regime_label_research02_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_regime_label_research02 import goal_regime_label_research02_valid_evidence
+
+        return goal_regime_label_research02_valid_evidence(root)
+    except Exception:
+        return False
+
+
 def _update_locked_capabilities(root: Path) -> None:
     path = root / "configs/project/locked_capabilities.json"
     payload = read_json(path) if path.exists() else {}
     payload[WORKFLOW_ID] = "implemented_research_only"
-    payload[REGIME02_WORKFLOW_ID] = False
+    payload[REGIME02_WORKFLOW_ID] = "implemented_research_only" if _goal_regime_label_research02_valid(root) else False
     payload[QUANT04_WORKFLOW_ID] = False
     payload[REC_TIERING_WORKFLOW_ID] = False
     payload[GOAL10B4_WORKFLOW_ID] = False
