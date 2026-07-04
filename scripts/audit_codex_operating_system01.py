@@ -54,7 +54,8 @@ REQUIRED_OUTPUTS = [
 
 LOCKED_EXPECTATIONS = {
     "goal_codex_max_onboarding_smoke01_remote_windows_github_only_compliance_gate": "locked_future",
-    "goal_data_expansion_research01_market_regime_data_expansion_gate": "locked_future",
+    "goal_data_expansion_research01_market_regime_data_expansion_gate": "implemented_research_only",
+    "goal_regime_label_research02_expanded_market_regime_label_refinement_gate": "implemented_research_only",
     "goal_quant_research04_regime_conditional_factor_evaluation_gate": "locked_future",
     "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
     "goal10b4_recommendation_backtest_revalidation": "locked_future",

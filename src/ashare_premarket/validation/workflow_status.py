@@ -35,7 +35,6 @@ DOWNSTREAM_LOCKED_IDS = {
     "goal10d_backtest_failure_attribution_gate",
     "goal_data_panel02_evaluation_panel_gate",
     "goal_rec_tiering01_recommendation_score_tiering_gate",
-    "goal_data_expansion_research01_market_regime_data_expansion_gate",
     "goal_quant_research04_regime_conditional_factor_evaluation_gate",
     "goal10b4_recommendation_backtest_revalidation",
     "goal_position_band_validation01_position_band_validation_gate",
@@ -115,6 +114,11 @@ GOAL_REGIME_LABEL_RESEARCH01_ALLOWED_NEXT_SPARSE = "request_goal_data_expansion_
 GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID = "goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"
 GOAL_ARCHITECTURE_REFACTOR03_ALLOWED_NEXT = "request_goal_data_expansion_research01_market_regime_data_expansion_gate"
 GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID = "goal_data_expansion_research01_market_regime_data_expansion_gate"
+GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_REGIME02 = "request_goal_regime_label_research02_expanded_market_regime_label_refinement_gate"
+GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_PROVIDER_HEALTH = "request_goal_data_provider_health02_akshare_source_stability_gate"
+GOAL_REGIME_LABEL_RESEARCH02_WORKFLOW_ID = "goal_regime_label_research02_expanded_market_regime_label_refinement_gate"
+GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_QUANT04 = "request_goal_quant_research04_regime_conditional_factor_evaluation_gate"
+GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_PROVIDER_HEALTH = "request_goal_data_provider_health02_akshare_source_stability_gate"
 GOAL_QUANT_RESEARCH04_WORKFLOW_ID = "goal_quant_research04_regime_conditional_factor_evaluation_gate"
 GOAL_REC_TIERING01_WORKFLOW_ID = "goal_rec_tiering01_recommendation_score_tiering_gate"
 GOAL10B4_WORKFLOW_ID = "goal10b4_recommendation_backtest_revalidation"
@@ -191,6 +195,8 @@ def run_workflow_status_audit(root: Path) -> bool:
         failures.append("full roadmap does not label GOAL-ALPHA-FACTOR-CANDIDATE-01 alpha candidate research as implemented_research_only")
     if "GOAL-ALPHA-RESEARCH-REFINEMENT-01 Rolling Stability and Candidate Refinement" not in full_roadmap or "implemented_research_only" not in full_roadmap:
         failures.append("full roadmap does not label GOAL-ALPHA-RESEARCH-REFINEMENT-01 alpha refinement research as implemented_research_only")
+    if "GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion" not in full_roadmap or "implemented_research_only" not in full_roadmap:
+        failures.append("full roadmap does not label GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion as implemented_research_only")
 
     by_id = {row["workflow_id"]: row for row in rows}
     goal06c = by_id.get("goal06c_expanded_validation_ranking", {})
@@ -472,6 +478,15 @@ def run_workflow_status_audit(root: Path) -> bool:
     goal_architecture_refactor03_manifest = _read(root / "outputs/audits/goal_architecture_refactor03_manifest.json")
     goal_architecture_refactor03_audit = _read(root / "outputs/audits/goal_architecture_refactor03_audit.md")
     goal_data_expansion_research01 = by_id.get(GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, {})
+    goal_data_expansion_research01_status = goal_data_expansion_research01.get("status")
+    goal_data_expansion_research01_report = _read(root / "outputs/audits/goal_data_expansion_research01_report.md")
+    goal_data_expansion_research01_manifest = _read(root / "outputs/audits/goal_data_expansion_research01_manifest.json")
+    goal_data_expansion_research01_audit = _read(root / "outputs/audits/goal_data_expansion_research01_audit.md")
+    goal_regime_label_research02 = by_id.get(GOAL_REGIME_LABEL_RESEARCH02_WORKFLOW_ID, {})
+    goal_regime_label_research02_status = goal_regime_label_research02.get("status")
+    goal_regime_label_research02_report = _read(root / "outputs/audits/goal_regime_label_research02_report.md")
+    goal_regime_label_research02_manifest = _read(root / "outputs/audits/goal_regime_label_research02_manifest.json")
+    goal_regime_label_research02_audit = _read(root / "outputs/audits/goal_regime_label_research02_audit.md")
     goal_quant_research04 = by_id.get(GOAL_QUANT_RESEARCH04_WORKFLOW_ID, {})
     goal_rec_tiering01 = by_id.get(GOAL_REC_TIERING01_WORKFLOW_ID, {})
     goal10b4 = by_id.get(GOAL10B4_WORKFLOW_ID, {})
@@ -619,6 +634,18 @@ def run_workflow_status_audit(root: Path) -> bool:
         and goal_architecture_refactor03_status == "implemented_engineering_research_support"
         and _goal_architecture_refactor03_readiness_implemented(goal_architecture_refactor03_report)
         and "Status: `PASS`" in goal_architecture_refactor03_audit
+    )
+    goal_data_expansion_research01_evidence_ready = (
+        bool(goal_data_expansion_research01)
+        and goal_data_expansion_research01_status == "implemented_research_only"
+        and _goal_data_expansion_research01_readiness_implemented(goal_data_expansion_research01_report)
+        and "Status: `PASS`" in goal_data_expansion_research01_audit
+    )
+    goal_regime_label_research02_evidence_ready = (
+        bool(goal_regime_label_research02)
+        and goal_regime_label_research02_status == "implemented_research_only"
+        and _goal_regime_label_research02_readiness_implemented(goal_regime_label_research02_report)
+        and "Status: `PASS`" in goal_regime_label_research02_audit
     )
     expected_quant04_dependency = (
         GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID
@@ -3311,13 +3338,17 @@ def run_workflow_status_audit(root: Path) -> bool:
                 '"artifact_size_policy_passed": true',
                 '"source_catalog_metadata_only": true',
                 '"provider_registry_metadata_only": true',
-                '"goal_data_expansion_research01_locked_future": true',
                 '"goal_quant_research04_locked_future": true',
                 '"goal_rec_tiering01_locked_future": true',
                 '"dashboard_daily_report_locked_future": true',
             ]:
                 if required_text not in goal_architecture_refactor03_manifest:
                     failures.append(f"GOAL-ARCHITECTURE-REFACTOR-03 manifest missing required marker: {required_text}")
+            if (
+                '"goal_data_expansion_research01_locked_future": true' not in goal_architecture_refactor03_manifest
+                and '"goal_data_expansion_research01_implemented_research_only": true' not in goal_architecture_refactor03_manifest
+            ):
+                failures.append("GOAL-ARCHITECTURE-REFACTOR-03 manifest missing DataExpansion01 preservation marker")
             for required_false in [
                 '"full_live_akshare_dataset_fetch_performed": false',
                 '"live_provider_fetches_run": false',
@@ -3342,8 +3373,20 @@ def run_workflow_status_audit(root: Path) -> bool:
             ]:
                 if required_false not in goal_architecture_refactor03_manifest:
                     failures.append(f"GOAL-ARCHITECTURE-REFACTOR-03 manifest missing false boundary flag: {required_false}")
+            if goal_data_expansion_research01:
+                if goal_data_expansion_research01_evidence_ready:
+                    if goal_data_expansion_research01.get("status") != "implemented_research_only":
+                        failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 valid evidence must be preserved after GOAL-ARCHITECTURE-REFACTOR-03")
+                    if goal_data_expansion_research01.get("implemented_in_repo") != "true":
+                        failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 implemented flag must be preserved after GOAL-ARCHITECTURE-REFACTOR-03")
+                else:
+                    if goal_data_expansion_research01.get("status") != "locked_future":
+                        failures.append(f"{GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID} must remain locked_future after GOAL-ARCHITECTURE-REFACTOR-03 until valid evidence exists")
+                    if goal_data_expansion_research01.get("implemented_in_repo") != "false":
+                        failures.append(f"{GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID} must not be implemented after GOAL-ARCHITECTURE-REFACTOR-03 until valid evidence exists")
+                if goal_data_expansion_research01.get("depends_on") != GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
+                    failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 dependency is invalid after GOAL-ARCHITECTURE-REFACTOR-03")
             for workflow_id, row, expected_dependency in [
-                (GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, goal_data_expansion_research01, GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID),
                 (GOAL_QUANT_RESEARCH04_WORKFLOW_ID, goal_quant_research04, GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID),
                 (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH04_WORKFLOW_ID),
                 (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
@@ -3362,12 +3405,137 @@ def run_workflow_status_audit(root: Path) -> bool:
             if goal_architecture_refactor03.get("depends_on") != GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
                 failures.append("GOAL-ARCHITECTURE-REFACTOR-03 must depend on GOAL-REGIME-LABEL-RESEARCH-01")
     if goal_data_expansion_research01:
-        if goal_data_expansion_research01.get("status") != "locked_future":
-            failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must remain locked_future after GOAL-ARCHITECTURE-REFACTOR-03")
-        if goal_data_expansion_research01.get("implemented_in_repo") != "false":
-            failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must not be implemented")
-        if goal_data_expansion_research01.get("depends_on") != GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
-            failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must depend on GOAL-ARCHITECTURE-REFACTOR-03")
+        if goal_data_expansion_research01_evidence_ready:
+            if not goal_architecture_refactor03_evidence_ready:
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 requires GOAL-ARCHITECTURE-REFACTOR-03 evidence")
+            if goal_data_expansion_research01.get("status") != "implemented_research_only":
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must be implemented_research_only when valid evidence exists")
+            if goal_data_expansion_research01.get("implemented_in_repo") != "true":
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 row must be marked implemented")
+            if goal_data_expansion_research01.get("allowed_next_action") not in {
+                GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_REGIME02,
+                GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_PROVIDER_HEALTH,
+            }:
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 allowed_next_action is invalid")
+            if goal_data_expansion_research01.get("depends_on") != GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must depend on GOAL-ARCHITECTURE-REFACTOR-03")
+            for required_text in [
+                '"mode": "research_only_market_regime_data_expansion_gate"',
+                '"source_selection_created": true',
+                '"provider_health_created": true',
+                '"normalized_market_regime_outputs_created": true',
+                '"data_quality_summary_created": true',
+                '"construction_warnings_created": true',
+                '"provider_registry_network_default_preserved": true',
+                '"workflow_locks_preserved": true',
+                '"artifact_size_policy_passed": true',
+                '"no_lookahead_policy_passed": true',
+                '"committed_evidence_replay_available": true',
+                '"live_fetch_requires_goal_local_opt_in": true',
+                '"fresh_clone_replay_requires_live_network": false',
+                '"goal_regime_label_research02_locked_future": true',
+                '"goal_quant_research04_locked_future": true',
+                '"goal_rec_tiering01_locked_future": true',
+                '"goal10b4_locked_future": true',
+                '"position_band_validation_locked_future": true',
+                '"goal10d_locked_future": true',
+                '"dashboard_daily_report_locked_future": true',
+            ]:
+                if required_text not in goal_data_expansion_research01_manifest:
+                    failures.append(f"GOAL-DATA-EXPANSION-RESEARCH-01 manifest missing required marker: {required_text}")
+            for required_false in [
+                '"factor_evaluation_performed": false',
+                '"alpha_factors_created": false',
+                '"quant04_run": false',
+                '"recommendation_outputs_created": false',
+                '"position_outputs_created": false',
+                '"buy_sell_hold_labels_created": false',
+                '"target_prices_created": false',
+                '"position_sizes_created": false',
+                '"portfolio_weights_created": false',
+                '"order_quantities_created": false',
+                '"portfolio_returns_created": false',
+                '"equity_curves_created": false',
+                '"dashboard_frontend_artifacts_created": false',
+                '"trading_outputs_created": false',
+                '"broker_outputs_created": false',
+                '"production_outputs_created": false',
+                '"local_lake_outputs_created": false',
+                '"factor_mining_outputs_created": false',
+                '"dqn_rl_outputs_created": false',
+                '"raw_provider_payloads_committed": false',
+                '"future_returns_used_in_construction": false',
+                '"benchmark_excess_forward_returns_used_in_construction": false',
+                '"label_ready_fields_used_in_construction": false',
+                '"posthoc_factor_performance_used": false',
+                '"ic_rankic_metrics_introduced": false',
+                '"tokens_or_secrets_persisted": false',
+                '"scientific_outputs_changed": false',
+            ]:
+                if required_false not in goal_data_expansion_research01_manifest:
+                    failures.append(f"GOAL-DATA-EXPANSION-RESEARCH-01 manifest missing false boundary flag: {required_false}")
+            if goal_regime_label_research02:
+                if goal_regime_label_research02_evidence_ready:
+                    if goal_regime_label_research02.get("status") != "implemented_research_only":
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 must be implemented_research_only when valid evidence exists")
+                    if goal_regime_label_research02.get("implemented_in_repo") != "true":
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 row must be marked implemented")
+                    if goal_regime_label_research02.get("allowed_next_action") not in {
+                        GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_QUANT04,
+                        GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_PROVIDER_HEALTH,
+                    }:
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 allowed_next_action is invalid")
+                    if goal_regime_label_research02.get("depends_on") != GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID:
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 must depend on GOAL-DATA-EXPANSION-RESEARCH-01")
+                    for required_text in [
+                        '"mode": "research_only_expanded_market_regime_label_refinement_gate"',
+                        '"expanded_regime_evidence_integrated": true',
+                        '"no_lookahead_construction_passed": true',
+                        '"artifact_size_policy_passed": true',
+                        '"goal_quant_research04_locked_future": true',
+                        '"goal_rec_tiering01_locked_future": true',
+                    ]:
+                        if required_text not in goal_regime_label_research02_manifest:
+                            failures.append(f"GOAL-REGIME-LABEL-RESEARCH-02 manifest missing required marker: {required_text}")
+                    for required_false in [
+                        '"factor_predictive_validity_evaluated": false',
+                        '"ic_rankic_metrics_introduced": false',
+                        '"future_returns_used_in_label_construction": false',
+                        '"benchmark_excess_forward_returns_used_in_label_construction": false',
+                        '"label_ready_fields_used_in_label_construction": false',
+                        '"posthoc_factor_performance_used_in_label_construction": false',
+                        '"recommendation_rows_created": false',
+                        '"position_rows_created": false',
+                    ]:
+                        if required_false not in goal_regime_label_research02_manifest:
+                            failures.append(f"GOAL-REGIME-LABEL-RESEARCH-02 manifest missing false boundary flag: {required_false}")
+                else:
+                    if goal_regime_label_research02.get("status") != "locked_future":
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 must remain locked_future after GOAL-DATA-EXPANSION-RESEARCH-01 until valid evidence exists")
+                    if goal_regime_label_research02.get("implemented_in_repo") != "false":
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 must not be implemented after GOAL-DATA-EXPANSION-RESEARCH-01 until valid evidence exists")
+                    if goal_regime_label_research02.get("depends_on") != GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID:
+                        failures.append("GOAL-REGIME-LABEL-RESEARCH-02 must depend on GOAL-DATA-EXPANSION-RESEARCH-01")
+            for workflow_id, row, expected_dependency in [
+                (GOAL_QUANT_RESEARCH04_WORKFLOW_ID, goal_quant_research04, GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID),
+                (GOAL_REC_TIERING01_WORKFLOW_ID, goal_rec_tiering01, GOAL_QUANT_RESEARCH04_WORKFLOW_ID),
+                (GOAL10B4_WORKFLOW_ID, goal10b4, GOAL_REC_TIERING01_WORKFLOW_ID),
+                (POSITION_BAND_VALIDATION_WORKFLOW_ID, position_band_validation, GOAL10B4_WORKFLOW_ID),
+            ]:
+                if row.get("status") != "locked_future":
+                    failures.append(f"{workflow_id} must remain locked_future after GOAL-DATA-EXPANSION-RESEARCH-01")
+                if row.get("implemented_in_repo") != "false":
+                    failures.append(f"{workflow_id} must not be implemented after GOAL-DATA-EXPANSION-RESEARCH-01")
+                if row.get("depends_on") != expected_dependency:
+                    failures.append(f"{workflow_id} dependency is invalid after GOAL-DATA-EXPANSION-RESEARCH-01")
+            _validate_locked_execution_downstream(failures, by_id, context="GOAL-DATA-EXPANSION-RESEARCH-01")
+        else:
+            if goal_data_expansion_research01.get("status") != "locked_future":
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must remain locked_future until valid evidence exists")
+            if goal_data_expansion_research01.get("implemented_in_repo") != "false":
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must not be implemented until valid evidence exists")
+            if goal_data_expansion_research01.get("depends_on") != GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
+                failures.append("GOAL-DATA-EXPANSION-RESEARCH-01 must depend on GOAL-ARCHITECTURE-REFACTOR-03")
     if goal_quant_research04:
         if goal_quant_research04.get("status") != "locked_future":
             failures.append("GOAL-QUANT-RESEARCH-04 must remain locked_future after GOAL-REGIME-LABEL-RESEARCH-01 or GOAL-DATA-EXPANSION-RESEARCH-01")
@@ -3869,10 +4037,37 @@ def _validate_rows(rows: list[dict[str, str]]) -> list[str]:
             if row["depends_on"] != GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
                 failures.append("goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate must depend on GOAL-REGIME-LABEL-RESEARCH-01")
         if workflow_id == GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID:
-            if status != "locked_future" or row["implemented_in_repo"] != "false":
-                failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate must remain locked_future and unimplemented")
+            if status not in {"locked_future", "implemented_research_only"}:
+                failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate must be locked_future or implemented_research_only")
+            if status == "implemented_research_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate implemented_research_only must be marked implemented")
+                if row["allowed_next_action"] not in {
+                    GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_REGIME02,
+                    GOAL_DATA_EXPANSION_RESEARCH01_ALLOWED_NEXT_PROVIDER_HEALTH,
+                }:
+                    failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate allowed_next_action is invalid")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate must remain unimplemented while locked_future")
             if row["depends_on"] != GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
                 failures.append("goal_data_expansion_research01_market_regime_data_expansion_gate must depend on GOAL-ARCHITECTURE-REFACTOR-03")
+        if workflow_id == GOAL_REGIME_LABEL_RESEARCH02_WORKFLOW_ID:
+            if status not in {"locked_future", "implemented_research_only"}:
+                failures.append("goal_regime_label_research02_expanded_market_regime_label_refinement_gate must be locked_future or implemented_research_only")
+            if status == "implemented_research_only":
+                if row["implemented_in_repo"] != "true":
+                    failures.append("goal_regime_label_research02_expanded_market_regime_label_refinement_gate implemented_research_only must be marked implemented")
+                if row["allowed_next_action"] not in {
+                    GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_QUANT04,
+                    GOAL_REGIME_LABEL_RESEARCH02_ALLOWED_NEXT_PROVIDER_HEALTH,
+                }:
+                    failures.append("goal_regime_label_research02_expanded_market_regime_label_refinement_gate allowed_next_action is invalid")
+            else:
+                if row["implemented_in_repo"] != "false":
+                    failures.append("goal_regime_label_research02_expanded_market_regime_label_refinement_gate must remain unimplemented while locked_future")
+            if row["depends_on"] != GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID:
+                failures.append("goal_regime_label_research02_expanded_market_regime_label_refinement_gate must depend on GOAL-DATA-EXPANSION-RESEARCH-01")
         if workflow_id == GOAL_QUANT_RESEARCH04_WORKFLOW_ID:
             if status != "locked_future" or row["implemented_in_repo"] != "false":
                 failures.append("goal_quant_research04_regime_conditional_factor_evaluation_gate must remain locked_future and unimplemented")
@@ -3965,7 +4160,7 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif status == "implemented_engineering_research_support":
         edge_type = "dotted_engineering_research_support"
         can_promote = False
-        blocker = "already implemented engineering research-support; downstream data expansion remains locked"
+        blocker = "already implemented engineering research-support; downstream execution remains locked"
     elif status == "implemented_mvp_research_only":
         edge_type = "dotted_mvp_research_only"
         can_promote = False
@@ -4075,9 +4270,11 @@ def _status_table_row(row: dict[str, str]) -> dict[str, object]:
     elif row["workflow_id"] == GOAL_REGIME_LABEL_RESEARCH01_WORKFLOW_ID:
         next_goal = "GOAL-ARCHITECTURE-REFACTOR-03 provider catalog and modularization before any data expansion"
     elif row["workflow_id"] == GOAL_ARCHITECTURE_REFACTOR03_WORKFLOW_ID:
-        next_goal = "GOAL-DATA-EXPANSION-RESEARCH-01 remains locked until explicit data-expansion request"
+        next_goal = "GOAL-DATA-EXPANSION-RESEARCH-01 market-regime data expansion is the explicit research-only successor"
     elif row["workflow_id"] == GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID:
-        next_goal = "GOAL-QUANT-RESEARCH-04 remains locked until explicit regime-conditional factor evaluation request after data expansion"
+        next_goal = "GOAL-REGIME-LABEL-RESEARCH-02 or provider-health repair before Quant04; execution surfaces remain locked"
+    elif row["workflow_id"] == GOAL_REGIME_LABEL_RESEARCH02_WORKFLOW_ID:
+        next_goal = "Remain locked until an explicit expanded market-regime label refinement gate is requested"
     elif row["workflow_id"] == GOAL_QUANT_RESEARCH04_WORKFLOW_ID:
         next_goal = "Remain locked until explicit GOAL-QUANT-RESEARCH-04 request after Arch03 and DataExpansion evidence is accepted"
     elif row["workflow_id"] == GOAL_REC_TIERING01_WORKFLOW_ID:
@@ -4371,6 +4568,20 @@ def _goal_architecture_refactor03_readiness_implemented(readiness: str) -> bool:
     return (
         "GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog and Provider Modularization Gate" in readiness
         and ("Status: `PASS`" in readiness or "Status: `PASS_WITH_WARNINGS`" in readiness)
+    )
+
+
+def _goal_data_expansion_research01_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion Gate" in readiness
+        and ("Status: `PASS`" in readiness or "Status: `PASS_WITH_WARNINGS`" in readiness)
+    )
+
+
+def _goal_regime_label_research02_readiness_implemented(readiness: str) -> bool:
+    return (
+        "GOAL-REGIME-LABEL-RESEARCH-02 Expanded Market Regime Label Refinement Gate: PASS" in readiness
+        or "GOAL-REGIME-LABEL-RESEARCH-02 Expanded Market Regime Label Refinement Gate: PASS_WITH_WARNINGS" in readiness
     )
 
 
