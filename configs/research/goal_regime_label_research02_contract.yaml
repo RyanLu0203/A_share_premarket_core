@@ -1,0 +1,30 @@
+{
+  "goal_id": "GOAL-REGIME-LABEL-RESEARCH-02",
+  "mode": "research_only_expanded_market_regime_label_refinement_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "artifact_size_limit_bytes": 99614720,
+  "allowed_input_artifacts": ["outputs/research/goal_regime_label_research01_date_regime_labels.csv", "outputs/research/goal_regime_label_research01_symbol_regime_context.csv", "outputs/data_expansion/goal_data_expansion_research01/expanded_date_regime_feature_panel.csv", "outputs/data_expansion/goal_data_expansion_research01/expanded_symbol_context_panel.csv"],
+  "allowed_regime_dimensions": ["benchmark_trend", "benchmark_volatility", "breadth", "dispersion", "liquidity", "downside_risk", "composite"],
+  "allowed_labels": [
+    "*_review_only",
+    "insufficient_*_review_only"
+  ],
+  "no_lookahead_construction_policy": "use_same_date_or_trailing_committed_fields_only; exclude forward returns, benchmark-excess forward returns, label-ready fields, and post-hoc factor performance",
+  "forbidden_columns": ["forward_return_1d", "forward_return_5d", "forward_return_20d", "benchmark_excess_return_1d", "benchmark_excess_return_5d", "benchmark_excess_return_20d", "label_ready_1d", "label_ready_5d", "label_ready_20d", "daily_ic", "daily_rank_ic", "hit_rate", "portfolio_return", "equity_curve"],
+  "forbidden_outputs": ["recommendation_rows", "position_rows", "buy_sell_hold", "target_prices", "position_sizes", "portfolio_weights", "order_quantities", "portfolio_returns", "equity_curves", "dashboard", "html", "streamlit", "frontend", "trading", "broker", "production", "local_lake", "factor_mining", "dqn_rl"],
+  "required_output_schemas": {
+    "refined_date_regime_labels": ["trade_date", "benchmark_symbol", "base_composite_regime_label", "refined_composite_regime_label", "benchmark_trend_regime", "benchmark_volatility_regime", "breadth_regime", "dispersion_regime", "liquidity_regime", "downside_risk_regime", "benchmark_trend_expanded_agreement", "benchmark_volatility_expanded_agreement", "breadth_expanded_agreement", "dispersion_expanded_agreement", "liquidity_expanded_agreement", "downside_risk_expanded_agreement", "broad_index_trend_20d", "broad_index_volatility_20d", "sector_breadth_positive_share", "sector_dispersion_level", "market_liquidity_pressure", "expanded_dimension_available_count", "expanded_dimension_agreement_count", "regime_confidence_tier", "source_coverage_score", "external_data_quality_score", "regime_refinement_status", "no_lookahead_status", "non_actionable_disclaimer"],
+    "refined_symbol_regime_context": ["trade_date", "symbol", "base_composite_regime_label", "refined_composite_regime_label", "benchmark_trend_regime", "benchmark_volatility_regime", "breadth_regime", "dispersion_regime", "liquidity_regime", "downside_risk_regime", "risk_score_bucket", "downside_risk_bucket", "mvp_review_queue_category", "symbol_listing_status", "symbol_suspension_status", "symbol_st_status", "symbol_flow_available", "event_risk_context_available", "regime_confidence_tier", "source_coverage_score", "external_data_quality_score", "regime_refinement_status", "no_lookahead_status", "non_actionable_disclaimer"],
+    "refined_factor_regime_bridge": ["trade_date", "symbol", "refined_factor_id", "source_factor_id", "refinement_type", "factor_family", "refined_composite_regime_label", "regime_confidence_tier", "factor_value_available", "factor_bucket", "risk_score_bucket", "downside_risk_bucket", "mvp_review_queue_category", "no_lookahead_status", "bridge_status", "intended_future_evaluation_goal", "non_actionable_disclaimer"]
+  },
+  "downstream_locks": {
+    "goal_quant_research04_regime_conditional_factor_evaluation_gate": "locked_future",
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

@@ -1,0 +1,7 @@
+warning_code,regime_dimension,affected_label,row_count,details
+refined_regime_dimension_not_constructed,benchmark_volatility,insufficient_benchmark_vol_evidence_review_only,19,At least one date has insufficient evidence for this refined dimension.
+refined_regime_dimension_not_constructed,composite,insufficient_composite_regime_evidence_review_only,19,At least one date has insufficient evidence for this refined dimension.
+sparse_refined_regime_label,composite,risk_on_low_vol_review_only,2,Refined regime label appears fewer than the configured minimum label count.
+expanded_cross_source_divergence,benchmark_trend,diverge_review_only,9,Expanded broad-index/sector evidence diverges from the Regime01 label on at least one date.
+expanded_cross_source_divergence,breadth,diverge_review_only,4,Expanded broad-index/sector evidence diverges from the Regime01 label on at least one date.
+expanded_evidence_unavailable_offline_replay,downside_risk,expanded_evidence_unavailable_review_only,120,Expanded evidence for this dimension is unavailable in committed offline replay.

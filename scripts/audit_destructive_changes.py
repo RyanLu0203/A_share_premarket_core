@@ -7,7 +7,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = "e216aac7cac188f401e970a03defca73b11aa449"
-ALLOWED_LOCK_PROMOTIONS = {"goal_codex_operating_system01_codex_max_governance_gate"}
+ALLOWED_LOCK_PROMOTIONS = {
+    "goal_codex_operating_system01_codex_max_governance_gate",
+    # Authorized research promotions reconciled from the Regime02 research lineage
+    # (GOAL-BRANCH-LINEAGE-RECONCILIATION-01): DataExpansion01 and its downstream
+    # Regime02 refinement gate are implemented research-only on project-current.
+    "goal_data_expansion_research01_market_regime_data_expansion_gate",
+    "goal_regime_label_research02_expanded_market_regime_label_refinement_gate",
+}
 
 
 def main() -> int:

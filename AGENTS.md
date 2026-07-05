@@ -307,7 +307,8 @@ Handoff policy:
   recommendation, position, portfolio output, dashboard/frontend file, trading,
   production, broker, factor-mining, DQN/RL output, or predictive-validity
   claim.
-- GOAL-DATA-EXPANSION-RESEARCH-01 remains `locked_future`.
+- GOAL-DATA-EXPANSION-RESEARCH-01 is `implemented_research_only` (reconciled from the Regime02 research lineage; offline committed-evidence market-regime data expansion).
+- GOAL-REGIME-LABEL-RESEARCH-02 is `implemented_research_only` (expanded market regime label refinement over DataExpansion01 evidence; no factor evaluation).
 - GOAL-QUANT-RESEARCH-04 remains `locked_future`.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
