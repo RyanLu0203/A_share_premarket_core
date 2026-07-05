@@ -49,7 +49,7 @@ def test_goal_architecture_refactor03_runner_preserves_locks() -> None:
     assert workflow[WORKFLOW_ID]["status"] == "implemented_engineering_research_support"
     assert workflow[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID]["depends_on"] == WORKFLOW_ID
-    assert workflow[GOAL_QUANT_RESEARCH04_WORKFLOW_ID]["status"] == "locked_future"
+    assert workflow[GOAL_QUANT_RESEARCH04_WORKFLOW_ID]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow[GOAL_QUANT_RESEARCH04_WORKFLOW_ID]["depends_on"] == GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID
     assert manifest["recommendation_outputs_created"] is False
     assert manifest["dashboard_frontend_artifacts_created"] is False

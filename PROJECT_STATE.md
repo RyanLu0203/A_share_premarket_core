@@ -30,8 +30,7 @@ onboarding and Git operating-system gate.
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
 - Next allowed data/research goal after the smoke test:
   `GOAL-DATA-EXPANSION-RESEARCH-01`.
-- Locked downstream stages: GOAL-QUANT-RESEARCH-04 until DataExpansion or
-  explicit user approval, GOAL-REC-TIERING-01 until `ready_factor_count > 0`
+- Locked downstream stages: GOAL-REC-TIERING-01 until `ready_factor_count > 0`
   and explicit user approval, GOAL-10B.4, position-band validation, GOAL-10D,
   dashboard/frontend, trading, broker, production, portfolio backtest,
   local-lake, factor-mining, and DQN/RL.
@@ -388,8 +387,8 @@ local-lake data, change scientific outputs, create alpha factors, create
 recommendations, create positions, create portfolio output, create
 dashboard/frontend files, trade, write production data, integrate brokers,
 activate factor-mining, or create DQN/RL outputs.
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-REC-TIERING-01,
+GOAL-10B.4, position-band validation,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
 portfolio backtest promotion, paper/live trading, broker, production,
 local-lake, factor-mining, and DQN/RL remain locked or deleted from active
@@ -611,6 +610,9 @@ Implemented review-only:
 - GOAL-REGIME-LABEL-RESEARCH-01 market regime label construction
   (`PASS_WITH_WARNINGS`; `implemented_research_only`; date, symbol, and
   factor-regime bridge context only)
+- GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
+  (`PASS_WITH_WARNINGS`; `implemented_research_only`; ready factor count 0;
+  21 factors conditionally useful; does not unlock recommendation tiering)
 
 Implemented engineering research-support:
 
@@ -642,7 +644,6 @@ Still locked:
 - position sizing and portfolio weights
 - GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion
 - GOAL-DATA-PANEL-02 evaluation panel build
-- GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation
 - GOAL-10D failure attribution
 - dashboard
 - paper trading

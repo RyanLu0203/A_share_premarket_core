@@ -155,7 +155,7 @@ def test_goal_regime_label_research01_runner_preserves_research_only_boundaries(
     assert workflow["goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"]["depends_on"] == "goal_regime_label_research01_market_regime_label_construction_gate"
     assert workflow["goal_data_expansion_research01_market_regime_data_expansion_gate"]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow["goal_data_expansion_research01_market_regime_data_expansion_gate"]["depends_on"] == "goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate"
-    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] == "locked_future"
+    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["depends_on"] == "goal_data_expansion_research01_market_regime_data_expansion_gate"
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["status"] == "locked_future"
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["depends_on"] == "goal_quant_research04_regime_conditional_factor_evaluation_gate"
