@@ -1,0 +1,2 @@
+dates_before,dates_after,effective_trading_dates,regime_coverage_before,regime_coverage_after,expansion_achieved_offline,solvability_class,pit_safe,trading_calendar_aware,future_filtering_applied,notes
+120,120,120,6,6,false,requires_new_bundle,true,true,false,No offline temporal expansion possible; longer history requires an externally-committed PIT-safe bundle.

@@ -1,0 +1,5 @@
+risk_dimension,measure,value,threshold,flag,notes
+symbol_universe,distinct_symbols,50,300,concentrated,small universe; breadth-limited
+temporal_depth,distinct_dates,120,250,shallow,short history; depth-limited
+provider,distinct_offline_providers,1,2,single_provider,single offline provider; no independent crosscheck
+regime_balance,top_regime_date_share,0.3167,0.4,ok,regime date balance

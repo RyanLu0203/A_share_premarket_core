@@ -1,0 +1,7 @@
+regime_label,date_count_before,date_count_after,share,balance_flag,expansion_achieved_offline,notes
+mixed_uncertain,38,38,0.3167,adequate,false,regime date counts unchanged; more cycles require longer committed history
+risk_on_high_vol,25,25,0.2083,adequate,false,regime date counts unchanged; more cycles require longer committed history
+insufficient_composite_regime_evidence,19,19,0.1583,adequate,false,regime date counts unchanged; more cycles require longer committed history
+liquidity_stress,19,19,0.1583,adequate,false,regime date counts unchanged; more cycles require longer committed history
+risk_off_high_vol,17,17,0.1417,adequate,false,regime date counts unchanged; more cycles require longer committed history
+risk_on_low_vol,2,2,0.0167,underpopulated,false,regime date counts unchanged; more cycles require longer committed history

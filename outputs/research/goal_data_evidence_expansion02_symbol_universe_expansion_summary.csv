@@ -1,0 +1,2 @@
+symbols_before,symbols_after,min_useful_target,preferred_target,expansion_achieved_offline,solvability_class,future_informed_universe_selection,cherry_picking_liquid_winners,target_conditioned_exclusions,notes
+50,50,300,500,false,requires_new_bundle,false,false,false,Broader universe not fetchable offline; no symbol added without a PIT-safe committed bundle. No survivorship-biased or target-conditioned selection performed.
