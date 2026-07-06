@@ -1,0 +1,47 @@
+{
+  "commits_frontend_artifact": false,
+  "creates_new_signal_semantics": false,
+  "creates_position_semantics": false,
+  "creates_readiness_semantics": false,
+  "creates_recommendation_semantics": false,
+  "disclaimer": "Research diagnostic view only. Read-only over committed evidence. Not a signal, recommendation, ready classification, or trading interface. No BUY/SELL/HOLD, no target prices, no positions or weights. GOAL-REC-TIERING-01 remains locked; ready_factor_count remains 0.",
+  "inputs_consumed": {
+    "data_quality_summary": "outputs/data_expansion/goal_data_expansion_research01/data_quality_summary.csv",
+    "factor_diagnostic_overview": "outputs/research/factor_metric_diagnostic_overview.csv",
+    "factor_overall_status": "outputs/research/goal_quant_research04_factor_overall_status.csv",
+    "leakage_pit_checks": "outputs/research/goal_quant_research04_leakage_pit_checks.csv",
+    "provider_health": "outputs/data_expansion/goal_data_expansion_research01/provider_health.csv",
+    "quant04_construction_warnings": "outputs/research/goal_quant_research04_construction_warnings.csv",
+    "regime02_coverage": "outputs/research/goal_regime_label_research02_refined_regime_coverage_summary.csv",
+    "regime02_transitions": "outputs/research/goal_regime_label_research02_refined_regime_transition_summary.csv",
+    "regime02_warnings": "outputs/research/goal_regime_label_research02_construction_warnings.csv",
+    "regime_conditional_summary": "outputs/research/goal_quant_research04_regime_conditional_evaluation_summary.csv",
+    "regime_transition_sensitivity": "outputs/research/goal_quant_research04_regime_transition_sensitivity.csv"
+  },
+  "inputs_present": {
+    "data_quality_summary": true,
+    "factor_diagnostic_overview": true,
+    "factor_overall_status": true,
+    "leakage_pit_checks": true,
+    "provider_health": true,
+    "quant04_construction_warnings": true,
+    "regime02_coverage": true,
+    "regime02_transitions": true,
+    "regime02_warnings": true,
+    "regime_conditional_summary": true,
+    "regime_transition_sensitivity": true
+  },
+  "mode": "research_only_read_only_diagnostic_view",
+  "modifies_workflow_or_governance_state": false,
+  "modules": [
+    "market_regime_context",
+    "factor_diagnostic_overview",
+    "warnings_integrity",
+    "evidence_provenance"
+  ],
+  "ready_factor_count_expected": 0,
+  "unlocks_dashboard_daily_report": false,
+  "unlocks_goal_rec_tiering01": false,
+  "view_id": "GOAL-RESEARCH-DIAGNOSTIC-DASHBOARD-V0",
+  "writes_actionable_output": false
+}
