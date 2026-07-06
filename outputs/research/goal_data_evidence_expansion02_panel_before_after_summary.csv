@@ -1,0 +1,6 @@
+dimension,before,after,materially_expanded,solvability_of_gap
+distinct_symbols,50,50,false,requires_new_bundle
+distinct_dates,120,120,false,requires_new_bundle
+composite_regimes,6,6,false,requires_new_bundle
+offline_providers,1,1,false,requires_user_credential
+offline_derivable_feature_families,5,5,false,solvable_offline_now

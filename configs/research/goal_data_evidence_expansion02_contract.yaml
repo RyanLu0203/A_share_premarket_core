@@ -1,0 +1,11 @@
+goal_id: GOAL-DATA-EVIDENCE-EXPANSION-02
+workflow_id: goal_data_evidence_expansion02_upstream_evidence_expansion_gate
+mode: research_only_upstream_evidence_expansion_gate
+research_only: true
+modifies_workflow_status: false
+modifies_locked_capabilities: false
+unlocks_goal_rec_tiering01: false
+lowers_readiness_thresholds: false
+fabricates_expansion: false
+embeds_credentials: false
+network_default: disabled_requires_ASHARE_ALLOW_NETWORK_INGESTION=1

@@ -1,0 +1,6 @@
+warning_code,dimension,detail
+NO_OFFLINE_TEMPORAL_EXPANSION,date_count,dates remain 120 < target 250; requires_new_bundle
+NO_OFFLINE_SYMBOL_EXPANSION,symbol_count,symbols remain 50 < target 300; requires_new_bundle
+SINGLE_OFFLINE_PROVIDER,provider,1 offline provider; independent crosscheck requires ASHARE_ALLOW_NETWORK_INGESTION=1
+EXTERNAL_CONTEXT_UNAVAILABLE_OFFLINE,missing_external_context,northbound/margin/real-time absent offline; user_authority_required
+SECTOR_INDUSTRY_MARKET_CAP_ABSENT,sector_industry_market_cap,per-symbol sector/industry/market-cap not committed; requires_new_provider

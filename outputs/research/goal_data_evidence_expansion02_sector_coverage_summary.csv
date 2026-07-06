@@ -1,0 +1,9 @@
+coverage_dimension,available_offline,distribution,notes
+st_status,true,normal=50,derived from committed symbol context
+suspension_status,true,trading=50,derived from committed symbol context
+listing_status_ipo_age_proxy,true,listed_committed_provider02b_universe=50,derived from committed symbol context
+margin_eligibility,true,not_available_offline_replay=50,derived from committed symbol context
+stock_connect_availability,true,false=50,derived from committed symbol context
+liquidity_proxy_board,true,10868581971.42=1;1175989215.81=1;1194144111.5=1;13796884415.09=1;1420574383.08=1;14843028813.27=1;1543834118.14=1;1546885194.2=1;15989585023.43=1;1687339022.19=1;19260163700.82=1;1976996398.96=1;2019419145.84=1;247931772.35=1;252480454.93=1;2562761519.28=1;259738879.74=1;267083472.79=1;2849155490.12=1;287314104.1=1;3306015682.26=1;3334041389.89=1;345547449.39=1;3540792198.97=1;415657557.49=1;420709364.23=1;4251188290.48=1;4366907105.37=1;437246871.62=1;444446997.03=1;4489999477.24=1;467982969.56=1;473014419.14=1;475811592.53=1;4858886693.64=1;4894248078.71=1;5078853902.2=1;5285435684.95=1;536982658.98=1;550233114.42=1;6107719538.22=1;614702112.2=1;627367051.96=1;728591945.11=1;732404804.43=1;776394238.7=1;7894693974.76=1;794353331.04=1;894767420.64=1;9928762956.16=1,derived from committed symbol context
+sector_industry_classification,false,absent,per-symbol sector/industry not committed; requires_new_provider
+free_float_market_cap,false,absent,per-symbol market cap not committed; requires_new_provider
