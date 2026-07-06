@@ -1,0 +1,3 @@
+field,rows,missing,missing_rate,notes
+close,34543,0,0.0,acquired daily close
+return_1d,34543,41,0.0012,first date per symbol has no trailing return (expected)

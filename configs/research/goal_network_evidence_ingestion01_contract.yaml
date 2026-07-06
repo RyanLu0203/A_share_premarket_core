@@ -1,0 +1,12 @@
+goal_id: GOAL-NETWORK-EVIDENCE-INGESTION-01
+workflow_id: goal_network_evidence_ingestion01_authorized_network_evidence_ingestion_gate
+mode: research_only_authorized_network_evidence_ingestion_gate
+research_only: true
+network_gate: ASHARE_ALLOW_NETWORK_INGESTION=1_single_goal
+credentials_required: false
+raw_payloads_committed: false
+modifies_workflow_status: false
+modifies_locked_capabilities: false
+unlocks_goal_rec_tiering01: false
+lowers_readiness_thresholds: false
+provider_added: akshare_sina

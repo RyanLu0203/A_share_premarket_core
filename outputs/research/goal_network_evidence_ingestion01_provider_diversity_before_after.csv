@@ -1,0 +1,2 @@
+providers_before,providers_after,material_target,target_met,independent_providers,aliases_or_fallbacks_excluded
+1,2,2,true,baostock_committed;akshare_sina_live,local_import;tushare_unfetched

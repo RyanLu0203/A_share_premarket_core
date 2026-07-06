@@ -1,0 +1,6 @@
+check_id,result,quarantined,detail
+no_forward_return_column,pass,false,daily panel stores trailing return_1d only; no forward-return column
+source_ts_le_availability_ts,pass,false,daily close available next session; contract satisfied
+no_future_universe_membership,pass,false,no future-informed constituent selection
+no_target_conditioned_inclusion,pass,false,"universe selected by code order, not by outcome"
+no_future_informed_imputation,pass,false,no imputation/scaling applied at ingestion

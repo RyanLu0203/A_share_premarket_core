@@ -1,0 +1,6 @@
+criterion,met
+symbols_ge_300,false
+dates_ge_250,true
+providers_ge_2,true
+new_external_family,true
+materially_expanded,true

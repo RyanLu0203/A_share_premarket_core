@@ -1,0 +1,4 @@
+warning_code,dimension,detail
+PARTIAL_FETCH_FAILURES,acquisition,"10 source fetch attempts failed (see acquisition_log); recorded honestly, not hidden"
+SYMBOL_TARGET_NOT_MET,symbols,"symbols_after 50 < preferred 300; connectivity-limited, honest partial"
+SURVIVORSHIP_DISCLOSURE,universe,"universe uses currently-listed constituents (akshare spot); survivorship risk disclosed, not silently used"

@@ -1,0 +1,2 @@
+evidence_family,provider,instruments,rows,pit_declaration,new_this_goal,notes
+index_market_context,akshare_sina,sh000001;sh000300;sz399001,2541,passed_current_or_past_only,true,daily index close/return context (CSI300/SSE/SZSE)

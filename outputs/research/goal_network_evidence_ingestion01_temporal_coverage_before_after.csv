@@ -1,0 +1,2 @@
+dates_before,dates_after,first_date,last_date,missing_dates,material_target,target_met,regime_coverage_before,regime_coverage_after,pit_safe,future_filtering_applied
+120,843,2023-01-03,2026-06-30,reported_per_symbol_in_coverage,250,true,6,recomputable_on_expanded_dates_in_readiness_rerun,true,false
