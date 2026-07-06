@@ -122,7 +122,6 @@ MODULARIZATION_PLAN_FIELDS = [
 ]
 
 LOCKED_WORKFLOW_IDS = [
-    GOAL_QUANT_RESEARCH04_WORKFLOW_ID,
     GOAL_REC_TIERING01_WORKFLOW_ID,
     GOAL10B4_WORKFLOW_ID,
     POSITION_BAND_VALIDATION_WORKFLOW_ID,
@@ -247,6 +246,12 @@ def audit_goal_architecture_refactor03_gate(root: Path) -> bool:
             failures.append("data_expansion_research01_valid_evidence_but_workflow_not_implemented")
     elif data_expansion_status != "locked_future":
         failures.append("data_expansion_research01_must_remain_locked_without_valid_evidence")
+    quant04_status = workflow.get(GOAL_QUANT_RESEARCH04_WORKFLOW_ID, {}).get("status")
+    if _goal_quant_research04_valid(root):
+        if quant04_status != "implemented_research_only":
+            failures.append("goal_quant_research04_valid_evidence_but_workflow_not_implemented")
+    elif quant04_status not in {None, "locked_future"}:
+        failures.append("goal_quant_research04_must_remain_locked_without_valid_evidence")
     if workflow.get(WORKFLOW_ID, {}).get("status") != "implemented_engineering_research_support":
         failures.append("architecture_refactor03_workflow_status_invalid")
     if workflow.get(GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID, {}).get("depends_on") != WORKFLOW_ID:
@@ -523,7 +528,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     else:
         by_id[GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID].update(locked_goal_data_expansion_research01_patch())
     if GOAL_QUANT_RESEARCH04_WORKFLOW_ID in by_id:
-        by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
+        if _goal_quant_research04_valid(root):
+            from ashare_premarket.research.goal_quant_research04 import implemented_workflow_patch as quant04_workflow_patch
+
+            by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(quant04_workflow_patch())
+        else:
+            by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
     if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
         by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
     if GOAL10B4_WORKFLOW_ID in by_id:
@@ -781,6 +791,14 @@ def _goal_data_expansion_research01_valid(root: Path) -> bool:
     except Exception:
         return False
     return goal_data_expansion_research01_valid_evidence(root)
+
+
+def _goal_quant_research04_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research04 import goal_quant_research04_valid_evidence
+    except Exception:
+        return False
+    return goal_quant_research04_valid_evidence(root)
 
 
 def _warnings(catalog_rows: list[dict[str, str]], duplicate_rows: list[dict[str, object]]) -> list[str]:

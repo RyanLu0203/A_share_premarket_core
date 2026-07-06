@@ -1,0 +1,24 @@
+{
+  "goal_id": "GOAL-QUANT-RESEARCH-04",
+  "mode": "research_only_regime_conditional_factor_evaluation_gate",
+  "status": "PASS_WITH_WARNINGS",
+  "research_only": true,
+  "artifact_size_limit_bytes": 99614720,
+  "allowed_input_artifacts": ["outputs/research/goal_regime_label_research02_refined_factor_regime_bridge.csv", "outputs/research/goal_regime_label_research02_refined_date_regime_labels.csv", "outputs/research/goal_alpha_factor_candidate02_refined_candidate_registry.csv", "outputs/research/goal_alpha_factor_candidate02_refined_candidate_panel.csv", "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv"],
+  "regime_conditioning_source": "goal_regime_label_research02_refined_factor_regime_bridge",
+  "factor_status_states": ["not_ready", "conditionally_useful", "ready"],
+  "forward_returns_usage": "post_hoc_evaluation_only_never_in_factor_or_regime_construction",
+  "forbidden_outputs": ["recommendation_rows", "position_rows", "buy_sell_hold", "target_prices", "position_sizes", "portfolio_weights", "order_quantities", "portfolio_returns", "equity_curves", "dashboard", "html", "streamlit", "frontend", "trading", "broker", "production", "local_lake", "factor_mining", "dqn_rl"],
+  "required_output_schemas": {
+    "regime_conditional_evaluation_summary": ["refined_factor_id", "source_factor_id", "refinement_type", "factor_family", "regime_label", "row_count", "valid_factor_value_count", "unique_symbols", "unique_trade_dates", "regime_sample_size_status", "mean_ic_1d", "mean_ic_5d", "mean_ic_20d", "mean_rank_ic_1d", "mean_rank_ic_5d", "mean_rank_ic_20d", "ic_positive_rate_1d", "top_minus_bottom_excess_spread_1d", "top_minus_bottom_excess_spread_5d", "top_minus_bottom_excess_spread_20d", "direction_status_1d", "direction_status_5d", "direction_status_20d", "sign_flip_count", "stable_window_count", "unstable_window_count", "regime_stability_status", "regime_conditional_status", "regime_conditional_reason", "no_lookahead_status", "non_actionable_disclaimer"],
+    "factor_overall_status": ["refined_factor_id", "source_factor_id", "refinement_type", "factor_family", "evaluated_regime_count", "informative_regime_count", "conditionally_useful_regime_count", "ready_regime_count", "best_regime_label", "best_regime_mean_ic_1d", "regime_specificity_status", "overall_factor_status", "candidate_for_rec_tiering", "no_lookahead_status", "non_actionable_disclaimer"]
+  },
+  "downstream_locks": {
+    "goal_rec_tiering01_recommendation_score_tiering_gate": "locked_future",
+    "goal10b4_recommendation_backtest_revalidation": "locked_future",
+    "goal_position_band_validation01_position_band_validation_gate": "locked_future",
+    "goal10d_backtest_failure_attribution_gate": "locked_future",
+    "dashboard_daily_report": "locked_future",
+    "portfolio_backtest": "locked_future"
+  }
+}

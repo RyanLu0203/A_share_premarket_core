@@ -414,7 +414,10 @@ def audit_goal_regime_label_research02_gate(root: Path) -> bool:
         failures.append("workflow_regime_label_research02_dependency_invalid")
     if data_expansion01.get("status") != "implemented_research_only":
         failures.append("workflow_data_expansion01_not_implemented_research_only")
-    if q04.get("status") != "locked_future" or q04.get("implemented_in_repo") != "false":
+    if q04.get("status") == "implemented_research_only":
+        if q04.get("implemented_in_repo") != "true":
+            failures.append("workflow_goal_quant_research04_not_locked_future")
+    elif q04.get("status") != "locked_future" or q04.get("implemented_in_repo") != "false":
         failures.append("workflow_goal_quant_research04_not_locked_future")
     if rec.get("status") != "locked_future" or rec.get("implemented_in_repo") != "false":
         failures.append("workflow_goal_rec_tiering01_not_locked_future")

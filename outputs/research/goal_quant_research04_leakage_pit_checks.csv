@@ -1,0 +1,6 @@
+check_id,check_name,scope,result,details
+PIT-01,factor_construction_excludes_forward_returns,evaluation_panel,pass,Factor value/quantile/bucket fields are distinct from forward-return fields.
+PIT-02,no_lookahead_status_marker_present,evaluation_panel,pass,Every evaluation row carries a current-or-past no-lookahead status.
+PIT-03,forward_returns_used_post_hoc_only,conditional_summary,pass,"Forward returns and benchmark-excess returns are consumed only to compute post-hoc IC/RankIC/spread metrics, never as factor or regime inputs."
+PIT-04,conditional_summary_headers_exclude_raw_forward_return_fields,conditional_summary,pass,"Regime-conditional summary exposes derived metrics only, no raw forward-return columns."
+PIT-05,regime_labels_not_altered_by_performance,regime_bridge,pass,Regime labels are consumed as committed conditioning context and are not re-derived from factor performance.

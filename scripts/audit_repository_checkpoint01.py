@@ -162,9 +162,15 @@ def _check_workflow_locks(failures: list[str]) -> None:
     checkpoint = rows.get("goal_repository_checkpoint01_arch03_stable_snapshot_and_codex_max_entrypoint_gate", {})
     if checkpoint.get("status") != "implemented_governance_only":
         failures.append("GOAL-REPOSITORY-CHECKPOINT-01 workflow row is not implemented_governance_only")
-    for workflow_id in [
+    # DataExpansion01, Regime02, and Quant04 are User-authorized research promotions past the
+    # frozen Arch03 checkpoint (reconciliation issue #8 and GOAL-QUANT-RESEARCH-04); they are
+    # research-only and keep the actionable execution chain below locked.
+    authorized_research_promotions = {
         "goal_data_expansion_research01_market_regime_data_expansion_gate",
+        "goal_regime_label_research02_expanded_market_regime_label_refinement_gate",
         "goal_quant_research04_regime_conditional_factor_evaluation_gate",
+    }
+    for workflow_id in [
         "goal_rec_tiering01_recommendation_score_tiering_gate",
         "goal10b4_recommendation_backtest_revalidation",
         "goal_position_band_validation01_position_band_validation_gate",
@@ -179,6 +185,10 @@ def _check_workflow_locks(failures: list[str]) -> None:
             failures.append(f"downstream workflow unlocked unexpectedly: {workflow_id}={row.get('status')}")
         if row.get("implemented_in_repo") == "true":
             failures.append(f"downstream workflow marked implemented unexpectedly: {workflow_id}")
+    for workflow_id in authorized_research_promotions:
+        row = rows.get(workflow_id, {})
+        if row.get("status") not in {"locked_future", "planned_locked", "implemented_research_only"}:
+            failures.append(f"downstream workflow unlocked unexpectedly: {workflow_id}={row.get('status')}")
 
 
 def _check_forbidden_paths(failures: list[str]) -> None:

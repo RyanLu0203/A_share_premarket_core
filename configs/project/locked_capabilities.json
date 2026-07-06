@@ -36,7 +36,7 @@
   "goal_quant_research01_factor_research_lab_gate": "implemented_research_only",
   "goal_quant_research02_alpha_candidate_factor_validity_evaluation_gate": "implemented_research_only",
   "goal_quant_research03_refined_alpha_factor_validity_evaluation_gate": "implemented_research_only",
-  "goal_quant_research04_regime_conditional_factor_evaluation_gate": false,
+  "goal_quant_research04_regime_conditional_factor_evaluation_gate": "implemented_research_only",
   "goal_rec_tiering01_recommendation_score_tiering_gate": false,
   "goal_regime_label_research01_market_regime_label_construction_gate": "implemented_research_only",
   "goal_regime_label_research02_expanded_market_regime_label_refinement_gate": "implemented_research_only",

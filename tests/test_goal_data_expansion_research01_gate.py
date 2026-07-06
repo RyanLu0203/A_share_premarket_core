@@ -39,7 +39,7 @@ def test_goal_data_expansion_research01_runner_writes_bounded_research_only_outp
     assert manifest["dashboard_frontend_artifacts_created"] is False
     assert workflow[WORKFLOW_ID]["status"] == "implemented_research_only"
     assert workflow["goal_regime_label_research02_expanded_market_regime_label_refinement_gate"]["status"] in {"locked_future", "implemented_research_only"}
-    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] == "locked_future"
+    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
     assert "Status: `PASS`" in (ROOT / AUDIT_PATH).read_text(encoding="utf-8")
     for path in OUTPUTS:

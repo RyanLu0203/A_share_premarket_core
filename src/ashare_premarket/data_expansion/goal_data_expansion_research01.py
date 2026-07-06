@@ -433,7 +433,7 @@ def audit_goal_data_expansion_research01_gate(root: Path) -> bool:
     failures.extend(_workflow_lock_failures(workflow))
     if workflow.get(WORKFLOW_ID, {}).get("status") != "implemented_research_only":
         failures.append("data_expansion_workflow_status_invalid")
-    if workflow.get(QUANT04_WORKFLOW_ID, {}).get("status") != "locked_future":
+    if workflow.get(QUANT04_WORKFLOW_ID, {}).get("status") not in {"locked_future", "implemented_research_only"}:
         failures.append("quant04_unlocked")
     if _read(root / REPORT_PATH).count("## ") < 19:
         failures.append("report_missing_required_sections")
@@ -784,7 +784,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     else:
         by_id[REGIME02_WORKFLOW_ID].update(locked_regime02_patch())
     if QUANT04_WORKFLOW_ID in by_id:
-        by_id[QUANT04_WORKFLOW_ID].update(locked_quant04_patch())
+        if _goal_quant_research04_valid(root):
+            from ashare_premarket.research.goal_quant_research04 import implemented_workflow_patch as quant04_implemented_patch
+
+            by_id[QUANT04_WORKFLOW_ID].update(quant04_implemented_patch())
+        else:
+            by_id[QUANT04_WORKFLOW_ID].update(locked_quant04_patch())
     if REC_TIERING_WORKFLOW_ID in by_id:
         by_id[REC_TIERING_WORKFLOW_ID].update(locked_rec_tiering_patch())
     if GOAL10B4_WORKFLOW_ID in by_id:
@@ -819,12 +824,21 @@ def _goal_regime_label_research02_valid(root: Path) -> bool:
         return False
 
 
+def _goal_quant_research04_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research04 import goal_quant_research04_valid_evidence
+
+        return goal_quant_research04_valid_evidence(root)
+    except Exception:
+        return False
+
+
 def _update_locked_capabilities(root: Path) -> None:
     path = root / "configs/project/locked_capabilities.json"
     payload = read_json(path) if path.exists() else {}
     payload[WORKFLOW_ID] = "implemented_research_only"
     payload[REGIME02_WORKFLOW_ID] = "implemented_research_only" if _goal_regime_label_research02_valid(root) else False
-    payload[QUANT04_WORKFLOW_ID] = False
+    payload[QUANT04_WORKFLOW_ID] = "implemented_research_only" if _goal_quant_research04_valid(root) else False
     payload[REC_TIERING_WORKFLOW_ID] = False
     payload[GOAL10B4_WORKFLOW_ID] = False
     payload[POSITION_VALIDATION_WORKFLOW_ID] = False
@@ -1239,7 +1253,6 @@ def _write_audit(root: Path, failures: list[str], warnings: list[str], status: s
 def _workflow_lock_failures(workflow: dict[str, dict[str, str]]) -> list[str]:
     failures: list[str] = []
     for workflow_id in [
-        QUANT04_WORKFLOW_ID,
         REC_TIERING_WORKFLOW_ID,
         GOAL10B4_WORKFLOW_ID,
         POSITION_VALIDATION_WORKFLOW_ID,
@@ -1254,14 +1267,15 @@ def _workflow_lock_failures(workflow: dict[str, dict[str, str]]) -> list[str]:
         row = workflow.get(workflow_id, {})
         if row.get("status") != "locked_future" or row.get("implemented_in_repo") != "false":
             failures.append(f"workflow_lock_not_preserved:{workflow_id}")
-    # Regime02 is DataExpansion01's sanctioned downstream refinement gate: it may
-    # be locked_future, or implemented_research_only once its committed evidence is valid.
-    regime02 = workflow.get(REGIME02_WORKFLOW_ID, {})
-    if regime02.get("status") == "implemented_research_only":
-        if regime02.get("implemented_in_repo") != "true":
-            failures.append(f"workflow_lock_not_preserved:{REGIME02_WORKFLOW_ID}")
-    elif regime02.get("status") != "locked_future" or regime02.get("implemented_in_repo") != "false":
-        failures.append(f"workflow_lock_not_preserved:{REGIME02_WORKFLOW_ID}")
+    # Regime02 and Quant04 are DataExpansion01's sanctioned downstream research gates: each may
+    # be locked_future, or implemented_research_only once its own committed evidence is valid.
+    for downstream_id in (REGIME02_WORKFLOW_ID, QUANT04_WORKFLOW_ID):
+        row = workflow.get(downstream_id, {})
+        if row.get("status") == "implemented_research_only":
+            if row.get("implemented_in_repo") != "true":
+                failures.append(f"workflow_lock_not_preserved:{downstream_id}")
+        elif row.get("status") != "locked_future" or row.get("implemented_in_repo") != "false":
+            failures.append(f"workflow_lock_not_preserved:{downstream_id}")
     if workflow.get("dqn_rl_mainline", {}).get("status") != "deleted_from_active_mainline":
         failures.append("dqn_rl_mainline_not_deleted")
     return failures

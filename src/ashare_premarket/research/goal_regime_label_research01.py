@@ -373,7 +373,10 @@ def audit_goal_regime_label_research01_gate(root: Path) -> bool:
         failures.append("workflow_regime_label_research01_not_implemented_research_only")
     if gate.get("depends_on") != GOAL_QUANT_RESEARCH03_WORKFLOW_ID:
         failures.append("workflow_regime_label_research01_dependency_invalid")
-    if q04.get("status") != "locked_future" or q04.get("implemented_in_repo") != "false":
+    if q04.get("status") == "implemented_research_only":
+        if q04.get("implemented_in_repo") != "true":
+            failures.append("workflow_goal_quant_research04_not_locked_future")
+    elif q04.get("status") != "locked_future" or q04.get("implemented_in_repo") != "false":
         failures.append("workflow_goal_quant_research04_not_locked_future")
     expected_q04_dependency = GOAL_DATA_EXPANSION_RESEARCH01_WORKFLOW_ID if architecture_refactor03 or data_expansion01 else WORKFLOW_ID
     if q04.get("depends_on") != expected_q04_dependency:
@@ -563,6 +566,14 @@ def locked_goal_quant_research04_patch() -> dict[str, str]:
         "promotion_rule": "locked_until_explicit_goal_quant_research04_regime_conditional_factor_evaluation_gate",
         "notes": "Future regime-conditional factor evaluation remains locked; GOAL-REGIME-LABEL-RESEARCH-01 creates labels only and does not evaluate alpha predictive validity.",
     }
+
+
+def _goal_quant_research04_valid(root: Path) -> bool:
+    try:
+        from ashare_premarket.research.goal_quant_research04 import goal_quant_research04_valid_evidence
+    except Exception:
+        return False
+    return goal_quant_research04_valid_evidence(root)
 
 
 def locked_goal_rec_tiering01_patch() -> dict[str, str]:
@@ -1094,7 +1105,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
         by_id = {row["workflow_id"]: row for row in rows}
     acceptable = bool(result["manifest"].get("acceptable_regime_coverage"))
     by_id[WORKFLOW_ID].update(goal_regime_label_research01_implemented_workflow_patch(str(result["status"]), acceptable))
-    by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
+    if _goal_quant_research04_valid(root):
+        from ashare_premarket.research.goal_quant_research04 import implemented_workflow_patch as _quant04_workflow_patch
+
+        by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(_quant04_workflow_patch())
+    else:
+        by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
     if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
         by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
     if GOAL10B4_WORKFLOW_ID in by_id:
@@ -1123,7 +1139,12 @@ def _update_workflow_status(root: Path, result: dict[str, object]) -> None:
     preserve_later_review_only_workflow_states(root, by_id)
     if result["status"] in {PASS, PASS_WITH_WARNINGS} and WORKFLOW_ID in by_id:
         by_id[WORKFLOW_ID].update(goal_regime_label_research01_implemented_workflow_patch(str(result["status"]), acceptable))
-        by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
+        if _goal_quant_research04_valid(root):
+            from ashare_premarket.research.goal_quant_research04 import implemented_workflow_patch as _quant04_workflow_patch
+
+            by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(_quant04_workflow_patch())
+        else:
+            by_id[GOAL_QUANT_RESEARCH04_WORKFLOW_ID].update(locked_goal_quant_research04_patch())
         if GOAL_REC_TIERING01_WORKFLOW_ID in by_id:
             by_id[GOAL_REC_TIERING01_WORKFLOW_ID].update(locked_goal_rec_tiering01_patch())
         if GOAL10B4_WORKFLOW_ID in by_id:

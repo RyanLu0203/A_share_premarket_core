@@ -14,6 +14,10 @@ ALLOWED_LOCK_PROMOTIONS = {
     # Regime02 refinement gate are implemented research-only on project-current.
     "goal_data_expansion_research01_market_regime_data_expansion_gate",
     "goal_regime_label_research02_expanded_market_regime_label_refinement_gate",
+    # Authorized research promotion (GOAL-QUANT-RESEARCH-04): regime-conditional factor
+    # evaluation is implemented research-only; it keeps ready_factor_count 0 and does not
+    # unlock recommendation tiering.
+    "goal_quant_research04_regime_conditional_factor_evaluation_gate",
 }
 
 

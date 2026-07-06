@@ -130,7 +130,7 @@ def test_regime02_workflow_row_implemented_and_downstream_locked() -> None:
     assert regime02["status"] == "implemented_research_only"
     assert regime02["implemented_in_repo"] == "true"
     assert regime02["depends_on"] == "goal_data_expansion_research01_market_regime_data_expansion_gate"
-    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] == "locked_future"
+    assert workflow["goal_quant_research04_regime_conditional_factor_evaluation_gate"]["status"] in {"locked_future", "implemented_research_only"}
     assert workflow["goal_rec_tiering01_recommendation_score_tiering_gate"]["status"] == "locked_future"
     assert workflow["dashboard_daily_report"]["status"] == "locked_future"
 
