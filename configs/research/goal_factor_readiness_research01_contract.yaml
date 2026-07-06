@@ -1,0 +1,12 @@
+goal_id: GOAL-FACTOR-READINESS-RESEARCH-01
+workflow_id: goal_factor_readiness_research01_factor_readiness_research_gate
+mode: research_only_factor_readiness_research_gate
+research_only: true
+modifies_workflow_status: false
+modifies_locked_capabilities: false
+unlocks_goal_rec_tiering01: false
+lowers_existing_thresholds: false
+fabricates_ready_status: false
+strong_ic_threshold: 0.03
+min_valid_rows: 500
+holdout_fraction: 0.2
