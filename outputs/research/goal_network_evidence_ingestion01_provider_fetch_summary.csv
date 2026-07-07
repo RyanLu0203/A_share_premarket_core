@@ -1,0 +1,3 @@
+provider_id,independent_evidence,source_lineage,fetch_status,credential_status,pit_suitability,timestamp_semantics,rows_acquired,symbols_acquired,dates_acquired,failure_reason
+baostock,true,committed_provider02b_offline_replay,already_committed,none,high,daily_close,0,50,120,
+akshare_sina,true,live_sina_daily_and_index,live_fetched_this_goal,none,high,daily_close_available_next_session,37084,50,843,9_symbol_fetches_failed_of_50

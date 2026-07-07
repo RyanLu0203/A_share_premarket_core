@@ -1,0 +1,2 @@
+source_id,acquisition_timestamp,source_snapshot_start,source_snapshot_end,availability_rule,timestamp_contract
+akshare_sina_bundle,2026-07-06T20:03:17+08:00,20230101,20260630,daily_close_available_next_session,source_ts<=availability_ts_enforced

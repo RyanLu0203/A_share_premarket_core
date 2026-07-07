@@ -1,0 +1,6 @@
+rank,source_id,provider,credential_required,pit_suitability,independent_evidence_value,selected,rationale
+1,akshare.stock_zh_a_daily,akshare_sina,false,high_daily_close_next_session,high_vs_baostock,true,credential-free deep multi-year daily history for temporal + symbol breadth
+2,akshare.stock_zh_index_daily,akshare_sina,false,high,external_index_context,true,credential-free index context (CSI300/SSE/SZSE) — new external family
+3,akshare.stock_zh_a_spot,akshare_sina,false,listing_snapshot,universe_breadth,best_effort,"universe listing for symbol breadth; connectivity-flaky, partial accepted"
+99,tushare_pro.*,tushare,true,high,high,false,requires user token -> user_authority_required; not used (no credential embedded)
+99,eastmoney_northbound_margin,akshare_eastmoney,false,medium,high_external,false,eastmoney endpoints unreachable from this context (proxy/reset); classified requires_network

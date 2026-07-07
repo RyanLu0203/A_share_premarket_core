@@ -1,0 +1,30 @@
+{
+  "acquisition_timestamp": "2026-07-06T20:03:17+08:00",
+  "allowlist": {
+    "akshare.stock_zh_a_daily": "credential_free_sina_backadjusted_daily_history",
+    "akshare.stock_zh_a_spot": "credential_free_sina_universe_listing",
+    "akshare.stock_zh_index_daily": "credential_free_sina_index_daily_history"
+  },
+  "checksums": {
+    "daily_panel.csv": "2ef494e9e47dce3f61eb17488562bfeda494cb52a47295c569d718af49dd9acc",
+    "index_panel.csv": "86eb9107bfc5be5ccb4dd006020164322209b7f124713587a46351b5805e6c65",
+    "symbol_coverage.csv": "d8277353b47c0ef08dbdca42866a2782544e3f8e87bf57b13b1ec7d483b573b2"
+  },
+  "daily_rows": 34543,
+  "distinct_trade_dates": 843,
+  "goal": "GOAL-NETWORK-EVIDENCE-INGESTION-01",
+  "index_rows": 2541,
+  "indices_acquired": [
+    "sh000001",
+    "sh000300",
+    "sz399001"
+  ],
+  "network_env_gate": "ASHARE_ALLOW_NETWORK_INGESTION=1",
+  "provider": "akshare_sina",
+  "raw_payloads_committed": false,
+  "secrets_persisted": false,
+  "source_snapshot_end_date": "20260630",
+  "source_snapshot_start_date": "20230101",
+  "symbols_acquired": 41,
+  "symbols_attempted": 50
+}

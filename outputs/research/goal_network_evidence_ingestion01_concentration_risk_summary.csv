@@ -1,0 +1,4 @@
+risk_dimension,before,after,improved,notes
+symbol_universe,50,50,false,breadth
+temporal_depth,120,843,true,depth
+provider,1,2,true,independent crosscheck now possible
