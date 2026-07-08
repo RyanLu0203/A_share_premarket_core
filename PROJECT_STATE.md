@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-30
+Last updated: 2026-07-08
 
 ## Codex Operating System Gate
 
@@ -9,7 +9,7 @@ onboarding and Git operating-system gate.
 
 - Authoritative remote branch: `project-current`.
 - Latest confirmed remote commit:
-  `e216aac7cac188f401e970a03defca73b11aa449`.
+  `fdffeb365066be2c5482671e18d4c67e958f3020`.
 - Remote checkpoint branch: `checkpoint/arch03-stable-310559`.
 - Remote checkpoint tag: `checkpoint-arch03-stable-310559`.
 - Stable checkpoint commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
@@ -38,6 +38,36 @@ onboarding and Git operating-system gate.
   GitHub repository code, docs, configs, committed outputs/audits, and remote
   branches/tags. It must not rely on local Mac paths, local bundles, local
   provider caches, local-lake data, or uncommitted local state.
+
+## GOAL-FACTOR-READINESS-RERUN-02
+
+GOAL-FACTOR-READINESS-RERUN-02 is implemented as a research-only expanded
+evidence readiness rerun over the committed GOAL-NETWORK-EVIDENCE-INGESTION-01
+bundle.
+
+- Status: `PASS_WITH_WARNINGS`.
+- Evidence consumed: 34,543 `akshare_sina` daily rows, 843 stock trading dates,
+  41 acquired symbols out of 50 attempted governed symbols, and three index
+  context series (`sh000001`, `sh000300`, `sz399001`).
+- Bundle checksums were verified against
+  `outputs/research/goal_network_evidence_ingestion01_evidence_bundle_manifest.json`.
+- Old/new panel relationship: old Readiness01 panel 180,000 rows over 120
+  dates; reconstructed Rerun02 panel 1,036,290 source-factor/refinement rows
+  over 843 dates.
+- Candidates evaluated: 120 fixed-threshold candidates using the existing
+  STRONG_IC, MIN_VALID_ROWS, holdout, sign-stability, aligned-horizon, and
+  walk-forward rules.
+- Readiness result: `ready_factor_count_before = 0`,
+  `ready_factor_count_after = 0`; all 120 candidates are `not_ready`.
+- Old/new transitions: 63 candidates lost prior `conditionally_useful` status;
+  57 remained `not_ready`.
+- Provider robustness: 4,910 old baostock/new akshare-sina overlap rows were
+  checked; six >2% discrepancy warnings were recorded.
+- Index context contribution: all nine fixed index-context checks are
+  `weak_or_unstable_context`.
+- GOAL-REC-TIERING-01 remains `locked_future`; no workflow status or locked
+  capability was modified, and no recommendation, position, dashboard, trading,
+  production, local-lake, factor-mining, broker, or DQN/RL output was created.
 
 ## Stable Repository Checkpoint
 

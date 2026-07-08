@@ -1,5 +1,50 @@
 # 09 Step Iteration Log
 
+## 2026-07-08 - GOAL-FACTOR-READINESS-RERUN-02 Expanded Evidence Readiness Rerun
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the research-only GOAL-FACTOR-READINESS-RERUN-02 gate.
+- Verified the committed network-ingestion bundle checksums and consumed the
+  expanded `akshare_sina` evidence: 34,543 daily rows, 843 stock trading dates,
+  41 acquired symbols out of 50 attempted governed symbols, and three index
+  context series.
+- Reconstructed fixed source-factor evidence from the new daily/index bundle
+  while keeping forward returns only in evaluation target structures.
+- Compared the old 180,000-row / 120-date Readiness01 panel with a reconstructed
+  1,036,290-row / 843-date source-factor/refinement panel.
+- Evaluated 120 candidates under the existing fixed thresholds, chronological
+  holdout, walk-forward stability, sign-stability, aligned-horizon, provider,
+  index-context, and anti-overfitting checks.
+
+Evidence:
+
+- `outputs/research/goal_factor_readiness_rerun02_evidence_integration_map.csv`
+- `outputs/research/goal_factor_readiness_rerun02_old_new_readiness_comparison.csv`
+- `outputs/research/goal_factor_readiness_rerun02_provider_robustness_summary.csv`
+- `outputs/audits/goal_factor_readiness_rerun02_report.md`
+- `outputs/audits/goal_factor_readiness_rerun02_manifest.json`
+- `outputs/audits/goal_factor_readiness_rerun02_audit.md`
+
+Outcome:
+
+- `ready_factor_count_before = 0`.
+- `ready_factor_count_after = 0`.
+- All 120 candidates are `not_ready`.
+- Old/new transitions: 63 `lost_conditional_status`; 57
+  `unchanged_not_ready`.
+- Provider robustness found six >2% overlap discrepancy warnings.
+- All nine fixed index-context checks are `weak_or_unstable_context`.
+
+Safety:
+
+- GOAL-REC-TIERING-01 remains `locked_future`.
+- No workflow status or locked capability was modified.
+- No recommendation, position, portfolio, dashboard, trading, production,
+  broker, local-lake, factor-mining, or DQN/RL output was created.
+
 ## 2026-06-30 - GOAL-CODEX-OPERATING-SYSTEM-01 Remote Windows GitHub-Only Governance Gate
 
 - Added the GOAL-CODEX-OPERATING-SYSTEM-01 governance-only operating-system
