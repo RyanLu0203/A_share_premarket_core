@@ -1,0 +1,2 @@
+decision_id,preferred_research_policy,band_reference_policy,selection_basis,score_margin_to_runner_up,rationale,return_metrics_role,research_only,not_trading_advice,not_for_execution
+preferred_research_policy,no_single_robust_winner,inverse_volatility,risk_first_not_return_optimized,0.01875193,top risk-first scores are within 5pct; inverse_volatility used only as conservative band reference,secondary_diagnostics_only,true,true,true

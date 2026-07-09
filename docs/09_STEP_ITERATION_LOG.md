@@ -1,5 +1,56 @@
 # 09 Step Iteration Log
 
+## 2026-07-09 - GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01 Research Portfolio Risk Track
+
+Status: `PASS_WITH_WARNINGS`.
+
+What changed:
+
+- Added the integrated research-only premarket portfolio risk and position-band
+  management gate.
+- Compared overlapping baostock and akshare/sina evidence over 4,910 rows and
+  quarantined six material discrepancies from risk-model fitting.
+- Built a canonical 34,543-row risk-estimation dataset from committed
+  akshare/sina daily evidence, preserving PIT and no-execution labels.
+- Added current-holdings input contract and used
+  `research_reference_portfolio_mode` because no real holdings snapshot was
+  supplied.
+- Estimated risk state, covariance quality, risk contribution, concentration,
+  correlation clusters, and drawdown/tail risk for the research reference
+  portfolio.
+- Added a non-actionable position constraint engine and evaluated fixed
+  risk-based policies under chronological walk-forward, holdout, turnover,
+  bounded cost, and regime-stability diagnostics.
+- Produced research-only acceptable position-band diagnostics for 41 symbols
+  with no target weights or order instructions.
+
+Evidence:
+
+- `outputs/research/goal_premarket_portfolio_risk_management01_provider_comparison.csv`
+- `outputs/research/goal_premarket_portfolio_risk_management01_portfolio_risk_state.csv`
+- `outputs/research/goal_premarket_portfolio_risk_management01_policy_risk_comparison.csv`
+- `outputs/research/goal_premarket_portfolio_risk_management01_position_band_summary.csv`
+- `outputs/audits/goal_premarket_portfolio_risk_management01_report.md`
+- `outputs/audits/goal_premarket_portfolio_risk_management01_manifest.json`
+- `outputs/audits/goal_premarket_portfolio_risk_management01_audit.md`
+
+Outcome:
+
+- Provider reconciliation status:
+  `pass_with_material_discrepancy_quarantine`.
+- Portfolio risk state: `normal_risk_review_only`.
+- Preferred research policy: `no_single_robust_winner`; `inverse_volatility`
+  is only a conservative band reference.
+- Symbols with bands: 41; symbols abstained: 0.
+- `ready_factor_count = 0`.
+
+Safety:
+
+- GOAL-REC-TIERING-01 remains `locked_future`.
+- GOAL-10B.4 and position-band validation remain locked.
+- No BUY/SELL/HOLD, target-weight recommendation, order, dashboard, broker,
+  trading, production, local-lake, factor-mining, or DQN/RL output was created.
+
 ## 2026-07-08 - GOAL-FACTOR-READINESS-RERUN-02 Expanded Evidence Readiness Rerun
 
 Status: `PASS_WITH_WARNINGS`.

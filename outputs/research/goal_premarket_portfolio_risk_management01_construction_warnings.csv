@@ -1,0 +1,6 @@
+warning_code,scope,count,detail
+MATERIAL_PROVIDER_DISCREPANCIES_QUARANTINED,phase1_provider_reconciliation,6,material baostock/akshare-sina forward-return differences excluded from risk fitting
+ADJUSTMENT_CONVENTION_UNRESOLVED,phase1_provider_reconciliation,1,"committed old panel lacks close/raw-adjusted metadata, so close-price and adjustment reconciliation remain disclosed but unresolved"
+DUPLICATE_POLICY_EXPOSURE_DISCLOSED,phase4_policy_selection,1,diagonal ERC is mathematically equivalent to inverse-volatility under the current diagonal proxy
+NO_SINGLE_ROBUST_POLICY_WINNER,phase4_policy_selection,1,top risk-first policy scores are close; band reference remains conservative research-only
+POSITION_BAND_ABSTENTIONS_PRESENT,phase5_position_bands,12,symbols with insufficient confidence or constraint blockers abstain from precise bands

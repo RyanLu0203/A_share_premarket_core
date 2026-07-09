@@ -1,0 +1,4 @@
+estimator_id,symbol_count,date_count,average_variance,average_abs_correlation,condition_proxy,selection_role,research_only,not_trading_advice,not_for_execution
+sample_covariance,41,842,0.0006052996,0.233708303,17.3091095049,diagnostic,true,true,true
+diagonal_shrinkage_20pct,41,842,0.0006052996,0.1869666424,bounded_by_diagonal_shrinkage,selected_for_stability_not_holdout_return,true,true,true
+constant_correlation_shrinkage,41,842,0.0006052996,0.233708303,bounded_constant_correlation_proxy,comparison,true,true,true

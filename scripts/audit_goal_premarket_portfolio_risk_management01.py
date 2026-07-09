@@ -1,0 +1,10 @@
+from __future__ import annotations
+
+from _bootstrap import ROOT
+from ashare_premarket.portfolio_risk.goal_premarket_portfolio_risk_management01 import (
+    audit_goal_premarket_portfolio_risk_management01,
+)
+
+
+if __name__ == "__main__":
+    raise SystemExit(0 if audit_goal_premarket_portfolio_risk_management01(ROOT) else 1)
