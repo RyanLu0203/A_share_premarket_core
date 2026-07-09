@@ -114,10 +114,38 @@ def test_phase1_provider_reconciliation_canonical_data_and_quarantine() -> None:
     }
 
     comparison = {row["comparison_id"]: row for row in _rows(PREFIX + "provider_comparison.csv")}
+    assert set(comparison) >= {
+        "baostock_vs_akshare_sina_forward_return_1d",
+        "baostock_vs_akshare_sina_close_price_overlap",
+        "baostock_vs_akshare_sina_return_1d_overlap",
+        "date_alignment_and_missing_date_diagnostics",
+        "timestamp_alignment_disclosure",
+        "suspension_and_zero_volume_handling",
+        "corporate_action_discontinuity_indicators",
+        "adjustment_convention_disclosure",
+    }
     row = comparison["baostock_vs_akshare_sina_forward_return_1d"]
     assert int(row["overlap_rows"]) == manifest["phase1_provider_overlap_rows"]
     assert row["canonical_decision"] == "akshare_sina_primary_with_baostock_overlap_diagnostics"
     assert row["material_discrepancy_policy"] == "quarantine_from_risk_model_fitting"
+    assert row["diagnostic_dimension"] == "return_overlap"
+    assert row["no_silent_averaging"] == "true"
+
+    price_row = comparison["baostock_vs_akshare_sina_close_price_overlap"]
+    assert price_row["diagnostic_dimension"] == "close_price_overlap"
+    assert price_row["canonical_decision"] == "akshare_sina_close_primary_no_silent_averaging"
+    assert price_row["adjustment_convention_status"].startswith("unresolved")
+    assert price_row["no_silent_averaging"] == "true"
+
+    adjustment_row = comparison["adjustment_convention_disclosure"]
+    assert adjustment_row["adjustment_convention_status"].startswith("unresolved")
+    assert adjustment_row["unresolved_status"] == "true"
+    assert manifest["adjustment_convention_status"].startswith("unresolved")
+
+    quarantine_rows = _rows(PREFIX + "provider_discrepancy_quarantine.csv")
+    assert all(row["quarantine_reason"] for row in quarantine_rows)
+    assert all(row["diagnostic_dimension"] in {"return_overlap", "close_price_overlap"} for row in quarantine_rows)
+    assert all(row["deterministic_rule"] for row in quarantine_rows)
 
     contract_rows = _rows(PREFIX + "canonical_market_data_contract.csv")
     assert {row["field_name"] for row in contract_rows} >= {
@@ -126,12 +154,19 @@ def test_phase1_provider_reconciliation_canonical_data_and_quarantine() -> None:
         "canonical_price_status",
         "canonical_return_status",
         "risk_model_eligible",
+        "adjustment_convention_status",
+        "raw_adjusted_semantics",
+        "timestamp_alignment_status",
+        "suspension_status",
+        "corporate_action_discontinuity_flag",
     }
 
     canonical_sample = _rows(PREFIX + "canonical_market_data.csv")[:20]
     assert canonical_sample
     assert all(row["not_for_execution"] == "true" for row in canonical_sample)
     assert all(row["research_only"] == "true" for row in canonical_sample)
+    assert all(row["adjustment_convention_status"] for row in canonical_sample)
+    assert all(row["raw_adjusted_semantics"] for row in canonical_sample)
 
 
 def test_phase2_risk_state_uses_reference_mode_without_fabricated_holdings() -> None:
@@ -161,7 +196,8 @@ def test_phase2_risk_state_uses_reference_mode_without_fabricated_holdings() -> 
 
 def test_phase3_constraint_engine_is_non_actionable_and_fail_closed() -> None:
     manifest = _manifest_once()
-    assert manifest["constraints_implemented"] >= 6
+    assert manifest["constraints_implemented"] >= 11
+    assert manifest["substantive_constraints"] >= 7
     assert manifest["constraint_engine_non_actionable"] is True
     assert manifest["fail_closed_cases"] >= 1
 
@@ -171,12 +207,49 @@ def test_phase3_constraint_engine_is_non_actionable_and_fail_closed() -> None:
         "max_symbol_risk_contribution",
         "min_history_observations",
         "quarantined_rows_excluded",
+        "gross_exposure_max",
+        "cash_buffer_band",
+        "turnover_limit",
+        "volatility_budget",
+        "cluster_concentration_cap",
+        "beta_budget",
+        "liquidity_limit",
+    }
+    substantive = {
+        row["constraint_id"]
+        for row in catalog
+        if row["substantive_constraint"] == "true"
+    }
+    assert substantive >= {
+        "gross_exposure_max",
+        "cash_buffer_band",
+        "turnover_limit",
+        "volatility_budget",
+        "cluster_concentration_cap",
+        "beta_budget",
+        "liquidity_limit",
     }
 
     evaluations = _rows(PREFIX + "position_constraint_evaluation.csv")
     assert evaluations
     assert all(row["action_instruction"] == "none" for row in evaluations)
+    for row in evaluations:
+        assert row["current_value"] != ""
+        assert row["threshold"] != ""
+        assert row["breach"] in {"true", "false"}
+        assert row["severity"] in {"none", "low", "medium", "high"}
+        assert row["fail_closed"] in {"true", "false"}
+        assert row["evidence_availability"]
     assert any(row["fail_closed"] == "true" for row in evaluations)
+    assert {
+        "gross_exposure_max",
+        "cash_buffer_band",
+        "turnover_limit",
+        "volatility_budget",
+        "cluster_concentration_cap",
+        "beta_budget",
+        "liquidity_limit",
+    } <= {row["constraint_id"] for row in evaluations}
 
 
 def test_phase4_policy_comparison_has_fixed_policies_chronological_splits_and_costs() -> None:
@@ -186,13 +259,22 @@ def test_phase4_policy_comparison_has_fixed_policies_chronological_splits_and_co
         "inverse_volatility",
         "minimum_variance_diagonal",
         "equal_risk_contribution_diagonal",
+        "hrp_correlation_cluster",
     }
+    assert manifest["effective_distinct_policies"] >= 4
     assert manifest["policy_selection_basis"] == "risk_first_not_return_optimized"
     assert manifest["historical_portfolio_returns_research_only"] is True
 
     catalog = _rows(PREFIX + "policy_catalog.csv")
     assert all(row["pre_specified"] == "true" for row in catalog)
     assert all(row["final_holdout_tuned"] == "false" for row in catalog)
+    by_policy = {row["policy_id"]: row for row in catalog}
+    assert by_policy["equal_risk_contribution_diagonal"]["duplicate_exposure_of"] == "inverse_volatility"
+    assert by_policy["equal_risk_contribution_diagonal"]["effective_distinct_policy"] == "false"
+    assert by_policy["hrp_correlation_cluster"]["effective_distinct_policy"] == "true"
+    assert by_policy["hrp_correlation_cluster"]["covariance_assumption"]
+    assert by_policy["hrp_correlation_cluster"]["clustering_assumption"]
+    assert by_policy["hrp_correlation_cluster"]["uses_alpha"] == "false"
 
     walk = _rows(PREFIX + "policy_walk_forward_summary.csv")
     holdout = _rows(PREFIX + "policy_holdout_summary.csv")
@@ -206,6 +288,7 @@ def test_phase4_policy_comparison_has_fixed_policies_chronological_splits_and_co
 def test_phase5_position_bands_are_bounded_not_target_weight_recommendations() -> None:
     manifest = _manifest_once()
     assert manifest["symbols_with_bands"] + manifest["symbols_abstained"] == manifest["canonical_symbols"]
+    assert manifest["symbols_abstained"] > 0
     assert manifest["position_bands_are_target_weights"] is False
     assert manifest["position_bands_generate_orders"] is False
 
@@ -217,6 +300,31 @@ def test_phase5_position_bands_are_bounded_not_target_weight_recommendations() -
     assert {row["constraint_integration_status"] for row in bands} <= {
         "constraints_applied",
         "abstain_due_to_data_or_constraint_uncertainty",
+    }
+
+    abstentions = _rows(PREFIX + "position_band_abstentions.csv")
+    assert len(abstentions) == manifest["symbols_abstained"]
+    allowed_reasons = {
+        "insufficient_history",
+        "unresolved_provider_discrepancy",
+        "quarantine_concentration",
+        "sparse_or_unstable_regime_evidence",
+        "unstable_covariance_sensitivity",
+        "unstable_band_sensitivity",
+        "constraint_data_insufficiency",
+    }
+    observed_reasons = {
+        reason
+        for row in abstentions
+        for reason in row["abstention_reason"].split(";")
+        if reason
+    }
+    assert observed_reasons <= allowed_reasons
+    assert observed_reasons & {
+        "unresolved_provider_discrepancy",
+        "sparse_or_unstable_regime_evidence",
+        "unstable_covariance_sensitivity",
+        "constraint_data_insufficiency",
     }
 
 

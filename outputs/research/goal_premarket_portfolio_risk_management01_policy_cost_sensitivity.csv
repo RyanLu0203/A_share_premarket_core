@@ -11,3 +11,6 @@ minimum_variance_diagonal,30,0.216781557,-0.0271288813,-0.027779226,bounded_rese
 equal_risk_contribution_diagonal,0,0.1123603208,-0.01661556,-0.01661556,bounded_research_scenario_not_live_execution_cost,true,true,true
 equal_risk_contribution_diagonal,10,0.1123603208,-0.01661556,-0.0167279203,bounded_research_scenario_not_live_execution_cost,true,true,true
 equal_risk_contribution_diagonal,30,0.1123603208,-0.01661556,-0.016952641,bounded_research_scenario_not_live_execution_cost,true,true,true
+hrp_correlation_cluster,0,0.1108731098,-0.0164624368,-0.0164624368,bounded_research_scenario_not_live_execution_cost,true,true,true
+hrp_correlation_cluster,10,0.1108731098,-0.0164624368,-0.0165733099,bounded_research_scenario_not_live_execution_cost,true,true,true
+hrp_correlation_cluster,30,0.1108731098,-0.0164624368,-0.0167950561,bounded_research_scenario_not_live_execution_cost,true,true,true

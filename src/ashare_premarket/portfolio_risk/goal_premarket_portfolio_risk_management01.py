@@ -153,13 +153,25 @@ POLICIES = [
         "definition": "diagonal equal-risk-contribution proxy using inverse volatility",
         "primary_objective": "equalize volatility-scaled risk contributions",
     },
+    {
+        "policy_id": "hrp_correlation_cluster",
+        "policy_family": "hierarchical_risk_parity_proxy",
+        "definition": "average-correlation rank-tercile clusters, equal cluster budgets, inverse-volatility intra-cluster weights",
+        "primary_objective": "diversify risk across correlation clusters without alpha forecasts",
+    },
 ]
 
 COST_BPS = [0, 10, 30]
 MATERIAL_RETURN_DIFF = 0.02
+CORPORATE_ACTION_RETURN_INDICATOR = 0.10
 MIN_HISTORY = 120
 MAX_SYMBOL_WEIGHT = 0.10
 MAX_SYMBOL_RISK_CONTRIBUTION = 0.20
+MAX_GROSS_EXPOSURE = 1.00
+MAX_POLICY_TURNOVER = 0.50
+MAX_ANNUALIZED_VOLATILITY = 0.35
+MAX_CLUSTER_CONCENTRATION = 0.60
+MAX_ABS_BETA = 1.20
 
 
 def run_goal_premarket_portfolio_risk_management01(root: Path) -> bool:
@@ -218,8 +230,8 @@ def _build(root: Path) -> dict[str, object]:
     provider = _provider_reconciliation(root, daily_rows)
     canonical = _canonical_market_data(daily_rows, provider["quarantine_keys"])
     risk = _risk_and_reference(canonical["eligible_rows"], index_rows)
-    constraints = _constraints(risk["reference_rows"], risk["risk_contribution_rows"], canonical)
     policies = _policy_comparison(canonical["returns_by_date"], risk["eligible_symbols"], regime_rows)
+    constraints = _constraints(risk, canonical, policies)
     bands = _position_bands(
         risk["eligible_symbols"],
         risk["latest_date"],
@@ -227,6 +239,11 @@ def _build(root: Path) -> dict[str, object]:
         policies["selected_weights"],
         risk["risk_state_row"],
         constraints["symbol_blockers"],
+        provider["discrepancy_symbols"],
+        provider["discrepancy_count_by_symbol"],
+        risk["avg_abs_corr_by_symbol"],
+        canonical["history_count"],
+        policies,
     )
     warnings = _warnings(provider, canonical, policies, bands)
     manifest = _manifest(daily_rows, index_rows, provider, canonical, risk, constraints, policies, bands, warnings, root)
@@ -245,9 +262,13 @@ def _build(root: Path) -> dict[str, object]:
 def _provider_reconciliation(root: Path, daily_rows: list[dict[str, str]]) -> dict[str, object]:
     new_forward = _next_return_map(daily_rows)
     old_forward: dict[tuple[str, str], float] = {}
+    old_dates: set[str] = set()
+    old_keys: set[tuple[str, str]] = set()
     for path in sorted(glob.glob(str(root / OLD_PANEL_GLOB))):
         for row in read_csv(Path(path)):
             key = (row["symbol"], row["trade_date"])
+            old_dates.add(row["trade_date"])
+            old_keys.add(key)
             if key not in old_forward:
                 value = _float(row.get("forward_return_1d"))
                 if value is not None:
@@ -266,6 +287,7 @@ def _provider_reconciliation(root: Path, daily_rows: list[dict[str, str]]) -> di
                 {
                     "symbol": symbol,
                     "trade_date": trade_date,
+                    "diagnostic_dimension": "return_overlap",
                     "comparison_metric": "forward_return_1d",
                     "baostock_value": _fmt(old_value),
                     "akshare_sina_value": _fmt(new_value),
@@ -273,6 +295,8 @@ def _provider_reconciliation(root: Path, daily_rows: list[dict[str, str]]) -> di
                     "threshold": _fmt(MATERIAL_RETURN_DIFF),
                     "quarantine_scope": "risk_model_fitting",
                     "quarantine_reason": "material_provider_return_discrepancy",
+                    "deterministic_rule": "abs(baostock_forward_return_1d-akshare_sina_next_return)>0.02",
+                    "evidence_availability": "baostock_forward_return_1d_and_akshare_sina_close_available",
                     "research_only": True,
                     "not_trading_advice": True,
                     "not_for_execution": True,
@@ -280,9 +304,44 @@ def _provider_reconciliation(root: Path, daily_rows: list[dict[str, str]]) -> di
             )
     mean_diff = _mean(diffs)
     max_diff = max(diffs) if diffs else 0.0
+    daily_dates = {row["trade_date"] for row in daily_rows}
+    daily_keys = {(row["symbol"], row["trade_date"]) for row in daily_rows}
+    missing_date_difference_count = len(daily_dates ^ old_dates)
+    missing_key_difference_count = len(daily_keys ^ old_keys)
+    missing_returns = sum(1 for row in daily_rows if _float(row.get("return_1d")) is None)
+    corporate_action_indicators = sum(
+        1
+        for row in daily_rows
+        if (_float(row.get("return_1d")) is not None and abs(float(row["return_1d"])) >= CORPORATE_ACTION_RETURN_INDICATOR)
+    )
+    common = {
+        "providers_compared": "baostock;akshare_sina",
+        "mean_abs_diff": "",
+        "max_abs_diff": "",
+        "material_discrepancy_count": 0,
+        "material_discrepancy_threshold": "",
+        "canonical_decision": "",
+        "material_discrepancy_policy": "no_quarantine_without_direct_overlap_evidence",
+        "adjustment_convention_status": "unresolved_missing_cross_provider_adjustment_metadata",
+        "unresolved_status": True,
+        "evidence_availability": "",
+        "date_alignment_status": "",
+        "missing_date_difference_count": missing_date_difference_count,
+        "timestamp_alignment_status": "date_level_only_no_intraday_timestamp",
+        "suspension_handling_status": "unresolved_no_volume_or_suspension_flag",
+        "corporate_action_indicator_count": corporate_action_indicators,
+        "raw_adjusted_semantics": "akshare_sina_adjusted_close_primary;baostock_raw_or_adjusted_semantics_unresolved",
+        "no_silent_averaging": True,
+        "status": "diagnostic",
+        "research_only": True,
+        "not_trading_advice": True,
+        "not_for_execution": True,
+    }
     comparison_rows = [
         {
+            **common,
             "comparison_id": "baostock_vs_akshare_sina_forward_return_1d",
+            "diagnostic_dimension": "return_overlap",
             "providers_compared": "baostock;akshare_sina",
             "overlap_rows": len(overlap),
             "mean_abs_diff": _fmt(mean_diff),
@@ -291,19 +350,97 @@ def _provider_reconciliation(root: Path, daily_rows: list[dict[str, str]]) -> di
             "material_discrepancy_threshold": _fmt(MATERIAL_RETURN_DIFF),
             "canonical_decision": "akshare_sina_primary_with_baostock_overlap_diagnostics",
             "material_discrepancy_policy": "quarantine_from_risk_model_fitting",
+            "evidence_availability": "baostock_forward_return_1d_and_akshare_sina_close_available",
+            "date_alignment_status": "symbol_date_overlap_used_for_return_diagnostics",
+            "unresolved_status": False,
             "status": "pass_with_material_discrepancy_quarantine" if quarantines else "pass",
-            "research_only": True,
-            "not_trading_advice": True,
-            "not_for_execution": True,
-        }
+        },
+        {
+            **common,
+            "comparison_id": "baostock_vs_akshare_sina_close_price_overlap",
+            "diagnostic_dimension": "close_price_overlap",
+            "overlap_rows": 0,
+            "canonical_decision": "akshare_sina_close_primary_no_silent_averaging",
+            "evidence_availability": "missing_baostock_close_price_in_committed_refined_panel",
+            "status": "unresolved_missing_provider_close_evidence",
+        },
+        {
+            **common,
+            "comparison_id": "baostock_vs_akshare_sina_return_1d_overlap",
+            "diagnostic_dimension": "return_overlap",
+            "overlap_rows": len(overlap),
+            "mean_abs_diff": _fmt(mean_diff),
+            "max_abs_diff": _fmt(max_diff),
+            "material_discrepancy_count": len(quarantines),
+            "material_discrepancy_threshold": _fmt(MATERIAL_RETURN_DIFF),
+            "canonical_decision": "akshare_sina_return_primary_with_forward_return_crosscheck",
+            "material_discrepancy_policy": "quarantine_from_risk_model_fitting",
+            "evidence_availability": "direct_return_1d_missing_in_old_panel_forward_return_1d_used_as_feasible_overlap",
+            "date_alignment_status": "symbol_date_overlap_used_for_return_diagnostics",
+            "unresolved_status": False,
+            "status": "pass_with_material_discrepancy_quarantine" if quarantines else "pass",
+        },
+        {
+            **common,
+            "comparison_id": "date_alignment_and_missing_date_diagnostics",
+            "diagnostic_dimension": "date_alignment",
+            "overlap_rows": len(daily_keys & old_keys),
+            "canonical_decision": "canonical_dates_follow_committed_akshare_sina_panel",
+            "evidence_availability": "symbol_date_keys_available_for_both_committed_sources",
+            "date_alignment_status": f"daily_vs_old_symbol_date_symmetric_difference={missing_key_difference_count}",
+            "status": "pass" if missing_key_difference_count == 0 else "pass_with_missing_date_differences_disclosed",
+        },
+        {
+            **common,
+            "comparison_id": "timestamp_alignment_disclosure",
+            "diagnostic_dimension": "timestamp_alignment",
+            "overlap_rows": len(daily_keys & old_keys),
+            "canonical_decision": "date_level_alignment_only_no_intraday_timestamp",
+            "evidence_availability": "trade_date_available_intraday_timestamp_unavailable",
+            "status": "unresolved_intraday_timestamp_not_available",
+        },
+        {
+            **common,
+            "comparison_id": "suspension_and_zero_volume_handling",
+            "diagnostic_dimension": "suspension_handling",
+            "overlap_rows": len(daily_rows),
+            "canonical_decision": "missing_returns_excluded_from_risk_model_no_volume_based_suspension_claim",
+            "evidence_availability": "close_and_return_available_volume_or_suspension_flag_unavailable",
+            "suspension_handling_status": f"return_missing_count={missing_returns};zero_volume_unobservable",
+            "status": "unresolved_no_volume_or_suspension_flag",
+        },
+        {
+            **common,
+            "comparison_id": "corporate_action_discontinuity_indicators",
+            "diagnostic_dimension": "corporate_action_discontinuity",
+            "overlap_rows": len(daily_rows),
+            "canonical_decision": "large_return_indicator_disclosed_not_treated_as_adjustment_reconciliation",
+            "evidence_availability": "return_path_available_corporate_action_metadata_unavailable",
+            "status": "indicator_only_requires_adjustment_metadata",
+        },
+        {
+            **common,
+            "comparison_id": "adjustment_convention_disclosure",
+            "diagnostic_dimension": "adjustment_convention",
+            "overlap_rows": 0,
+            "canonical_decision": "akshare_sina_adjusted_close_primary_adjustment_convention_unresolved",
+            "evidence_availability": "missing_cross_provider_raw_adjusted_metadata",
+            "status": "unresolved_adjustment_convention",
+        },
     ]
+    status = "pass_with_material_discrepancy_quarantine" if quarantines else "pass"
     return {
         "comparison_rows": comparison_rows,
         "quarantine_rows": quarantines,
         "quarantine_keys": {(row["symbol"], row["trade_date"]) for row in quarantines},
+        "discrepancy_symbols": {row["symbol"] for row in quarantines},
+        "discrepancy_count_by_symbol": dict(_counts([row["symbol"] for row in quarantines])),
         "overlap_rows": len(overlap),
         "material_discrepancy_count": len(quarantines),
-        "status": comparison_rows[0]["status"],
+        "price_diagnostic_count": sum(1 for row in comparison_rows if row["diagnostic_dimension"] == "close_price_overlap"),
+        "return_diagnostic_count": sum(1 for row in comparison_rows if row["diagnostic_dimension"] == "return_overlap"),
+        "adjustment_convention_status": "unresolved_missing_cross_provider_adjustment_metadata",
+        "status": status,
     }
 
 
@@ -318,6 +455,7 @@ def _canonical_market_data(daily_rows: list[dict[str, str]], quarantine_keys: se
         quarantined = key in quarantine_keys
         return_status = "accepted" if ret is not None and not quarantined else "insufficient_prior_price" if ret is None else "quarantined_provider_discrepancy"
         price_status = "accepted" if close is not None and not quarantined else "quarantined_provider_discrepancy" if quarantined else "missing_close"
+        corporate_action_indicator = ret is not None and abs(ret) >= CORPORATE_ACTION_RETURN_INDICATOR
         eligible = close is not None and ret is not None and not quarantined
         if eligible:
             returns_by_date[row["trade_date"]][row["symbol"]] = ret
@@ -332,6 +470,11 @@ def _canonical_market_data(daily_rows: list[dict[str, str]], quarantine_keys: se
                 "provider_overlap_status": "material_discrepancy_quarantined" if quarantined else "accepted_or_no_overlap",
                 "canonical_price_status": price_status,
                 "canonical_return_status": return_status,
+                "adjustment_convention_status": "unresolved_cross_provider_adjustment_convention",
+                "raw_adjusted_semantics": "akshare_sina_adjusted_close_primary;raw_unadjusted_cross_provider_not_available",
+                "timestamp_alignment_status": "date_level_only_no_intraday_timestamp",
+                "suspension_status": "not_observable_no_volume_or_suspension_flag" if ret is not None else "return_missing_suspension_unresolved",
+                "corporate_action_discontinuity_flag": corporate_action_indicator,
                 "risk_model_eligible": eligible,
                 "quarantine_reason": "material_provider_return_discrepancy" if quarantined else "",
                 "no_lookahead_status": row.get("no_lookahead_status", "passed_current_or_past_only"),
@@ -370,6 +513,11 @@ def _canonical_market_data(daily_rows: list[dict[str, str]], quarantine_keys: se
         _contract_row("canonical_return_1d", "float", "current-day close-to-close return", "current_or_past_only"),
         _contract_row("canonical_price_status", "enum", "accepted or quarantined price status", "current_or_past_only"),
         _contract_row("canonical_return_status", "enum", "accepted or quarantined return status", "current_or_past_only"),
+        _contract_row("adjustment_convention_status", "enum", "cross-provider adjustment convention remains unresolved where metadata is missing", "current_or_past_only"),
+        _contract_row("raw_adjusted_semantics", "string", "discloses adjusted-primary versus unavailable raw/unadjusted evidence", "current_or_past_only"),
+        _contract_row("timestamp_alignment_status", "enum", "trade-date alignment only; no intraday timestamp evidence", "current_or_past_only"),
+        _contract_row("suspension_status", "enum", "suspension handling limited by missing volume/suspension flags", "current_or_past_only"),
+        _contract_row("corporate_action_discontinuity_flag", "bool", "large-return indicator only, not full corporate-action adjustment reconciliation", "derived_without_future_returns"),
         _contract_row("risk_model_eligible", "bool", "eligible for research risk estimation", "derived_without_future_returns"),
     ]
     return {
@@ -421,6 +569,9 @@ def _risk_and_reference(eligible_rows: list[dict[str, object]], index_rows: list
     p75 = _percentile(rolling_vols, 0.75) if rolling_vols else 0.0
     p90 = _percentile(rolling_vols, 0.90) if rolling_vols else 0.0
     csi300 = [row for row in index_rows if row.get("index_id") == "sh000300"]
+    csi300_by_date = {row["trade_date"]: _float(row.get("return_1d")) for row in csi300}
+    beta_pairs = [(ret, csi300_by_date[date]) for date, ret in portfolio_returns if csi300_by_date.get(date) is not None]
+    beta_to_csi300 = _beta([ret for ret, _ in beta_pairs], [index_ret for _, index_ret in beta_pairs])
     csi300_ret20 = _sum_last([_float(row.get("return_1d")) for row in csi300 if _float(row.get("return_1d")) is not None], 20)
     if not symbols:
         risk_state = "abstain_insufficient_confidence"
@@ -475,13 +626,15 @@ def _risk_and_reference(eligible_rows: list[dict[str, object]], index_rows: list
         }
     ]
     estimator_rows = _risk_estimator_rows(returns_by_symbol, symbols)
-    covariance_rows, cluster_rows = _covariance_and_clusters(returns_by_date, symbols)
+    covariance_rows, cluster_rows, cluster_by_symbol, avg_abs_corr_by_symbol = _covariance_and_clusters(returns_by_date, symbols)
     tail_rows = [
         {
             "portfolio_id": "research_reference_portfolio",
             "asof_date": latest_date,
             "observations": len(portfolio_returns),
             "historical_volatility": _fmt(_annualized_vol([ret for _, ret in portfolio_returns])),
+            "beta_to_csi300": _fmt(beta_to_csi300),
+            "beta_observations": len(beta_pairs),
             "max_drawdown": _fmt(_max_drawdown([ret for _, ret in portfolio_returns])),
             "var_95_daily": _fmt(_percentile([ret for _, ret in portfolio_returns], 0.05)),
             "cvar_95_daily": _fmt(_tail_mean([ret for _, ret in portfolio_returns], 0.05)),
@@ -503,16 +656,22 @@ def _risk_and_reference(eligible_rows: list[dict[str, object]], index_rows: list
         "risk_contribution_rows": contribution_rows,
         "concentration_rows": concentration_rows,
         "cluster_rows": cluster_rows,
+        "cluster_by_symbol": cluster_by_symbol,
+        "avg_abs_corr_by_symbol": avg_abs_corr_by_symbol,
         "tail_rows": tail_rows,
         "portfolio_returns": portfolio_returns,
+        "beta_to_csi300": beta_to_csi300,
+        "beta_observations": len(beta_pairs),
     }
 
 
 def _constraints(
-    reference_rows: list[dict[str, object]],
-    contribution_rows: list[dict[str, object]],
+    risk: dict[str, object],
     canonical: dict[str, object],
+    policies: dict[str, object],
 ) -> dict[str, object]:
+    reference_rows = risk["reference_rows"]
+    contribution_rows = risk["risk_contribution_rows"]
     catalog = [
         _constraint("max_symbol_weight", "single-name exposure must not exceed 10%", "<=0.10", "symbol"),
         _constraint("max_symbol_risk_contribution", "single-name diagonal risk contribution must not exceed 20%", "<=0.20", "symbol"),
@@ -520,6 +679,13 @@ def _constraints(
         _constraint("quarantined_rows_excluded", "provider-quarantined rows must be excluded from risk fitting", "true", "dataset"),
         _constraint("research_reference_only_without_holdings", "no current holdings may be fabricated", "current_holdings_supplied=false", "portfolio"),
         _constraint("no_action_instruction", "constraint engine cannot emit trade instructions", "action_instruction=none", "portfolio"),
+        _constraint("gross_exposure_max", "gross research exposure may not exceed 100%", "<=1.00", "portfolio", True, "reference weights"),
+        _constraint("cash_buffer_band", "cash buffer must be inside the owner-supplied band when real holdings exist", "0.00_to_0.05", "portfolio", True, "current holdings cash snapshot"),
+        _constraint("turnover_limit", "one-way turnover from equal-weight reference must remain bounded", "<=0.50", "portfolio", True, "policy weights"),
+        _constraint("volatility_budget", "annualized reference volatility must remain inside research budget", "<=0.35", "portfolio", True, "historical returns"),
+        _constraint("cluster_concentration_cap", "largest correlation-cluster weight share must remain diversified", "<=0.60", "portfolio", True, "correlation clusters"),
+        _constraint("beta_budget", "absolute reference beta to CSI300 must remain bounded", "<=1.20", "portfolio", True, "index returns"),
+        _constraint("liquidity_limit", "liquidity capacity requires volume or amount evidence", "capacity_from_volume_or_amount", "symbol", True, "volume or amount"),
     ]
     contribution_by_symbol = {row["symbol"]: float(row["risk_contribution_share"]) for row in contribution_rows}
     history = canonical["history_count"]
@@ -530,45 +696,40 @@ def _constraints(
         weight = float(row["reference_weight"])
         risk_share = contribution_by_symbol.get(symbol, 0.0)
         checks = [
-            ("max_symbol_weight", weight <= MAX_SYMBOL_WEIGHT, weight, MAX_SYMBOL_WEIGHT, False),
-            ("max_symbol_risk_contribution", risk_share <= MAX_SYMBOL_RISK_CONTRIBUTION, risk_share, MAX_SYMBOL_RISK_CONTRIBUTION, False),
-            ("min_history_observations", int(history.get(symbol, 0)) >= MIN_HISTORY, int(history.get(symbol, 0)), MIN_HISTORY, False),
+            ("max_symbol_weight", weight <= MAX_SYMBOL_WEIGHT, weight, MAX_SYMBOL_WEIGHT, False, "available"),
+            ("max_symbol_risk_contribution", risk_share <= MAX_SYMBOL_RISK_CONTRIBUTION, risk_share, MAX_SYMBOL_RISK_CONTRIBUTION, False, "available"),
+            ("min_history_observations", int(history.get(symbol, 0)) >= MIN_HISTORY, int(history.get(symbol, 0)), MIN_HISTORY, False, "available"),
         ]
-        for constraint_id, passed, observed, threshold, fail_closed in checks:
+        for constraint_id, passed, observed, threshold, fail_closed, evidence in checks:
             if not passed:
                 blockers.add(symbol)
-            evaluations.append(
-                {
-                    "portfolio_id": "research_reference_portfolio",
-                    "symbol": symbol,
-                    "constraint_id": constraint_id,
-                    "observed_value": _fmt(observed) if isinstance(observed, float) else observed,
-                    "threshold": _fmt(threshold) if isinstance(threshold, float) else threshold,
-                    "constraint_passed": passed,
-                    "breach_severity": "none" if passed else "review_required",
-                    "fail_closed": fail_closed,
-                    "action_instruction": "none",
-                    "research_only": True,
-                    "not_trading_advice": True,
-                    "not_for_execution": True,
-                }
-            )
-    evaluations.append(
-        {
-            "portfolio_id": "current_holdings",
-            "symbol": "",
-            "constraint_id": "research_reference_only_without_holdings",
-            "observed_value": "current_holdings_not_supplied",
-            "threshold": "valid_snapshot_required",
-            "constraint_passed": False,
-            "breach_severity": "fail_closed",
-            "fail_closed": True,
-            "action_instruction": "none",
-            "research_only": True,
-            "not_trading_advice": True,
-            "not_for_execution": True,
-        }
-    )
+            evaluations.append(_constraint_eval("research_reference_portfolio", symbol, constraint_id, observed, threshold, passed, fail_closed, evidence))
+
+    reference_weights = risk["reference_weights"]
+    gross_exposure = sum(abs(weight) for weight in reference_weights.values())
+    max_turnover = policies["max_turnover"]
+    annualized_vol = _float(risk["tail_rows"][0]["historical_volatility"]) or 0.0
+    beta = risk["beta_to_csi300"]
+    cluster_weights: dict[str, float] = defaultdict(float)
+    for symbol, weight in reference_weights.items():
+        cluster_weights[risk["cluster_by_symbol"].get(symbol, "cluster_unavailable")] += weight
+    max_cluster_weight = max(cluster_weights.values()) if cluster_weights else 0.0
+
+    portfolio_checks = [
+        ("quarantined_rows_excluded", canonical["quarantined_rows"] >= 0, canonical["quarantined_rows"], "excluded_from_risk_model=true", False, "available"),
+        ("research_reference_only_without_holdings", False, "current_holdings_not_supplied", "valid_snapshot_required", True, "unavailable_no_current_holdings_snapshot"),
+        ("no_action_instruction", True, "none", "action_instruction=none", False, "available"),
+        ("gross_exposure_max", gross_exposure <= MAX_GROSS_EXPOSURE + 1e-9, gross_exposure, MAX_GROSS_EXPOSURE, False, "available"),
+        ("cash_buffer_band", False, "unavailable_no_current_cash_snapshot", "0.00_to_0.05", True, "unavailable_no_current_holdings_or_cash_snapshot"),
+        ("turnover_limit", max_turnover <= MAX_POLICY_TURNOVER, max_turnover, MAX_POLICY_TURNOVER, False, "available"),
+        ("volatility_budget", annualized_vol <= MAX_ANNUALIZED_VOLATILITY, annualized_vol, MAX_ANNUALIZED_VOLATILITY, False, "available"),
+        ("cluster_concentration_cap", max_cluster_weight <= MAX_CLUSTER_CONCENTRATION, max_cluster_weight, MAX_CLUSTER_CONCENTRATION, False, "available"),
+        ("beta_budget", risk["beta_observations"] >= MIN_HISTORY and abs(beta) <= MAX_ABS_BETA, beta, MAX_ABS_BETA, risk["beta_observations"] < MIN_HISTORY, "available" if risk["beta_observations"] >= MIN_HISTORY else "unavailable_insufficient_index_overlap"),
+        ("liquidity_limit", False, "unavailable_no_volume_or_amount_field", "capacity_from_volume_or_amount", True, "unavailable_no_volume_or_amount_field"),
+    ]
+    for constraint_id, passed, observed, threshold, fail_closed, evidence in portfolio_checks:
+        evaluations.append(_constraint_eval("research_reference_portfolio", "", constraint_id, observed, threshold, passed, fail_closed, evidence))
+
     breach_summary = []
     grouped: dict[str, list[dict[str, object]]] = defaultdict(list)
     for row in evaluations:
@@ -580,6 +741,7 @@ def _constraints(
                 "evaluated_rows": len(rows),
                 "breach_count": sum(1 for row in rows if row["constraint_passed"] is False),
                 "fail_closed_count": sum(1 for row in rows if row["fail_closed"] is True),
+                "severity": _max_severity([str(row["severity"]) for row in rows]),
                 "action_instruction": "none",
                 "research_only": True,
                 "not_trading_advice": True,
@@ -592,6 +754,7 @@ def _constraints(
         "breach_rows": breach_summary,
         "symbol_blockers": blockers,
         "fail_closed_cases": sum(1 for row in evaluations if row["fail_closed"] is True),
+        "substantive_constraints": sum(1 for row in catalog if row["substantive_constraint"] is True),
     }
 
 
@@ -605,20 +768,19 @@ def _policy_comparison(
     holdout_start = int(len(dates) * 0.80)
     train_dates = dates[:train_end]
     holdout_dates = dates[holdout_start:]
-    catalog_rows = [
-        {
-            **policy,
-            "pre_specified": True,
-            "final_holdout_tuned": False,
-            "uses_alpha": False,
-            "research_only": True,
-            "not_trading_advice": True,
-            "not_for_execution": True,
-        }
-        for policy in POLICIES
-    ]
+    catalog_rows = [_policy_catalog_row(policy) for policy in POLICIES]
     train_returns = _slice_returns(returns_by_date, train_dates)
     weights_by_policy = {policy["policy_id"]: _policy_weights(policy["policy_id"], symbols, train_returns) for policy in POLICIES}
+    effective_policy_ids = [str(row["policy_id"]) for row in catalog_rows if row["effective_distinct_policy"] is True]
+    policy_weight_spread_by_symbol = {
+        symbol: (
+            max(weights_by_policy[policy_id].get(symbol, 0.0) for policy_id in effective_policy_ids)
+            - min(weights_by_policy[policy_id].get(symbol, 0.0) for policy_id in effective_policy_ids)
+        )
+        if effective_policy_ids
+        else 0.0
+        for symbol in symbols
+    }
     walk_rows = []
     folds = _walk_forward_folds(dates)
     for fold_id, train_fold_dates, test_dates in folds:
@@ -711,6 +873,7 @@ def _policy_comparison(
         policy_scores[policy_id] = vol + drawdown + cvar + turnover * 0.05
     regime_by_date = {row["trade_date"]: row.get("refined_composite_regime_label", "") for row in regime_rows}
     regime_rows_out = []
+    sparse_regime_count = 0
     for policy in POLICIES:
         weights = weights_by_policy[policy["policy_id"]]
         returns = _portfolio_returns(_slice_returns(returns_by_date, holdout_dates), weights)
@@ -718,6 +881,9 @@ def _policy_comparison(
         for date, ret in returns:
             by_regime[regime_by_date.get(date, "regime_unavailable_review_only")].append(ret)
         for regime, values in sorted(by_regime.items()):
+            sparse = len(values) < 20
+            if sparse:
+                sparse_regime_count += 1
             regime_rows_out.append(
                 {
                     "policy_id": policy["policy_id"],
@@ -725,7 +891,7 @@ def _policy_comparison(
                     "observations": len(values),
                     "annualized_volatility": _fmt(_annualized_vol(values)),
                     "mean_daily_return": _fmt(_mean(values)),
-                    "regime_stability_status": "review_only_sufficient" if len(values) >= 20 else "sparse_regime_review_only",
+                    "regime_stability_status": "review_only_sufficient" if not sparse else "sparse_regime_review_only",
                     "research_only": True,
                     "not_trading_advice": True,
                     "not_for_execution": True,
@@ -769,6 +935,11 @@ def _policy_comparison(
         "band_reference_policy": selected_for_bands,
         "selected_weights": weights_by_policy.get(selected_for_bands, _weights_equal(symbols)),
         "policy_ids": [policy["policy_id"] for policy in POLICIES],
+        "effective_policy_ids": effective_policy_ids,
+        "effective_distinct_policies": len(effective_policy_ids),
+        "max_turnover": max((float(row["turnover"]) for row in turnover_rows), default=0.0),
+        "policy_weight_spread_by_symbol": policy_weight_spread_by_symbol,
+        "sparse_regime_count": sparse_regime_count,
     }
 
 
@@ -779,6 +950,11 @@ def _position_bands(
     reference_weights: dict[str, float],
     risk_state: dict[str, object],
     blockers: set[str],
+    provider_discrepancy_symbols: set[str],
+    discrepancy_count_by_symbol: dict[str, int],
+    avg_abs_corr_by_symbol: dict[str, float],
+    history_count: dict[str, int],
+    policies: dict[str, object],
 ) -> dict[str, object]:
     state = str(risk_state["risk_state"])
     state_multiplier = {
@@ -791,22 +967,46 @@ def _position_bands(
     stability_rows = []
     abstentions = []
     median_vol = _percentile(list(vol_by_symbol.values()), 0.50) if vol_by_symbol else 0.0
+    corr_cutoff = _percentile(list(avg_abs_corr_by_symbol.values()), 0.90) if avg_abs_corr_by_symbol else 1.0
+    spreads = list(policies["policy_weight_spread_by_symbol"].values())
+    spread_cutoff = _percentile(spreads, 0.90) if spreads else 1.0
     for symbol in symbols:
         ref = reference_weights.get(symbol, 0.0)
         vol = vol_by_symbol.get(symbol, 0.0)
         high_vol = vol > median_vol * 1.5 if median_vol else False
-        abstain = symbol in blockers or state_multiplier == 0.0 or not ref
+        reasons = []
+        if int(history_count.get(symbol, 0)) < MIN_HISTORY:
+            reasons.append("insufficient_history")
+        elif symbol in blockers:
+            reasons.append("constraint_data_insufficiency")
+        if symbol in provider_discrepancy_symbols:
+            reasons.append("unresolved_provider_discrepancy")
+        if discrepancy_count_by_symbol.get(symbol, 0) >= 2:
+            reasons.append("quarantine_concentration")
+        if policies["sparse_regime_count"] and policies["selected_policy"] == "no_single_robust_winner" and high_vol:
+            reasons.append("sparse_or_unstable_regime_evidence")
+        if avg_abs_corr_by_symbol.get(symbol, 0.0) >= corr_cutoff and high_vol:
+            reasons.append("unstable_covariance_sensitivity")
+        spread = policies["policy_weight_spread_by_symbol"].get(symbol, 0.0)
+        if spread >= spread_cutoff and spread > 0.0025 and high_vol:
+            reasons.append("unstable_band_sensitivity")
+        if state_multiplier == 0.0 or not ref:
+            reasons.append("constraint_data_insufficiency")
+        reasons = sorted(set(reasons))
+        abstain = bool(reasons)
+        confidence_score = max(0.0, 1.0 - 0.18 * len(reasons) - (0.12 if high_vol else 0.0))
         if abstain:
             band_min = ""
             band_max = ""
             status = "abstain_due_to_data_or_constraint_uncertainty"
-            reason = "constraint_or_confidence_block"
+            reason = ";".join(reasons)
             abstentions.append(
                 {
                     "asof_date": latest_date,
                     "symbol": symbol,
                     "abstain": True,
                     "abstention_reason": reason,
+                    "confidence_score": _fmt(confidence_score),
                     "research_only": True,
                     "not_trading_advice": True,
                     "not_for_execution": True,
@@ -818,6 +1018,7 @@ def _position_bands(
             band_min = _fmt(max(0.0, center - width))
             band_max = _fmt(min(MAX_SYMBOL_WEIGHT, center + width))
             status = "constraints_applied"
+            reason = ""
         rows.append(
             {
                 "asof_date": latest_date,
@@ -830,6 +1031,7 @@ def _position_bands(
                 "constraint_breach": "not_evaluated_no_current_holdings",
                 "abstain": abstain,
                 "abstention_reason": reason if abstain else "",
+                "confidence_score": _fmt(confidence_score),
                 "band_methodology": "risk_budget_band_from_reference_policy_volatility_and_regime",
                 "regime_risk_state": state,
                 "alpha_required": False,
@@ -871,6 +1073,24 @@ def _warnings(provider: dict[str, object], canonical: dict[str, object], policie
                 "scope": "phase1_provider_reconciliation",
                 "count": provider["material_discrepancy_count"],
                 "detail": "material baostock/akshare-sina forward-return differences excluded from risk fitting",
+            }
+        )
+    if str(provider["adjustment_convention_status"]).startswith("unresolved"):
+        rows.append(
+            {
+                "warning_code": "ADJUSTMENT_CONVENTION_UNRESOLVED",
+                "scope": "phase1_provider_reconciliation",
+                "count": 1,
+                "detail": "committed old panel lacks close/raw-adjusted metadata, so close-price and adjustment reconciliation remain disclosed but unresolved",
+            }
+        )
+    if policies["effective_distinct_policies"] < len(policies["policy_ids"]):
+        rows.append(
+            {
+                "warning_code": "DUPLICATE_POLICY_EXPOSURE_DISCLOSED",
+                "scope": "phase4_policy_selection",
+                "count": len(policies["policy_ids"]) - policies["effective_distinct_policies"],
+                "detail": "diagonal ERC is mathematically equivalent to inverse-volatility under the current diagonal proxy",
             }
         )
     if policies["selected_policy"] == "no_single_robust_winner":
@@ -936,11 +1156,14 @@ def _manifest(
         "phase1_major_discrepancies": provider["material_discrepancy_count"],
         "phase1_quarantined_rows": len(provider["quarantine_rows"]),
         "provider_reconciliation_status": provider["status"],
+        "provider_price_diagnostics_count": provider["price_diagnostic_count"],
+        "provider_return_diagnostics_count": provider["return_diagnostic_count"],
+        "adjustment_convention_status": provider["adjustment_convention_status"],
         "canonical_rows": len(daily_rows),
         "canonical_symbols": len(canonical["symbols"]),
         "canonical_dates": len(canonical["dates"]),
-        "canonical_price_status": "akshare_sina_primary_with_material_discrepancy_quarantine",
-        "canonical_return_status": "accepted_current_day_returns_with_provider_forward_return_crosscheck",
+        "canonical_price_status": "akshare_sina_adjusted_close_primary_cross_provider_close_unresolved",
+        "canonical_return_status": "accepted_current_day_returns_with_forward_return_crosscheck_and_quarantine",
         "canonical_eligible_rows": sum(1 for row in canonical["rows"] if row["risk_model_eligible"] is True),
         "current_holdings_mode": "research_reference_portfolio_mode",
         "current_holdings_fabricated": False,
@@ -949,10 +1172,13 @@ def _manifest(
         "portfolio_risk_states": [risk["risk_state_row"]["risk_state"]],
         "risk_contribution_status": "estimated_from_research_reference_portfolio",
         "constraints_implemented": len(constraints["catalog_rows"]),
+        "substantive_constraints": constraints["substantive_constraints"],
         "constraint_breaches_detected": sum(int(row["breach_count"]) for row in constraints["breach_rows"]),
         "constraint_engine_non_actionable": True,
         "fail_closed_cases": constraints["fail_closed_cases"],
         "policies_evaluated": policies["policy_ids"],
+        "effective_distinct_policies": policies["effective_distinct_policies"],
+        "effective_policy_ids": policies["effective_policy_ids"],
         "walk_forward_design": "fixed_252_train_63_test_chronological_folds",
         "holdout_design": "chronological_last_20pct_final_holdout",
         "preferred_research_policy": policies["selected_policy"],
@@ -961,6 +1187,7 @@ def _manifest(
         "cost_scenarios_bps": COST_BPS,
         "symbols_with_bands": bands["symbols_with_bands"],
         "symbols_abstained": bands["symbols_abstained"],
+        "position_band_confidence_logic": "abstain_on_provider_discrepancy_history_constraint_regime_covariance_or_band_sensitivity",
         "position_bands_are_target_weights": False,
         "position_bands_generate_orders": False,
         "alpha_required": False,
@@ -992,6 +1219,7 @@ def _write_outputs(root: Path, result: dict[str, object]) -> None:
     write_csv(root / PROVIDER_QUARANTINE, provider["quarantine_rows"], fieldnames=[
         "symbol",
         "trade_date",
+        "diagnostic_dimension",
         "comparison_metric",
         "baostock_value",
         "akshare_sina_value",
@@ -999,6 +1227,8 @@ def _write_outputs(root: Path, result: dict[str, object]) -> None:
         "threshold",
         "quarantine_scope",
         "quarantine_reason",
+        "deterministic_rule",
+        "evidence_availability",
         "research_only",
         "not_trading_advice",
         "not_for_execution",
@@ -1033,6 +1263,7 @@ def _write_outputs(root: Path, result: dict[str, object]) -> None:
         "symbol",
         "abstain",
         "abstention_reason",
+        "confidence_score",
         "research_only",
         "not_trading_advice",
         "not_for_execution",
@@ -1117,7 +1348,10 @@ def _risk_estimator_rows(returns_by_symbol: dict[str, list[tuple[str, float]]], 
     return rows
 
 
-def _covariance_and_clusters(returns_by_date: dict[str, dict[str, float]], symbols: list[str]) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+def _covariance_and_clusters(
+    returns_by_date: dict[str, dict[str, float]],
+    symbols: list[str],
+) -> tuple[list[dict[str, object]], list[dict[str, object]], dict[str, str], dict[str, float]]:
     pair_corrs = []
     variances = []
     for i, left in enumerate(symbols):
@@ -1165,32 +1399,23 @@ def _covariance_and_clusters(returns_by_date: dict[str, dict[str, float]], symbo
             "not_for_execution": True,
         },
     ]
+    cluster_by_symbol, avg_abs_corr_by_symbol = _symbol_correlation_clusters(returns_by_date, symbols)
     clusters = {"low_corr": 0, "medium_corr": 0, "high_corr": 0}
-    for symbol in symbols:
-        corrs = []
-        s = _series_for_symbol(returns_by_date, symbol)
-        for other in symbols:
-            if other == symbol:
-                continue
-            corr = _correlation(s, _series_for_symbol(returns_by_date, other))
-            if corr is not None:
-                corrs.append(abs(corr))
-        avg = _mean(corrs)
-        bucket = "high_corr" if avg >= 0.5 else "medium_corr" if avg >= 0.25 else "low_corr"
+    for bucket in cluster_by_symbol.values():
         clusters[bucket] += 1
     cluster_rows = [
         {
             "cluster_id": bucket,
             "symbol_count": count,
-            "cluster_rule": "average_abs_pairwise_correlation_bucket",
-            "constraint_usage": "diversification_context_only",
+            "cluster_rule": "average_abs_pairwise_correlation_rank_tercile",
+            "constraint_usage": "diversification_constraint_and_hrp_cluster_budget",
             "research_only": True,
             "not_trading_advice": True,
             "not_for_execution": True,
         }
         for bucket, count in clusters.items()
     ]
-    return cov_rows, cluster_rows
+    return cov_rows, cluster_rows, cluster_by_symbol, avg_abs_corr_by_symbol
 
 
 def _holdings_contract_rows() -> list[dict[str, object]]:
@@ -1240,14 +1465,82 @@ def _contract_row(name: str, typ: str, description: str, pit: str) -> dict[str, 
     }
 
 
-def _constraint(constraint_id: str, description: str, threshold: str, scope: str) -> dict[str, object]:
+def _constraint(
+    constraint_id: str,
+    description: str,
+    threshold: str,
+    scope: str,
+    substantive: bool = False,
+    evidence_required: str = "committed research evidence",
+) -> dict[str, object]:
     return {
         "constraint_id": constraint_id,
         "constraint_family": "research_position_risk_constraint",
         "scope": scope,
         "description": description,
         "threshold": threshold,
+        "substantive_constraint": substantive,
+        "evidence_required": evidence_required,
+        "fail_closed_behavior": "abstain_or_block_precise_band_when_required_evidence_is_unavailable",
         "actionability": "non_actionable_no_order_instruction",
+        "research_only": True,
+        "not_trading_advice": True,
+        "not_for_execution": True,
+    }
+
+
+def _constraint_eval(
+    portfolio_id: str,
+    symbol: str,
+    constraint_id: str,
+    current_value: object,
+    threshold: object,
+    passed: bool,
+    fail_closed: bool,
+    evidence_availability: str,
+) -> dict[str, object]:
+    severity = "none" if passed else "high" if fail_closed else "medium"
+    current = _fmt(current_value) if isinstance(current_value, float) else current_value
+    limit = _fmt(threshold) if isinstance(threshold, float) else threshold
+    return {
+        "portfolio_id": portfolio_id,
+        "symbol": symbol,
+        "constraint_id": constraint_id,
+        "current_value": current,
+        "observed_value": current,
+        "threshold": limit,
+        "breach": not passed,
+        "constraint_passed": passed,
+        "severity": severity,
+        "breach_severity": severity,
+        "fail_closed": fail_closed,
+        "evidence_availability": evidence_availability,
+        "action_instruction": "none",
+        "research_only": True,
+        "not_trading_advice": True,
+        "not_for_execution": True,
+    }
+
+
+def _max_severity(values: list[str]) -> str:
+    order = {"none": 0, "low": 1, "medium": 2, "high": 3}
+    return max(values, key=lambda value: order.get(value, 0)) if values else "none"
+
+
+def _policy_catalog_row(policy: dict[str, str]) -> dict[str, object]:
+    policy_id = policy["policy_id"]
+    duplicate = "inverse_volatility" if policy_id == "equal_risk_contribution_diagonal" else ""
+    hrp = policy_id == "hrp_correlation_cluster"
+    return {
+        **policy,
+        "pre_specified": True,
+        "final_holdout_tuned": False,
+        "uses_alpha": False,
+        "covariance_assumption": "sample_return_correlation_training_window" if hrp else "diagonal_volatility_proxy" if policy_id != "equal_weight" else "none",
+        "clustering_assumption": "average_abs_correlation_rank_terciles" if hrp else "none",
+        "duplicate_exposure_of": duplicate,
+        "equivalence_disclosure": "equivalent_to_inverse_volatility_under_diagonal_covariance_proxy" if duplicate else "not_a_declared_duplicate",
+        "effective_distinct_policy": duplicate == "",
         "research_only": True,
         "not_trading_advice": True,
         "not_for_execution": True,
@@ -1264,6 +1557,18 @@ def _policy_weights(policy_id: str, symbols: list[str], returns_by_date: dict[st
         raw = {symbol: 1.0 / vols[symbol] for symbol in symbols}
     elif policy_id == "minimum_variance_diagonal":
         raw = {symbol: 1.0 / (vols[symbol] ** 2) for symbol in symbols}
+    elif policy_id == "hrp_correlation_cluster":
+        cluster_by_symbol, _ = _symbol_correlation_clusters(returns_by_date, symbols)
+        members_by_cluster: dict[str, list[str]] = defaultdict(list)
+        for symbol in symbols:
+            members_by_cluster[cluster_by_symbol.get(symbol, "medium_corr")].append(symbol)
+        raw = {}
+        cluster_budget = 1.0 / len(members_by_cluster) if members_by_cluster else 0.0
+        for members in members_by_cluster.values():
+            cluster_raw = {symbol: 1.0 / vols[symbol] for symbol in members}
+            cluster_total = sum(cluster_raw.values()) or 1.0
+            for symbol, value in cluster_raw.items():
+                raw[symbol] = cluster_budget * value / cluster_total
     else:
         raw = {symbol: 1.0 for symbol in symbols}
     return _normalize_with_cap(raw, MAX_SYMBOL_WEIGHT)
@@ -1271,6 +1576,36 @@ def _policy_weights(policy_id: str, symbols: list[str], returns_by_date: dict[st
 
 def _weights_equal(symbols: list[str]) -> dict[str, float]:
     return {symbol: 1.0 / len(symbols) for symbol in symbols} if symbols else {}
+
+
+def _symbol_correlation_clusters(
+    returns_by_date: dict[str, dict[str, float]],
+    symbols: list[str],
+) -> tuple[dict[str, str], dict[str, float]]:
+    avg_abs_corr_by_symbol = {}
+    for symbol in symbols:
+        corrs = []
+        series = _series_for_symbol(returns_by_date, symbol)
+        for other in symbols:
+            if other == symbol:
+                continue
+            corr = _correlation(series, _series_for_symbol(returns_by_date, other))
+            if corr is not None:
+                corrs.append(abs(corr))
+        avg_abs_corr_by_symbol[symbol] = _mean(corrs)
+    ranked = sorted(symbols, key=lambda symbol: (avg_abs_corr_by_symbol.get(symbol, 0.0), symbol))
+    cluster_by_symbol = {}
+    n = len(ranked)
+    for idx, symbol in enumerate(ranked):
+        fraction = idx / n if n else 0.0
+        if fraction < 1.0 / 3.0:
+            cluster = "low_corr"
+        elif fraction < 2.0 / 3.0:
+            cluster = "medium_corr"
+        else:
+            cluster = "high_corr"
+        cluster_by_symbol[symbol] = cluster
+    return cluster_by_symbol, avg_abs_corr_by_symbol
 
 
 def _normalize_with_cap(raw: dict[str, float], cap: float) -> dict[str, float]:
@@ -1365,6 +1700,21 @@ def _mean(values: list[float]) -> float:
     return sum(clean) / len(clean) if clean else 0.0
 
 
+def _beta(portfolio_returns: list[float], index_returns: list[float]) -> float:
+    n = min(len(portfolio_returns), len(index_returns))
+    if n < 3:
+        return 0.0
+    x = portfolio_returns[-n:]
+    y = index_returns[-n:]
+    mx = _mean(x)
+    my = _mean(y)
+    variance = sum((value - my) ** 2 for value in y)
+    if variance == 0:
+        return 0.0
+    covariance = sum((px - mx) * (iy - my) for px, iy in zip(x, y))
+    return covariance / variance
+
+
 def _std(values: list[float]) -> float:
     clean = [value for value in values if value is not None and math.isfinite(value)]
     if len(clean) < 2:
@@ -1432,6 +1782,13 @@ def _rolling_values(values: list[float], window: int, fn) -> list[float]:
 
 def _sum_last(values: list[float], n: int) -> float:
     return sum(values[-n:]) if values else 0.0
+
+
+def _counts(values: list[str]) -> dict[str, int]:
+    counts: dict[str, int] = defaultdict(int)
+    for value in values:
+        counts[value] += 1
+    return dict(counts)
 
 
 def _workflow_rows(root: Path) -> dict[str, dict[str, str]]:

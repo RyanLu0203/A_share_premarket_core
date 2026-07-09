@@ -1,16 +1,17 @@
 {
+  "adjustment_convention_status": "unresolved_missing_cross_provider_adjustment_metadata",
   "alpha_required": false,
   "broker_trading_outputs_created": false,
   "buy_sell_hold_outputs_created": false,
   "canonical_dates": 843,
   "canonical_eligible_rows": 34496,
-  "canonical_price_status": "akshare_sina_primary_with_material_discrepancy_quarantine",
-  "canonical_return_status": "accepted_current_day_returns_with_provider_forward_return_crosscheck",
+  "canonical_price_status": "akshare_sina_adjusted_close_primary_cross_provider_close_unresolved",
+  "canonical_return_status": "accepted_current_day_returns_with_forward_return_crosscheck_and_quarantine",
   "canonical_rows": 34543,
   "canonical_symbols": 41,
-  "constraint_breaches_detected": 1,
+  "constraint_breaches_detected": 3,
   "constraint_engine_non_actionable": true,
-  "constraints_implemented": 6,
+  "constraints_implemented": 13,
   "cost_scenarios_bps": [
     0,
     10,
@@ -22,7 +23,14 @@
   "current_holdings_mode": "research_reference_portfolio_mode",
   "dashboard_frontend_artifacts_created": false,
   "dqn_rl_outputs_created": false,
-  "fail_closed_cases": 1,
+  "effective_distinct_policies": 4,
+  "effective_policy_ids": [
+    "equal_weight",
+    "inverse_volatility",
+    "minimum_variance_diagonal",
+    "hrp_correlation_cluster"
+  ],
+  "fail_closed_cases": 3,
   "goal": "GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01",
   "historical_portfolio_returns_research_only": true,
   "holdout_design": "chronological_last_20pct_final_holdout",
@@ -48,18 +56,22 @@
     "equal_weight",
     "inverse_volatility",
     "minimum_variance_diagonal",
-    "equal_risk_contribution_diagonal"
+    "equal_risk_contribution_diagonal",
+    "hrp_correlation_cluster"
   ],
   "policy_selection_basis": "risk_first_not_return_optimized",
   "portfolio_risk_states": [
     "normal_risk_review_only"
   ],
+  "position_band_confidence_logic": "abstain_on_provider_discrepancy_history_constraint_regime_covariance_or_band_sensitivity",
   "position_band_validation_unlocked_by_this_goal": false,
   "position_bands_are_target_weights": false,
   "position_bands_generate_orders": false,
   "preferred_research_policy": "no_single_robust_winner",
   "production_outputs_created": false,
+  "provider_price_diagnostics_count": 1,
   "provider_reconciliation_status": "pass_with_material_discrepancy_quarantine",
+  "provider_return_diagnostics_count": 2,
   "providers_compared": [
     "baostock",
     "akshare_sina"
@@ -73,14 +85,15 @@
   "risk_contribution_status": "estimated_from_research_reference_portfolio",
   "risk_estimators_compared": 3,
   "status": "PASS_WITH_WARNINGS",
-  "symbols_abstained": 0,
-  "symbols_with_bands": 41,
+  "substantive_constraints": 7,
+  "symbols_abstained": 12,
+  "symbols_with_bands": 29,
   "target_weight_recommendations_created": false,
   "tokens_or_secrets_persisted": false,
   "trade_instructions_created": false,
   "trading_state": "locked_future",
   "walk_forward_design": "fixed_252_train_63_test_chronological_folds",
-  "warning_count": 2,
+  "warning_count": 5,
   "workflow_id": "goal_premarket_portfolio_risk_management01",
   "workflow_status_modified_by_this_goal": true
 }

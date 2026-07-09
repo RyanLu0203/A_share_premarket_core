@@ -1,2 +1,2 @@
-portfolio_id,asof_date,observations,historical_volatility,max_drawdown,var_95_daily,cvar_95_daily,tail_risk_status,research_only,not_trading_advice,not_for_execution
-research_reference_portfolio,2026-06-30,842,0.2143067911,-0.2775916142,-0.0191014337,-0.027051004,estimated_research_only,true,true,true
+portfolio_id,asof_date,observations,historical_volatility,beta_to_csi300,beta_observations,max_drawdown,var_95_daily,cvar_95_daily,tail_risk_status,research_only,not_trading_advice,not_for_execution
+research_reference_portfolio,2026-06-30,842,0.2143067911,1.1623355098,842,-0.2775916142,-0.0191014337,-0.027051004,estimated_research_only,true,true,true

@@ -27,3 +27,10 @@ equal_risk_contribution_diagonal,regime_unavailable_review_only,49,0.1667724926,
 equal_risk_contribution_diagonal,risk_off_high_vol_review_only,17,0.1186612796,-0.0076887171,sparse_regime_review_only,true,true,true
 equal_risk_contribution_diagonal,risk_on_high_vol_review_only,25,0.2113043419,0.0017555118,review_only_sufficient,true,true,true
 equal_risk_contribution_diagonal,risk_on_low_vol_review_only,2,0.0802152378,0.01258701,sparse_regime_review_only,true,true,true
+hrp_correlation_cluster,insufficient_composite_regime_evidence_review_only,19,0.1386385687,-0.001445327,sparse_regime_review_only,true,true,true
+hrp_correlation_cluster,liquidity_stress_review_only,19,0.1089186992,-0.0005522711,sparse_regime_review_only,true,true,true
+hrp_correlation_cluster,mixed_uncertain_review_only,38,0.1573415675,0.0023654614,review_only_sufficient,true,true,true
+hrp_correlation_cluster,regime_unavailable_review_only,49,0.1697587437,0.0000963214,review_only_sufficient,true,true,true
+hrp_correlation_cluster,risk_off_high_vol_review_only,17,0.1212535694,-0.0078950906,sparse_regime_review_only,true,true,true
+hrp_correlation_cluster,risk_on_high_vol_review_only,25,0.2119174739,0.0017945549,review_only_sufficient,true,true,true
+hrp_correlation_cluster,risk_on_low_vol_review_only,2,0.0785945577,0.0126318135,sparse_regime_review_only,true,true,true

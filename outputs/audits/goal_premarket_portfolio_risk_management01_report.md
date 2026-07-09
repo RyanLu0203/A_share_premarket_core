@@ -8,9 +8,9 @@ Status: `PASS_WITH_WARNINGS`
 - Major provider discrepancies quarantined: `6`
 - Canonical rows/symbols/dates: `34543` / `41` / `843`
 - Risk state: `normal_risk_review_only`
-- Policies evaluated: `equal_weight;inverse_volatility;minimum_variance_diagonal;equal_risk_contribution_diagonal`
+- Policies evaluated: `equal_weight;inverse_volatility;minimum_variance_diagonal;equal_risk_contribution_diagonal;hrp_correlation_cluster`
 - Preferred research policy: `no_single_robust_winner`
-- Symbols with bands / abstained: `41` / `0`
+- Symbols with bands / abstained: `29` / `12`
 
 ## Boundary
 

@@ -1,1 +1,13 @@
-asof_date,symbol,abstain,abstention_reason,research_only,not_trading_advice,not_for_execution
+asof_date,symbol,abstain,abstention_reason,confidence_score,research_only,not_trading_advice,not_for_execution
+2026-06-30,000157.SZ,true,unresolved_provider_discrepancy,0.82,true,true,true
+2026-06-30,000338.SZ,true,sparse_or_unstable_regime_evidence,0.7,true,true,true
+2026-06-30,000651.SZ,true,unresolved_provider_discrepancy,0.82,true,true,true
+2026-06-30,000725.SZ,true,sparse_or_unstable_regime_evidence,0.7,true,true,true
+2026-06-30,000895.SZ,true,unresolved_provider_discrepancy,0.82,true,true,true
+2026-06-30,000938.SZ,true,sparse_or_unstable_regime_evidence,0.7,true,true,true
+2026-06-30,002415.SZ,true,unresolved_provider_discrepancy,0.82,true,true,true
+2026-06-30,002812.SZ,true,sparse_or_unstable_regime_evidence;unresolved_provider_discrepancy,0.52,true,true,true
+2026-06-30,002821.SZ,true,sparse_or_unstable_regime_evidence,0.7,true,true,true
+2026-06-30,002916.SZ,true,sparse_or_unstable_regime_evidence,0.7,true,true,true
+2026-06-30,300033.SZ,true,sparse_or_unstable_regime_evidence;unresolved_provider_discrepancy;unstable_band_sensitivity,0.34,true,true,true
+2026-06-30,300502.SZ,true,sparse_or_unstable_regime_evidence;unstable_band_sensitivity,0.52,true,true,true

@@ -5,4 +5,9 @@ canonical_close,float,akshare_sina close unless quarantined,current_or_past_only
 canonical_return_1d,float,current-day close-to-close return,current_or_past_only,true,true,true
 canonical_price_status,enum,accepted or quarantined price status,current_or_past_only,true,true,true
 canonical_return_status,enum,accepted or quarantined return status,current_or_past_only,true,true,true
+adjustment_convention_status,enum,cross-provider adjustment convention remains unresolved where metadata is missing,current_or_past_only,true,true,true
+raw_adjusted_semantics,string,discloses adjusted-primary versus unavailable raw/unadjusted evidence,current_or_past_only,true,true,true
+timestamp_alignment_status,enum,trade-date alignment only; no intraday timestamp evidence,current_or_past_only,true,true,true
+suspension_status,enum,suspension handling limited by missing volume/suspension flags,current_or_past_only,true,true,true
+corporate_action_discontinuity_flag,bool,"large-return indicator only, not full corporate-action adjustment reconciliation",derived_without_future_returns,true,true,true
 risk_model_eligible,bool,eligible for research risk estimation,derived_without_future_returns,true,true,true

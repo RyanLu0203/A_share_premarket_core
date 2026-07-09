@@ -3,3 +3,4 @@ equal_weight,one_way_turnover_from_equal_weight_reference,0,bounded,true,true,tr
 inverse_volatility,one_way_turnover_from_equal_weight_reference,0.1123603208,bounded,true,true,true
 minimum_variance_diagonal,one_way_turnover_from_equal_weight_reference,0.216781557,bounded,true,true,true
 equal_risk_contribution_diagonal,one_way_turnover_from_equal_weight_reference,0.1123603208,bounded,true,true,true
+hrp_correlation_cluster,one_way_turnover_from_equal_weight_reference,0.1108731098,bounded,true,true,true

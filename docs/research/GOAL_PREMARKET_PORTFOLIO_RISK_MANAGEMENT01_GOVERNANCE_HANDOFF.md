@@ -6,7 +6,7 @@
 - trading state: locked_future
 - current holdings mode: research_reference_portfolio_mode
 - preferred research policy: no_single_robust_winner
-- symbols with bands: 41
-- symbols abstained: 0
+- symbols with bands: 29
+- symbols abstained: 12
 
 Do not treat these outputs as target weights, order instructions, recommendations, or position validation.
