@@ -1,0 +1,14 @@
+goal_id: GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
+workflow_id: goal_premarket_portfolio_risk_management01
+mode: research_only_portfolio_risk_position_management
+research_only: true
+not_trading_advice: true
+not_for_execution: true
+uses_committed_evidence_offline: true
+alpha_required: false
+recommendation_outputs_created: false
+orders_created: false
+broker_trading_outputs_created: false
+production_outputs_created: false
+local_lake_outputs_created: false
+dqn_rl_outputs_created: false

@@ -1,0 +1,5 @@
+constraint_id,evaluated_rows,breach_count,fail_closed_count,action_instruction,research_only,not_trading_advice,not_for_execution
+max_symbol_risk_contribution,41,0,0,none,true,true,true
+max_symbol_weight,41,0,0,none,true,true,true
+min_history_observations,41,0,0,none,true,true,true
+research_reference_only_without_holdings,1,1,1,none,true,true,true

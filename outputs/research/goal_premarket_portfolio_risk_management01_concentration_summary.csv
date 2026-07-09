@@ -1,0 +1,2 @@
+portfolio_id,asof_date,symbol_count,max_weight,hhi,effective_names,concentration_status,research_only,not_trading_advice,not_for_execution
+research_reference_portfolio,2026-06-30,41,0.0243902439,0.0243902439,41,diversified_reference,true,true,true

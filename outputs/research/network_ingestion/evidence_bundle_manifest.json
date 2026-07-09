@@ -6,9 +6,9 @@
     "akshare.stock_zh_index_daily": "credential_free_sina_index_daily_history"
   },
   "checksums": {
-    "daily_panel.csv": "2ef494e9e47dce3f61eb17488562bfeda494cb52a47295c569d718af49dd9acc",
-    "index_panel.csv": "86eb9107bfc5be5ccb4dd006020164322209b7f124713587a46351b5805e6c65",
-    "symbol_coverage.csv": "d8277353b47c0ef08dbdca42866a2782544e3f8e87bf57b13b1ec7d483b573b2"
+    "daily_panel.csv": "74f2cf3715a6e6aacd908c8efaae7ffb1ae9eb5f6e424592157ac3b8c5cdbc07",
+    "index_panel.csv": "a9ab8ad8fbdfc2dcc7b7d9441249e98800c053e2877877c08d6e9d53b1f5b13e",
+    "symbol_coverage.csv": "63d9d5261b45739b31158504fb96220067657df1287362906fb9eb54554fa636"
   },
   "daily_rows": 34543,
   "distinct_trade_dates": 843,

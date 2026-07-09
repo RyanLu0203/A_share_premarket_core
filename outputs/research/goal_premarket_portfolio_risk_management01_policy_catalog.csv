@@ -1,0 +1,5 @@
+policy_id,policy_family,definition,primary_objective,pre_specified,final_holdout_tuned,uses_alpha,research_only,not_trading_advice,not_for_execution
+equal_weight,diversification_baseline,equal weight over eligible canonical symbols,transparent diversification baseline,true,false,false,true,true,true
+inverse_volatility,risk_scaled_baseline,weight proportional to inverse trailing 60-day volatility,reduce concentration in volatile symbols,true,false,false,true,true,true
+minimum_variance_diagonal,minimum_variance_baseline,weight proportional to inverse trailing variance with no return forecast,lower ex-ante diagonal variance,true,false,false,true,true,true
+equal_risk_contribution_diagonal,risk_parity_baseline,diagonal equal-risk-contribution proxy using inverse volatility,equalize volatility-scaled risk contributions,true,false,false,true,true,true

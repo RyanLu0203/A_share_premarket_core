@@ -1,0 +1,6 @@
+field_name,required,description,missing_behavior
+asof_date,true,current holdings snapshot date supplied by owner if available,fail_closed_to_research_reference_portfolio_mode
+portfolio_id,true,owner-provided portfolio identifier,fail_closed_to_research_reference_portfolio_mode
+symbol,true,approved symbol identifier,row_rejected
+current_weight,true,"current portfolio weight, not a target",row_rejected
+market_value,false,optional current market value for diagnostics,weight_only_mode

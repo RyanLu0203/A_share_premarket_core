@@ -1,0 +1,4 @@
+metric,value,status,notes
+canonical_rows,34543,pass,all committed akshare_sina daily rows carried into canonical layer
+eligible_risk_rows,34496,pass,rows with current-or-past close and 1d return after provider quarantine
+eligible_symbols_min_history,41,pass,minimum_history=120

@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-08
+Last updated: 2026-07-09
 
 ## Codex Operating System Gate
 
@@ -9,7 +9,7 @@ onboarding and Git operating-system gate.
 
 - Authoritative remote branch: `project-current`.
 - Latest confirmed remote commit:
-  `fdffeb365066be2c5482671e18d4c67e958f3020`.
+  `6b9fbab29a2ca49703d46fc8360f8bb9e8917120`.
 - Remote checkpoint branch: `checkpoint/arch03-stable-310559`.
 - Remote checkpoint tag: `checkpoint-arch03-stable-310559`.
 - Stable checkpoint commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
@@ -38,6 +38,35 @@ onboarding and Git operating-system gate.
   GitHub repository code, docs, configs, committed outputs/audits, and remote
   branches/tags. It must not rely on local Mac paths, local bundles, local
   provider caches, local-lake data, or uncommitted local state.
+
+## GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
+
+GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01 is implemented as a bounded
+research-only portfolio risk and position-management track over committed
+expanded evidence.
+
+- Status: `PASS_WITH_WARNINGS`.
+- Provider reconciliation: 4,910 baostock/akshare-sina overlap rows checked;
+  six material discrepancies were quarantined from risk-model fitting.
+- Canonical risk dataset: 34,543 canonical rows, 843 dates, 41 symbols,
+  34,496 eligible risk rows, and three index context series.
+- Current holdings mode: no real current holdings snapshot was supplied; the
+  system runs in `research_reference_portfolio_mode` and does not fabricate
+  holdings.
+- Risk state: `normal_risk_review_only` for the research reference portfolio.
+- Constraint engine: six non-actionable research constraints implemented, with
+  current-holdings-missing fail-closed behavior.
+- Policies compared: `equal_weight`, `inverse_volatility`,
+  `minimum_variance_diagonal`, and `equal_risk_contribution_diagonal` under
+  chronological walk-forward, final holdout, bounded cost, turnover, and regime
+  stability diagnostics.
+- Preferred policy outcome: `no_single_robust_winner`; `inverse_volatility` is
+  used only as a conservative research band reference.
+- Position-band output: 41 symbols have research-only acceptable risk bands,
+  zero target weights, zero order instructions, and zero recommendation output.
+- Ready factor count remains `0`; GOAL-REC-TIERING-01, GOAL-10B.4, position
+  validation, GOAL-10D, dashboard/frontend, trading, broker, production,
+  portfolio backtest, local-lake, factor-mining, and DQN/RL remain locked.
 
 ## GOAL-FACTOR-READINESS-RERUN-02
 

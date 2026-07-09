@@ -1,0 +1,5 @@
+policy_id,annualized_volatility,max_drawdown,var_95_daily,cvar_95_daily,risk_first_rank_input,research_only,not_trading_advice,not_for_execution
+equal_weight,0.1757183119,-0.103551211,-0.019623829,-0.0251824963,volatility;drawdown;cvar;turnover,true,true,true
+inverse_volatility,0.1639147655,-0.0983988665,-0.0162780887,-0.0232822586,volatility;drawdown;cvar;turnover,true,true,true
+minimum_variance_diagonal,0.1543562621,-0.0990639863,-0.0160915272,-0.0215942737,volatility;drawdown;cvar;turnover,true,true,true
+equal_risk_contribution_diagonal,0.1639147655,-0.0983988665,-0.0162780887,-0.0232822586,volatility;drawdown;cvar;turnover,true,true,true

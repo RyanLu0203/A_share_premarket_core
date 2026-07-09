@@ -1,0 +1,4 @@
+estimator_id,lookback_days,symbol_count,average_daily_volatility,max_daily_volatility,selection_role,notes,research_only,not_trading_advice,not_for_execution
+historical_volatility_20d,20,41,0.0295001923,0.0535872121,input_diagnostic_not_holdout_optimized,short horizon volatility,true,true,true
+historical_volatility_60d,60,41,0.0263695171,0.0490849358,input_diagnostic_not_holdout_optimized,medium horizon volatility,true,true,true
+ewma_volatility_lambda_0_94,120,41,0.0299239491,0.052827354,input_diagnostic_not_holdout_optimized,bounded ewma-style volatility proxy,true,true,true

@@ -1,0 +1,3 @@
+warning_code,scope,count,detail
+MATERIAL_PROVIDER_DISCREPANCIES_QUARANTINED,phase1_provider_reconciliation,6,material baostock/akshare-sina forward-return differences excluded from risk fitting
+NO_SINGLE_ROBUST_POLICY_WINNER,phase4_policy_selection,1,top risk-first policy scores are close; band reference remains conservative research-only

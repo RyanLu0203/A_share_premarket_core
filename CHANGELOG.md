@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-09 - GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01 Research Portfolio Risk Track
+
+- Added an integrated research-only premarket portfolio risk and position-band
+  management track over committed expanded evidence.
+- Reconciled overlapping baostock and akshare/sina return evidence, using
+  akshare/sina as canonical risk data while quarantining six material provider
+  discrepancies from risk-model fitting.
+- Built canonical market-data, optional current-holdings input, research
+  reference portfolio, risk-estimator, covariance-quality, risk-state,
+  risk-contribution, concentration, correlation-cluster, and tail-risk
+  artifacts.
+- Added a non-actionable position constraint engine and compared fixed
+  equal-weight, inverse-volatility, diagonal minimum-variance, and diagonal
+  equal-risk-contribution policies with chronological walk-forward, holdout,
+  turnover, bounded cost, and regime-stability diagnostics.
+- Produced research-only acceptable position-band diagnostics for 41 symbols
+  without target weights, order instructions, recommendations, trading,
+  production, broker, local-lake, factor-mining, or DQN/RL outputs.
+- Recorded `PASS_WITH_WARNINGS`: no single robust policy winner, provider
+  discrepancies quarantined, `ready_factor_count = 0`, and RecTiering remains
+  locked.
+
 ## 2026-07-08 - GOAL-FACTOR-READINESS-RERUN-02 Expanded Evidence Readiness Rerun
 
 - Added a research-only expanded-evidence factor-readiness rerun over the

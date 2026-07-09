@@ -1,0 +1,7 @@
+constraint_id,constraint_family,scope,description,threshold,actionability,research_only,not_trading_advice,not_for_execution
+max_symbol_weight,research_position_risk_constraint,symbol,single-name exposure must not exceed 10%,<=0.10,non_actionable_no_order_instruction,true,true,true
+max_symbol_risk_contribution,research_position_risk_constraint,symbol,single-name diagonal risk contribution must not exceed 20%,<=0.20,non_actionable_no_order_instruction,true,true,true
+min_history_observations,research_position_risk_constraint,symbol,symbol must have at least 120 eligible return observations,>=120,non_actionable_no_order_instruction,true,true,true
+quarantined_rows_excluded,research_position_risk_constraint,dataset,provider-quarantined rows must be excluded from risk fitting,true,non_actionable_no_order_instruction,true,true,true
+research_reference_only_without_holdings,research_position_risk_constraint,portfolio,no current holdings may be fabricated,current_holdings_supplied=false,non_actionable_no_order_instruction,true,true,true
+no_action_instruction,research_position_risk_constraint,portfolio,constraint engine cannot emit trade instructions,action_instruction=none,non_actionable_no_order_instruction,true,true,true

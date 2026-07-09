@@ -1,0 +1,2 @@
+portfolio_id,asof_date,risk_state,state_machine_version,decision_rule_trace,current_holdings_mode,buy_sell_hold_generated,research_only,not_trading_advice,not_for_execution
+research_reference_portfolio,2026-06-30,normal_risk_review_only,fixed_v1,current_60d_vol=0.0122098334;p75=0.0137057851;p90=0.0156938187;csi300_20d_return=0.00794867;rules=fixed_quantile_volatility_thresholds,research_reference_portfolio_mode,false,true,true,true
