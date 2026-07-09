@@ -1,0 +1,35 @@
+{
+  "asof_ts": "2026-06-30T08:30:00+08:00",
+  "checksums": {
+    "abstention_summary.csv": "f6a5b1e5dc648cee2aa73531c768612a5864c63c8602ded7c183415e79f20bdf",
+    "constraint_evaluation.csv": "58fd2dcb6c6671252410812296f52c29ab09354f76eaa018237f45e1cb108378",
+    "data_readiness.csv": "f5b96daa9386d3368fc86e094dacb1d412201b7f72c7fed71b65c03b6ba4d033",
+    "exposure_envelope.csv": "307ecffba7a1beccc0571f80dd2e186953d18458bd33f250ff9ee5f01597ac38",
+    "manifest.json": "ed79be17d3a4a731e871122328ac64466cacde70c417f19ec1eaf1d63a72bdff",
+    "operational_run_summary.csv": "f1ee892b3bdbba022550161e4152314ceb3fa62eeba9ffc468dedea94614a212",
+    "portfolio_risk_state.csv": "7ef37fb4871b0f2049285250102a62b13f9cd0ff840d809725b84fca936a4243",
+    "position_band_status.csv": "f29cc83e32a68a339abae9fa75a17e3c15f598e5c1e34487463f7dd8903ca262",
+    "warnings.csv": "5d53592883c29ad28c7351ef819762e6cb3c1cf62e88346bc761429eb9e9a8ec"
+  },
+  "code_commit": "tracked_snapshot_is_deterministic;runtime_git_head_verified_by_validation",
+  "config_hash": "681ae99fe8253f148e2de6811a507483a5612b358615f098b806c1b26fd76e8a",
+  "data_cutoff": "2026-06-30",
+  "generated_at": "2026-06-30T08:30:00+08:00",
+  "goal": "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01",
+  "holdings_mode": "research_reference_portfolio",
+  "holdings_snapshot_id": "research_reference_portfolio_2026-06-30",
+  "immutable_write_policy": "refuse_conflicting_snapshot_overwrite",
+  "pit_status": "passed_current_or_past_only",
+  "provider_lineage": [
+    "baostock",
+    "akshare_sina"
+  ],
+  "readiness_state": "READY_WITH_WARNINGS",
+  "snapshot_date": "2026-06-30",
+  "source_lineage": [
+    "GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01",
+    "network_ingestion_daily_panel",
+    "network_ingestion_index_panel",
+    "regime_label_research02"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "latest_pointer_policy": "points_to_latest_validated_snapshot_without_rewriting_history",
+  "snapshot_date": "2026-06-30",
+  "snapshot_manifest_checksum": "ed79be17d3a4a731e871122328ac64466cacde70c417f19ec1eaf1d63a72bdff",
+  "snapshot_manifest_path": "outputs/research/premarket_position_management/2026-06-30/manifest.json"
+}

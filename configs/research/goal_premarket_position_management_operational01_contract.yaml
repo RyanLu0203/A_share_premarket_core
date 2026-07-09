@@ -1,0 +1,12 @@
+goal_id: GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01
+workflow_id: goal_premarket_position_management_operational01
+mode: read_only_premarket_position_management_decision_support
+depends_on: GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
+read_only: true
+broker_connection: false
+orders_created: false
+buy_sell_hold_labels: false
+target_prices: false
+recommendation_tiering: false
+issue10: false
+dqn_rl: false
