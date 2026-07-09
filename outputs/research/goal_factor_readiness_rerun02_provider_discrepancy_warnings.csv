@@ -1,0 +1,7 @@
+warning_code,symbol,trade_date,metric,old_value,new_value,abs_diff,threshold,detail
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,300033.SZ,2026-04-09,forward_return_1d,-0.257660348,0.0567903516,0.3144506996,0.02,baostock and akshare_sina overlap return differs materially
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,002812.SZ,2025-11-28,forward_return_1d,0,-0.0999096658,0.0999096658,0.02,baostock and akshare_sina overlap return differs materially
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,000895.SZ,2026-04-28,forward_return_1d,-0.0508591065,-0.0240282686,0.0268308379,0.02,baostock and akshare_sina overlap return differs materially
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,000651.SZ,2026-01-22,forward_return_1d,-0.0347613219,-0.0105395232,0.0242217987,0.02,baostock and akshare_sina overlap return differs materially
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,000157.SZ,2026-01-08,forward_return_1d,0.0046893318,0.0288115246,0.0241221928,0.02,baostock and akshare_sina overlap return differs materially
+PROVIDER_RETURN_DISCREPANCY_GT_2PCT,002415.SZ,2026-05-19,forward_return_1d,-0.0248651887,-0.0024517315,0.0224134572,0.02,baostock and akshare_sina overlap return differs materially

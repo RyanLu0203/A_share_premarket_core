@@ -1,0 +1,5 @@
+gap_dimension,current_state,binding_constraint,impact,next_legitimate_action
+symbol_breadth,41_acquired_of_50_attempted,provider_gaps,failed symbols reduce independent evidence breadth,new committed provider retry bundle; no silent imputation
+feature_coverage,volume_absent,feature_insufficiency,price-volume factor cannot be reconstructed,commit PIT-safe volume evidence
+provider_robustness,pass_with_discrepancy_warnings,provider_discrepancy,large overlap discrepancies require review before promotion,investigate adjusted-price convention differences
+readiness,ready_factor_count_after_0,signal_weakness_or_instability,RecTiering dependency not scientifically satisfied,"more evidence or better pre-specified features, without lowering thresholds"

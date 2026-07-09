@@ -1,0 +1,7 @@
+regime_label,old_date_count,new_date_count,new_share,imbalance_status,reconstruction_status,limitation
+insufficient_composite_regime_evidence_review_only,19,20,0.023725,sparse,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.
+liquidity_stress_review_only,19,0,0,sparse,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.
+mixed_uncertain_review_only,38,233,0.276394,usable,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.
+risk_off_high_vol_review_only,17,197,0.233689,usable,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.
+risk_on_high_vol_review_only,25,183,0.217082,usable,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.
+risk_on_low_vol_review_only,2,210,0.24911,usable,rebuilt_from_index_context_pit_safe,Regime02 exact sector/liquidity inputs are not all in network bundle; index-context reconstruction is disclosed.

@@ -1,0 +1,5 @@
+metric,old_value,new_value,change_class,notes
+panel_rows,180000,1036290,expanded_after_factor_lineage_replication,New panel rows are reconstructed from network daily rows across fixed source factors and old refinement lineage strata.
+dates,120,843,materially_expanded_committed_network_bundle,Strict chronological validation uses the expanded date range.
+symbols,50,41,network_acquired_subset_of_governed_universe,Failed network symbols remain disclosed and are not silently dropped.
+source_relation,goal_quant_research03_refined_evaluation_panel_parts,outputs/research/network_ingestion/daily_panel.csv,materially_expanded_committed_network_bundle,Rerun does not mechanically reuse old 120-date panel as its evaluation panel.

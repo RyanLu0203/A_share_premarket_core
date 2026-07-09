@@ -1,0 +1,10 @@
+index_id,index_name,context_feature,target_horizon,dates_evaluated,date_level_correlation,sign_consistency,contribution_status,no_target_tuning
+sh000001,sse_composite,index_return_5d,1d_equal_weight_symbol_return,837,0.0344198187,0.497013,weak_or_unstable_context,true
+sh000001,sse_composite,index_return_20d,1d_equal_weight_symbol_return,822,-0.0273562892,0.484185,weak_or_unstable_context,true
+sh000001,sse_composite,index_volatility_20d,1d_equal_weight_symbol_return,823,0.0759900807,0.489672,weak_or_unstable_context,true
+sh000300,csi300,index_return_5d,1d_equal_weight_symbol_return,837,0.0461982558,0.489845,weak_or_unstable_context,true
+sh000300,csi300,index_return_20d,1d_equal_weight_symbol_return,822,-0.0136725813,0.498783,weak_or_unstable_context,true
+sh000300,csi300,index_volatility_20d,1d_equal_weight_symbol_return,823,0.0605733391,0.489672,weak_or_unstable_context,true
+sz399001,szse_component,index_return_5d,1d_equal_weight_symbol_return,837,0.0191665765,0.501792,weak_or_unstable_context,true
+sz399001,szse_component,index_return_20d,1d_equal_weight_symbol_return,822,-0.0075648607,0.497567,weak_or_unstable_context,true
+sz399001,szse_component,index_volatility_20d,1d_equal_weight_symbol_return,823,0.0673556438,0.489672,weak_or_unstable_context,true

@@ -1,0 +1,14 @@
+goal_id: GOAL-FACTOR-READINESS-RERUN-02
+workflow_id: goal_factor_readiness_rerun02_expanded_evidence_readiness_rerun
+mode: research_only_expanded_evidence_factor_readiness_rerun
+research_only: true
+uses_committed_network_bundle_offline: true
+modifies_workflow_status: false
+modifies_locked_capabilities: false
+unlocks_goal_rec_tiering01: false
+lowers_existing_thresholds: false
+fabricates_ready_status: false
+strong_ic_threshold: 0.03
+min_valid_rows: 500
+min_holdout_valid_rows: 500
+holdout_fraction: 0.2

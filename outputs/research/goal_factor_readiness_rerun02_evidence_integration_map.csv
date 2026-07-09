@@ -1,0 +1,8 @@
+dimension,old_state,new_state,overlap_state,change_class,new_context_fields_consumed,disclosure
+date_coverage,120_dates,843_dates,old_dates_subset_compared_by_symbol_date_where_available,materially_expanded,,"New evaluation consumes committed network daily_panel.csv, not the old-only panel."
+date_extension,2025-11-19..2026-05-21,2023-01-03..2026-06-30,partial_overlap,deeper_history,,Index panel extends beyond daily stock panel but evaluation dates are bounded to stock daily dates.
+symbol_overlap,50_symbols,41_acquired_symbols,41_symbols_with_new_rows,same_governed_universe_with_failed_network_symbols_disclosed,,Nine attempted symbols lacked independent network history and are retained in warnings/gaps.
+symbol_fetch_failures,not_applicable_old_baostock_panel,9_failed_or_empty_retained,41_acquired,missing_independent_evidence_disclosed,,000001.SZ;000538.SZ;000776.SZ;002271.SZ;002304.SZ;002459.SZ;002475.SZ;300014.SZ;300124.SZ
+provider_lineage,baostock_committed_provider02b,akshare_sina_plus_baostock_crosscheck,symbol_trade_date_forward_return_overlap_used_for_robustness,provider_diversity_expanded,,akshare_sina
+index_context_availability,limited_benchmark_context,3_index_series,sh000001;sh000300;sz399001,new_index_context_consumed,index_return_5d;index_return_20d;index_volatility_20d;market_relative_return_20d,CSI300/SSE/SZSE index fields are used only with fixed trailing transforms.
+network_rows,180000,34543,new_rows_are_raw_symbol_date_observations_before_factor_replication,materially_expanded_committed_network_bundle,close;return_1d;index_panel,Forward returns are reconstructed only in evaluation target structures.

@@ -1,0 +1,6 @@
+warning_code,scope,count,detail
+FAILED_NETWORK_SYMBOLS_RETAINED,symbol_coverage,9,000001.SZ;000538.SZ;000776.SZ;002271.SZ;002304.SZ;002459.SZ;002475.SZ;300014.SZ;300124.SZ
+PRICE_VOLUME_FACTOR_BLOCKED,feature_reconstruction,1,"alpha_price_volume_confirmation_5d requires volume, which is absent from the committed network bundle."
+PROVIDER_DISCREPANCIES_PRESENT,provider_robustness,6,See provider_discrepancy_warnings.csv.
+INDEX_CONTEXT_WEAK_OR_UNSTABLE,index_context,9,Index context is consumed but not assumed useful.
+NO_READY_FACTOR_AFTER_EXPANDED_RERUN,readiness_decision,1,RecTiering remains locked_future.

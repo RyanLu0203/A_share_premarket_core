@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-08 - GOAL-FACTOR-READINESS-RERUN-02 Expanded Evidence Readiness Rerun
+
+- Added a research-only expanded-evidence factor-readiness rerun over the
+  committed GOAL-NETWORK-EVIDENCE-INGESTION-01 bundle.
+- Validated bundle checksums and consumed 34,543 `akshare_sina` daily rows,
+  843 stock trading dates, 41 acquired symbols out of 50 attempted symbols,
+  and three index context series.
+- Reconstructed fixed-window source-factor evidence from the new daily/index
+  bundle, isolated forward returns in evaluation-only target structures, and
+  preserved existing Readiness01 thresholds and anti-overfitting rules.
+- Added evidence integration, old/new panel comparison, reconstructed panel
+  summary, feature lineage, target contract, extended regime coverage,
+  walk-forward and holdout validation, old/new readiness comparison, provider
+  robustness, index contribution, anti-overfitting, remaining-gap, warning,
+  report, manifest, audit, handoff, contract, scripts, and tests.
+- Recorded `PASS_WITH_WARNINGS`: 120 candidates evaluated, all `not_ready`,
+  `ready_factor_count_before = 0`, and `ready_factor_count_after = 0`.
+- Kept GOAL-REC-TIERING-01, GOAL-10B.4, position validation, GOAL-10D,
+  dashboards, trading, production, broker, local-lake, factor-mining, and
+  DQN/RL locked.
+
 ## 2026-06-30 - GOAL-CODEX-OPERATING-SYSTEM-01 Remote Windows GitHub-Only Governance Gate
 
 - Added the governance-only remote Windows GitHub-only Codex Max

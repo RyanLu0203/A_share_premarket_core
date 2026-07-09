@@ -1,0 +1,2 @@
+check_id,scope,overlap_rows,mean_abs_diff,max_abs_diff,missingness_difference,timestamp_alignment,provider_specific_fragility,status,notes
+baostock_akshare_overlap_return_consistency,old_baostock_forward_return_1d_vs_new_akshare_sina_target_1d,4910,0.0002080177,0.3144506996,1090,symbol_trade_date_exact_overlap,fragile_large_discrepancy_present,pass_with_discrepancy_warnings,"Provider independence is a robustness check, not a correctness guarantee."
