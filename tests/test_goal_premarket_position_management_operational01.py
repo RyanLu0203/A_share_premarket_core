@@ -167,9 +167,13 @@ def test_daily_readiness_gate_surfaces_freshness_pit_quarantine_and_holdings_sta
 
     rows = {row["check_id"]: row for row in _rows(PREFIX + "daily_data_readiness.csv")}
     assert set(rows) >= {
-        "trading_date",
-        "previous_trading_date",
-        "asof_timestamp",
+        "execution_mode",
+        "execution_time",
+        "target_trading_date",
+        "expected_previous_trading_date",
+        "decision_asof_timestamp",
+        "data_cutoff",
+        "latest_available_canonical_date",
         "source_freshness",
         "provider_availability",
         "provider_discrepancy_state",
@@ -182,7 +186,12 @@ def test_daily_readiness_gate_surfaces_freshness_pit_quarantine_and_holdings_sta
         "missingness",
         "quarantine_impact",
     }
-    assert rows["source_freshness"]["state"] in {"READY", "READY_WITH_WARNINGS"}
+    assert rows["execution_mode"]["current_value"] == "deterministic_replay"
+    assert rows["target_trading_date"]["current_value"] == "2026-07-01"
+    assert rows["expected_previous_trading_date"]["current_value"] == "2026-06-30"
+    assert rows["data_cutoff"]["current_value"] == "2026-06-30"
+    assert rows["latest_available_canonical_date"]["current_value"] == "2026-06-30"
+    assert rows["source_freshness"]["state"] == "READY"
     assert rows["holdings_snapshot_freshness"]["state"] == "READY_WITH_WARNINGS"
     assert rows["holdings_snapshot_validity"]["state"] == "READY"
     assert rows["provider_discrepancy_state"]["state"] == "READY_WITH_WARNINGS"
@@ -191,10 +200,29 @@ def test_daily_readiness_gate_surfaces_freshness_pit_quarantine_and_holdings_sta
 
 def test_invalid_owner_holdings_snapshot_blocks_readiness_and_manifest_status() -> None:
     module = _module()
+    context = {
+        "execution_mode": "daily_operational",
+        "timezone": "Asia/Shanghai",
+        "execution_time": "2026-07-01T08:00:00+08:00",
+        "execution_date": "2026-07-01",
+        "generated_at": "2026-07-01T08:00:00+08:00",
+        "decision_asof_ts": "2026-07-01T08:30:00+08:00",
+        "target_trading_date": "2026-07-01",
+        "expected_previous_trading_date": "2026-06-30",
+        "data_cutoff": "2026-06-30",
+    }
+    freshness = {
+        "state": "READY",
+        "freshness_code": "FRESH_T_MINUS_ONE_DATA",
+        "latest_available_canonical_date": "2026-06-30",
+        "target_trading_date": "2026-07-01",
+        "expected_previous_trading_date": "2026-06-30",
+        "data_cutoff": "2026-06-30",
+        "execution_mode": "daily_operational",
+    }
     rows, state = module._data_readiness_rows(
-        trading_date="2026-06-30",
-        previous_trading_date="2026-06-29",
-        asof_ts="2026-06-30T08:30:00+08:00",
+        context=context,
+        freshness=freshness,
         canonical=[
             {
                 "trade_date": "2026-06-30",
@@ -221,8 +249,8 @@ def test_invalid_owner_holdings_snapshot_blocks_readiness_and_manifest_status() 
 
     manifest = module._manifest(
         predecessor_manifest={"status": "PASS_WITH_WARNINGS", "ready_factor_count": 0},
-        trading_date="2026-06-30",
-        asof_ts="2026-06-30T08:30:00+08:00",
+        context=context,
+        freshness=freshness,
         readiness_state="BLOCKED",
         holdings={
             "mode": "invalid_holdings_snapshot_fail_closed",
@@ -301,6 +329,13 @@ def test_exposure_envelope_immutable_snapshot_console_and_deterministic_replay()
 
     snapshot_manifest = json.loads((ROOT / (PREFIX + "immutable_snapshot_manifest.json")).read_text(encoding="utf-8"))
     snapshot_date = snapshot_manifest["snapshot_date"]
+    assert snapshot_manifest["execution_mode"] == "deterministic_replay"
+    assert snapshot_manifest["target_trading_date"] == "2026-07-01"
+    assert snapshot_manifest["expected_previous_trading_date"] == "2026-06-30"
+    assert snapshot_manifest["data_cutoff"] == "2026-06-30"
+    assert snapshot_manifest["latest_available_data_date"] == "2026-06-30"
+    assert snapshot_manifest["decision_asof_ts"] == "2026-07-01T08:30:00+08:00"
+    assert snapshot_manifest["generated_at"] == snapshot_manifest["decision_asof_ts"]
     snapshot_dir = ROOT / SNAPSHOT_ROOT / snapshot_date
     for name in [
         "manifest.json",

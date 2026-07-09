@@ -2,6 +2,11 @@ goal_id: GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01
 workflow_id: goal_premarket_position_management_operational01
 mode: read_only_premarket_position_management_decision_support
 depends_on: GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
+execution_modes: [daily_operational, deterministic_replay]
+timezone: Asia/Shanghai
+daily_operational_generated_at: actual_execution_time
+deterministic_replay_requires: replay_date
+freshness_rule: latest_available_canonical_date_must_equal_expected_previous_trading_date
 read_only: true
 broker_connection: false
 orders_created: false

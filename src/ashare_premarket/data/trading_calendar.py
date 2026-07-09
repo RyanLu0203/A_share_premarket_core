@@ -24,3 +24,18 @@ def next_trading_day(root: Path, value: str) -> str:
         if candidate > current and row["is_trading_day"] == "true":
             return row["date"]
     raise ValueError(f"No next trading day configured after {value}")
+
+
+def previous_trading_day(root: Path, value: str) -> str:
+    current = date.fromisoformat(value)
+    for row in reversed(trading_calendar(root)):
+        candidate = date.fromisoformat(row["date"])
+        if candidate < current and row["is_trading_day"] == "true":
+            return row["date"]
+    raise ValueError(f"No previous trading day configured before {value}")
+
+
+def resolve_target_trading_day(root: Path, execution_date: str) -> str:
+    if is_trading_day(root, execution_date):
+        return execution_date
+    return next_trading_day(root, execution_date)

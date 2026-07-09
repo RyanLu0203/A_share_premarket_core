@@ -6,9 +6,12 @@ import io
 import json
 import math
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from ashare_premarket.core.io import read_csv, write_csv
+from ashare_premarket.data.trading_calendar import previous_trading_day, resolve_target_trading_day
 
 GOAL_ID = "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01"
 PREDECESSOR_GOAL_ID = "GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01"
@@ -17,6 +20,10 @@ MODE = "read_only_premarket_position_management_decision_support"
 PASS = "PASS"
 PASS_WITH_WARNINGS = "PASS_WITH_WARNINGS"
 BLOCKED = "BLOCKED"
+READY = "READY"
+READY_WITH_WARNINGS = "READY_WITH_WARNINGS"
+TZ_NAME = "Asia/Shanghai"
+DEFAULT_REPLAY_TARGET_TRADING_DATE = "2026-07-01"
 
 PR_PREFIX = "outputs/research/goal_premarket_portfolio_risk_management01_"
 PR_MANIFEST = "outputs/audits/goal_premarket_portfolio_risk_management01_manifest.json"
@@ -115,20 +122,90 @@ def write_json(path: Path, payload: dict[str, object]) -> None:
     write_text(path, json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
-def run_goal_premarket_position_management_operational01(root: Path, print_summary: bool = False) -> bool:
-    result = _build(root)
+def resolve_run_context(
+    root: Path,
+    execution_time: str | None = None,
+    target_trading_date: str | None = None,
+    replay_date: str | None = None,
+) -> dict[str, str]:
+    if replay_date and execution_time:
+        raise ValueError("replay_date and execution_time cannot both be supplied")
+    if replay_date and target_trading_date and replay_date != target_trading_date:
+        raise ValueError("replay_date must match target_trading_date when both are supplied")
+
+    if replay_date:
+        target = replay_date
+        execution_mode = "deterministic_replay"
+        execution_dt = _parse_execution_time(f"{target}T08:30:00+08:00")
+    else:
+        execution_mode = "daily_operational"
+        execution_dt = _parse_execution_time(execution_time) if execution_time else datetime.now(ZoneInfo(TZ_NAME))
+        target = target_trading_date or resolve_target_trading_day(root, execution_dt.date().isoformat())
+
+    expected_previous = previous_trading_day(root, target)
+    decision_asof_ts = f"{target}T08:30:00+08:00"
+    generated_at = decision_asof_ts if execution_mode == "deterministic_replay" else _iso_seconds(execution_dt)
+    return {
+        "execution_mode": execution_mode,
+        "timezone": TZ_NAME,
+        "execution_time": _iso_seconds(execution_dt),
+        "execution_date": execution_dt.date().isoformat(),
+        "generated_at": generated_at,
+        "decision_asof_ts": decision_asof_ts,
+        "target_trading_date": target,
+        "expected_previous_trading_date": expected_previous,
+        "data_cutoff": expected_previous,
+    }
+
+
+def evaluate_canonical_freshness(canonical_dates: list[str], context: dict[str, str]) -> dict[str, str]:
+    latest = max(canonical_dates) if canonical_dates else ""
+    expected = context["expected_previous_trading_date"]
+    if not latest:
+        state = BLOCKED
+        code = "NO_CANONICAL_DATA"
+    elif latest == expected:
+        state = READY
+        code = "FRESH_T_MINUS_ONE_DATA"
+    elif latest < expected:
+        state = BLOCKED
+        code = "STALE_SOURCE_DATA"
+    else:
+        state = BLOCKED
+        code = "FUTURE_DATA_AFTER_PIT_CUTOFF"
+    return {
+        "state": state,
+        "freshness_code": code,
+        "latest_available_canonical_date": latest,
+        "target_trading_date": context["target_trading_date"],
+        "expected_previous_trading_date": expected,
+        "data_cutoff": context["data_cutoff"],
+        "execution_mode": context["execution_mode"],
+    }
+
+
+def run_goal_premarket_position_management_operational01(
+    root: Path,
+    print_summary: bool = False,
+    execution_time: str | None = None,
+    target_trading_date: str | None = None,
+    replay_date: str | None = DEFAULT_REPLAY_TARGET_TRADING_DATE,
+) -> bool:
+    result = _build(root, execution_time=execution_time, target_trading_date=target_trading_date, replay_date=replay_date)
     _write_outputs(root, result)
     if print_summary:
         summary = result["run_summary"][0]
         print(
             "Premarket position management: "
-            f"{summary['daily_readiness_state']} | "
+            f"{summary['daily_readiness_state']} | mode={summary['execution_mode']} | "
+            f"target={summary['target_trading_date']} | cutoff={summary['data_cutoff']} | "
+            f"latest={summary['latest_available_canonical_date']} | freshness={summary['freshness_code']} | "
             f"bands within/above/below/abstain="
             f"{summary['symbols_within_band']}/{summary['symbols_above_band']}/"
             f"{summary['symbols_below_band']}/{summary['symbols_abstained']} | "
             "orders=none"
         )
-    return result["manifest"]["status"] in {PASS, PASS_WITH_WARNINGS}
+    return result["manifest"]["status"] in {PASS, PASS_WITH_WARNINGS, BLOCKED}
 
 
 def audit_goal_premarket_position_management_operational01(root: Path) -> bool:
@@ -162,6 +239,24 @@ def audit_goal_premarket_position_management_operational01(root: Path) -> bool:
     if console_path.exists() and _contains_forbidden_operational_text(console_path.read_text(encoding="utf-8")):
         failures.append("forbidden_console_text")
     snapshot_manifest = _read_json_if_exists(root / IMMUTABLE_SNAPSHOT_MANIFEST)
+    for key in [
+        "snapshot_date",
+        "target_trading_date",
+        "expected_previous_trading_date",
+        "data_cutoff",
+        "latest_available_data_date",
+        "decision_asof_ts",
+        "generated_at",
+        "execution_mode",
+    ]:
+        if not snapshot_manifest.get(key):
+            failures.append(f"snapshot_metadata_missing:{key}")
+    if snapshot_manifest.get("execution_mode") not in {"daily_operational", "deterministic_replay"}:
+        failures.append("invalid_execution_mode")
+    if snapshot_manifest.get("execution_mode") == "daily_operational" and snapshot_manifest.get("generated_at") == snapshot_manifest.get("decision_asof_ts"):
+        failures.append("daily_generated_at_not_actual_execution_time")
+    if snapshot_manifest.get("data_cutoff") != snapshot_manifest.get("expected_previous_trading_date"):
+        failures.append("data_cutoff_not_expected_previous_trading_date")
     snapshot_date = str(snapshot_manifest.get("snapshot_date", ""))
     if snapshot_date:
         snapshot_dir = root / SNAPSHOT_ROOT / snapshot_date
@@ -225,7 +320,12 @@ def validate_holdings_snapshot(
     return {"valid": not errors, "errors": sorted(errors), "warnings": sorted(warnings)}
 
 
-def _build(root: Path) -> dict[str, object]:
+def _build(
+    root: Path,
+    execution_time: str | None = None,
+    target_trading_date: str | None = None,
+    replay_date: str | None = DEFAULT_REPLAY_TARGET_TRADING_DATE,
+) -> dict[str, object]:
     predecessor_manifest = _read_json_if_exists(root / PR_MANIFEST)
     canonical = read_csv(root / PR_CANONICAL)
     risk_state = read_csv(root / PR_RISK_STATE)[0]
@@ -246,17 +346,19 @@ def _build(root: Path) -> dict[str, object]:
     index_rows = read_csv(root / INDEX_PANEL) if (root / INDEX_PANEL).exists() else []
 
     dates = sorted({row["trade_date"] for row in canonical})
-    trading_date = dates[-1]
-    previous_trading_date = dates[-2] if len(dates) > 1 else trading_date
-    asof_ts = f"{trading_date}T08:30:00+08:00"
-    generated_at = asof_ts
+    context = resolve_run_context(root, execution_time=execution_time, target_trading_date=target_trading_date, replay_date=replay_date)
+    freshness = evaluate_canonical_freshness(dates, context)
+    trading_date = context["target_trading_date"]
+    previous_trading_date = context["expected_previous_trading_date"]
+    data_cutoff = context["data_cutoff"]
+    asof_ts = context["decision_asof_ts"]
+    generated_at = context["generated_at"]
     allowed_symbols = {row["symbol"] for row in reference}
     holdings = _load_holdings(root, reference, allowed_symbols, previous_trading_date, asof_ts)
-    latest_regime = _latest_regime(regime_rows, trading_date)
+    latest_regime = _latest_regime(regime_rows, data_cutoff)
     readiness_rows, readiness_state = _data_readiness_rows(
-        trading_date,
-        previous_trading_date,
-        asof_ts,
+        context,
+        freshness,
         canonical,
         index_rows,
         regime_rows,
@@ -282,14 +384,14 @@ def _build(root: Path) -> dict[str, object]:
     band_status_rows = _band_status_rows(trading_date, asof_ts, bands, holdings, latest_regime, provider_quarantine)
     exposure_rows = _exposure_envelope_rows(trading_date, asof_ts, holdings, daily_risk_rows[0], band_status_rows)
     abstention_rows = _abstention_summary_rows(band_status_rows)
-    warning_rows = _daily_warning_rows(prior_warnings, holdings, readiness_state)
-    run_summary = _run_summary_rows(readiness_state, holdings, daily_risk_rows[0], band_status_rows, exposure_rows[0])
+    warning_rows = _daily_warning_rows(prior_warnings, holdings, readiness_state, freshness)
+    run_summary = _run_summary_rows(context, freshness, readiness_state, holdings, daily_risk_rows[0], band_status_rows, exposure_rows[0])
     shadow_contract = _shadow_experiment_contract_rows(predecessor_manifest, preferred_policy)
-    freeze_manifest = _experiment_freeze_manifest(trading_date, asof_ts, predecessor_manifest, preferred_policy)
+    freeze_manifest = _experiment_freeze_manifest(context, predecessor_manifest, preferred_policy)
     snapshot_manifest = _snapshot_manifest_skeleton(
-        trading_date,
+        context,
+        freshness,
         generated_at,
-        asof_ts,
         predecessor_manifest,
         holdings,
         readiness_state,
@@ -297,8 +399,8 @@ def _build(root: Path) -> dict[str, object]:
     )
     manifest = _manifest(
         predecessor_manifest,
-        trading_date,
-        asof_ts,
+        context,
+        freshness,
         readiness_state,
         holdings,
         daily_risk_rows[0],
@@ -392,9 +494,8 @@ def _load_holdings(
 
 
 def _data_readiness_rows(
-    trading_date: str,
-    previous_trading_date: str,
-    asof_ts: str,
+    context: dict[str, str],
+    freshness: dict[str, str],
     canonical: list[dict[str, str]],
     index_rows: list[dict[str, str]],
     regime_rows: list[dict[str, str]],
@@ -403,7 +504,6 @@ def _data_readiness_rows(
     provider_quarantine: list[dict[str, str]],
     predecessor_manifest: dict[str, object],
 ) -> tuple[list[dict[str, object]], str]:
-    latest_canonical = max(row["trade_date"] for row in canonical)
     index_dates = {row["trade_date"] for row in index_rows}
     regime_dates = {row["trade_date"] for row in regime_rows}
     missing_returns = sum(1 for row in canonical if not row.get("canonical_return_1d"))
@@ -412,28 +512,34 @@ def _data_readiness_rows(
     holdings_validation = holdings.get("validation", {})
     holdings_valid = holdings_validation.get("valid") is not False
     holdings_errors = ";".join(str(error) for error in holdings_validation.get("errors", []))
+    data_cutoff = context["data_cutoff"]
+    pit_state = BLOCKED if pit_failed or freshness["freshness_code"] == "FUTURE_DATA_AFTER_PIT_CUTOFF" else READY
     rows = [
-        _readiness_row("trading_date", "READY", trading_date, trading_date, "latest canonical trading date selected"),
-        _readiness_row("previous_trading_date", "READY", previous_trading_date, previous_trading_date, "previous committed trading date selected"),
-        _readiness_row("asof_timestamp", "READY", asof_ts, "premarket timestamp", "deterministic premarket timestamp"),
-        _readiness_row("source_freshness", "READY" if latest_canonical == trading_date else "BLOCKED", latest_canonical, trading_date, "canonical latest date must match selected trading date"),
-        _readiness_row("provider_availability", "READY_WITH_WARNINGS" if unresolved_provider else "READY", f"unresolved_provider_dimensions={unresolved_provider}", "providers disclosed", "provider diagnostics consumed from predecessor"),
-        _readiness_row("provider_discrepancy_state", "READY_WITH_WARNINGS" if provider_quarantine else "READY", len(provider_quarantine), "0 preferred", "quarantines remain excluded and surfaced"),
-        _readiness_row("canonical_data_availability", "READY", len(canonical), ">0", "canonical market data available"),
-        _readiness_row("index_context_availability", "READY" if trading_date in index_dates else "READY_WITH_WARNINGS", trading_date in index_dates, "index row for trading date", "index context consumed when available"),
-        _readiness_row("regime_availability", "READY" if trading_date in regime_dates else "READY_WITH_WARNINGS", trading_date in regime_dates, "regime row for trading date", "regime context consumed when available"),
-        _readiness_row("holdings_snapshot_freshness", "READY" if holdings["real_snapshot_supplied"] else "READY_WITH_WARNINGS", holdings["snapshot_id"], "fresh owner snapshot or explicit reference mode", "no fabricated holdings"),
-        _readiness_row("holdings_snapshot_validity", "READY" if holdings_valid else "BLOCKED", holdings_errors or "valid", "no validation errors", "invalid holdings snapshot fails closed"),
-        _readiness_row("pit_status", "READY" if pit_failed == 0 else "BLOCKED", f"pit_failures={pit_failed}", "0", "current-or-past-only rows required"),
-        _readiness_row("missingness", "READY_WITH_WARNINGS" if missing_returns else "READY", missing_returns, "0 preferred", "missing first returns disclosed"),
-        _readiness_row("quarantine_impact", "READY_WITH_WARNINGS" if provider_quarantine else "READY", len(provider_quarantine), "0 preferred", "provider quarantine impact surfaced"),
+        _readiness_row("execution_mode", READY, context["execution_mode"], "daily_operational_or_deterministic_replay", "run mode is explicit"),
+        _readiness_row("execution_time", READY, context["execution_time"], "actual execution timestamp or replay timestamp", "execution timestamp separated from data date"),
+        _readiness_row("target_trading_date", READY, context["target_trading_date"], "governed trading calendar target", "target trading day resolved from calendar, not canonical max"),
+        _readiness_row("expected_previous_trading_date", READY, context["expected_previous_trading_date"], "calendar T-1", "previous trading day resolved from governed calendar"),
+        _readiness_row("decision_asof_timestamp", READY, context["decision_asof_ts"], "premarket decision timestamp", "decision timestamp separated from execution timestamp"),
+        _readiness_row("data_cutoff", READY, data_cutoff, "expected previous trading date", "market data cutoff is T-1 for premarket decisions"),
+        _readiness_row("latest_available_canonical_date", freshness["state"], freshness["latest_available_canonical_date"], data_cutoff, freshness["freshness_code"]),
+        _readiness_row("source_freshness", freshness["state"], freshness["latest_available_canonical_date"], data_cutoff, freshness["freshness_code"]),
+        _readiness_row("provider_availability", READY_WITH_WARNINGS if unresolved_provider else READY, f"unresolved_provider_dimensions={unresolved_provider}", "providers disclosed", "provider diagnostics consumed from predecessor"),
+        _readiness_row("provider_discrepancy_state", READY_WITH_WARNINGS if provider_quarantine else READY, len(provider_quarantine), "0 preferred", "quarantines remain excluded and surfaced"),
+        _readiness_row("canonical_data_availability", READY, len(canonical), ">0", "canonical market data available"),
+        _readiness_row("index_context_availability", READY if data_cutoff in index_dates else READY_WITH_WARNINGS, data_cutoff in index_dates, "index row for data cutoff", "index context consumed when available"),
+        _readiness_row("regime_availability", READY if data_cutoff in regime_dates else READY_WITH_WARNINGS, data_cutoff in regime_dates, "regime row for data cutoff", "regime context consumed when available"),
+        _readiness_row("holdings_snapshot_freshness", READY if holdings["real_snapshot_supplied"] else READY_WITH_WARNINGS, holdings["snapshot_id"], "fresh owner snapshot or explicit reference mode", "no fabricated holdings"),
+        _readiness_row("holdings_snapshot_validity", READY if holdings_valid else BLOCKED, holdings_errors or "valid", "no validation errors", "invalid holdings snapshot fails closed"),
+        _readiness_row("pit_status", pit_state, f"pit_failures={pit_failed};freshness={freshness['freshness_code']}", "0 and latest<=data_cutoff", "current-or-past-only rows required"),
+        _readiness_row("missingness", READY_WITH_WARNINGS if missing_returns else READY, missing_returns, "0 preferred", "missing first returns disclosed"),
+        _readiness_row("quarantine_impact", READY_WITH_WARNINGS if provider_quarantine else READY, len(provider_quarantine), "0 preferred", "provider quarantine impact surfaced"),
     ]
-    if any(row["state"] == "BLOCKED" for row in rows) or predecessor_manifest.get("ready_factor_count") != 0:
-        state = "BLOCKED"
-    elif any(row["state"] == "READY_WITH_WARNINGS" for row in rows):
-        state = "READY_WITH_WARNINGS"
+    if any(row["state"] == BLOCKED for row in rows) or predecessor_manifest.get("ready_factor_count") != 0:
+        state = BLOCKED
+    elif any(row["state"] == READY_WITH_WARNINGS for row in rows):
+        state = READY_WITH_WARNINGS
     else:
-        state = "READY"
+        state = READY
     return rows, state
 
 
@@ -648,6 +754,7 @@ def _daily_warning_rows(
     prior_warnings: list[dict[str, str]],
     holdings: dict[str, object],
     readiness_state: str,
+    freshness: dict[str, str],
 ) -> list[dict[str, object]]:
     rows = [
         {
@@ -679,10 +786,26 @@ def _daily_warning_rows(
                 "source_goal": GOAL_ID,
             }
         )
+    if freshness["freshness_code"] in {"STALE_SOURCE_DATA", "FUTURE_DATA_AFTER_PIT_CUTOFF", "NO_CANONICAL_DATA"}:
+        rows.append(
+            {
+                "warning_code": freshness["freshness_code"],
+                "scope": "daily_data_readiness",
+                "count": 1,
+                "detail": (
+                    f"latest_available_canonical_date={freshness['latest_available_canonical_date']};"
+                    f"expected_previous_trading_date={freshness['expected_previous_trading_date']};"
+                    f"target_trading_date={freshness['target_trading_date']}"
+                ),
+                "source_goal": GOAL_ID,
+            }
+        )
     return rows
 
 
 def _run_summary_rows(
+    context: dict[str, str],
+    freshness: dict[str, str],
     readiness_state: str,
     holdings: dict[str, object],
     risk: dict[str, object],
@@ -692,6 +815,15 @@ def _run_summary_rows(
     return [
         {
             "daily_readiness_state": readiness_state,
+            "execution_mode": context["execution_mode"],
+            "execution_time": context["execution_time"],
+            "generated_at": context["generated_at"],
+            "decision_asof_ts": context["decision_asof_ts"],
+            "target_trading_date": context["target_trading_date"],
+            "expected_previous_trading_date": context["expected_previous_trading_date"],
+            "data_cutoff": context["data_cutoff"],
+            "latest_available_canonical_date": freshness["latest_available_canonical_date"],
+            "freshness_code": freshness["freshness_code"],
             "holdings_mode": holdings["mode"],
             "risk_state": risk["predecessor_risk_state"],
             "symbols_evaluated": len(bands),
@@ -736,12 +868,16 @@ def _shadow_experiment_contract_rows(predecessor_manifest: dict[str, object], pr
     ]
 
 
-def _experiment_freeze_manifest(trading_date: str, asof_ts: str, predecessor_manifest: dict[str, object], preferred_policy: dict[str, str]) -> dict[str, object]:
+def _experiment_freeze_manifest(context: dict[str, str], predecessor_manifest: dict[str, object], preferred_policy: dict[str, str]) -> dict[str, object]:
     return {
         "goal": GOAL_ID,
         "experiment_status": "prepared_not_started",
-        "freeze_asof_ts": asof_ts,
-        "freeze_source_trading_date": trading_date,
+        "freeze_asof_ts": context["decision_asof_ts"],
+        "freeze_source_trading_date": context["target_trading_date"],
+        "execution_mode": context["execution_mode"],
+        "target_trading_date": context["target_trading_date"],
+        "expected_previous_trading_date": context["expected_previous_trading_date"],
+        "data_cutoff": context["data_cutoff"],
         "policy_definitions": predecessor_manifest.get("policies_evaluated", []),
         "effective_policy_definitions": predecessor_manifest.get("effective_policy_ids", []),
         "risk_estimators": ["historical_volatility_20d", "historical_volatility_60d", "ewma_volatility_lambda_0_94"],
@@ -763,9 +899,9 @@ def _experiment_freeze_manifest(trading_date: str, asof_ts: str, predecessor_man
 
 
 def _snapshot_manifest_skeleton(
-    trading_date: str,
+    context: dict[str, str],
+    freshness: dict[str, str],
     generated_at: str,
-    asof_ts: str,
     predecessor_manifest: dict[str, object],
     holdings: dict[str, object],
     readiness_state: str,
@@ -773,10 +909,17 @@ def _snapshot_manifest_skeleton(
 ) -> dict[str, object]:
     return {
         "goal": GOAL_ID,
-        "snapshot_date": trading_date,
+        "snapshot_date": context["target_trading_date"],
+        "target_trading_date": context["target_trading_date"],
+        "expected_previous_trading_date": context["expected_previous_trading_date"],
+        "latest_available_data_date": freshness["latest_available_canonical_date"],
+        "latest_available_canonical_date": freshness["latest_available_canonical_date"],
+        "execution_mode": context["execution_mode"],
+        "execution_time": context["execution_time"],
         "generated_at": generated_at,
-        "asof_ts": asof_ts,
-        "data_cutoff": trading_date,
+        "decision_asof_ts": context["decision_asof_ts"],
+        "asof_ts": context["decision_asof_ts"],
+        "data_cutoff": context["data_cutoff"],
         "source_lineage": [PREDECESSOR_GOAL_ID, "network_ingestion_daily_panel", "network_ingestion_index_panel", "regime_label_research02"],
         "provider_lineage": predecessor_manifest.get("providers_compared", []),
         "holdings_snapshot_id": holdings["snapshot_id"],
@@ -784,6 +927,8 @@ def _snapshot_manifest_skeleton(
         "config_hash": _sha256_text(json.dumps(_config_payload(predecessor_manifest, preferred_policy), sort_keys=True)),
         "code_commit": "tracked_snapshot_is_deterministic;runtime_git_head_verified_by_validation",
         "readiness_state": readiness_state,
+        "freshness_state": freshness["state"],
+        "freshness_code": freshness["freshness_code"],
         "pit_status": "passed_current_or_past_only",
         "immutable_write_policy": "refuse_conflicting_snapshot_overwrite",
         "checksums": {},
@@ -792,8 +937,8 @@ def _snapshot_manifest_skeleton(
 
 def _manifest(
     predecessor_manifest: dict[str, object],
-    trading_date: str,
-    asof_ts: str,
+    context: dict[str, str],
+    freshness: dict[str, str],
     readiness_state: str,
     holdings: dict[str, object],
     risk: dict[str, object],
@@ -808,8 +953,18 @@ def _manifest(
         "depends_on_goal": PREDECESSOR_GOAL_ID,
         "predecessor_status": predecessor_manifest.get("status"),
         "predecessor_ready_factor_count": predecessor_manifest.get("ready_factor_count"),
-        "trading_date": trading_date,
-        "asof_ts": asof_ts,
+        "trading_date": context["target_trading_date"],
+        "execution_mode": context["execution_mode"],
+        "execution_time": context["execution_time"],
+        "generated_at": context["generated_at"],
+        "target_trading_date": context["target_trading_date"],
+        "expected_previous_trading_date": context["expected_previous_trading_date"],
+        "data_cutoff": context["data_cutoff"],
+        "decision_asof_ts": context["decision_asof_ts"],
+        "asof_ts": context["decision_asof_ts"],
+        "latest_available_canonical_date": freshness["latest_available_canonical_date"],
+        "freshness_state": freshness["state"],
+        "freshness_code": freshness["freshness_code"],
         "daily_readiness_state": readiness_state,
         "pit_status": "passed_current_or_past_only",
         "holdings_mode": holdings["mode"],
@@ -974,6 +1129,14 @@ def _report(manifest: dict[str, object]) -> str:
             f"Status: `{manifest['status']}`",
             "",
             f"- Daily readiness: `{manifest['daily_readiness_state']}`",
+            f"- Execution mode: `{manifest['execution_mode']}`",
+            f"- Generated at: `{manifest['generated_at']}`",
+            f"- Decision as-of: `{manifest['decision_asof_ts']}`",
+            f"- Target trading date: `{manifest['target_trading_date']}`",
+            f"- Expected previous trading date: `{manifest['expected_previous_trading_date']}`",
+            f"- Data cutoff: `{manifest['data_cutoff']}`",
+            f"- Latest available canonical date: `{manifest['latest_available_canonical_date']}`",
+            f"- Freshness code: `{manifest['freshness_code']}`",
             f"- Holdings mode: `{manifest['holdings_mode']}`",
             f"- Risk state: `{manifest['risk_state']}`",
             f"- Symbols within/above/below/abstained: `{manifest['symbols_within_band']}` / `{manifest['symbols_above_band']}` / `{manifest['symbols_below_band']}` / `{manifest['symbols_abstained']}`",
@@ -994,6 +1157,8 @@ def _doc(manifest: dict[str, object]) -> str:
             "",
             "It consumes validated predecessor outputs, optional owner holdings snapshots, and immutable daily snapshots. It does not restart research or fetch providers directly.",
             "",
+            f"Execution mode: `{manifest['execution_mode']}`. Target trading date: `{manifest['target_trading_date']}`. Data cutoff: `{manifest['data_cutoff']}`.",
+            "",
             f"Daily readiness state: `{manifest['daily_readiness_state']}`.",
             "",
         ]
@@ -1006,6 +1171,14 @@ def _handoff(manifest: dict[str, object]) -> str:
             f"# {GOAL_ID} Governance Handoff",
             "",
             f"- holdings mode: {manifest['holdings_mode']}",
+            f"- execution mode: {manifest['execution_mode']}",
+            f"- generated at: {manifest['generated_at']}",
+            f"- decision as-of: {manifest['decision_asof_ts']}",
+            f"- target trading date: {manifest['target_trading_date']}",
+            f"- expected previous trading date: {manifest['expected_previous_trading_date']}",
+            f"- data cutoff: {manifest['data_cutoff']}",
+            f"- latest available canonical date: {manifest['latest_available_canonical_date']}",
+            f"- freshness code: {manifest['freshness_code']}",
             f"- daily readiness: {manifest['daily_readiness_state']}",
             f"- risk state: {manifest['risk_state']}",
             f"- constraints operationalized: {manifest['constraints_operationalized']}",
@@ -1029,6 +1202,11 @@ def _contract() -> str:
             f"workflow_id: {WORKFLOW_ID}",
             f"mode: {MODE}",
             f"depends_on: {PREDECESSOR_GOAL_ID}",
+            "execution_modes: [daily_operational, deterministic_replay]",
+            "timezone: Asia/Shanghai",
+            "daily_operational_generated_at: actual_execution_time",
+            "deterministic_replay_requires: replay_date",
+            "freshness_rule: latest_available_canonical_date_must_equal_expected_previous_trading_date",
             "read_only: true",
             "broker_connection: false",
             "orders_created: false",
@@ -1157,3 +1335,15 @@ def _workflow_rows(root: Path) -> dict[str, dict[str, str]]:
 
 def _read_json_if_exists(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def _parse_execution_time(value: str) -> datetime:
+    text = value.replace("Z", "+00:00")
+    parsed = datetime.fromisoformat(text)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=ZoneInfo(TZ_NAME))
+    return parsed.astimezone(ZoneInfo(TZ_NAME))
+
+
+def _iso_seconds(value: datetime) -> str:
+    return value.astimezone(ZoneInfo(TZ_NAME)).isoformat(timespec="seconds")

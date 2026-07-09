@@ -1,2 +1,0 @@
-daily_readiness_state,holdings_mode,risk_state,symbols_evaluated,symbols_within_band,symbols_above_band,symbols_below_band,symbols_abstained,current_gross_exposure,current_cash_weight,action_instruction,research_only,not_trading_advice,not_for_execution
-READY_WITH_WARNINGS,research_reference_portfolio,normal_risk_review_only,41,29,0,0,12,0.9999999999,0,none,true,true,true

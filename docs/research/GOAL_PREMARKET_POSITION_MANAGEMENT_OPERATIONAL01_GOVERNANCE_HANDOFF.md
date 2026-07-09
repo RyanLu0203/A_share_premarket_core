@@ -1,6 +1,14 @@
 # GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01 Governance Handoff
 
 - holdings mode: research_reference_portfolio
+- execution mode: deterministic_replay
+- generated at: 2026-07-01T08:30:00+08:00
+- decision as-of: 2026-07-01T08:30:00+08:00
+- target trading date: 2026-07-01
+- expected previous trading date: 2026-06-30
+- data cutoff: 2026-06-30
+- latest available canonical date: 2026-06-30
+- freshness code: FRESH_T_MINUS_ONE_DATA
 - daily readiness: READY_WITH_WARNINGS
 - risk state: normal_risk_review_only
 - constraints operationalized: 13
