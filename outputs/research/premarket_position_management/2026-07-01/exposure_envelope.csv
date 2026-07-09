@@ -1,0 +1,2 @@
+trading_date,asof_ts,current_gross_exposure,acceptable_gross_exposure_min,acceptable_gross_exposure_max,current_cash_weight,acceptable_cash_min,acceptable_cash_max,volatility_budget,beta_budget,risk_state,confidence,abstain,envelope_basis,research_only,not_trading_advice,not_for_execution
+2026-07-01,2026-07-01T08:30:00+08:00,0.9999999999,0.95,1,0,0,0.05,0.35,1.20,normal_risk_review_only,1,false,risk_budget_constraints_from_predecessor_goal,true,true,true

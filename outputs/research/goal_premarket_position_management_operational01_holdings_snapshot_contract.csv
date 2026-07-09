@@ -1,0 +1,10 @@
+field_name,required,description,grain,missing_behavior,no_broker_integration,no_automatic_account_scraping
+asof_ts,true,owner snapshot timestamp,asof_ts+portfolio_id+symbol,fail_closed_if_missing_or_stale,true,true
+portfolio_id,true,owner portfolio identifier,asof_ts+portfolio_id+symbol,fail_closed_if_missing,true,true
+symbol,true,approved symbol identifier,asof_ts+portfolio_id+symbol,row_rejected_if_missing_or_unknown,true,true
+quantity,false,optional current quantity,asof_ts+portfolio_id+symbol,weight_only_mode,true,true
+market_value,false,optional current market value,asof_ts+portfolio_id+symbol,weight_only_mode,true,true
+current_weight,true,current portfolio weight from owner snapshot,asof_ts+portfolio_id+symbol,fail_closed_if_missing_or_not_reconciled,true,true
+cash_weight,false,portfolio cash weight,asof_ts+portfolio_id+symbol,default_zero_only_in_research_reference_mode,true,true
+source,true,manual or system snapshot source,asof_ts+portfolio_id+symbol,fail_closed_if_missing,true,true
+snapshot_id,true,stable snapshot identifier,asof_ts+portfolio_id+symbol,fail_closed_if_missing,true,true

@@ -1,0 +1,44 @@
+{
+  "asof_ts": "2026-07-01T08:30:00+08:00",
+  "checksums": {
+    "abstention_summary.csv": "e1419e66d02791f8a15bbd7781946c523887af83065e16eeb0d377fbadb303f3",
+    "constraint_evaluation.csv": "932c24b27af53049a14acdd17d50c79875e23398986d005d399b43c0a8a1c9e9",
+    "data_readiness.csv": "bba3a5080912aa868635964b9f056f9f7d6e2b0c98709caf494af7a8b8de0740",
+    "exposure_envelope.csv": "5f7845c74dbdf50f828db8ee872dc7b919359bb9e749f34ef8036d44147f3729",
+    "manifest.json": "7e3e680451068ff859460e0c3e55e62b4d95a994773bf0e00e68e90f691e679e",
+    "operational_run_summary.csv": "9256871f10abb6b0c08af82743a12cc4bf44d837c71d59fb256085f1d9817ebc",
+    "portfolio_risk_state.csv": "a30ca37b2997e2fbec7f98dbd316d5b5fcdb006be0e9b17f298736567f0ddd3b",
+    "position_band_status.csv": "99c65ea5730aa056f58a3e77273a318da863c9cc7963a55831aac14a69bb7857",
+    "warnings.csv": "5d53592883c29ad28c7351ef819762e6cb3c1cf62e88346bc761429eb9e9a8ec"
+  },
+  "code_commit": "tracked_snapshot_is_deterministic;runtime_git_head_verified_by_validation",
+  "config_hash": "681ae99fe8253f148e2de6811a507483a5612b358615f098b806c1b26fd76e8a",
+  "data_cutoff": "2026-06-30",
+  "decision_asof_ts": "2026-07-01T08:30:00+08:00",
+  "execution_mode": "deterministic_replay",
+  "execution_time": "2026-07-01T08:30:00+08:00",
+  "expected_previous_trading_date": "2026-06-30",
+  "freshness_code": "FRESH_T_MINUS_ONE_DATA",
+  "freshness_state": "READY",
+  "generated_at": "2026-07-01T08:30:00+08:00",
+  "goal": "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01",
+  "holdings_mode": "research_reference_portfolio",
+  "holdings_snapshot_id": "research_reference_portfolio_2026-07-01",
+  "immutable_write_policy": "refuse_conflicting_snapshot_overwrite",
+  "latest_available_canonical_date": "2026-06-30",
+  "latest_available_data_date": "2026-06-30",
+  "pit_status": "passed_current_or_past_only",
+  "provider_lineage": [
+    "baostock",
+    "akshare_sina"
+  ],
+  "readiness_state": "READY_WITH_WARNINGS",
+  "snapshot_date": "2026-07-01",
+  "source_lineage": [
+    "GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01",
+    "network_ingestion_daily_panel",
+    "network_ingestion_index_panel",
+    "regime_label_research02"
+  ],
+  "target_trading_date": "2026-07-01"
+}

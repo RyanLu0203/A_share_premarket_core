@@ -1,0 +1,46 @@
+{
+  "abstention_logic": "abstain_on_provider_discrepancy_history_constraint_regime_covariance_or_band_sensitivity",
+  "backfilled_future_experiment": false,
+  "band_methodology": "risk_budget_band_from_reference_policy_volatility_and_regime",
+  "broker_trading_started": false,
+  "constraints": 13,
+  "covariance_settings": "predecessor sample/diagonal/constant-correlation diagnostics; no new model search",
+  "data_cutoff": "2026-06-30",
+  "decision_time": "08:30:00+08:00",
+  "effective_policy_definitions": [
+    "equal_weight",
+    "inverse_volatility",
+    "minimum_variance_diagonal",
+    "hrp_correlation_cluster"
+  ],
+  "execution_mode": "deterministic_replay",
+  "expected_previous_trading_date": "2026-06-30",
+  "experiment_start_date": "not_started_requires_owner_authorization",
+  "experiment_status": "prepared_not_started",
+  "fill_convention_for_future_shadow_experiment": "future_shadow_close_to_close_observation_only_after_owner_start_authorization",
+  "freeze_asof_ts": "2026-07-01T08:30:00+08:00",
+  "freeze_source_trading_date": "2026-07-01",
+  "future_days_fabricated": false,
+  "goal": "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01",
+  "paper_trading_started": false,
+  "policy_definitions": [
+    "equal_weight",
+    "inverse_volatility",
+    "minimum_variance_diagonal",
+    "equal_risk_contribution_diagonal",
+    "hrp_correlation_cluster"
+  ],
+  "post_start_changes_require_versioning": true,
+  "preferred_research_policy": "no_single_robust_winner",
+  "risk_estimators": [
+    "historical_volatility_20d",
+    "historical_volatility_60d",
+    "ewma_volatility_lambda_0_94"
+  ],
+  "target_trading_date": "2026-07-01",
+  "transaction_cost_scenarios_bps": [
+    0,
+    10,
+    30
+  ]
+}

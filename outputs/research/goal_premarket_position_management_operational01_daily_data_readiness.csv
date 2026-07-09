@@ -1,0 +1,19 @@
+check_id,state,current_value,threshold,evidence,fail_closed_behavior,research_only,not_trading_advice,not_for_execution
+execution_mode,READY,deterministic_replay,daily_operational_or_deterministic_replay,run mode is explicit,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+execution_time,READY,2026-07-01T08:30:00+08:00,actual execution timestamp or replay timestamp,execution timestamp separated from data date,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+target_trading_date,READY,2026-07-01,governed trading calendar target,"target trading day resolved from calendar, not canonical max",ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+expected_previous_trading_date,READY,2026-06-30,calendar T-1,previous trading day resolved from governed calendar,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+decision_asof_timestamp,READY,2026-07-01T08:30:00+08:00,premarket decision timestamp,decision timestamp separated from execution timestamp,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+data_cutoff,READY,2026-06-30,expected previous trading date,market data cutoff is T-1 for premarket decisions,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+latest_available_canonical_date,READY,2026-06-30,2026-06-30,FRESH_T_MINUS_ONE_DATA,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+source_freshness,READY,2026-06-30,2026-06-30,FRESH_T_MINUS_ONE_DATA,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+provider_availability,READY_WITH_WARNINGS,unresolved_provider_dimensions=6,providers disclosed,provider diagnostics consumed from predecessor,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+provider_discrepancy_state,READY_WITH_WARNINGS,6,0 preferred,quarantines remain excluded and surfaced,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+canonical_data_availability,READY,34543,>0,canonical market data available,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+index_context_availability,READY,true,index row for data cutoff,index context consumed when available,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+regime_availability,READY_WITH_WARNINGS,false,regime row for data cutoff,regime context consumed when available,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+holdings_snapshot_freshness,READY_WITH_WARNINGS,research_reference_portfolio_2026-07-01,fresh owner snapshot or explicit reference mode,no fabricated holdings,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+holdings_snapshot_validity,READY,valid,no validation errors,invalid holdings snapshot fails closed,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+pit_status,READY,pit_failures=0;freshness=FRESH_T_MINUS_ONE_DATA,0 and latest<=data_cutoff,current-or-past-only rows required,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+missingness,READY_WITH_WARNINGS,41,0 preferred,missing first returns disclosed,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
+quarantine_impact,READY_WITH_WARNINGS,6,0 preferred,provider quarantine impact surfaced,ABSTAIN_OR_BLOCKED_IF_REQUIRED_EVIDENCE_INVALID,true,true,true
