@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-09
+Last updated: 2026-07-10
 
 ## Codex Operating System Gate
 
@@ -38,6 +38,34 @@ onboarding and Git operating-system gate.
   GitHub repository code, docs, configs, committed outputs/audits, and remote
   branches/tags. It must not rely on local Mac paths, local bundles, local
   provider caches, local-lake data, or uncommitted local state.
+
+## GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01
+
+Issue #24 implements one goal-specific local research workspace over the merged
+PR #23 operational position-management evidence.
+
+- Status: `PASS`.
+- Branch target: `project-current`; predecessor PR #23 is merged.
+- Interface: 23 governed pages in `apps/premarket-workspace`.
+- API: 22 FastAPI GET routes and zero write routes.
+- Source snapshot: `2026-07-01`, checksum status `VERIFIED`.
+- Current evidence: 41 symbols, 41 position-band rows, 12 abstentions,
+  13 constraints, and 7 substantive constraints.
+- Current live readiness fails closed as `BLOCKED / STALE_SOURCE_DATA`; the
+  immutable replay remains explicitly selectable.
+- `ready_factor_count = 0`; Alpha, Factor Monitor, IC/RankIC, factor
+  correlation, Recommendation Tiering, and Issue #10 stay locked as specified.
+- Missing fundamentals are `N/A / UNAVAILABLE`; no market, fundamental,
+  factor, Alpha, IC/RankIC, or recommendation evidence is fabricated.
+- Browser watchlists use local storage only. Broker connections, orders, paper
+  trading, production writes, and production promotion remain absent.
+- The goal-specific capability is `implemented_research_only`.
+- The generic `dashboard` capability remains `false`, and
+  `dashboard_daily_report` remains `locked_future`.
+
+Run with `python scripts/run_premarket_workspace.py`. Deterministic goal and
+audit evidence are under
+`outputs/audits/goal_premarket_research_position_workspace_dashboard01_*`.
 
 ## GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
 

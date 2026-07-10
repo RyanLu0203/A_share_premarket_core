@@ -196,3 +196,12 @@ inactive in V1; no factor mining, IC/RankIC mining, factor library generation,
 or factor integration is active. Recommendation execution, position, dashboard,
 paper/live trading, production, portfolio backtest execution, factor-mining, and DQN/RL blocks
 remain locked, planned-locked, design-only, or infrastructure-only.
+
+## Issue #24 Goal-Specific Local Workspace
+
+The explicit Issue #24 goal adds a terminal research-only display node after
+the operational position-management node. It has 23 pages, consumes committed
+validated artifacts and immutable snapshots, and exposes no server write or
+execution path. It does not change the locked future status of the generic
+Dashboard / Daily Report node. It also does not create a path to Recommendation
+Tiering, Issue #10, broker integration, paper trading, production, or DQN/RL.

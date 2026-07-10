@@ -1,5 +1,44 @@
 # 09 Step Iteration Log
 
+## 2026-07-10 - GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01
+
+Status: `PASS`.
+
+What changed:
+
+- Added a functional 23-page Next.js/React/TypeScript local research workspace.
+- Added a normalized FastAPI evidence layer with 22 GET routes and no write
+  route.
+- Added ECharts risk and correlation displays plus Lightweight Charts
+  candlestick/volume evidence.
+- Added browser-local watchlists, live/replay mode, immutable snapshot history,
+  stale-data blocking, and explicit unavailable-evidence states.
+- Preserved current scientific evidence: 41 symbols, 41 bands, 12 abstentions,
+  13 constraints, 7 substantive constraints, and zero ready factors.
+- Kept Alpha, Factor Monitor, IC/RankIC, factor correlation, Recommendation
+  Tiering, and Issue #10 locked; Candidate Diagnostics remains historical and
+  read-only, while Regime Analysis exposes only available market context.
+- Added Windows-safe combined startup, frontend/backend tests, deterministic
+  goal runner/audit, goal contract, and governance records.
+
+Safety:
+
+- No fundamentals, market data, Alpha, factors, IC/RankIC, or recommendation
+  outputs were fabricated.
+- No broker, order, paper-trading, production-write, or production-promotion
+  path exists.
+- The goal-specific workspace is implemented research-only; generic
+  `dashboard_daily_report` remains `locked_future` and `dashboard` remains
+  `false`.
+
+Evidence:
+
+- `docs/research/GOAL_PREMARKET_RESEARCH_POSITION_WORKSPACE_DASHBOARD01_LOCAL_WORKSPACE.md`
+- `configs/dashboard/goal_premarket_research_position_workspace_dashboard01_contract.yaml`
+- `outputs/audits/goal_premarket_research_position_workspace_dashboard01_report.md`
+- `outputs/audits/goal_premarket_research_position_workspace_dashboard01_manifest.json`
+- `outputs/audits/goal_premarket_research_position_workspace_dashboard01_audit.md`
+
 ## 2026-07-09 - GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01 Research Portfolio Risk Track
 
 Status: `PASS_WITH_WARNINGS`.

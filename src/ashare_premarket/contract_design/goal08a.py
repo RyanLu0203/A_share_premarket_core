@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+from ashare_premarket.core.boundary import forbidden_locked_import_terms
 from ashare_premarket.contract_design.goal08b0 import (
     GOAL08B0_ALLOWED_NEXT,
     GOAL08B0_WORKFLOW_ID,
@@ -1043,16 +1044,15 @@ def _forbidden_active_imports(root: Path) -> list[str]:
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
-                        failures.extend(_import_term_failures(alias.name, rel))
+                        failures.extend(_import_term_failures(root, alias.name, rel))
                 elif isinstance(node, ast.ImportFrom):
-                    failures.extend(_import_term_failures(node.module or "", rel))
+                    failures.extend(_import_term_failures(root, node.module or "", rel))
     return sorted(set(failures))
 
 
-def _import_term_failures(module_name: str, rel: str) -> list[str]:
+def _import_term_failures(root: Path, module_name: str, rel: str) -> list[str]:
     lowered = module_name.lower()
     return [
         f"{lowered} in {rel}"
-        for term in FORBIDDEN_IMPORT_TERMS
-        if term in lowered
+        for _ in forbidden_locked_import_terms(root, lowered, rel, FORBIDDEN_IMPORT_TERMS)
     ]

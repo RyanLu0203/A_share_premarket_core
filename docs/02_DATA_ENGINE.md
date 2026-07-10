@@ -405,3 +405,23 @@ output, factor-mining output, DQN/RL output, or predictive-validity claims.
   portfolio outputs, write local-lake data, create dashboards, or unlock
   trading, production, broker, factor-mining, or DQN/RL paths. GOAL-10B.3 uses
   DC03 evidence only for non-actionable revalidation diagnostics.
+
+## Issue #24 Read-Only Workspace Projection
+
+The Issue #24 workspace adds no new market, fundamental, factor, Alpha,
+IC/RankIC, recommendation, position, or order data. `CommittedEvidenceStore`
+allowlists and caches committed CSV/JSON inputs, validates immutable snapshot
+checksums, and prevents path escape. `PremarketWorkspaceRepository` normalizes
+those sources into display contracts, including explicit `UNAVAILABLE` values.
+
+The FastAPI layer exposes 22 GET routes and no write methods. The frontend may
+format, sort, filter, and visualize returned evidence, but it may not calculate
+covariance, risk contribution, policy selection, position bands, constraints,
+readiness, provider selection, factor validity, or recommendations. The one
+server-derived correlation matrix is display-only and carries
+`decision_input=false`.
+
+Provider price and return discrepancy diagnostics remain separate. Adjustment
+convention is explicitly unresolved and provider values are never silently
+averaged. Browser-local watchlists are configuration only and are not part of
+the data engine or repository state.

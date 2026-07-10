@@ -1,12 +1,40 @@
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 
+from ashare_premarket.core.boundary import (
+    ISSUE24_CAPABILITY_KEY,
+    ISSUE24_WORKFLOW_ID,
+    issue24_workspace_evidence_valid,
+    issue24_workspace_workflow_patch,
+)
 from ashare_premarket.core.io import read_json
+
+
+def _issue24_workspace_evidence_valid_for_runner(root: Path) -> bool:
+    manifest = root / "outputs/audits/goal_premarket_research_position_workspace_dashboard01_manifest.json"
+    try:
+        stat = manifest.stat()
+    except OSError:
+        return False
+    return _issue24_workspace_evidence_valid_cached(str(root.resolve()), stat.st_mtime_ns, stat.st_size)
+
+
+@lru_cache(maxsize=8)
+def _issue24_workspace_evidence_valid_cached(root: str, _manifest_mtime_ns: int, _manifest_size: int) -> bool:
+    # Earlier goal runners mutate governance outputs, not implementation files. Cache the
+    # checksum decision per manifest revision so repeated preservation calls stay bounded.
+    return issue24_workspace_evidence_valid(Path(root))
 
 
 def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict[str, str]]) -> None:
     """Preserve validated later-stage review-only rows during earlier gate reruns."""
+
+    if _issue24_workspace_evidence_valid_for_runner(root):
+        by_id.setdefault(ISSUE24_WORKFLOW_ID, issue24_workspace_workflow_patch()).update(
+            issue24_workspace_workflow_patch()
+        )
 
     if _goal08a_valid(root) and "goal08a_recommendation_contract_design_gate" in by_id:
         by_id["goal08a_recommendation_contract_design_gate"].update(
@@ -1072,6 +1100,9 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
 
 
 def preserve_later_review_only_capabilities(root: Path, payload: dict[str, object]) -> None:
+    if _issue24_workspace_evidence_valid_for_runner(root):
+        payload[ISSUE24_CAPABILITY_KEY] = "implemented_research_only"
+        payload["dashboard"] = False
     if _goal08a_valid(root):
         payload["goal08a_recommendation_contract_design_gate"] = "implemented_design_only"
     if _storage01_valid(root):

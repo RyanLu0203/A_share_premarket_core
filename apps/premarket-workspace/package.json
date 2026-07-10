@@ -1,0 +1,44 @@
+{
+  "name": "a-share-premarket-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "visual:qa": "node scripts/visual-qa.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/ibm-plex-sans": "5.2.8",
+    "@fontsource/ibm-plex-mono": "5.2.7",
+    "@radix-ui/react-tabs": "1.1.17",
+    "@radix-ui/react-tooltip": "1.2.12",
+    "@tanstack/react-table": "8.21.3",
+    "echarts": "6.1.0",
+    "echarts-for-react": "3.0.6",
+    "lightweight-charts": "5.2.0",
+    "lucide-react": "1.24.0",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@tailwindcss/postcss": "4.3.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "26.1.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.10",
+    "jsdom": "29.1.1",
+    "tailwindcss": "4.3.2",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
