@@ -19,6 +19,7 @@ no_silent_averaging: true
 adjustment_convention_status: unresolved
 network_default: disabled
 immutable_success_manifest: true
+source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf
 recommendation_state: locked_future
 trading_state: locked_future
 ready_factor_count: 0

@@ -125,6 +125,15 @@ def test_incremental_merge_rejects_conflicting_existing_symbol_date() -> None:
         daily_refresh.merge_incremental_evidence(base, incremental, expected_date="2026-07-01")
 
 
+def test_source_checksum_is_stable_across_git_line_endings(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.csv"
+    crlf = tmp_path / "crlf.csv"
+    lf.write_bytes(b"trade_date,symbol\n2026-06-30,000001.SZ\n")
+    crlf.write_bytes(b"trade_date,symbol\r\n2026-06-30,000001.SZ\r\n")
+
+    assert daily_refresh._sha256_normalized_text_file(lf) == daily_refresh._sha256_normalized_text_file(crlf)
+
+
 @pytest.mark.parametrize(
     ("rows", "required_symbols", "source_checksum", "expected_checksum", "reason"),
     [

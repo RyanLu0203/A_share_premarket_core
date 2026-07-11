@@ -12,6 +12,8 @@
 
 The primary provider row is never averaged with another source. Cross-provider adjustment semantics remain explicitly unresolved when direct metadata is unavailable. Existing discrepancy quarantine rows remain excluded from risk fitting.
 
+Text evidence checksums normalize CRLF to LF before SHA-256 so tracked CSV evidence remains reproducible across Windows and Unix checkouts. Immutable refresh and OPM snapshot files retain raw-byte checksums.
+
 ## Boundaries
 
 This layer is research-only. Recommendation tiering, action labels, target prices, orders, broker connections, paper execution, production writes, and reinforcement learning remain outside the active workflow.

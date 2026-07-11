@@ -367,7 +367,7 @@ def run_goal_daily_incremental_evidence_refresh01(
         extra_reasons.append("INVALID_EVIDENCE_SCHEMA")
         provider_attempts.append({"status": "FAIL", "notes": str(exc)})
 
-    source_checksum = source_checksum_override or (_sha256_file(source_path) if source_path.exists() else "missing")
+    source_checksum = source_checksum_override or (_sha256_normalized_text_file(source_path) if source_path.exists() else "missing")
     validation = validate_refresh_evidence(
         context,
         candidate_rows,
@@ -735,6 +735,7 @@ def _write_governance_files(root: Path) -> None:
                 "adjustment_convention_status: unresolved",
                 "network_default: disabled",
                 "immutable_success_manifest: true",
+                "source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf",
                 "recommendation_state: locked_future",
                 "trading_state: locked_future",
                 "ready_factor_count: 0",
@@ -762,6 +763,8 @@ def _write_governance_files(root: Path) -> None:
                 "## Evidence semantics",
                 "",
                 "The primary provider row is never averaged with another source. Cross-provider adjustment semantics remain explicitly unresolved when direct metadata is unavailable. Existing discrepancy quarantine rows remain excluded from risk fitting.",
+                "",
+                "Text evidence checksums normalize CRLF to LF before SHA-256 so tracked CSV evidence remains reproducible across Windows and Unix checkouts. Immutable refresh and OPM snapshot files retain raw-byte checksums.",
                 "",
                 "## Boundaries",
                 "",
@@ -901,6 +904,10 @@ def _csv_text(rows: list[dict[str, object]], fieldnames: list[str] | None = None
 
 def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _sha256_normalized_text_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _sha256_text(value: str) -> str:
