@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/ashare/shadow-20-trading-days-metadata.schema.json",
+  "title": "A-Share Premarket Shadow Observation Metadata",
+  "description": "Research-only metadata for a future owner-authorized observation. No performance or execution fields are permitted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "experiment_id",
+    "observation_index",
+    "trading_date",
+    "observed_at",
+    "snapshot_manifest_path",
+    "snapshot_sha256",
+    "snapshot_integrity",
+    "pit_status",
+    "freshness_status",
+    "risk_state",
+    "position_band_row_count",
+    "abstention_count",
+    "warning_codes",
+    "research_only",
+    "not_for_execution"
+  ],
+  "properties": {
+    "experiment_id": {"type": "string", "minLength": 1},
+    "observation_index": {"type": "integer", "minimum": 1, "maximum": 20},
+    "trading_date": {"type": "string", "format": "date"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "snapshot_manifest_path": {"type": "string", "pattern": "^outputs/research/premarket_position_management/"},
+    "snapshot_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "snapshot_integrity": {"const": "VERIFIED"},
+    "pit_status": {"type": "string", "minLength": 1},
+    "freshness_status": {"type": "string", "minLength": 1},
+    "risk_state": {"type": "string", "minLength": 1},
+    "position_band_row_count": {"type": "integer", "minimum": 0},
+    "abstention_count": {"type": "integer", "minimum": 0},
+    "warning_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "research_only": {"const": true},
+    "not_for_execution": {"const": true}
+  }
+}

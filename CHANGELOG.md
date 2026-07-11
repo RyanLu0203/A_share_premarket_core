@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-11 - Local Mac Deployment Preparation
+
+- Added a local Apple Silicon operation runbook for environment activation,
+  daily evidence refresh, OPM01, GET-only API, dashboard startup, checks,
+  shutdown, and troubleshooting.
+- Added a `PREPARED_NOT_STARTED` 20-trading-day shadow-observation scaffold
+  with an inert config template, metadata schema, and Git-ignored local runtime
+  directories.
+- Updated the repository safety walk to prune project-local `.venv` and `venv`
+  directories, preventing editable-install metadata from being mistaken for a
+  committed forbidden artifact while preserving the suffix check elsewhere.
+- Made no research-logic, scientific-output, recommendation, trading, broker,
+  or production change; `ready_factor_count` remains `0`.
+
 ## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 - Added a controlled T-1 daily evidence refresh with committed replay, bounded

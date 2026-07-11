@@ -33,7 +33,16 @@ DANGEROUS_SUFFIXES = {
     ".zip",
 }
 
-IGNORED_GENERATED_PARTS = {".git", ".next", "coverage", "node_modules", "playwright-report", "test-results"}
+IGNORED_GENERATED_PARTS = {
+    ".git",
+    ".next",
+    ".venv",
+    "coverage",
+    "node_modules",
+    "playwright-report",
+    "test-results",
+    "venv",
+}
 
 
 def run_safety_gate(root: Path) -> bool:

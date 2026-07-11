@@ -1,5 +1,19 @@
 # 09 Step Iteration Log
 
+## 2026-07-11 - Local Mac Deployment Preparation
+
+Status: `DEPLOYMENT_VALIDATION_ONLY`.
+
+- Added an Apple Silicon daily-operation and troubleshooting runbook.
+- Added an ignored local folder scaffold, inert configuration template, and
+  metadata schema for a future 20-trading-day shadow observation.
+- Fixed the safety walk's local-environment compatibility by pruning `.venv`
+  and `venv`, with a regression fixture for editable-install `.pth` metadata.
+- Kept the shadow experiment `PREPARED_NOT_STARTED`; no observation,
+  backfill, paper trade, broker action, or performance claim was created.
+- Preserved `ready_factor_count = 0` and every recommendation, execution,
+  production, factor-promotion, and DQN/RL lock.
+
 ## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 Status: `PASS`.

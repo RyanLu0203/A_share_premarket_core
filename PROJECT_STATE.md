@@ -2,6 +2,23 @@
 
 Last updated: 2026-07-11
 
+## Local Mac Deployment Preparation
+
+- A clean Apple Silicon deployment checkout has been prepared from
+  `project-current` without altering the pre-existing dirty local checkout.
+- The local Python environment, GET-only API, and Next.js workspace are
+  deployment targets only; they do not change scientific evidence or workflow
+  authorization.
+- The safety scanner excludes project-local `.venv` and `venv` directories so
+  editable-install metadata cannot be confused with a committed artifact.
+- `docs/LOCAL_MAC_OPERATION_RUNBOOK.md` records the local daily workflow.
+- `experiments/shadow_20_trading_days/` is an inert
+  `PREPARED_NOT_STARTED` scaffold for a future explicitly authorized
+  20-trading-day observation. No observation or performance claim exists.
+- `ready_factor_count = 0`; Recommendation Tiering, BUY/SELL/HOLD, broker,
+  order, paper-trading, production-trading, factor promotion, and DQN/RL paths
+  remain locked or absent.
+
 ## Codex Operating System Gate
 
 GOAL-CODEX-OPERATING-SYSTEM-01 is implemented as a governance-only Codex Max

@@ -1,0 +1,6 @@
+observations/*
+!observations/.gitkeep
+snapshot_refs/*
+!snapshot_refs/.gitkeep
+logs/*
+!logs/.gitkeep
