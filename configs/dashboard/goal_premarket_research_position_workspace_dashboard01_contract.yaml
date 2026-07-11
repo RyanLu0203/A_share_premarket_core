@@ -1,0 +1,58 @@
+goal_id: GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01
+workflow_id: goal_premarket_research_position_workspace_dashboard01
+depends_on: GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01
+authorization: issue_24_goal_specific_local_workspace
+mode: local_research_only_read_only_workspace
+frontend: nextjs_react_typescript
+backend: fastapi_read_only_get_api
+source_of_truth: committed_validated_artifacts_and_immutable_snapshots
+server_writes: false
+browser_local_watchlist_only: true
+generic_dashboard_unlocked: false
+pages:
+  - 01_command_center
+  - 02_watchlist
+  - 03_stock_explorer
+  - 04_stock_detail
+  - 05_market_context
+  - 06_portfolio_overview
+  - 07_position_bands
+  - 08_risk_monitor
+  - 09_constraint_monitor
+  - 10_abstention_center
+  - 11_alpha_overview_locked
+  - 12_factor_monitor_locked
+  - 13_ic_rankic_lab_locked
+  - 14_regime_analysis_hybrid_factor_regime_locked
+  - 15_factor_correlation_locked
+  - 16_candidate_diagnostics_historical_read_only
+  - 17_recommendation_tiering_locked
+  - 18_shadow_experiment
+  - 19_experiment_history
+  - 20_data_quality
+  - 21_provider_health
+  - 22_snapshot_history
+  - 23_provenance_audit
+locked_capabilities:
+  ready_factor_count: 0
+  alpha_generation: false
+  factor_promotion: false
+  ic_rankic_claims: false
+  recommendation_tiering: false
+  issue_10: false
+  broker_connection: false
+  orders: false
+  paper_trading: false
+  production_writes: false
+  production_promotion: false
+display_derivations:
+  correlation_matrix: server_derived_from_validated_canonical_returns_display_only
+  correlation_matrix_decision_input: false
+provider_policy:
+  silent_averaging: false
+  adjustment_convention_status: unresolved_until_provider_evidence_exists
+  discrepancy_diagnostics: separate_price_and_return_dimensions
+freshness_policy:
+  live_stale_state: BLOCKED
+  replay_state: immutable_snapshot_clock
+  stale_panels_must_not_present_as_current: true

@@ -1,5 +1,18 @@
 # Roadmap
 
+## 2026-07-10 Issue #24 Checkpoint
+
+`GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01` is implemented
+research-only on top of the merged operational position-management goal. The
+checkpoint includes 23 pages, 22 GET-only API routes, immutable replay,
+fail-closed live freshness, portfolio/risk/constraint/abstention views,
+provider and provenance diagnostics, and explicitly locked quant surfaces.
+
+The named workspace is not a generic downstream promotion. The generic
+`dashboard` capability remains `false` and `dashboard_daily_report` remains
+`locked_future`. Recommendation Tiering can proceed only under its own future
+explicit authorization and scientifically ready factor evidence.
+
 ## Current Checkpoint
 
 - GOAL-REPOSITORY-CHECKPOINT-01 Arch03 stable snapshot is the current

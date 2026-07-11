@@ -1,5 +1,22 @@
 # CODEX Project Memory
 
+## Issue #24 Workspace Authorization
+
+`GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01` is implemented
+as a goal-specific local research-only workspace after the merged
+`GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01` dependency.
+
+Agents may maintain `apps/premarket-workspace`, the GET-only API under
+`src/ashare_premarket/dashboard`, its goal-specific contract, docs, tests, and
+audit artifacts. The browser must not calculate scientific decisions or write
+server state. Missing evidence must remain unavailable. Stale live evidence
+must fail closed. Watchlists may persist only in browser local storage.
+
+This authorization does not promote `dashboard_daily_report` and does not set
+the generic `dashboard` capability to true. `ready_factor_count` remains zero;
+Recommendation Tiering, Issue #10, broker connectivity, orders, paper trading,
+production writes, production promotion, and DQN/RL remain locked or absent.
+
 ## Codex Operating System
 
 Authoritative remote repository: `RyanLu0203/A_share_premarket_core`.

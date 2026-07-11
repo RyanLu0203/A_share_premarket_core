@@ -191,8 +191,22 @@ GOAL-REC-TIERING-01, GOAL-10B.4,
 GOAL-POSITION-BAND-VALIDATION-01,
 GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, and downstream
 execution stages remain locked future work;
-no dashboard files, visual reports, frontend, or UI output exist. V2 factor
+the generic Dashboard / Daily Report workflow remains locked. Issue #24 now
+separately authorizes and implements only the named local research workspace
+`GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01`; it is GET-only,
+non-actionable, and does not unlock the generic workflow. V2 factor
 research is planned but inactive; no V2 factor mining, IC/RankIC mining, factor
 library generation, or factor integration is active in V1. Future,
 design-only, infrastructure-only, locked, planned-locked, and
 deleted-from-active-mainline blocks use dotted arrows or side-note references.
+
+### Issue #24 Local Workspace Node
+
+The named workspace depends on
+`GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01` and exposes 23 governed
+pages over committed evidence through 22 GET-only API routes. Live stale data
+fails closed; immutable replay remains explicit. The browser does not calculate
+scientific decisions, and absent fundamentals remain unavailable.
+
+This node has no outgoing promotion edge to Recommendation Tiering, Issue #10,
+trading, broker, paper trading, production, or generic dashboard workflows.

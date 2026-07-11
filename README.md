@@ -3,6 +3,30 @@
 Clean private active repository for the A-share pre-market alpha diagnosis and
 risk-aware position-building decision support system.
 
+## Local Research Workspace
+
+Issue #24 adds the goal-specific A-Share Premarket Workspace as a local,
+research-only interface over committed validated evidence. It contains 23
+governed pages, a 22-route GET-only FastAPI service, browser-local watchlists,
+immutable replay selection, provider diagnostics, portfolio risk and
+constraint views, abstention evidence, and locked quant surfaces.
+
+```powershell
+python scripts/run_premarket_workspace.py --check
+python scripts/run_premarket_workspace.py
+```
+
+Open `http://127.0.0.1:3000`. The API is read-only at
+`http://127.0.0.1:8000/docs`. Current live readiness fails closed when source
+data is stale. Missing fundamentals show `N/A / UNAVAILABLE` and are not
+fabricated.
+
+This named Issue #24 workspace is `implemented_research_only`. It does not
+unlock the generic `dashboard_daily_report` workflow or the top-level
+`dashboard` capability. Recommendation Tiering, Issue #10, broker, orders,
+paper trading, production writes, production promotion, and DQN/RL remain
+locked or absent.
+
 Current Codex Max entrypoint: `project-current`.
 Latest confirmed pre-governance commit:
 `e216aac7cac188f401e970a03defca73b11aa449`.

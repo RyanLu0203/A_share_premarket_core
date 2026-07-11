@@ -748,3 +748,16 @@ recommendations, create positions, create dashboards, write trading or
 production data, activate V2 factor mining, or implement GOAL-07B. GOAL-07B is
 implemented only by its own review-only diagnostic prototype; downstream
 execution modules remain `locked_future`.
+
+## 2026-07-10 Goal-Specific Workspace Status
+
+`goal_premarket_research_position_workspace_dashboard01` is
+`implemented_research_only` under the explicit Issue #24 authorization and
+depends on `goal_premarket_position_management_operational01`. It provides a
+local 23-page evidence workspace with 22 GET-only API routes.
+
+This row is distinct from `dashboard_daily_report`, which remains
+`locked_future` and `implemented_in_repo=false`. The top-level `dashboard`
+capability remains `false`. The goal-specific workspace does not promote any
+recommendation, position validation, broker, order, paper-trading, production,
+factor-mining, or DQN/RL capability.

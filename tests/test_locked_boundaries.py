@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ashare_premarket.core.boundary import forbidden_locked_import_terms
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -26,6 +28,7 @@ def test_locked_capabilities_remain_false() -> None:
     assert locked["goal_v1_diagnostic_coverage03_multi_provider_diagnostics"] == "implemented_review_only"
     assert locked["goal10b3_recommendation_backtest_revalidation"] == "implemented_review_only"
     assert locked["goal10d_backtest_failure_attribution_gate"] is False
+    assert locked["goal_premarket_research_position_workspace_dashboard01_gate"] == "implemented_research_only"
     for key in [
         "signal_backtest",
         "portfolio_backtest",
@@ -43,6 +46,7 @@ def test_active_source_has_no_locked_imports() -> None:
     import ast
 
     for path in (ROOT / "src").rglob("*.py"):
+        relative = path.relative_to(ROOT).as_posix()
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             names: list[str] = []
@@ -50,4 +54,10 @@ def test_active_source_has_no_locked_imports() -> None:
                 names = [alias.name.lower() for alias in node.names]
             elif isinstance(node, ast.ImportFrom):
                 names = [(node.module or "").lower()]
-            assert not any(token in name for name in names for token in ["dashboard", "dqn", "paper_trading"])
+            for name in names:
+                assert not forbidden_locked_import_terms(
+                    ROOT,
+                    name,
+                    relative,
+                    ["dashboard", "dqn", "paper_trading"],
+                )

@@ -1,0 +1,89 @@
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+from _bootstrap import ROOT
+from ashare_premarket.dashboard.api import create_app
+
+
+FRONTEND = ROOT / "apps" / "premarket-workspace"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run the local A-Share Premarket Workspace")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--api-port", type=int, default=8000)
+    parser.add_argument("--web-port", type=int, default=3000)
+    parser.add_argument("--check", action="store_true", help="validate both services without starting them")
+    args = parser.parse_args()
+
+    api_url = f"http://{args.host}:{args.api_port}"
+    web_url = f"http://{args.host}:{args.web_port}"
+    npm = shutil.which("npm.cmd" if os.name == "nt" else "npm")
+    package_file = FRONTEND / "package.json"
+
+    app = create_app(ROOT)
+    api_routes = [path for path, methods in app.openapi()["paths"].items() if path.startswith("/api/") and set(methods).issubset({"get"})]
+    package = json.loads(package_file.read_text(encoding="utf-8")) if package_file.exists() else {}
+    required_scripts = {"dev", "build", "typecheck", "lint", "test"}
+    missing_scripts = required_scripts - set(package.get("scripts", {}))
+    if not api_routes:
+        raise RuntimeError("read-only API exposes no GET routes")
+    if missing_scripts:
+        raise RuntimeError(f"frontend package is missing scripts: {sorted(missing_scripts)}")
+    if npm is None:
+        raise RuntimeError("npm executable is unavailable")
+
+    if args.check:
+        print(f"workspace launcher check: PASS | api={api_url} | frontend={web_url} | routes={len(api_routes)}")
+        return 0
+
+    environment = os.environ.copy()
+    environment["NEXT_PUBLIC_PREMARKET_API_URL"] = api_url
+    api = subprocess.Popen(
+        [sys.executable, str(ROOT / "scripts" / "run_premarket_workspace_api.py"), "--host", args.host, "--port", str(args.api_port)],
+        cwd=ROOT,
+        env=environment,
+    )
+    frontend = subprocess.Popen(
+        [npm, "run", "dev", "--", "--hostname", args.host, "--port", str(args.web_port)],
+        cwd=FRONTEND,
+        env=environment,
+    )
+    print(f"A-Share Premarket Workspace: {web_url}")
+    print(f"Read-only evidence API: {api_url}/docs")
+    try:
+        while api.poll() is None and frontend.poll() is None:
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        _stop(frontend)
+        _stop(api)
+    if api.returncode not in {0, None}:
+        return int(api.returncode)
+    if frontend.returncode not in {0, None}:
+        return int(frontend.returncode)
+    return 0
+
+
+def _stop(process: subprocess.Popen[bytes]) -> None:
+    if process.poll() is not None:
+        return
+    process.terminate()
+    try:
+        process.wait(timeout=8)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=3)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

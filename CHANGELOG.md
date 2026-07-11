@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-10 - Issue #24 Local Research and Position Workspace
+
+- Added a production-quality local 23-page research workspace with a GET-only
+  FastAPI evidence service.
+- Added live/replay context, immutable snapshots, stale-data fail-closed UX,
+  browser-local watchlists, stock evidence, portfolio risk, position bands,
+  constraints, abstentions, experiments, data quality, provider health, and
+  provenance views.
+- Added ECharts and Lightweight Charts without moving scientific calculations
+  into the browser.
+- Preserved zero ready factors and all recommendation, execution, broker, and
+  production locks. The generic dashboard capability remains locked; only the
+  Issue #24 goal-specific local workspace is implemented research-only.
+- Added deterministic goal/audit artifacts and Windows-safe startup commands.
+
 ## 2026-07-09 - GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01 Research Portfolio Risk Track
 
 - Added an integrated research-only premarket portfolio risk and position-band

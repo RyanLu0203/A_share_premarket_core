@@ -506,6 +506,8 @@ def _no_absolute_user_paths_required(root: Path) -> bool:
 
 
 def _no_locked_active_imports(root: Path) -> bool:
+    from ashare_premarket.core.boundary import forbidden_locked_import_terms
+
     for path in (root / "src").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         import ast
@@ -517,6 +519,8 @@ def _no_locked_active_imports(root: Path) -> bool:
                 module_names = [alias.name.lower() for alias in node.names]
             elif isinstance(node, ast.ImportFrom):
                 module_names = [(node.module or "").lower()]
-            if any(token in name for name in module_names for token in ["dashboard", "dqn", "paper_trading"]):
-                return False
+            rel = path.relative_to(root).as_posix()
+            for name in module_names:
+                if forbidden_locked_import_terms(root, name, rel, ["dashboard", "dqn", "paper_trading"]):
+                    return False
     return True
