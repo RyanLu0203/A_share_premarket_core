@@ -190,8 +190,17 @@ def run_goal_premarket_position_management_operational01(
     execution_time: str | None = None,
     target_trading_date: str | None = None,
     replay_date: str | None = DEFAULT_REPLAY_TARGET_TRADING_DATE,
+    canonical_evidence_path: str | Path | None = None,
+    refresh_metadata: dict[str, object] | None = None,
 ) -> bool:
-    result = _build(root, execution_time=execution_time, target_trading_date=target_trading_date, replay_date=replay_date)
+    result = _build(
+        root,
+        execution_time=execution_time,
+        target_trading_date=target_trading_date,
+        replay_date=replay_date,
+        canonical_evidence_path=canonical_evidence_path,
+        refresh_metadata=refresh_metadata,
+    )
     _write_outputs(root, result)
     if print_summary:
         summary = result["run_summary"][0]
@@ -325,9 +334,12 @@ def _build(
     execution_time: str | None = None,
     target_trading_date: str | None = None,
     replay_date: str | None = DEFAULT_REPLAY_TARGET_TRADING_DATE,
+    canonical_evidence_path: str | Path | None = None,
+    refresh_metadata: dict[str, object] | None = None,
 ) -> dict[str, object]:
     predecessor_manifest = _read_json_if_exists(root / PR_MANIFEST)
-    canonical = read_csv(root / PR_CANONICAL)
+    canonical_path, canonical_relative = _resolve_canonical_evidence_path(root, canonical_evidence_path)
+    canonical = read_csv(canonical_path)
     risk_state = read_csv(root / PR_RISK_STATE)[0]
     reference = read_csv(root / PR_REFERENCE)
     constraints = read_csv(root / PR_CONSTRAINT_EVALUATION)
@@ -396,6 +408,9 @@ def _build(
         holdings,
         readiness_state,
         preferred_policy,
+        canonical_relative,
+        canonical_path,
+        refresh_metadata,
     )
     manifest = _manifest(
         predecessor_manifest,
@@ -406,6 +421,9 @@ def _build(
         daily_risk_rows[0],
         band_status_rows,
         warning_rows,
+        canonical_relative,
+        canonical_path,
+        refresh_metadata,
     )
     return {
         "predecessor_manifest": predecessor_manifest,
@@ -906,8 +924,16 @@ def _snapshot_manifest_skeleton(
     holdings: dict[str, object],
     readiness_state: str,
     preferred_policy: dict[str, str],
+    canonical_evidence_path: str = "",
+    canonical_path: Path | None = None,
+    refresh_metadata: dict[str, object] | None = None,
 ) -> dict[str, object]:
-    return {
+    source_lineage = [PREDECESSOR_GOAL_ID, "network_ingestion_daily_panel", "network_ingestion_index_panel", "regime_label_research02"]
+    config_payload = _config_payload(predecessor_manifest, preferred_policy)
+    if canonical_evidence_path:
+        source_lineage.append(str((refresh_metadata or {}).get("goal", "validated_daily_refresh")))
+        config_payload["daily_refresh"] = refresh_metadata or {}
+    manifest = {
         "goal": GOAL_ID,
         "snapshot_date": context["target_trading_date"],
         "target_trading_date": context["target_trading_date"],
@@ -920,11 +946,11 @@ def _snapshot_manifest_skeleton(
         "decision_asof_ts": context["decision_asof_ts"],
         "asof_ts": context["decision_asof_ts"],
         "data_cutoff": context["data_cutoff"],
-        "source_lineage": [PREDECESSOR_GOAL_ID, "network_ingestion_daily_panel", "network_ingestion_index_panel", "regime_label_research02"],
+        "source_lineage": source_lineage,
         "provider_lineage": predecessor_manifest.get("providers_compared", []),
         "holdings_snapshot_id": holdings["snapshot_id"],
         "holdings_mode": holdings["mode"],
-        "config_hash": _sha256_text(json.dumps(_config_payload(predecessor_manifest, preferred_policy), sort_keys=True)),
+        "config_hash": _sha256_text(json.dumps(config_payload, sort_keys=True)),
         "code_commit": "tracked_snapshot_is_deterministic;runtime_git_head_verified_by_validation",
         "readiness_state": readiness_state,
         "freshness_state": freshness["state"],
@@ -933,6 +959,15 @@ def _snapshot_manifest_skeleton(
         "immutable_write_policy": "refuse_conflicting_snapshot_overwrite",
         "checksums": {},
     }
+    if canonical_evidence_path and canonical_path is not None:
+        manifest.update(
+            {
+                "canonical_evidence_path": canonical_evidence_path,
+                "canonical_evidence_checksum": _sha256_bytes(canonical_path.read_bytes()),
+                "daily_refresh_lineage": refresh_metadata or {},
+            }
+        )
+    return manifest
 
 
 def _manifest(
@@ -944,6 +979,9 @@ def _manifest(
     risk: dict[str, object],
     bands: list[dict[str, object]],
     warnings: list[dict[str, object]],
+    canonical_evidence_path: str = "",
+    canonical_path: Path | None = None,
+    refresh_metadata: dict[str, object] | None = None,
 ) -> dict[str, object]:
     manifest = {
         "goal": GOAL_ID,
@@ -994,6 +1032,14 @@ def _manifest(
     }
     for key in FALSE_BOUNDARY_KEYS:
         manifest[key] = False
+    if canonical_evidence_path and canonical_path is not None:
+        manifest.update(
+            {
+                "canonical_evidence_path": canonical_evidence_path,
+                "canonical_evidence_checksum": _sha256_bytes(canonical_path.read_bytes()),
+                "daily_refresh_lineage": refresh_metadata or {},
+            }
+        )
     return manifest
 
 
@@ -1294,6 +1340,23 @@ def _contains_forbidden_operational_text(text: str) -> bool:
 
 def _sha256_text(body: str) -> str:
     return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
+def _sha256_bytes(body: bytes) -> str:
+    return hashlib.sha256(body).hexdigest()
+
+
+def _resolve_canonical_evidence_path(root: Path, value: str | Path | None) -> tuple[Path, str]:
+    if value is None or str(value) == "":
+        return root / PR_CANONICAL, ""
+    candidate = Path(value)
+    resolved = (candidate if candidate.is_absolute() else root / candidate).resolve()
+    resolved_root = root.resolve()
+    if resolved_root not in resolved.parents:
+        raise ValueError("canonical evidence path must remain inside repository root")
+    if not resolved.exists():
+        raise ValueError(f"canonical evidence path does not exist: {resolved}")
+    return resolved, resolved.relative_to(resolved_root).as_posix()
 
 
 def _float(value: object) -> float | None:

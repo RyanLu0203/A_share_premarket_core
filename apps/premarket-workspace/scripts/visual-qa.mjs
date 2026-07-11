@@ -35,12 +35,15 @@ try {
 
     await page.goto(`${baseUrl}/`, {waitUntil: "networkidle"});
     await page.getByRole("heading", {name: "Command Center", exact: true}).waitFor();
-    await page.getByText("STALE_SOURCE_DATA").first().waitFor();
+    await page.locator(".freshness-banner.is-blocked").waitFor();
+    await page.getByText("Refresh SUCCEEDED").waitFor();
+    await page.getByText("Validation PASS").waitFor();
     const layout = await inspectLayout(page);
     assert(layout.bodyOverflow <= 1, `${prefix} command center body overflow ${layout.bodyOverflow}px`);
     assert(layout.contextOverflow <= 1, `${prefix} topbar context overflow ${layout.contextOverflow}px`);
     assert(!layout.topbarTextOverlap, `${prefix} provider and mode text overlap`);
     assert(layout.mainStartsAfterSidebar, `${prefix} sidebar overlaps workspace content`);
+    assert(layout.refreshOverflow <= 1, `${prefix} refresh status overflow ${layout.refreshOverflow}px`);
     await page.screenshot({path: path.join(outputDir, `${prefix}-command-center.png`), fullPage: true});
     report.checks.push({viewport: prefix, page: "command-center", layout, staleBlocked: true});
 
@@ -106,12 +109,14 @@ async function inspectLayout(page) {
     const sidebar = document.querySelector(".sidebar")?.getBoundingClientRect();
     const main = document.querySelector(".workspace-main")?.getBoundingClientRect();
     const contextOverflow = Math.max(0, ...Array.from(document.querySelectorAll(".context-block")).map((element) => element.scrollWidth - element.clientWidth));
+    const refreshOverflow = Math.max(0, ...Array.from(document.querySelectorAll(".refresh-status-strip > div")).map((element) => element.scrollWidth - element.clientWidth));
     const provider = textRect(document.querySelector(".context-provider strong"));
     const mode = textRect(document.querySelector(".mode-badge"));
     const contextClip = document.querySelector(".topbar-context")?.getBoundingClientRect() ?? null;
     return {
       bodyOverflow: document.documentElement.scrollWidth - window.innerWidth,
       contextOverflow,
+      refreshOverflow,
       topbarTextOverlap: intersects(clip(provider, contextClip), mode),
       mainStartsAfterSidebar: Boolean(sidebar && main && main.left >= sidebar.right - 1),
       sidebarRight: sidebar?.right ?? null,

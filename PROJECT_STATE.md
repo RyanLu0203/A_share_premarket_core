@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 
 ## Codex Operating System Gate
 
@@ -66,6 +66,46 @@ PR #23 operational position-management evidence.
 Run with `python scripts/run_premarket_workspace.py`. Deterministic goal and
 audit evidence are under
 `outputs/audits/goal_premarket_research_position_workspace_dashboard01_*`.
+
+## GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
+
+The controlled daily research evidence refresh is implemented on top of the
+portfolio-risk, OPM01, and named local workspace goals.
+
+- Status: `PASS`; committed deterministic refresh: `SUCCEEDED`.
+- Clock: target `2026-07-01`, expected T-1 `2026-06-30`, latest evidence
+  `2026-06-30`, mode `deterministic_replay`.
+- Evidence modes: committed replay, bounded local incremental CSV, and explicit
+  network opt-in through the existing AKShare adapter. Network remains disabled
+  by default and raw provider responses are not committed.
+- Validation runs before OPM and fails closed for missing trading-calendar
+  coverage, stale or future data, required-symbol missingness, provider
+  failures, timestamp/PIT violations, invalid quarantine state, and checksum
+  mismatch. It does not guess an unconfigured exchange session.
+- Provider rules remain primary-source/no-averaging. Existing discrepancy
+  quarantine is preserved, and cross-provider adjustment convention remains
+  explicitly `UNRESOLVED` where metadata is unavailable.
+- Successful refreshes call OPM01 and verify the immutable snapshot before the
+  latest refresh pointer advances. Failed refreshes publish a blocked reason
+  without advancing the latest valid OPM snapshot.
+- The daily layer does not duplicate upstream risk estimators. OPM reuses the
+  validated predecessor portfolio-risk outputs, and this limitation is
+  recorded in refresh provenance.
+- The workspace surfaces latest refresh state, last successful time, freshness,
+  validation, blocked reasons, and snapshot version.
+- Future experiment contracts cover only date range, snapshot lineage,
+  evaluation metadata, and baseline reference. Status remains
+  `PREPARED_NOT_STARTED`; no observations or performance claims exist.
+- `ready_factor_count = 0`; Recommendation Tiering, recommendation outputs,
+  trading, broker, paper execution, production writes, and DQN/RL remain
+  locked or absent.
+
+Operational command: `python scripts/run_daily_incremental_evidence_refresh.py`.
+
+Deterministic governance commands:
+
+- `python scripts/run_goal_daily_incremental_evidence_refresh01.py`
+- `python scripts/audit_goal_daily_incremental_evidence_refresh01.py`
 
 ## GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01
 

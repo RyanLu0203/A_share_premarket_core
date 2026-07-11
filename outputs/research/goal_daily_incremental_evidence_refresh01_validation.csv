@@ -1,0 +1,10 @@
+check_id,current_value,threshold,state,reason_code,fail_closed,evidence_availability
+freshness,2026-06-30,2026-06-30,PASS,,true,available
+schema_and_key_uniqueness,rows=34543;duplicate_keys=0,rows>0;duplicate_keys=0,PASS,,true,available
+missingness,missing=;incomplete=,all required symbols have a T-1 close and return or explicit suspension,PASS,,true,available
+provider_consistency,invalid=;failed_attempts=0,approved=akshare;akshare_sina;no_failed_attempts,PASS,,true,available
+timestamp_correctness,date_level_timestamps_at_or_before_cutoff,provider_timestamp<=2026-07-01T08:30:00+08:00,PASS,,true,available
+pit_availability,passed_current_or_past_only,all evidence available by 2026-06-30,PASS,,true,available
+checksum_reproducibility,4c5fa34d55ebbc327deee12f05ff120c0fe90db89c15dc0b995fee5aa96f4c4b,4c5fa34d55ebbc327deee12f05ff120c0fe90db89c15dc0b995fee5aa96f4c4b,PASS,,true,available
+quarantine_preservation,quarantined_rows=6,quarantined rows remain risk_model_eligible=false,PASS,,true,available
+adjustment_convention_disclosure,UNRESOLVED,explicit unresolved status; no full reconciliation claim,PASS,,true,available

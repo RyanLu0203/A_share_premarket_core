@@ -96,6 +96,12 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
 .timeline-node strong {font-family: "IBM Plex Mono", monospace; font-size: 12px;}
 .timeline-node.is-stale {border-color: var(--red); color: var(--red);}
 .freshness-meta {padding: 18px; color: var(--muted); font-size: 10px; font-family: "IBM Plex Mono", monospace; display: flex; gap: 6px; align-items: center;}
+.refresh-status-strip {grid-column: 1 / -1; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));}
+.refresh-status-strip > div {min-width: 0; padding: 9px 12px; border-right: 1px solid var(--border); display: grid; gap: 3px;}
+.refresh-status-strip > div:last-child {border-right: 0;}
+.refresh-status-strip span {font-size: 9px; color: var(--subtle);}
+.refresh-status-strip strong {font-family: "IBM Plex Mono", monospace; font-size: 10px; overflow-wrap: anywhere;}
+.refresh-blocked-reason {color: var(--amber);}
 .blocked-current-state {min-height: 54px; border: 1px solid var(--red); background: var(--surface); padding: 10px 13px; display: flex; align-items: center; gap: 11px; color: var(--red);}
 .blocked-current-state > svg {width: 23px; height: 23px;}
 .blocked-current-state > div {display: grid; gap: 2px;}
@@ -262,6 +268,7 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
   .evidence-grid {grid-template-columns: repeat(3, minmax(0, 1fr));}
   .freshness-banner {grid-template-columns: 220px minmax(420px, 1fr);}
   .freshness-meta {grid-column: 1 / -1; border-top: 1px solid var(--border); padding: 8px 18px;}
+  .refresh-status-strip {grid-template-columns: repeat(3, minmax(0, 1fr));}
   .explorer-filters {grid-template-columns: repeat(4, minmax(120px, 1fr));}
   .state-definition-grid {grid-template-columns: repeat(2, minmax(0, 1fr));}
 }
@@ -283,6 +290,7 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
   .freshness-banner {grid-template-columns: 1fr;}
   .evidence-timeline {padding: 0 16px 14px; justify-content: flex-start; overflow-x: auto;}
   .freshness-meta {grid-column: auto;}
+  .refresh-status-strip {grid-template-columns: repeat(2, minmax(0, 1fr));}
   .explorer-filters {grid-template-columns: repeat(2, minmax(120px, 1fr));}
   .chart-evidence-strip {grid-template-columns: 1fr;}
 }

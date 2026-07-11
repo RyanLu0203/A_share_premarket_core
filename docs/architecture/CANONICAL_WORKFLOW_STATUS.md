@@ -761,3 +761,14 @@ This row is distinct from `dashboard_daily_report`, which remains
 capability remains `false`. The goal-specific workspace does not promote any
 recommendation, position validation, broker, order, paper-trading, production,
 factor-mining, or DQN/RL capability.
+
+## 2026-07-11 Daily Incremental Evidence Refresh Status
+
+`goal_daily_incremental_evidence_refresh01` is
+`implemented_research_only`. It depends on the named local workspace and OPM01,
+validates controlled T-1 evidence before invoking OPM, and publishes an
+immutable successful refresh manifest plus a latest refresh status pointer.
+
+The row has no promotion edge to Recommendation Tiering, generic dashboard,
+broker, paper execution, production, or DQN/RL. A blocked daily attempt records
+deterministic reasons without advancing the latest valid OPM snapshot.

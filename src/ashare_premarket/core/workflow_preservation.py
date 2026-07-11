@@ -4,8 +4,12 @@ from functools import lru_cache
 from pathlib import Path
 
 from ashare_premarket.core.boundary import (
+    DAILY_REFRESH_CAPABILITY_KEY,
+    DAILY_REFRESH_WORKFLOW_ID,
     ISSUE24_CAPABILITY_KEY,
     ISSUE24_WORKFLOW_ID,
+    daily_refresh_evidence_valid,
+    daily_refresh_workflow_patch,
     issue24_workspace_evidence_valid,
     issue24_workspace_workflow_patch,
 )
@@ -21,11 +25,25 @@ def _issue24_workspace_evidence_valid_for_runner(root: Path) -> bool:
     return _issue24_workspace_evidence_valid_cached(str(root.resolve()), stat.st_mtime_ns, stat.st_size)
 
 
+def _daily_refresh_evidence_valid_for_runner(root: Path) -> bool:
+    manifest = root / "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json"
+    try:
+        stat = manifest.stat()
+    except OSError:
+        return False
+    return _daily_refresh_evidence_valid_cached(str(root.resolve()), stat.st_mtime_ns, stat.st_size)
+
+
 @lru_cache(maxsize=8)
 def _issue24_workspace_evidence_valid_cached(root: str, _manifest_mtime_ns: int, _manifest_size: int) -> bool:
     # Earlier goal runners mutate governance outputs, not implementation files. Cache the
     # checksum decision per manifest revision so repeated preservation calls stay bounded.
     return issue24_workspace_evidence_valid(Path(root))
+
+
+@lru_cache(maxsize=8)
+def _daily_refresh_evidence_valid_cached(root: str, _manifest_mtime_ns: int, _manifest_size: int) -> bool:
+    return daily_refresh_evidence_valid(Path(root))
 
 
 def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict[str, str]]) -> None:
@@ -34,6 +52,11 @@ def preserve_later_review_only_workflow_states(root: Path, by_id: dict[str, dict
     if _issue24_workspace_evidence_valid_for_runner(root):
         by_id.setdefault(ISSUE24_WORKFLOW_ID, issue24_workspace_workflow_patch()).update(
             issue24_workspace_workflow_patch()
+        )
+
+    if _daily_refresh_evidence_valid_for_runner(root):
+        by_id.setdefault(DAILY_REFRESH_WORKFLOW_ID, daily_refresh_workflow_patch()).update(
+            daily_refresh_workflow_patch()
         )
 
     if _goal08a_valid(root) and "goal08a_recommendation_contract_design_gate" in by_id:
@@ -1103,6 +1126,10 @@ def preserve_later_review_only_capabilities(root: Path, payload: dict[str, objec
     if _issue24_workspace_evidence_valid_for_runner(root):
         payload[ISSUE24_CAPABILITY_KEY] = "implemented_research_only"
         payload["dashboard"] = False
+    if _daily_refresh_evidence_valid_for_runner(root):
+        payload[DAILY_REFRESH_CAPABILITY_KEY] = "implemented_research_only"
+        for key in ("dashboard", "paper_trading", "broker_live_trading", "production_db_writes", "production_model_promotion", "dqn_rl"):
+            payload[key] = False
     if _goal08a_valid(root):
         payload["goal08a_recommendation_contract_design_gate"] = "implemented_design_only"
     if _storage01_valid(root):
@@ -1603,3 +1630,5 @@ def _read_json(path: Path) -> dict[str, object]:
         return read_json(path)
     except Exception:
         return {}
+    daily_refresh_evidence_valid,
+    daily_refresh_workflow_patch,

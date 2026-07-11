@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
+
+- Added a controlled T-1 daily evidence refresh with committed replay, bounded
+  local incremental input, and explicit existing-provider network opt-in.
+- Added fail-closed freshness, missingness, provider, timestamp, PIT,
+  quarantine, and checksum validation before OPM execution.
+- Added conditional repository-local canonical evidence handoff to OPM while
+  preserving the historical default snapshot bytes and no-averaging rules.
+- Added immutable successful refresh manifests, mutable blocked-status
+  reporting, OPM snapshot verification, and deterministic refresh lineage.
+- Extended the named local workspace with latest refresh state, last successful
+  time, freshness, validation, blocked reasons, and snapshot version.
+- Added future experiment-readiness contracts without starting observations or
+  producing performance claims.
+- Preserved `ready_factor_count = 0` and all recommendation, trading, broker,
+  paper-execution, production, and DQN/RL locks.
+
 ## 2026-07-10 - Issue #24 Local Research and Position Workspace
 
 - Added a production-quality local 23-page research workspace with a GET-only

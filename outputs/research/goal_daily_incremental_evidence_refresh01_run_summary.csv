@@ -1,0 +1,2 @@
+goal,refresh_status,validation_status,blocked_reasons,target_trading_date,expected_previous_trading_date,latest_available_data_date,execution_timestamp,execution_mode,opm_executed,opm_snapshot_integrity,snapshot_version,research_only,not_for_execution
+GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01,SUCCEEDED,PASS,,2026-07-01,2026-06-30,2026-06-30,2026-07-01T08:30:00+08:00,deterministic_replay,true,VERIFIED,sha256:7e3e680451068ff8,true,true

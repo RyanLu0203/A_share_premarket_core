@@ -27,6 +27,42 @@ unlock the generic `dashboard_daily_report` workflow or the top-level
 paper trading, production writes, production promotion, and DQN/RL remain
 locked or absent.
 
+## Daily Evidence Refresh
+
+`GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01` adds the controlled daily layer
+between governed market evidence and OPM01. Validation must pass before OPM is
+called; a blocked refresh updates the visible reason but does not advance the
+latest valid immutable snapshot.
+
+```mermaid
+flowchart LR
+    A["Committed replay / bounded local increment / explicit provider opt-in"] --> B["T-1 freshness + missingness + provider + timestamp + PIT + checksum validation"]
+    B -->|"PASS"| C["OPM01"]
+    C --> D["Immutable position-management snapshot"]
+    D --> E["Named read-only workspace"]
+    B -->|"BLOCKED"| F["Refresh status + deterministic reason codes"]
+    F -. "does not advance" .-> D
+```
+
+Daily operational run:
+
+```powershell
+python scripts/run_daily_incremental_evidence_refresh.py
+```
+
+An owner-supplied bounded CSV can be passed with `--evidence-file`; live
+provider access additionally requires `--allow-network` or the existing
+environment opt-in. Deterministic governance replay uses
+`python scripts/run_goal_daily_incremental_evidence_refresh01.py`.
+
+The refresh is research-only. It keeps `ready_factor_count = 0`, preserves
+provider quarantine and unresolved adjustment disclosure, and does not unlock
+recommendation or execution capabilities.
+
+If the governed trading calendar does not cover the next session, live mode
+returns `TRADING_CALENDAR_COVERAGE_MISSING` with unresolved target/cutoff fields
+instead of guessing an exchange date or returning an application error.
+
 Current Codex Max entrypoint: `project-current`.
 Latest confirmed pre-governance commit:
 `e216aac7cac188f401e970a03defca73b11aa449`.

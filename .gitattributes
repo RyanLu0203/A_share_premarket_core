@@ -1,2 +1,3 @@
 # Checksummed immutable snapshots must remain byte-identical across platforms.
 outputs/research/premarket_position_management/** -text
+outputs/research/daily_incremental_evidence_refresh/** -text
