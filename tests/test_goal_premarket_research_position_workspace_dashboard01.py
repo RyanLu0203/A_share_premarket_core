@@ -17,6 +17,7 @@ from ashare_premarket.dashboard.goal_premarket_research_position_workspace_dashb
     run_goal_premarket_research_position_workspace_dashboard01,
 )
 from ashare_premarket.dashboard.repository import PremarketWorkspaceRepository
+from ashare_premarket.dashboard.store import CommittedEvidenceStore
 from ashare_premarket.core.workflow_preservation import (
     preserve_later_review_only_capabilities,
     preserve_later_review_only_workflow_states,
@@ -44,6 +45,42 @@ def test_replay_status_uses_immutable_snapshot_clock_and_checksums() -> None:
     assert status["holdings_mode"] == "RESEARCH REFERENCE PORTFOLIO"
     assert status["snapshot_integrity"] == "VERIFIED"
     assert status["research_only"] is True
+    assert status["latest_refresh_status"] == "SUCCEEDED"
+    assert status["last_successful_refresh_time"] == "2026-07-01T08:30:00+08:00"
+    assert status["data_freshness_badge"] == "FRESH_T_MINUS_ONE_DATA"
+    assert status["refresh_validation_status"] == "PASS"
+    assert status["refresh_manifest_integrity"] == "VERIFIED"
+    assert status["refresh_blocked_reasons"] == []
+    assert status["snapshot_version"]
+
+
+def test_dashboard_store_observes_refresh_and_snapshot_pointer_updates_without_restart(tmp_path: Path) -> None:
+    store = CommittedEvidenceStore(tmp_path)
+    refresh_root = tmp_path / "outputs/research/daily_incremental_evidence_refresh"
+    refresh_root.mkdir(parents=True)
+
+    def write_refresh(state: str) -> None:
+        manifest = refresh_root / f"{state.lower()}.json"
+        manifest.write_bytes((json.dumps({"refresh_status": state}, sort_keys=True) + "\n").encode("utf-8"))
+        latest = {
+            "refresh_status": state,
+            "refresh_manifest_path": manifest.relative_to(tmp_path).as_posix(),
+            "refresh_manifest_checksum": hashlib.sha256(manifest.read_bytes()).hexdigest(),
+        }
+        (refresh_root / "latest_refresh.json").write_bytes((json.dumps(latest, sort_keys=True) + "\n").encode("utf-8"))
+
+    write_refresh("BLOCKED")
+    assert store.refresh_status()["refresh_status"] == "BLOCKED"
+    write_refresh("SUCCEEDED")
+    assert store.refresh_status()["refresh_status"] == "SUCCEEDED"
+
+    snapshot_root = tmp_path / "outputs/research/premarket_position_management"
+    for date in ("2026-07-01", "2026-07-02"):
+        path = snapshot_root / date / "manifest.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps({"snapshot_date": date}), encoding="utf-8")
+        (snapshot_root / "latest_manifest.json").write_text(json.dumps({"snapshot_date": date}), encoding="utf-8")
+        assert store.latest_snapshot_date() == date
 
 
 def test_live_status_blocks_stale_t_minus_one_without_self_reference() -> None:
@@ -60,6 +97,19 @@ def test_live_status_blocks_stale_t_minus_one_without_self_reference() -> None:
     assert status["latest_available_data_date"] == "2026-06-30"
     assert status["data_cutoff"] == "2026-07-08"
     assert status["current_panels_enabled"] is False
+
+
+def test_live_status_fails_closed_when_calendar_coverage_is_exhausted() -> None:
+    status = _repo().status(
+        mode="live",
+        execution_time=datetime(2026, 7, 11, 8, 0, tzinfo=ZoneInfo("Asia/Shanghai")),
+    )
+
+    assert status["readiness_state"] == "BLOCKED"
+    assert status["freshness_code"] == "TRADING_CALENDAR_COVERAGE_MISSING"
+    assert status["target_trading_date"] == "UNRESOLVED"
+    assert status["current_panels_enabled"] is False
+    assert "TRADING_CALENDAR_COVERAGE_MISSING" in status["refresh_blocked_reasons"]
 
 
 def test_stock_contract_uses_real_evidence_and_explicit_unavailable_values() -> None:

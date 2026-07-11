@@ -22,4 +22,11 @@ export interface WorkspaceStatus {
   provider_state?: string;
   holdings_mode?: string;
   current_panels_enabled?: boolean;
+  latest_refresh_status?: string;
+  last_successful_refresh_time?: string;
+  data_freshness_badge?: string;
+  refresh_validation_status?: string;
+  refresh_manifest_integrity?: string;
+  refresh_blocked_reasons?: string[];
+  snapshot_version?: string;
 }

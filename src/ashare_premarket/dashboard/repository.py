@@ -7,9 +7,9 @@ from typing import Any
 
 from ashare_premarket.dashboard.analytics import display_correlation_matrix
 from ashare_premarket.dashboard.store import CommittedEvidenceStore
+from ashare_premarket.daily_refresh.goal_daily_incremental_evidence_refresh01 import resolve_daily_refresh_context
 from ashare_premarket.portfolio_risk.goal_premarket_position_management_operational01 import (
     evaluate_canonical_freshness,
-    resolve_run_context,
 )
 
 
@@ -57,6 +57,7 @@ class PremarketWorkspaceRepository:
         selected = snapshot_date or self.store.latest_snapshot_date()
         manifest = self.store.snapshot_manifest(selected)
         verified, checksum_failures = self.store.verify_snapshot(selected)
+        refresh = self.store.refresh_status()
         if mode == "replay":
             result = {
                 "execution_mode": "deterministic_replay",
@@ -74,8 +75,15 @@ class PremarketWorkspaceRepository:
             }
         elif mode == "live":
             execution = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
-            context = resolve_run_context(self.root, execution_time=execution, replay_date=None)
-            freshness = evaluate_canonical_freshness(list(self.store.canonical_dates()), context)
+            context = resolve_daily_refresh_context(self.root, execution_time=execution, replay_date=None)
+            if context.get("calendar_status") == "BLOCKED":
+                freshness = {
+                    "state": "BLOCKED",
+                    "freshness_code": context["calendar_reason"],
+                    "latest_available_canonical_date": max(self.store.canonical_dates(selected), default=""),
+                }
+            else:
+                freshness = evaluate_canonical_freshness(list(self.store.canonical_dates(selected)), context)
             result = {
                 **context,
                 "snapshot_date": selected,
@@ -86,6 +94,16 @@ class PremarketWorkspaceRepository:
             }
         else:
             raise ValueError("mode must be 'live' or 'replay'")
+        if mode == "live" and (refresh.get("refresh_status") == "BLOCKED" or refresh.get("refresh_manifest_integrity") == "FAILED"):
+            result["readiness_state"] = "BLOCKED"
+            result["current_panels_enabled"] = False
+        refresh_reasons = refresh.get("blocked_reasons", [])
+        if not isinstance(refresh_reasons, list):
+            refresh_reasons = [str(refresh_reasons)] if refresh_reasons else []
+        if refresh.get("refresh_manifest_integrity") == "FAILED":
+            refresh_reasons = [*refresh_reasons, "REFRESH_MANIFEST_CHECKSUM_MISMATCH"]
+        if result.get("readiness_state") == "BLOCKED" and result.get("freshness_code") not in refresh_reasons:
+            refresh_reasons = [*refresh_reasons, result.get("freshness_code")]
         return {
             **result,
             "provider_state": "WARNINGS_QUARANTINED",
@@ -93,6 +111,13 @@ class PremarketWorkspaceRepository:
             "portfolio_id": "research_reference_portfolio",
             "snapshot_integrity": "VERIFIED" if verified else "FAILED",
             "snapshot_checksum_failures": checksum_failures,
+            "latest_refresh_status": refresh.get("refresh_status", "NOT_RUN"),
+            "last_successful_refresh_time": refresh.get("last_successful_refresh_time", ""),
+            "data_freshness_badge": result.get("freshness_code", "UNAVAILABLE") if mode == "live" else refresh.get("freshness_code", result.get("freshness_code", "UNAVAILABLE")),
+            "refresh_validation_status": refresh.get("validation_status", "NOT_RUN"),
+            "refresh_manifest_integrity": refresh.get("refresh_manifest_integrity", "UNAVAILABLE"),
+            "refresh_blocked_reasons": refresh_reasons,
+            "snapshot_version": refresh.get("snapshot_version") if refresh.get("snapshot_date") == selected else self.store.snapshot_version(selected),
             "research_only": True,
             "not_trading_advice": True,
             "not_for_execution": True,
@@ -105,7 +130,7 @@ class PremarketWorkspaceRepository:
         bands = {row["symbol"]: row for row in self.store.snapshot_csv("position_band_status.csv", selected)}
         risk = {row["symbol"]: row for row in self._risk_contributions()}
         abstentions = {row["symbol"]: row for row in self.store.snapshot_csv("abstention_summary.csv", selected)}
-        latest_canonical = self._latest_by_symbol(self.store.canonical_rows(), cutoff)
+        latest_canonical = self._latest_by_symbol(self.store.canonical_rows(selected), cutoff)
         latest_panel = self._latest_by_symbol(self.store.provider_panel_rows(), cutoff)
         identity = self._identity_map()
         rows: list[dict[str, Any]] = []
@@ -293,7 +318,7 @@ class PremarketWorkspaceRepository:
             "portfolio_mode": HOLDINGS_MODE_LABEL,
             "risk_state": risk_state,
             "positions": positions,
-            "correlation_matrix": display_correlation_matrix(self.store.canonical_rows(), top_symbols, cutoff),
+            "correlation_matrix": display_correlation_matrix(self.store.canonical_rows(selected), top_symbols, cutoff),
             "clusters": list(self._cluster_summary()),
             "exposure": self.store.snapshot_csv("exposure_envelope.csv", selected)[0],
             "snapshot_date": selected,
@@ -502,14 +527,15 @@ class PremarketWorkspaceRepository:
     def experiment(self) -> dict[str, Any]:
         contract = {row["field_name"]: row["frozen_value"] for row in self.store.csv("outputs/research/goal_premarket_position_management_operational01_shadow_experiment_contract.csv")}
         freeze = self.store.json("outputs/research/goal_premarket_position_management_operational01_experiment_freeze_manifest.json")
-        return {"status": "PREPARED_NOT_STARTED", "contract": contract, "freeze_manifest": freeze, "observations": [], "empty_state": "NO FORWARD EXPERIMENT OBSERVATIONS YET", "research_only": True}
+        refresh_contract = {row["field_name"]: row["frozen_value"] for row in self.store.csv("outputs/research/goal_daily_incremental_evidence_refresh01_experiment_readiness_contract.csv")}
+        return {"status": "PREPARED_NOT_STARTED", "contract": contract, "daily_refresh_contract": refresh_contract, "freeze_manifest": freeze, "observations": [], "empty_state": "NO FORWARD EXPERIMENT OBSERVATIONS YET", "research_only": True}
 
     def snapshots(self) -> dict[str, Any]:
         rows = []
         for date in self.store.snapshot_dates():
             manifest = self.store.snapshot_manifest(date)
             verified, failures = self.store.verify_snapshot(date)
-            rows.append({**manifest, "snapshot_integrity": "VERIFIED" if verified else "FAILED", "checksum_failures": failures})
+            rows.append({**manifest, "snapshot_version": self.store.snapshot_version(date), "snapshot_integrity": "VERIFIED" if verified else "FAILED", "checksum_failures": failures})
         return {"latest": self.store.latest_snapshot_date(), "snapshots": rows}
 
     def provenance(self, snapshot_date: str | None = None) -> dict[str, Any]:
@@ -525,7 +551,8 @@ class PremarketWorkspaceRepository:
             "code_commit": manifest.get("code_commit"),
             "checksums": manifest.get("checksums", {}),
             "pit_status": manifest.get("pit_status"),
-            "goal_lineage": ["GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01", "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01", "GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01"],
+            "goal_lineage": ["GOAL-PREMARKET-PORTFOLIO-RISK-MANAGEMENT-01", "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01", "GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01", "GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01"],
+            "daily_refresh": self.store.refresh_status(),
             "audit_status": workspace_audit.get("status", "UNAVAILABLE"),
             "workflow_state": workflow,
             "research_only": True,

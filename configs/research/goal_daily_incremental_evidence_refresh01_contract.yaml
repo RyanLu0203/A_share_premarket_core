@@ -1,0 +1,28 @@
+goal_id: GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
+workflow_id: goal_daily_incremental_evidence_refresh01
+mode: controlled_daily_research_evidence_refresh
+required_run_fields:
+  - target_trading_date
+  - expected_previous_trading_date
+  - latest_available_data_date
+  - execution_timestamp
+  - execution_mode
+incremental_input_fields:
+  required: [trade_date, symbol, close, source_provider, provider_timestamp, pit_available_date, no_lookahead_status, suspension_status, adjustment_policy]
+  optional: [return_1d, quarantine_reason]
+validation_reason_codes: [TRADING_CALENDAR_COVERAGE_MISSING, STALE_SOURCE_DATA, FUTURE_DATA_AFTER_PIT_CUTOFF, MISSING_REQUIRED_EVIDENCE, INVALID_PROVIDER_STATE, INVALID_TIMESTAMP, PIT_VIOLATION, CHECKSUM_MISMATCH, INVALID_QUARANTINE_STATE, INVALID_EVIDENCE_SCHEMA, OPM_EXECUTION_FAILED, SNAPSHOT_INTEGRITY_FAILED]
+t_minus_one_required: true
+pit_fail_closed: true
+provider_reconciliation_preserved: true
+quarantine_preserved: true
+no_silent_averaging: true
+adjustment_convention_status: unresolved
+network_default: disabled
+immutable_success_manifest: true
+source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf
+recommendation_state: locked_future
+trading_state: locked_future
+ready_factor_count: 0
+experiment_status: prepared_not_started
+risk_model_recalculated: false
+risk_model_source: validated_predecessor_portfolio_risk_outputs

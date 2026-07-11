@@ -11,6 +11,7 @@ import { SnapshotHistoryPage } from "@/views/SnapshotHistoryPage";
 import { StockDetailPage } from "@/views/StockDetailPage";
 import { StockExplorerPage } from "@/views/StockExplorerPage";
 import { DataQualityPage, ProvenancePage } from "@/views/SystemEvidencePage";
+import { ExperimentPage } from "@/views/ExperimentPage";
 import { WatchlistPage } from "@/views/WatchlistPage";
 
 vi.mock("@/components/EvidenceCharts", () => ({
@@ -40,6 +41,13 @@ const status = {
 };
 
 describe("functional workspace pages", () => {
+  it("shows daily refresh experiment contracts without starting observations", () => {
+    render(<ExperimentPage pageId={18} data={{status: "PREPARED_NOT_STARTED", observations: [], contract: {eligible_trading_days: "future_only"}, daily_refresh_contract: {experiment_date_range: "not_started_start_and_end_unset", snapshot_lineage: "daily_refresh_manifest"}}} />);
+    expect(screen.getByText("Daily refresh experiment readiness")).toBeVisible();
+    expect(screen.getByText("not_started_start_and_end_unset")).toBeVisible();
+    expect(screen.getByText("0")).toBeVisible();
+  });
+
   it("puts freshness before command-center metrics", () => {
     render(<CommandCenterPage data={{status, kpis: {gross_exposure: 1, cash_weight: 0, portfolio_volatility: 0.21, beta: 1.16, constraint_breaches: 3, abstentions: 12, portfolio_risk_state: "normal_risk_review_only", snapshot_timestamp: "2026-07-01T08:30:00+08:00"}, position_distribution: {WITHIN_BAND: 29, ABSTAIN: 12}, top_risk_contributors: [], warnings: [], exposure: {}, risk_history: []}} />);
     expect(screen.getByRole("alert")).toHaveTextContent("STALE_SOURCE_DATA");

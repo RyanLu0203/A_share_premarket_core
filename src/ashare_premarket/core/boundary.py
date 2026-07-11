@@ -11,6 +11,9 @@ ISSUE24_CAPABILITY_KEY = "goal_premarket_research_position_workspace_dashboard01
 ISSUE24_DASHBOARD_MODULE = "ashare_premarket.dashboard"
 ISSUE24_GOAL_ID = "GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01"
 ISSUE24_WORKFLOW_ID = "goal_premarket_research_position_workspace_dashboard01"
+DAILY_REFRESH_CAPABILITY_KEY = "goal_daily_incremental_evidence_refresh01_gate"
+DAILY_REFRESH_GOAL_ID = "GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01"
+DAILY_REFRESH_WORKFLOW_ID = "goal_daily_incremental_evidence_refresh01"
 ISSUE24_AUTHORIZED_IMPORTERS = {
     "scripts/audit_goal_premarket_research_position_workspace_dashboard01.py",
     "scripts/run_goal_premarket_research_position_workspace_dashboard01.py",
@@ -122,4 +125,67 @@ def issue24_workspace_workflow_patch() -> dict[str, str]:
         "primary_outputs": "outputs/audits/goal_premarket_research_position_workspace_dashboard01_report.md;outputs/audits/goal_premarket_research_position_workspace_dashboard01_manifest.json;outputs/audits/goal_premarket_research_position_workspace_dashboard01_audit.md",
         "promotion_rule": "implemented_research_only_after_issue24_audit_pass_no_generic_dashboard_unlock",
         "notes": "Issue #24 goal-specific local read-only research workspace. Generic dashboard workflow, Recommendation Tiering, Issue #10, broker, orders, paper trading, production writes, production promotion, and DQN/RL remain locked.",
+    }
+
+
+def daily_refresh_evidence_valid(root: Path) -> bool:
+    root = root.resolve()
+    manifest_path = root / "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json"
+    audit_path = root / "outputs/audits/goal_daily_incremental_evidence_refresh01_audit.md"
+    latest_path = root / "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        latest = json.loads(latest_path.read_text(encoding="utf-8"))
+        audit = audit_path.read_text(encoding="utf-8")
+    except (OSError, json.JSONDecodeError):
+        return False
+    checksums = manifest.get("implementation_checksums")
+    succeeded = (
+        manifest.get("refresh_status") == "SUCCEEDED"
+        and manifest.get("validation_status") == "PASS"
+        and manifest.get("opm_executed") is True
+        and manifest.get("opm_snapshot_integrity") == "VERIFIED"
+        and latest.get("refresh_status") == "SUCCEEDED"
+        and latest.get("validation_status") == "PASS"
+    )
+    blocked = (
+        manifest.get("refresh_status") == "BLOCKED"
+        and manifest.get("validation_status") == "BLOCKED"
+        and manifest.get("opm_executed") is False
+        and manifest.get("opm_snapshot_integrity") == "NOT_RUN"
+        and latest.get("refresh_status") == "BLOCKED"
+        and latest.get("validation_status") == "BLOCKED"
+        and bool(latest.get("blocked_reasons"))
+        and not latest.get("snapshot_manifest_path")
+    )
+    return (
+        manifest.get("goal") == DAILY_REFRESH_GOAL_ID
+        and manifest.get("status") == "PASS"
+        and (succeeded or blocked)
+        and manifest.get("ready_factor_count") == 0
+        and manifest.get("recommendation_state") == "locked_future"
+        and manifest.get("trading_state") == "locked_future"
+        and "Status: `PASS`" in audit
+        and isinstance(checksums, dict)
+        and bool(checksums)
+        and _implementation_checksums_valid(root, checksums)
+    )
+
+
+def daily_refresh_workflow_patch() -> dict[str, str]:
+    return {
+        "workflow_id": DAILY_REFRESH_WORKFLOW_ID,
+        "display_name": f"{DAILY_REFRESH_GOAL_ID} Daily Incremental Evidence Refresh",
+        "stage_or_goal": DAILY_REFRESH_GOAL_ID,
+        "status": "implemented_research_only",
+        "current_repo_role": "controlled_daily_t_minus_one_evidence_refresh",
+        "implemented_in_repo": "true",
+        "allowed_next_action": "review_daily_refresh_no_downstream_unlock",
+        "depends_on": "goal_premarket_research_position_workspace_dashboard01;goal_premarket_position_management_operational01",
+        "produces_artifacts": "outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv;outputs/research/goal_daily_incremental_evidence_refresh01_run_summary.csv;outputs/research/goal_daily_incremental_evidence_refresh01_experiment_readiness_contract.csv;outputs/research/goal_daily_incremental_evidence_refresh01_refresh_manifest.json;outputs/research/daily_incremental_evidence_refresh/latest_refresh.json;outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json;outputs/audits/goal_daily_incremental_evidence_refresh01_report.md;outputs/audits/goal_daily_incremental_evidence_refresh01_audit.md;docs/research/GOAL_DAILY_INCREMENTAL_EVIDENCE_REFRESH01_DAILY_WORKFLOW.md;configs/research/goal_daily_incremental_evidence_refresh01_contract.yaml",
+        "primary_docs": "docs/research/GOAL_DAILY_INCREMENTAL_EVIDENCE_REFRESH01_DAILY_WORKFLOW.md",
+        "primary_scripts": "scripts/run_daily_incremental_evidence_refresh.py;scripts/run_goal_daily_incremental_evidence_refresh01.py;scripts/audit_goal_daily_incremental_evidence_refresh01.py",
+        "primary_outputs": "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json;outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json;outputs/audits/goal_daily_incremental_evidence_refresh01_report.md;outputs/audits/goal_daily_incremental_evidence_refresh01_audit.md",
+        "promotion_rule": "implemented_research_only_after_daily_refresh_replay_and_audit_pass",
+        "notes": "Controlled research-only T-1 refresh and OPM snapshot handoff. Recommendation, trading, broker, paper execution, production, and reinforcement-learning capabilities remain locked.",
     }

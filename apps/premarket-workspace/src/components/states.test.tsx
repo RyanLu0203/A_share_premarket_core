@@ -17,6 +17,12 @@ describe("governed workspace states", () => {
           latest_available_data_date: "2026-06-30",
           data_cutoff: "2026-07-08",
           execution_mode: "daily_operational",
+          latest_refresh_status: "BLOCKED",
+          last_successful_refresh_time: "2026-07-01T08:30:00+08:00",
+          data_freshness_badge: "STALE_SOURCE_DATA",
+          refresh_validation_status: "BLOCKED",
+          refresh_blocked_reasons: ["STALE_SOURCE_DATA"],
+          snapshot_version: "sha256:abc123",
         }}
       />,
     );
@@ -24,6 +30,10 @@ describe("governed workspace states", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("STALE_SOURCE_DATA");
     expect(screen.getByText("2026-07-08")).toBeVisible();
     expect(screen.getByText("2026-06-30")).toBeVisible();
+    expect(screen.getByText("Refresh BLOCKED")).toBeVisible();
+    expect(screen.getByText("Validation BLOCKED")).toBeVisible();
+    expect(screen.getByText("STALE_SOURCE_DATA", {selector: ".refresh-blocked-reason"})).toBeVisible();
+    expect(screen.getByText("sha256:abc123")).toBeVisible();
   });
 
   it("marks live current-state panels disabled while preserving replay evidence", () => {

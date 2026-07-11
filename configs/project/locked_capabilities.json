@@ -25,6 +25,7 @@
   "goal_alpha_factor_candidate02_refined_variants_research_gate": "implemented_research_only",
   "goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate": "implemented_research_only",
   "goal_architecture_refactor03_akshare_source_catalog_and_provider_modularization_gate": "implemented_engineering_research_support",
+  "goal_daily_incremental_evidence_refresh01_gate": "implemented_research_only",
   "goal_data_expansion_research01_market_regime_data_expansion_gate": "implemented_research_only",
   "goal_data_label01_forward_return_label_coverage_expansion": "implemented_review_only",
   "goal_data_panel02_evaluation_panel_gate": false,

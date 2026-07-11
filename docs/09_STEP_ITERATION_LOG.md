@@ -1,5 +1,35 @@
 # 09 Step Iteration Log
 
+## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
+
+Status: `PASS`.
+
+What changed:
+
+- Added a daily T-1 contract that reuses the OPM01 trading clock and supports
+  committed replay, bounded local increments, and explicit network opt-in.
+- Added pre-OPM fail-closed checks for freshness, required-symbol completeness,
+  provider state, date/timestamp alignment, PIT availability, quarantine
+  preservation, and reproducibility checksums.
+- Added immutable refresh lineage and conditional canonical evidence handoff to
+  OPM. A failed refresh cannot create or advance an OPM snapshot.
+- Added Dashboard refresh status fields and experiment-readiness contracts.
+
+Evidence:
+
+- `outputs/research/daily_incremental_evidence_refresh/latest_refresh.json`
+- `outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv`
+- `outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json`
+- `outputs/audits/goal_daily_incremental_evidence_refresh01_audit.md`
+
+Safety:
+
+- The adjustment convention remains unresolved where direct metadata is not
+  available, and provider rows are never silently averaged.
+- The future experiment remains prepared but not started.
+- Ready factor count remains zero. Recommendation tiering, trading, broker,
+  paper execution, production, and DQN/RL remain locked.
+
 ## 2026-07-10 - GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01
 
 Status: `PASS`.

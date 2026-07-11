@@ -210,3 +210,16 @@ scientific decisions, and absent fundamentals remain unavailable.
 
 This node has no outgoing promotion edge to Recommendation Tiering, Issue #10,
 trading, broker, paper trading, production, or generic dashboard workflows.
+
+### Daily Incremental Evidence Refresh Node
+
+`GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01` sits between governed market
+evidence and OPM01. It reuses the OPM clock, validates T-1 freshness,
+required-symbol completeness, provider/timestamp/PIT state, quarantine, and
+checksums, then invokes OPM only after all fail-closed checks pass.
+
+Successful runs produce immutable refresh lineage and a verified OPM snapshot.
+Blocked runs update only refresh status and reasons. The named local workspace
+reads both the latest valid snapshot and latest refresh state. Experiment
+metadata is contract-only and remains not started. No recommendation or
+execution capability is promoted by this node.
