@@ -16,6 +16,8 @@ from ashare_premarket.core.workflow_preservation import (
 )
 from ashare_premarket.daily_refresh import goal_daily_incremental_evidence_refresh01 as daily_refresh
 from ashare_premarket.portfolio_risk import goal_premarket_position_management_operational01 as opm01
+from ashare_premarket.providers.akshare_provider import ProviderResult
+from ashare_premarket.providers.provider_attempt_log import make_attempt
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -162,6 +164,66 @@ def test_evidence_validation_fails_closed_with_stable_reason_codes(
     assert result["status"] == "BLOCKED"
     assert reason in result["reason_codes"]
     assert all(row["fail_closed"] == "true" for row in result["rows"])
+
+
+def test_provider_failure_recovered_by_fallback_is_warning_not_blocker() -> None:
+    attempts = [
+        make_attempt("akshare", "stock_zh_a_hist", symbol="000001.SZ", date_end="2026-07-01", status="FAIL", failure_class="PROXY_ERROR"),
+        make_attempt("akshare_sina", "stock_zh_a_daily", symbol="000001.SZ", date_end="2026-07-01", status="PASS", failure_class="PROVIDER_OK", rows_returned=1, schema_valid=True),
+    ]
+    result = daily_refresh.validate_refresh_evidence(
+        _context(),
+        [_canonical_row("000001.SZ", "2026-07-01")],
+        required_symbols={"000001.SZ"},
+        source_checksum="same",
+        expected_source_checksum="same",
+        provider_attempts=attempts,
+    )
+
+    assert result["status"] == "PASS"
+    assert "PROVIDER_FALLBACK_RECOVERED" in result["warning_codes"]
+    provider_check = next(row for row in result["rows"] if row["check_id"] == "provider_consistency")
+    assert "recovered_attempts=1" in provider_check["current_value"]
+
+
+def test_network_incremental_uses_sina_fallback_and_true_daily_return(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    _write_csv(
+        tmp_path / "configs/project/trading_calendar.csv",
+        [
+            {"date": "2026-07-09", "is_trading_day": "true", "session_note": "regular"},
+            {"date": "2026-07-10", "is_trading_day": "true", "session_note": "regular"},
+        ],
+    )
+    primary = ProviderResult(
+        rows=[],
+        attempt=make_attempt("akshare", "stock_zh_a_hist", symbol="000001.SZ", date_start="2026-07-09", date_end="2026-07-10", status="FAIL", failure_class="PROXY_ERROR"),
+    )
+    fallback = ProviderResult(
+        rows=[
+            {"trade_date": "2026-07-09", "symbol": "000001.SZ", "close": 10.0},
+            {"trade_date": "2026-07-10", "symbol": "000001.SZ", "close": 11.0},
+        ],
+        attempt=make_attempt("akshare_sina", "stock_zh_a_daily", symbol="000001.SZ", date_start="2026-07-09", date_end="2026-07-10", status="PASS", failure_class="PROVIDER_OK", rows_returned=2, schema_valid=True),
+    )
+    monkeypatch.setattr(daily_refresh, "load_stock_ohlcv_daily", lambda *_args, **_kwargs: primary)
+    monkeypatch.setattr(daily_refresh, "load_stock_ohlcv_daily_sina", lambda *_args, **_kwargs: fallback)
+    monkeypatch.setattr(
+        daily_refresh,
+        "load_ingestion_config",
+        lambda _root: {"adjustment_policy": "qfq", "rate_limit_policy": {"min_seconds_between_symbol_calls": 0}},
+    )
+
+    rows, attempts = daily_refresh._fetch_network_incremental(
+        tmp_path,
+        {"expected_previous_trading_date": "2026-07-10"},
+        {"000001.SZ"},
+    )
+
+    assert len(rows) == 1
+    assert rows[0]["source_provider"] == "akshare_sina"
+    assert rows[0]["return_1d"] == pytest.approx(0.1)
+    assert attempts[0]["fallback_provider"] == "akshare_sina"
+    assert attempts[1]["status"] == "PASS"
 
 
 def test_validation_failure_does_not_call_opm(tmp_path: Path) -> None:

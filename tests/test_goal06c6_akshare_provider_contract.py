@@ -7,6 +7,7 @@ from ashare_premarket.providers.akshare_provider import (
     load_a_share_code_name_list,
     load_benchmark_ohlcv_daily,
     load_stock_ohlcv_daily,
+    load_stock_ohlcv_daily_sina,
 )
 from ashare_premarket.providers.schema_normalization import code_to_symbol, normalize_stock_ohlcv_schema, symbol_to_provider_code
 
@@ -19,9 +20,12 @@ def test_core_package_imports_without_forcing_akshare() -> None:
 def test_provider_wrappers_do_not_call_network_when_disabled() -> None:
     code_names = load_a_share_code_name_list(network_enabled=False)
     stock = load_stock_ohlcv_daily("600036.SH", "2024-01-01", "2024-01-31", "qfq", network_enabled=False)
+    sina = load_stock_ohlcv_daily_sina("600036.SH", "2024-01-01", "2024-01-31", "qfq", network_enabled=False)
     benchmark = load_benchmark_ohlcv_daily("000300", "2024-01-01", "2024-01-31", network_enabled=False)
     assert code_names.attempt["failure_class"] == "NETWORK_DISABLED_BY_POLICY"
     assert stock.attempt["failure_class"] == "NETWORK_DISABLED_BY_POLICY"
+    assert sina.attempt["failure_class"] == "NETWORK_DISABLED_BY_POLICY"
+    assert sina.attempt["provider_id"] == "akshare_sina"
     assert benchmark.attempt["failure_class"] == "NETWORK_DISABLED_BY_POLICY"
 
 

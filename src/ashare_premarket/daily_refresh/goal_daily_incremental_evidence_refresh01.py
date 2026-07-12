@@ -19,7 +19,8 @@ from ashare_premarket.portfolio_risk.goal_premarket_position_management_operatio
     resolve_run_context,
     run_goal_premarket_position_management_operational01,
 )
-from ashare_premarket.providers.akshare_provider import load_stock_ohlcv_daily
+from ashare_premarket.data.trading_calendar import previous_trading_day
+from ashare_premarket.providers.akshare_provider import load_stock_ohlcv_daily, load_stock_ohlcv_daily_sina
 from ashare_premarket.providers.provider_registry import load_ingestion_config, network_enabled
 
 
@@ -260,11 +261,43 @@ def validate_refresh_evidence(
     checks.append(_check("missingness", f"missing={';'.join(missing_symbols)};incomplete={';'.join(incomplete_symbols)}", "all required symbols have a T-1 close and return or explicit suspension", missing_ok, "MISSING_REQUIRED_EVIDENCE" if not missing_ok else ""))
 
     invalid_providers = sorted({row["source_provider"] for row in expected_rows if row["source_provider"] not in APPROVED_PROVIDERS})
-    failed_attempts = [attempt for attempt in provider_attempts or [] if str(attempt.get("status", "")).upper() != "PASS"]
+    attempts = provider_attempts or []
+    successful_attempt_keys = {
+        (str(attempt.get("symbol", "")), str(attempt.get("date_end", "")))
+        for attempt in attempts
+        if str(attempt.get("status", "")).upper() == "PASS"
+    }
+    failed_attempts = [
+        attempt
+        for attempt in attempts
+        if str(attempt.get("status", "")).upper() != "PASS"
+        and (str(attempt.get("symbol", "")), str(attempt.get("date_end", ""))) not in successful_attempt_keys
+    ]
+    recovered_attempts = [
+        attempt
+        for attempt in attempts
+        if str(attempt.get("status", "")).upper() != "PASS"
+        and (str(attempt.get("symbol", "")), str(attempt.get("date_end", ""))) in successful_attempt_keys
+    ]
     provider_ok = not invalid_providers and not failed_attempts
     if not provider_ok:
         reasons.add("INVALID_PROVIDER_STATE")
-    checks.append(_check("provider_consistency", f"invalid={';'.join(invalid_providers)};failed_attempts={len(failed_attempts)}", f"approved={';'.join(sorted(APPROVED_PROVIDERS))};no_failed_attempts", provider_ok, "INVALID_PROVIDER_STATE" if not provider_ok else ""))
+    elif recovered_attempts:
+        warnings.add("PROVIDER_FALLBACK_RECOVERED")
+    provider_current = f"invalid={';'.join(invalid_providers)};failed_attempts={len(failed_attempts)}"
+    provider_threshold = f"approved={';'.join(sorted(APPROVED_PROVIDERS))};no_failed_attempts"
+    if recovered_attempts:
+        provider_current += f";recovered_attempts={len(recovered_attempts)}"
+        provider_threshold = f"approved={';'.join(sorted(APPROVED_PROVIDERS))};no_unrecovered_failed_attempts"
+    checks.append(
+        _check(
+            "provider_consistency",
+            provider_current,
+            provider_threshold,
+            provider_ok,
+            "INVALID_PROVIDER_STATE" if not provider_ok else "",
+        )
+    )
 
     timestamp_failures = [
         row["symbol"]
@@ -556,27 +589,49 @@ def _fetch_network_incremental(
     adjustment = str(config.get("adjustment_policy", "qfq"))
     interval = float(dict(config.get("rate_limit_policy", {})).get("min_seconds_between_symbol_calls", 0.2))
     expected = context["expected_previous_trading_date"]
+    fetch_start = previous_trading_day(root, expected)
     rows: list[dict[str, object]] = []
     attempts: list[dict[str, object]] = []
     for index, symbol in enumerate(sorted(required_symbols)):
         if index and interval:
             time.sleep(interval)
-        result = load_stock_ohlcv_daily(symbol, expected, expected, adjustment, True)
+        result = load_stock_ohlcv_daily(symbol, fetch_start, expected, adjustment, True)
         attempts.append(result.attempt)
-        for row in result.rows:
-            if str(row.get("trade_date")) == expected:
-                rows.append(
-                    {
-                        **row,
-                        "source_provider": "akshare",
-                        "provider_timestamp": expected,
-                        "pit_available_date": expected,
-                        "no_lookahead_status": "passed_current_or_past_only",
-                        "suspension_status": "trading",
-                        "adjustment_policy": adjustment,
-                    }
-                )
+        selected = _daily_incremental_row(result.rows, expected, "akshare", adjustment)
+        if selected is None:
+            attempts[-1] = {**attempts[-1], "fallback_provider": "akshare_sina"}
+            fallback = load_stock_ohlcv_daily_sina(symbol, fetch_start, expected, adjustment, True)
+            attempts.append(fallback.attempt)
+            selected = _daily_incremental_row(fallback.rows, expected, "akshare_sina", adjustment)
+        if selected is not None:
+            rows.append(selected)
     return rows, attempts
+
+
+def _daily_incremental_row(
+    provider_rows: list[dict[str, object]],
+    expected_date: str,
+    source_provider: str,
+    adjustment: str,
+) -> dict[str, object] | None:
+    ordered = sorted(provider_rows, key=lambda row: str(row.get("trade_date", "")))
+    target = next((row for row in reversed(ordered) if str(row.get("trade_date")) == expected_date), None)
+    if target is None:
+        return None
+    prior = [row for row in ordered if str(row.get("trade_date", "")) < expected_date]
+    target_close = _finite_float(target.get("close"))
+    prior_close = _finite_float(prior[-1].get("close")) if prior else None
+    daily_return = target_close / prior_close - 1.0 if target_close is not None and prior_close else None
+    return {
+        **target,
+        "return_1d": daily_return,
+        "source_provider": source_provider,
+        "provider_timestamp": expected_date,
+        "pit_available_date": expected_date,
+        "no_lookahead_status": "passed_current_or_past_only",
+        "suspension_status": "trading",
+        "adjustment_policy": adjustment,
+    }
 
 
 def _opm_snapshot_state(root: Path, expected_date: str) -> tuple[str, str, str]:

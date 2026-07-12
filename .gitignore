@@ -34,6 +34,8 @@ outputs/**/*.zip
 outputs/**/raw*
 outputs/**/cache*
 outputs/local/
+outputs/research/daily_incremental_evidence_refresh/20*/
+outputs/research/premarket_position_management/20*/
 outputs/diagnostics/local_runtime_*.csv
 outputs/diagnostics/local_runtime_*.json
 outputs/diagnostics/local_run_*.md

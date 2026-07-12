@@ -1,6 +1,17 @@
 # Project State
 
-Last updated: 2026-07-11
+Last updated: 2026-07-12
+
+## macOS Daily Refresh Operations
+
+The Daily Refresh now has a governed network provider ladder for local macOS operation: AKShare `stock_zh_a_hist` remains primary and AKShare/Sina `stock_zh_a_daily` is used only as a same-symbol, same-session fallback. Primary failures remain auditable; a complete fallback recovery is surfaced as `PROVIDER_FALLBACK_RECOVERED`, while unrecovered failures remain fail-closed.
+
+- A source-backed runtime trading calendar is written only under ignored `outputs/local/runtime/` and selected through `ASHARE_TRADING_CALENDAR_PATH`; committed deterministic evidence is unchanged.
+- User launch agents keep the GET-only workspace running at login and schedule the bounded refresh Monday-Friday at 07:45 local time.
+- Network access is enabled only inside the explicit macOS daily runner. Raw provider payloads, credentials, caches, and runtime logs are not committed.
+- Local deployment validation on 2026-07-12 resolved target `2026-07-13` / T-1 `2026-07-10`: all 41 primary failures were recovered by the Sina fallback, validation passed, and OPM snapshot integrity was verified as `sha256:9d0c65fc55127165`.
+- Repeated runs for an already successful immutable target are idempotently skipped after verifying the target manifest and snapshot manifest.
+- `ready_factor_count = 0`; recommendation tiering, action labels, brokers, orders, paper/live trading, production writes, factor promotion, and DQN/RL remain locked.
 
 ## Codex Operating System Gate
 

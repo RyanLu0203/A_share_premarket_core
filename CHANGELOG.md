@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-12 - macOS AKShare/Sina Daily Refresh operations
+
+- Added AKShare/Sina same-session fallback recovery to the governed Daily Refresh provider ladder while preserving primary failure provenance and fail-closed validation.
+- Added a source-backed, Git-ignored runtime trading calendar selected by environment override; committed replay evidence remains deterministic.
+- Added user-level macOS launchd installation, status, and uninstall tooling for workspace startup and weekday 07:45 refresh.
+- Added immutable-target idempotency so a weekend pre-run and the next weekday schedule do not conflict.
+- Added focused provider, refresh, calendar, launchd, and repository-safety tests.
+- Preserved `ready_factor_count = 0` and all recommendation, execution, broker, paper/live trading, production, factor-promotion, and DQN/RL locks.
+
 ## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 - Added a controlled T-1 daily evidence refresh with committed replay, bounded

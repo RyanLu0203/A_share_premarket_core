@@ -55,6 +55,21 @@ provider access additionally requires `--allow-network` or the existing
 environment opt-in. Deterministic governance replay uses
 `python scripts/run_goal_daily_incremental_evidence_refresh01.py`.
 
+The live provider ladder tries the bounded AKShare Eastmoney daily endpoint
+first and falls back to the bounded AKShare/Sina daily endpoint when the
+primary attempt does not return the expected T-1 row. Primary failures remain
+auditable; a successful symbol/date fallback is reported as
+`PROVIDER_FALLBACK_RECOVERED` rather than blocking an otherwise complete
+slice. `python scripts/run_macos_daily_refresh.py --allow-network` also syncs a
+source-backed runtime trading calendar under `outputs/local/` before refresh.
+
+On macOS, install the persistent workspace and weekday 07:45 refresh agents:
+
+```bash
+.venv/bin/python scripts/install_macos_launchd.py
+.venv/bin/python scripts/install_macos_launchd.py --status
+```
+
 The refresh is research-only. It keeps `ready_factor_count = 0`, preserves
 provider quarantine and unresolved adjustment disclosure, and does not unlock
 recommendation or execution capabilities.

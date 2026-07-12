@@ -80,6 +80,33 @@ def load_stock_ohlcv_daily(symbol: str, start_date: str, end_date: str, adjust_p
     )
 
 
+def load_stock_ohlcv_daily_sina(symbol: str, start_date: str, end_date: str, adjust_policy: str, network_enabled: bool) -> ProviderResult:
+    """Load the bounded Sina daily series exposed through AKShare.
+
+    This is an explicit fallback for ``stock_zh_a_hist`` provider failures. It
+    remains date-bounded, normalized through the same OHLCV contract, and is
+    identified separately in provider provenance.
+    """
+    market = symbol.rsplit(".", 1)[-1].lower() if "." in symbol else ""
+    prefix = {"sh": "sh", "sz": "sz", "bj": "bj"}.get(market, "")
+    kwargs = {
+        "symbol": f"{prefix}{symbol_to_provider_code(symbol)}",
+        "start_date": start_date.replace("-", ""),
+        "end_date": end_date.replace("-", ""),
+        "adjust": adjust_policy,
+    }
+    return _call(
+        "stock_zh_a_daily",
+        kwargs,
+        network_enabled,
+        lambda raw: normalize_stock_ohlcv_schema(raw, symbol, source_id="akshare_stock_zh_a_daily_sina"),
+        symbol=symbol,
+        date_start=start_date,
+        date_end=end_date,
+        provider_id="akshare_sina",
+    )
+
+
 def load_benchmark_ohlcv_daily(benchmark_symbol: str, start_date: str, end_date: str, network_enabled: bool) -> ProviderResult:
     kwargs = {
         "symbol": benchmark_symbol,
@@ -106,11 +133,12 @@ def _call(
     symbol: str = "",
     date_start: str = "",
     date_end: str = "",
+    provider_id: str = PROVIDER_ID,
 ) -> ProviderResult:
     if not network_enabled:
-        return _empty_result(function_name, symbol, date_start, date_end, "NETWORK_DISABLED_BY_POLICY", "network disabled by policy")
+        return _empty_result(function_name, symbol, date_start, date_end, "NETWORK_DISABLED_BY_POLICY", "network disabled by policy", provider_id=provider_id)
     if not akshare_available():
-        return _empty_result(function_name, symbol, date_start, date_end, "AKSHARE_IMPORT_FAILED", "optional dependency akshare is not installed", network_enabled=True)
+        return _empty_result(function_name, symbol, date_start, date_end, "AKSHARE_IMPORT_FAILED", "optional dependency akshare is not installed", network_enabled=True, provider_id=provider_id)
     network_context: dict[str, object] = {}
     try:
         ak = importlib.import_module("akshare")
@@ -122,7 +150,7 @@ def _call(
         rows, schema_valid, notes = normalizer(raw)
         classification = classify_provider_success(len(rows), schema_valid)
         attempt = make_attempt(
-            PROVIDER_ID,
+            provider_id,
             function_name,
             symbol=symbol,
             date_start=date_start,
@@ -142,7 +170,7 @@ def _call(
         return ProviderResult(
             rows=[],
             attempt=make_attempt(
-                PROVIDER_ID,
+                provider_id,
                 function_name,
                 symbol=symbol,
                 date_start=date_start,
@@ -178,12 +206,13 @@ def _empty_result(
     failure_class: str,
     notes: str,
     network_enabled: bool = False,
+    provider_id: str = PROVIDER_ID,
 ) -> ProviderResult:
     classification = classify_provider_failure(exc=ModuleNotFoundError(notes)) if failure_class in {"DEPENDENCY_MISSING", "AKSHARE_IMPORT_FAILED"} else None
     return ProviderResult(
         rows=[],
         attempt=make_attempt(
-            PROVIDER_ID,
+            provider_id,
             function_name,
             symbol=symbol,
             date_start=date_start,

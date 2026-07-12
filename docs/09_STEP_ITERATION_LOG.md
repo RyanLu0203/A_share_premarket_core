@@ -1801,3 +1801,11 @@ Next review question:
 Can GOAL-06C start as review-only expanded validation under the readiness report
 constraints, or should the next worker first close the documented Class D source
 evidence gap?
+
+# 2026-07-12 - macOS Daily Refresh provider fallback and launchd operation
+
+- Added a bounded AKShare/Sina provider ladder to Daily Refresh: `stock_zh_a_hist` primary, `stock_zh_a_daily` fallback, with preserved failed-attempt provenance and recoverable-warning classification.
+- Added source-backed runtime trading-calendar synchronization without rewriting committed deterministic fixtures.
+- Added user-level macOS launchd installers for workspace startup and weekday 07:45 refresh, with ignored local logs and explicit network gates.
+- Verified one bounded source-backed run for target `2026-07-13`: 41/41 primary attempts were recovered by Sina, validation passed, snapshot integrity was verified, and a launchd rerun exited idempotently.
+- Preserved `ready_factor_count = 0` and all recommendation, broker, order, trading, production, factor-promotion, and DQN/RL locks.

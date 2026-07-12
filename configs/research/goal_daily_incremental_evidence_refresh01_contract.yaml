@@ -18,6 +18,11 @@ quarantine_preserved: true
 no_silent_averaging: true
 adjustment_convention_status: unresolved
 network_default: disabled
+provider_ladder:
+  primary: akshare_stock_zh_a_hist
+  fallback: akshare_stock_zh_a_daily_sina
+  recovered_warning: PROVIDER_FALLBACK_RECOVERED
+runtime_calendar_environment: ASHARE_TRADING_CALENDAR_PATH
 immutable_success_manifest: true
 source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf
 recommendation_state: locked_future
