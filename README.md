@@ -74,6 +74,13 @@ The refresh is research-only. It keeps `ready_factor_count = 0`, preserves
 provider quarantine and unresolved adjustment disclosure, and does not unlock
 recommendation or execution capabilities.
 
+For selected browser-local observation symbols, a separate explicit command
+can attach sanitized T-1 evidence without changing the active OPM universe:
+
+```bash
+.venv/bin/python scripts/run_observation_basket_refresh.py --allow-network --symbols 002475.SZ 601138.SH 601208.SH
+```
+
 If the governed trading calendar does not cover the next session, live mode
 returns `TRADING_CALENDAR_COVERAGE_MISSING` with unresolved target/cutoff fields
 instead of guessing an exchange date or returning an application error.

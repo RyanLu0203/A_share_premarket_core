@@ -567,6 +567,8 @@ class PremarketWorkspaceRepository:
         current = self.stocks()
         current_symbols = {row["symbol"] for row in current}
         identity = self._identity_map()
+        observation_payload = self.store.runtime_json("outputs/local/runtime/observation_basket.json")
+        observation = {row["symbol"]: row for row in observation_payload.get("rows", []) if isinstance(row, dict) and row.get("observation_status") == "AVAILABLE"}
         approved = {row["symbol"]: row for row in self.store.csv("configs/universe/approved_symbols.csv") if row.get("approval_status") == "approved"}
         configured = {row["symbol"]: row for row in self.store.csv("configs/universe/candidate_symbols.csv") if row.get("symbol")}
         eligible = sorted(set(approved) | {symbol for symbol, row in configured.items() if row.get("universe_group") == "blocked_pending"})
@@ -581,6 +583,11 @@ class PremarketWorkspaceRepository:
             state = "BLOCKED_PENDING_OBSERVATION_ONLY" if blocked_pending else "EVIDENCE_PENDING"
             reason = "blocked/pending symbol is observation-only and excluded from active outputs" if blocked_pending else "approved watchlist candidate is not present in the latest validated OPM snapshot"
             unavailable = self._unavailable(reason)
+            observed = observation.get(symbol, {})
+            observation_date = str(observed.get("trade_date", ""))
+            observation_source = str(observed.get("selected_provider", ""))
+            latest_price = self._available(_float(observed.get("close")), observation_date, observation_source, "OBSERVATION_ONLY_SOURCE_BACKED") if observed else unavailable
+            price_change = self._available(_float(observed.get("return_1d")), observation_date, observation_source, "OBSERVATION_ONLY_SOURCE_BACKED") if observed else unavailable
             candidates.append(
                 {
                     "symbol": symbol,
@@ -589,8 +596,8 @@ class PremarketWorkspaceRepository:
                     "exchange": self._available(_exchange(symbol), None, "symbol_suffix", "DERIVED"),
                     "board": self._available(_board(symbol), None, "symbol_prefix", "DERIVED"),
                     "industry": self._available(sector, None, "configs/universe/approved_symbols.csv", "APPROVED_CONFIG"),
-                    "latest_price": unavailable,
-                    "price_change": unavailable,
+                    "latest_price": latest_price,
+                    "price_change": price_change,
                     "market_cap": unavailable,
                     "pe_ttm": unavailable,
                     "pb": unavailable,
@@ -605,6 +612,7 @@ class PremarketWorkspaceRepository:
                     "provider_quality": state,
                     "governance_status": "blocked_pending" if blocked_pending else "approved_evidence_pending",
                     "observation_only": True,
+                    "observation_data_status": "OBSERVATION_ONLY_SOURCE_BACKED" if observed else "UNAVAILABLE",
                     "portfolio_mode": HOLDINGS_MODE_LABEL,
                     "research_only": True,
                 }

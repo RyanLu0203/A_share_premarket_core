@@ -35,6 +35,9 @@ class CommittedEvidenceStore:
             return {}
         return json.loads(path.read_text(encoding="utf-8"))
 
+    def runtime_json(self, relative_path: str) -> dict[str, Any]:
+        return self._json_uncached(relative_path)
+
     def snapshot_dates(self) -> tuple[str, ...]:
         base = self._path(SNAPSHOT_ROOT)
         if not base.exists():

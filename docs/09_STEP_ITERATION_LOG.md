@@ -1818,3 +1818,4 @@ evidence gap?
 - Repaired structured-field table search and verified `Home Appliances` returns only Midea Group.
 - Enabled approved but out-of-snapshot symbols as explicit browser-local `EVIDENCE_PENDING` watchlist candidates; added `002475.SZ` without fabricating price, position-band, or risk evidence.
 - Established a browser-local three-name observation basket for `002475.SZ`, `601138.SH`, and `601208.SH`; the two blocked/pending symbols remain `BLOCKED_PENDING_OBSERVATION_ONLY`, with no simulated trades, weights, returns, P&L, or recommendations.
+- Ran an explicitly authorized T-1 observation refresh for the three names. The Eastmoney-backed AKShare primary failed under the scoped proxy environment; the AKShare/Sina fallback returned complete 2026-07-10 rows, which are shown only as observation evidence.

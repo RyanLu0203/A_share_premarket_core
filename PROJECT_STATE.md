@@ -10,6 +10,7 @@ Last updated: 2026-07-13
 - Browser-local watchlists accept approved symbols not yet present in the current OPM snapshot. These rows are explicitly `EVIDENCE_PENDING`, with price, band, weight, and risk fields unavailable rather than fabricated.
 - `002475.SZ` (Luxshare Precision) remains approved and can be watched, but it has not been promoted into the current 41-symbol OPM evidence/risk snapshot.
 - A browser-local observation basket may also list `601138.SH` and `601208.SH` only as `BLOCKED_PENDING_OBSERVATION_ONLY`. This is not a paper portfolio: it stores no trades, quantities, prices, weights, returns, P&L, or recommendations and does not admit either symbol to active outputs.
+- An explicitly authorized bounded observation refresh may attach sanitized T-1 close/return evidence under ignored `outputs/local/runtime/observation_basket.json`. The 2026-07-13 run used AKShare/Sina fallback for all three observed symbols after the Eastmoney-backed AKShare primary returned a scoped proxy failure; provenance remains labeled `akshare_sina`.
 - All research, recommendation, broker, order, and trading locks remain unchanged.
 
 ## macOS Daily Refresh Operations

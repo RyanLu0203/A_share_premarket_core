@@ -60,3 +60,11 @@ Uninstalling unloads and removes only these two user launch-agent plists. It doe
 - The workspace resolves stale mutable pointers against newer verified immutable snapshots. If the UI shows an older date after a successful refresh, restart `com.ashare.premarket.workspace` and check `/api/status` before rerunning ingestion.
 - Approved symbols outside the current OPM snapshot may be added to the browser-local watchlist as `EVIDENCE_PENDING`; unavailable price, band, weight, and risk fields remain `N/A` until a separately governed evidence expansion admits them.
 - Blocked/pending symbols may appear only in the browser-local observation basket as `BLOCKED_PENDING_OBSERVATION_ONLY`. This label never unlocks active outputs, paper positions, simulated orders, P&L, or advice.
+
+Refresh selected observation-only symbols with explicit network authorization:
+
+```bash
+.venv/bin/python scripts/run_observation_basket_refresh.py --allow-network --symbols 002475.SZ 601138.SH 601208.SH
+```
+
+The command writes sanitized T-1 rows only to ignored `outputs/local/runtime/observation_basket.json`. `akshare` identifies the Eastmoney-backed primary endpoint; `akshare_sina` identifies the Sina endpoint reached through AKShare fallback.
