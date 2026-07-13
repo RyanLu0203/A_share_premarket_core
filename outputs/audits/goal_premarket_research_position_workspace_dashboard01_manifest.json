@@ -89,7 +89,7 @@
     "src/ashare_premarket/interfaces/api/routers/status.py": "98f32ae25af4409f1a2a5c3fe5eb2b6531a7de8848a05326090c7eaf9a3d652a",
     "src/ashare_premarket/interfaces/api/routers/stocks.py": "ca0926478d56f59da40893be68e265967838dc6addfed22458926d642d96f818",
     "src/ashare_premarket/interfaces/api/routers/system.py": "77bf068a71f12d9ad1f7c198094458ba5809d5e5e9e33662407a96208ad53cc6",
-    "src/ashare_premarket/ops/safety.py": "c3d914b7996ffb6fd87aca6cce0ac7a13025b62182f5df570f60622dfc11d684"
+    "src/ashare_premarket/ops/safety.py": "8734f9f26a44a77fa2e59354f30217137d54f7eacd56e1db6818448bb45dec8c"
   },
   "issue_10_state": "locked",
   "mode": "local_research_only_read_only_workspace",

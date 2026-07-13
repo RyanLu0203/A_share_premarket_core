@@ -7,12 +7,22 @@ from ashare_premarket.governance.goal_global_codebase_consolidation_stock_chart0
     AUDIT,
     MANIFEST,
     PARITY,
+    _sha256,
     audit_goal_global_codebase_consolidation_stock_chart01,
     run_goal_global_codebase_consolidation_stock_chart01,
 )
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_global_refactor_file_hash_is_platform_line_ending_stable(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.txt"
+    crlf = tmp_path / "crlf.txt"
+    lf.write_bytes(b"first\nsecond\n")
+    crlf.write_bytes(b"first\r\nsecond\r\n")
+
+    assert _sha256(lf) == _sha256(crlf)
 
 
 def test_global_refactor_goal_runner_records_exact_behavior_parity() -> None:

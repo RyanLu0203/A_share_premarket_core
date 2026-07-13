@@ -314,6 +314,8 @@ def test_safety_file_walk_prunes_generated_directories(tmp_path: Path) -> None:
     ignored = [
         tmp_path / "apps/workspace/node_modules/package/dangerous.zip",
         tmp_path / "apps/workspace/.next/cache/chunk.py",
+        tmp_path / ".venv/Lib/site-packages/dangerous.zip",
+        tmp_path / "venv/Lib/site-packages/dangerous.zip",
         tmp_path / "outputs/local/raw_payload.csv",
     ]
     for path in [*included, *ignored]:
