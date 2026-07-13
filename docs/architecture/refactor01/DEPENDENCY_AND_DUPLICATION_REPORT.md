@@ -61,4 +61,3 @@ risk, and regime evidence. This is disclosed. Changing the snapshot schema or re
 historical evidence is outside this refactor. The final parity report must prove exact OPM
 payload equality and disclose implementation-checksum-only changes in workspace/daily
 governance manifests.
-

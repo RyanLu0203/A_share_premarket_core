@@ -144,4 +144,3 @@ absolute user paths are zero.
    rows do not open stock detail.
 6. Two historical dependency cycles and broad optional-reader duplication remain. They are
    checksummed historical paths and are not safe deletion targets for this goal.
-

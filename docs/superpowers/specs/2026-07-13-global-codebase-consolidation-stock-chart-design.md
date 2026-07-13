@@ -38,4 +38,3 @@ prose to machine governance without changing scientific conclusions.
 Use TDD for registry, boundary, wrapper, repository, client, selected-symbol, and chart work.
 Require raw and semantic parity, full Python/frontend validation, Playwright screenshots, and a
 remote fresh clone. The PR remains draft until all checks pass and is never self-merged.
-

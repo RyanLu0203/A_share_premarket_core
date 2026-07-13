@@ -47,4 +47,3 @@ frontend chart capability is completed using the existing Lightweight Charts dep
 The branch starts at `e17a114aec8ea2f2f29259e5508e123f0f5486cc`. Each commit is independently
 reviewable. Reverting commits in reverse order restores the baseline without moving the frozen
 checkpoint branch/tag, rewriting history, or deleting accepted evidence.
-

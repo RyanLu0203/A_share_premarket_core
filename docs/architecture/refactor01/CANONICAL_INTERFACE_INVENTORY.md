@@ -45,4 +45,3 @@ and `/api/provenance`.
   effect contracts differ.
 - The V0 diagnostic viewer remains compatibility-only historical evidence in this goal. It is
   not deleted because its test, documentation, and manifest form a checksummed historical set.
-

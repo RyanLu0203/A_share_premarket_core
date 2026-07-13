@@ -90,4 +90,3 @@
 - [ ] Run workspace and daily goal runners to refresh authorized implementation checksums.
 - [ ] Run full Python/frontend/visual/audit matrix and three adversarial reviews.
 - [ ] Push all commits, run remote fresh-clone verification, update Draft PR, and stop unmerged.
-

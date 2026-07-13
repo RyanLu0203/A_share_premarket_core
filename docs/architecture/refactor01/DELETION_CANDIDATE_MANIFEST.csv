@@ -11,4 +11,3 @@ RF01-009,optional reader helpers in historical goal modules,DEPRECATE,"139 exact
 RF01-010,185 scripts,KEEP,"Operational goal audit and compatibility commands have distinct defaults; thin wrappers are intentional",docs/architecture/CANONICAL_PROGRAM_INTERFACES.md,"all names retained and machine-classified",doctor and public-entrypoint test
 RF01-011,historical scientific outputs and manifests,KEEP,"Accepted evidence and rollback lineage",unchanged paths,"exact paths retained",deterministic parity and fresh clone
 RF01-012,provider optional dynamic imports,KEEP,"Deliberate network-disabled optional dependency boundaries",existing provider modules,"unchanged",provider and safety audits
-
