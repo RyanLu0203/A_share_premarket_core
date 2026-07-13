@@ -1,0 +1,20 @@
+old_interface,new_canonical_interface,compatibility_status,wrapper_location,behavior_parity,removal_eligible_later,notes
+ashare_premarket.dashboard.api,ashare_premarket.interfaces.api.app,WRAPPED,src/ashare_premarket/dashboard/api.py,EXACT,true,Old import re-exports app and create_app
+ashare_premarket.dashboard.repository.PremarketWorkspaceRepository,ashare_premarket.application.workspace.repository.PremarketWorkspaceRepository,WRAPPED,src/ashare_premarket/dashboard/repository.py,EXACT,true,Old class identity is preserved
+ashare_premarket.dashboard.store.CommittedEvidenceStore,ashare_premarket.dashboard.repositories.snapshot_repository.CommittedEvidenceStore,WRAPPED,src/ashare_premarket/dashboard/store.py,EXACT,true,Old class identity is preserved
+apps/premarket-workspace/src/lib/api.ts,apps/premarket-workspace/src/lib/api/client.ts,INTERNAL_REPLACED,,EXACT,true,Internal-only fetch wrapper removed after all callers migrated
+apps/premarket-workspace/src/lib/page-data.ts,apps/premarket-workspace/src/lib/api/page-plan.ts,INTERNAL_REPLACED,,EXACT,true,Internal-only request plan moved under canonical API package
+apps/premarket-workspace/src/lib/page-data.test.ts,apps/premarket-workspace/src/lib/api/page-plan.test.ts,INTERNAL_REPLACED,,STRONGER,true,Replacement covers all pages and complete stock workspace bundle
+python scripts/run_premarket_workspace.py,python scripts/run_premarket_workspace.py,PRESERVED,,EXACT,false,Canonical local launcher unchanged
+python scripts/run_premarket_workspace_api.py,python scripts/run_premarket_workspace_api.py,PRESERVED,,EXACT,false,Canonical loopback API launcher unchanged
+npm run dev --prefix apps/premarket-workspace,configs/project/canonical_interfaces.json workspace_frontend.command,PRESERVED,,EXACT,false,Canonical POSIX and macOS frontend command
+npm.cmd run dev --prefix apps/premarket-workspace,configs/project/canonical_interfaces.json workspace_frontend.platform_commands.windows,PRESERVED,,EXACT,false,Explicit Windows frontend alternative
+python scripts/run_daily_incremental_evidence_refresh.py,python scripts/run_daily_incremental_evidence_refresh.py,PRESERVED,,EXACT,false,Daily operational command unchanged
+python scripts/run_goal_daily_incremental_evidence_refresh01.py,python scripts/run_goal_daily_incremental_evidence_refresh01.py,PRESERVED,,EXACT,false,Deterministic daily replay unchanged
+python scripts/run_premarket_position_management.py,python scripts/run_premarket_position_management.py,PRESERVED,,EXACT,false,OPM01 command unchanged
+python scripts/run_goal_premarket_position_management_operational01.py,python scripts/run_goal_premarket_position_management_operational01.py,PRESERVED,,EXACT,false,OPM01 replay unchanged
+/api/*,configs/project/canonical_interfaces.json api_routes,PRESERVED,,EXACT,false,All 22 GET paths and parameter contracts retain exact OpenAPI hash
+/stocks/{symbol},/stocks/{symbol},PRESERVED,,EXACT,false,Existing stock detail deep link remains valid
+,/stocks/{symbol}/chart,ADDITIVE,,NOT_APPLICABLE,false,Stable selected-stock chart deep link
+outputs/research/premarket_position_management/{date},outputs/research/premarket_position_management/{date},PRESERVED,,EXACT,false,Snapshot directory and schema unchanged
+outputs/research/premarket_position_management/latest_manifest.json,outputs/research/premarket_position_management/latest_manifest.json,PRESERVED,,EXACT,false,Latest validated pointer unchanged

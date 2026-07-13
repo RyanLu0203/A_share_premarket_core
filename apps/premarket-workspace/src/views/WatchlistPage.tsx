@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { ChartCandlestick, Plus, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { DenseTable, type DenseColumn } from "@/components/DenseTable";
@@ -10,7 +11,7 @@ import { useWatchlist } from "@/hooks/useWatchlist";
 
 type Stock = Record<string, unknown> & {symbol: string; display_name: string};
 
-export function WatchlistPage({seed, stocks}: {seed: string[]; stocks: Stock[]}) {
+export function WatchlistPage({seed, stocks, selectedSymbol}: {seed: string[]; stocks: Stock[]; selectedSymbol?: string}) {
   const watchlist = useWatchlist(seed);
   const [symbol, setSymbol] = useState("");
   const [bandFilter, setBandFilter] = useState("ALL");
@@ -18,7 +19,7 @@ export function WatchlistPage({seed, stocks}: {seed: string[]; stocks: Stock[]})
   const watchlistRows = watchlist.symbols.map((item) => stocks.find((stock) => stock.symbol === item)).filter((stock): stock is Stock => Boolean(stock));
   const rows = watchlistRows.filter((row) => (bandFilter === "ALL" || row.band_status === bandFilter) && (abstentionFilter === "ALL" || String(Boolean(row.abstain)) === abstentionFilter));
   const columns: DenseColumn<Stock>[] = [
-    {key: "symbol", label: "Symbol"},
+    {key: "symbol", label: "Symbol", render: (row) => <span className="stock-symbol-cell"><Link href={`/stocks/${row.symbol}`} aria-current={row.symbol === selectedSymbol ? "true" : undefined}>{row.symbol}</Link>{row.symbol === selectedSymbol ? <span className="selected-symbol-indicator">Selected</span> : null}</span>},
     {key: "display_name", label: "Company"},
     {key: "latest_price", label: "Latest", render: (row) => formatNumber(evidenceValue(row.latest_price))},
     {key: "price_change", label: "Change", render: (row) => <span className={Number(evidenceValue(row.price_change)) >= 0 ? "price-up" : "price-down"}>{formatPercent(evidenceValue(row.price_change))}</span>},
@@ -34,6 +35,7 @@ export function WatchlistPage({seed, stocks}: {seed: string[]; stocks: Stock[]})
     {key: "confidence", label: "Confidence", render: (row) => formatPercent(row.confidence)},
     {key: "abstain", label: "Abstain", render: (row) => <StatusBadge state={Boolean(row.abstain) ? "ABSTAIN" : "NOT_ABSTAIN"} />},
     {key: "provider_quality", label: "Provider"},
+    {key: "chart", label: "", render: (row) => <Link className="icon-button" href={`/stocks/${row.symbol}/chart`} aria-label={`Open chart for ${row.symbol}`} title={`Open chart for ${row.symbol}`}><ChartCandlestick aria-hidden="true" /></Link>},
     {key: "remove", label: "", render: (row) => <button className="icon-button" aria-label={`Remove ${row.symbol}`} onClick={() => watchlist.remove(row.symbol)}><X aria-hidden="true" /></button>},
   ];
   return <div className="page-stack">

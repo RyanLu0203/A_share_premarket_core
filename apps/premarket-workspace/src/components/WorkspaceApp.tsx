@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { FreshnessBanner } from "@/components/FreshnessBanner";
 import { BlockedCurrentStateNotice } from "@/components/BlockedCurrentStateNotice";
@@ -9,7 +9,10 @@ import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { ErrorState, LoadingState } from "@/components/ui";
 import { usePageEvidence } from "@/hooks/usePageEvidence";
-import { fetchWorkspaceJson, withQuery } from "@/lib/api";
+import { useSelectedSymbol } from "@/hooks/useSelectedSymbol";
+import { useWorkspaceRequest } from "@/hooks/useWorkspaceRequest";
+import { workspaceApi } from "@/lib/api/client";
+import { apiRoutes, withQuery } from "@/lib/api/routes";
 import { navigationItemForPath } from "@/lib/navigation";
 import type { WorkspaceStatus } from "@/lib/types";
 import { AbstentionCenterPage } from "@/views/AbstentionCenterPage";
@@ -38,43 +41,42 @@ const emptyStatus: WorkspaceStatus = {
   execution_mode: "local_research_only",
   holdings_mode: "RESEARCH REFERENCE PORTFOLIO",
 };
+const emptySnapshots = {latest: "", snapshots: [] as Array<{snapshot_date: string}>};
 
 export function WorkspaceApp() {
   const pathname = usePathname() || "/";
+  const router = useRouter();
   const resolved = resolveWorkspacePage(pathname);
   const item = navigationItemForPath(pathname);
   const [mode, setMode] = useState<"live" | "replay">("live");
-  const [snapshots, setSnapshots] = useState<string[]>([]);
   const [snapshotDate, setSnapshotDate] = useState<string>();
-  const [status, setStatus] = useState<WorkspaceStatus>(emptyStatus);
-  const [statusError, setStatusError] = useState<string | null>(null);
+  const {selectedSymbol, selectSymbol} = useSelectedSymbol(resolved.symbol);
+  const loadSnapshots = useCallback((signal: AbortSignal) => workspaceApi.snapshots(signal), []);
+  const snapshotsRequest = useWorkspaceRequest("snapshots", loadSnapshots, emptySnapshots);
+  const snapshots = useMemo(() => snapshotsRequest.data.snapshots.map((snapshot) => snapshot.snapshot_date), [snapshotsRequest.data.snapshots]);
+  const effectiveSnapshotDate = (snapshotDate ?? snapshotsRequest.data.latest) || undefined;
+  const statusPath = withQuery(apiRoutes.status, {mode, snapshot_date: effectiveSnapshotDate});
+  const loadStatus = useCallback((signal: AbortSignal) => workspaceApi.status(mode, effectiveSnapshotDate, signal), [effectiveSnapshotDate, mode]);
+  const statusRequest = useWorkspaceRequest(statusPath, loadStatus, emptyStatus);
+  const status = statusRequest.data;
+  const statusError = snapshotsRequest.error ?? statusRequest.error;
 
-  useEffect(() => {
-    const controller = new AbortController();
-    void fetchWorkspaceJson<{latest: string; snapshots: Array<{snapshot_date: string}>}>("/api/snapshots", controller.signal)
-      .then((result) => {
-        const dates = result.snapshots.map((snapshot) => snapshot.snapshot_date);
-        setSnapshots(dates);
-        setSnapshotDate((current) => current ?? result.latest);
-      })
-      .catch((reason: unknown) => setStatusError(reason instanceof Error ? reason.message : String(reason)));
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const path = withQuery("/api/status", {mode, snapshot_date: snapshotDate});
-    void fetchWorkspaceJson<WorkspaceStatus>(path, controller.signal)
-      .then((result) => {setStatus(result); setStatusError(null);})
-      .catch((reason: unknown) => {if (!controller.signal.aborted) setStatusError(reason instanceof Error ? reason.message : String(reason));});
-    return () => controller.abort();
-  }, [mode, snapshotDate]);
-
-  const evidence = usePageEvidence(resolved.pageId, resolved.symbol, mode, snapshotDate);
-  const view = useMemo(() => renderPage(resolved.pageId, evidence.data, resolved.symbol, (selected) => {setMode("replay"); setSnapshotDate(selected);}), [evidence.data, resolved.pageId, resolved.symbol]);
+  const evidence = usePageEvidence(resolved.pageId, resolved.symbol, mode, effectiveSnapshotDate);
+  const openSnapshot = useCallback((selected: string) => {setMode("replay"); setSnapshotDate(selected);}, []);
+  const openStockChart = useCallback((symbol: string) => {
+    selectSymbol(symbol);
+    router.push(`/stocks/${symbol.trim().toUpperCase()}/chart`);
+  }, [router, selectSymbol]);
+  const view = useMemo(() => renderPage(resolved.pageId, evidence.data, resolved.symbol, openSnapshot, {
+    initialTab: resolved.view === "chart" ? "chart" : "overview",
+    mode,
+    status,
+    onSymbolSelect: openStockChart,
+    selectedSymbol,
+  }), [evidence.data, mode, openSnapshot, openStockChart, resolved.pageId, resolved.symbol, resolved.view, selectedSymbol, status]);
 
   return <div className="workspace-shell">
-    <Sidebar pathname={pathname} />
+    <Sidebar pathname={pathname} selectedSymbol={selectedSymbol} />
     <div className="workspace-main">
       <TopBar pageTitle={item.label} status={status} mode={mode} snapshots={snapshots} onModeChange={setMode} onSnapshotChange={setSnapshotDate} />
       <main className="workspace-content">
@@ -88,12 +90,12 @@ export function WorkspaceApp() {
   </div>;
 }
 
-function renderPage(pageId: number, data: Record<string, unknown>, symbol: string | undefined, onSnapshot: (date: string) => void) {
+function renderPage(pageId: number, data: Record<string, unknown>, symbol: string | undefined, onSnapshot: (date: string) => void, stockContext: {initialTab: "overview" | "chart"; mode: "live" | "replay"; status: WorkspaceStatus; onSymbolSelect: (symbol: string) => void; selectedSymbol: string}) {
   switch (pageId) {
     case 1: return <CommandCenterPage data={data.command as React.ComponentProps<typeof CommandCenterPage>["data"]} />;
-    case 2: return <WatchlistPage seed={record(data.watchlist).symbols as string[] ?? []} stocks={(record(data.stocks).rows ?? []) as React.ComponentProps<typeof WatchlistPage>["stocks"]} />;
-    case 3: return <StockExplorerPage data={data.stocks as React.ComponentProps<typeof StockExplorerPage>["data"]} />;
-    case 4: return <StockDetailPage detail={record(data.detail) as React.ComponentProps<typeof StockDetailPage>["detail"]} market={record(data.market)} fundamentals={record(data.fundamentals)} risk={record(data.risk)} position={record(data.position)} />;
+    case 2: return <WatchlistPage seed={record(data.watchlist).symbols as string[] ?? []} stocks={(record(data.stocks).rows ?? []) as React.ComponentProps<typeof WatchlistPage>["stocks"]} selectedSymbol={stockContext.selectedSymbol} />;
+    case 3: return <StockExplorerPage data={data.stocks as React.ComponentProps<typeof StockExplorerPage>["data"]} selectedSymbol={stockContext.selectedSymbol} />;
+    case 4: return <StockDetailPage detail={record(data.detail) as React.ComponentProps<typeof StockDetailPage>["detail"]} market={record(data.market)} fundamentals={record(data.fundamentals)} risk={record(data.risk)} position={record(data.position)} stocks={(record(data.stocks).rows ?? []) as React.ComponentProps<typeof StockDetailPage>["stocks"]} {...stockContext} />;
     case 5: return <MarketContextPage data={record(data.marketContext)} />;
     case 6: return <PortfolioOverviewPage data={record(data.portfolio)} />;
     case 7: return <PositionBandsPage data={data.bands as React.ComponentProps<typeof PositionBandsPage>["data"]} />;

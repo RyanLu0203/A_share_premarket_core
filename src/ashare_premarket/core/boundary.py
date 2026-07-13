@@ -19,9 +19,18 @@ ISSUE24_AUTHORIZED_IMPORTERS = {
     "scripts/run_goal_premarket_research_position_workspace_dashboard01.py",
     "scripts/run_premarket_workspace.py",
     "scripts/run_premarket_workspace_api.py",
+    "src/ashare_premarket/application/workspace/repository.py",
     "src/ashare_premarket/dashboard/api.py",
     "src/ashare_premarket/dashboard/goal_premarket_research_position_workspace_dashboard01.py",
+    "src/ashare_premarket/dashboard/repositories/base.py",
+    "src/ashare_premarket/dashboard/repositories/portfolio_repository.py",
+    "src/ashare_premarket/dashboard/repositories/stock_repository.py",
+    "src/ashare_premarket/dashboard/repositories/system_evidence_repository.py",
+    "src/ashare_premarket/dashboard/repositories/snapshot_repository.py",
     "src/ashare_premarket/dashboard/repository.py",
+    "src/ashare_premarket/dashboard/services/capability_service.py",
+    "src/ashare_premarket/dashboard/services/status_service.py",
+    "src/ashare_premarket/dashboard/store.py",
 }
 
 

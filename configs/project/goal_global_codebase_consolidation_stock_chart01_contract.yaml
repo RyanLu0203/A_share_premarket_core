@@ -1,0 +1,21 @@
+goal: GOAL-GLOBAL-CODEBASE-CONSOLIDATION-AND-STOCK-CHART-WORKSPACE-01
+authoritative_branch: project-current
+baseline_commit: e17a114aec8ea2f2f29259e5508e123f0f5486cc
+mode: controlled_architecture_refactor_and_local_research_chart
+public_api_policy: GET_ONLY
+behavioral_parity: EXACT_REQUIRED
+stock_chart:
+  route: /stocks/{symbol}/chart
+  ranges: [20D, 60D, 120D, 250D, ALL]
+  source_semantics: committed_t_minus_one_not_live_quote
+  chart_library: lightweight-charts
+future_factor_interface:
+  ready_factor_count: 0
+  state: LOCKED_NO_READY_FACTORS
+locked:
+  recommendation: true
+  trading: true
+  broker: true
+  paper_execution: true
+  production: true
+  dqn_rl: true

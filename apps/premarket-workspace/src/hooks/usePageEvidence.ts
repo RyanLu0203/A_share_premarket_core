@@ -1,34 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 
-import { fetchWorkspaceJson, withQuery } from "@/lib/api";
-import { endpointPlanForPage } from "@/lib/page-data";
+import { useWorkspaceRequest } from "@/hooks/useWorkspaceRequest";
+import { workspaceApi } from "@/lib/api/client";
+import { endpointPlanForPage } from "@/lib/api/page-plan";
+import { withQuery } from "@/lib/api/routes";
+
+const EMPTY_EVIDENCE: Record<string, unknown> = {};
 
 export function usePageEvidence(pageId: number, symbol: string | undefined, mode: "live" | "replay", snapshotDate: string | undefined) {
   const requestKey = `${pageId}:${symbol ?? ""}:${mode}:${snapshotDate ?? ""}`;
-  const [result, setResult] = useState<{requestKey: string; data: Record<string, unknown>; error: string | null}>({requestKey: "", data: {}, error: null});
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const plan = endpointPlanForPage(pageId, symbol);
-    Promise.all(plan.map(async (item) => {
-      const path = withQuery(item.path, {
+  const plan = useMemo(() => endpointPlanForPage(pageId, symbol).map((item) => ({
+    ...item,
+    path: withQuery(item.path, {
         mode: pageId === 1 ? mode : undefined,
         snapshot_date: snapshotDate,
-      });
-      return [item.key, await fetchWorkspaceJson<unknown>(path, controller.signal)] as const;
-    }))
-      .then((entries) => setResult({requestKey, data: Object.fromEntries(entries), error: null}))
-      .catch((reason: unknown) => {
-        if (!controller.signal.aborted) setResult({requestKey, data: {}, error: reason instanceof Error ? reason.message : String(reason)});
-      });
-    return () => controller.abort();
-  }, [mode, pageId, requestKey, snapshotDate, symbol]);
-
-  return {
-    data: result.data,
-    loading: result.requestKey !== requestKey,
-    error: result.requestKey === requestKey ? result.error : null,
-  };
+    }),
+  })), [mode, pageId, snapshotDate, symbol]);
+  const request = useCallback((signal: AbortSignal) => workspaceApi.bundle(plan, signal), [plan]);
+  return useWorkspaceRequest(requestKey, request, EMPTY_EVIDENCE);
 }

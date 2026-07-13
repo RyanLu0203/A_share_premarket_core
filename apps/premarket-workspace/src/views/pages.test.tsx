@@ -57,6 +57,7 @@ describe("functional workspace pages", () => {
 
   it("persists watchlist additions and supports removal", () => {
     render(<WatchlistPage seed={["000333.SZ"]} stocks={[{symbol: "000333.SZ", display_name: "Midea Group", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Home Appliances"}, latest_price: {value: 72.1}, price_change: {value: 0.01}, market_cap: evidenceUnavailable, pe_ttm: {value: 15}, pb: {value: 2}, current_weight: 0.02, band_min: 0.01, band_max: 0.03, band_status: "WITHIN_BAND", risk_contribution: 0.02, confidence: 1, abstain: false, provider_quality: "accepted"}, {symbol: "002475.SZ", display_name: "Luxshare Precision", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Electronics"}, latest_price: {value: 30}, price_change: {value: -0.01}, market_cap: evidenceUnavailable, pe_ttm: {value: 20}, pb: {value: 3}, current_weight: 0.02, band_min: 0.01, band_max: 0.03, band_status: "WITHIN_BAND", risk_contribution: 0.02, confidence: 1, abstain: false, provider_quality: "accepted"}]} />);
+    expect(screen.getByRole("link", {name: "Open chart for 000333.SZ"})).toHaveAttribute("href", "/stocks/000333.SZ/chart");
     expect(screen.getByText("Market cap")).toBeVisible();
     expect(screen.getByText("Band min")).toBeVisible();
     expect(screen.getByText("Abstain")).toBeVisible();
@@ -68,7 +69,7 @@ describe("functional workspace pages", () => {
   });
 
   it("filters stock explorer evidence by governed categories", () => {
-    render(<StockExplorerPage data={{count: 2, rows: [
+    render(<StockExplorerPage selectedSymbol="000157.SZ" data={{count: 2, rows: [
       {symbol: "000333.SZ", display_name: "Midea Group", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Home Appliances"}, latest_price: {value: 72.1}, price_change: {value: 0.01}, market_cap: evidenceUnavailable, pe_ttm: {value: 15}, pb: {value: 2}, current_weight: 0.02, band_status: "WITHIN_BAND", abstain: false, provider_quality: "accepted"},
       {symbol: "000157.SZ", display_name: "Zoomlion", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Machinery"}, latest_price: {value: 7.1}, price_change: {value: -0.01}, market_cap: evidenceUnavailable, pe_ttm: evidenceUnavailable, pb: evidenceUnavailable, current_weight: 0, band_status: "ABSTAIN", abstain: true, provider_quality: "quarantined"},
     ]}} />);
@@ -76,6 +77,8 @@ describe("functional workspace pages", () => {
     expect(screen.getByText("Zoomlion")).toBeVisible();
     expect(screen.queryByText("Midea Group")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Provider quality filter")).toBeVisible();
+    expect(screen.getByText("Selected")).toBeVisible();
+    expect(screen.getByRole("link", {name: "Open chart for 000157.SZ"})).toHaveAttribute("href", "/stocks/000157.SZ/chart");
   });
 
   it("shows stock tabs and evidence-backed unavailable fundamentals", () => {

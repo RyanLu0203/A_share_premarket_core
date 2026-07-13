@@ -772,3 +772,14 @@ immutable successful refresh manifest plus a latest refresh status pointer.
 The row has no promotion edge to Recommendation Tiering, generic dashboard,
 broker, paper execution, production, or DQN/RL. A blocked daily attempt records
 deterministic reasons without advancing the latest valid OPM snapshot.
+
+## 2026-07-13 Global Consolidation And Stock Chart Status
+
+`goal_global_codebase_consolidation_stock_chart01` is
+`implemented_engineering_research_support`. It preserves the accepted daily refresh, OPM01,
+snapshot, API, frontend-page, and governance contracts while establishing canonical package and
+interface boundaries.
+
+The selected-stock chart is a local read-only research surface over committed T-1 evidence. This
+row has no promotion edge. Generic dashboard, Recommendation Tiering, recommendation outputs,
+trading, broker, paper execution, production, factor mining, and DQN/RL remain locked.
