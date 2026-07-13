@@ -1,0 +1,14 @@
+candidate_id,path_or_scope,classification,evidence,replacement_path,compatibility,validation
+RF01-001,apps/premarket-workspace/src/lib/api.ts,DELETE,"Internal fetch wrapper; all callers migrate in one commit",apps/premarket-workspace/src/lib/workspace-api.ts,"internal only; no wrapper",frontend tests and build
+RF01-002,apps/premarket-workspace/src/lib/page-data.ts,DELETE,"Internal endpoint map duplicates backend route strings",apps/premarket-workspace/src/lib/workspace-api.ts,"internal only; no wrapper",route registry consistency test
+RF01-003,apps/premarket-workspace/src/lib/page-data.test.ts,DELETE,"Coverage replaced by stronger registry and typed-client tests",apps/premarket-workspace/src/lib/workspace-api.test.ts,"equal or stronger replacement",frontend tests
+RF01-004,src/ashare_premarket/dashboard/api.py,REPLACE_WITH_WRAPPER,"Routes and application assembly are combined",src/ashare_premarket/interfaces/api/app.py,"create_app and app retained",OpenAPI and route parity
+RF01-005,src/ashare_premarket/dashboard/repository.py,REPLACE_WITH_WRAPPER,"672 lines combine stock portfolio status system and capability views",src/ashare_premarket/application/workspace/repository.py,"PremarketWorkspaceRepository retained",22-response hash parity
+RF01-006,src/ashare_premarket/dashboard/store.py,REPLACE_WITH_WRAPPER,"Snapshot and committed-evidence access need one focused owner",src/ashare_premarket/dashboard/repositories/snapshot_repository.py,"CommittedEvidenceStore retained",cache checksum and pointer tests
+RF01-007,apps/research_diagnostic_dashboard_v0.py,DEPRECATE,"Parallel V0 interface remains referenced by module test doc and manifest",docs/architecture/CANONICAL_PROGRAM_INTERFACES.md,"compatibility-only historical surface",deprecation inventory only
+RF01-008,src/ashare_premarket/providers/health.py,KEEP,"No current caller but retained in Arch03 historical module inventory; deletion would orphan accepted evidence",src/ashare_premarket/providers/health.py,"unchanged",deletion-reference audit
+RF01-009,optional reader helpers in historical goal modules,DEPRECATE,"139 exact duplicate groups exist but source files are tied to historical implementation checksums",src/ashare_premarket/core/io.py,"future evidence-migration goal required",manifest-chain audit
+RF01-010,185 scripts,KEEP,"Operational goal audit and compatibility commands have distinct defaults; thin wrappers are intentional",docs/architecture/CANONICAL_PROGRAM_INTERFACES.md,"all names retained and machine-classified",doctor and public-entrypoint test
+RF01-011,historical scientific outputs and manifests,KEEP,"Accepted evidence and rollback lineage",unchanged paths,"exact paths retained",deterministic parity and fresh clone
+RF01-012,provider optional dynamic imports,KEEP,"Deliberate network-disabled optional dependency boundaries",existing provider modules,"unchanged",provider and safety audits
+
