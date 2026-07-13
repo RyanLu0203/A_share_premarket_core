@@ -102,3 +102,7 @@ export function navigationItemForPath(pathname: string): NavigationItem {
   }
   return flattenNavigation(navigationGroups).find((item) => item.path === pathname) ?? pageRegistry[1];
 }
+
+export function navigationPath(item: NavigationItem, selectedSymbol: string): string {
+  return item.id === 4 ? `/stocks/${selectedSymbol}` : item.path;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, RotateCcw } from "lucide-react";
+import { ChartCandlestick, ExternalLink, RotateCcw } from "lucide-react";
 import { useState } from "react";
 
 import { DenseTable, type DenseColumn } from "@/components/DenseTable";
@@ -10,7 +10,7 @@ import { evidenceValue, formatNumber, formatPercent } from "@/lib/format";
 
 type Stock = Record<string, unknown> & {symbol: string; display_name: string};
 
-export function StockExplorerPage({data}: {data: {rows: Stock[]; count: number}}) {
+export function StockExplorerPage({data, selectedSymbol}: {data: {rows: Stock[]; count: number}; selectedSymbol?: string}) {
   const [filters, setFilters] = useState({exchange: "ALL", board: "ALL", industry: "ALL", portfolio: "ALL", band: "ALL", abstention: "ALL", provider: "ALL"});
   const rows = data.rows.filter((row) => {
     const values = {
@@ -25,7 +25,7 @@ export function StockExplorerPage({data}: {data: {rows: Stock[]; count: number}}
     return Object.entries(filters).every(([key, selected]) => selected === "ALL" || values[key as keyof typeof values] === selected);
   });
   const columns: DenseColumn<Stock>[] = [
-    {key: "symbol", label: "Symbol", render: (row) => <Link href={`/stocks/${row.symbol}`}>{row.symbol}<ExternalLink aria-hidden="true" /></Link>},
+    {key: "symbol", label: "Symbol", render: (row) => <span className="stock-symbol-cell"><Link href={`/stocks/${row.symbol}`} aria-current={row.symbol === selectedSymbol ? "true" : undefined}>{row.symbol}<ExternalLink aria-hidden="true" /></Link>{row.symbol === selectedSymbol ? <span className="selected-symbol-indicator">Selected</span> : null}</span>},
     {key: "display_name", label: "Company"},
     {key: "exchange", label: "Exchange", render: (row) => String(evidenceValue(row.exchange) ?? "N/A")},
     {key: "board", label: "Board", render: (row) => String(evidenceValue(row.board) ?? "N/A")},
@@ -37,9 +37,10 @@ export function StockExplorerPage({data}: {data: {rows: Stock[]; count: number}}
     {key: "pb", label: "PB", render: (row) => formatNumber(evidenceValue(row.pb))},
     {key: "band_status", label: "Band", render: (row) => <StatusBadge state={String(row.band_status)} />},
     {key: "provider_quality", label: "Provider quality"},
+    {key: "chart", label: "", render: (row) => <Link className="icon-button" href={`/stocks/${row.symbol}/chart`} aria-label={`Open chart for ${row.symbol}`} title={`Open chart for ${row.symbol}`}><ChartCandlestick aria-hidden="true" /></Link>},
   ];
   const update = (key: keyof typeof filters, value: string) => setFilters((current) => ({...current, [key]: value}));
-  return <div className="page-stack"><PageHeader eyebrow="03 / SECURITY MASTER" title="Stock Explorer" meta={`${data.count} evidence-backed symbols / ${rows.length} visible / Missing fundamentals remain unavailable`} />
+  return <div className="page-stack"><PageHeader eyebrow="03 / SECURITY MASTER" title="Stock Explorer" meta={`${data.count} evidence-backed symbols / ${rows.length} visible / Selected ${selectedSymbol ?? "none"} / Missing fundamentals remain unavailable`} />
     <div className="filter-bar explorer-filters">
       <FilterSelect label="Exchange" value={filters.exchange} values={options(data.rows, (row) => evidenceValue(row.exchange))} onChange={(value) => update("exchange", value)} />
       <FilterSelect label="Board" value={filters.board} values={options(data.rows, (row) => evidenceValue(row.board))} onChange={(value) => update("board", value)} />

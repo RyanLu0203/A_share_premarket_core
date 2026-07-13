@@ -151,6 +151,8 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
 .dense-table-wrap tbody tr:hover {background: var(--surface-2);}
 .dense-table-wrap td a {color: var(--blue); display: inline-flex; gap: 5px; align-items: center;}
 .dense-table-wrap td a svg {width: 12px;}
+.stock-symbol-cell {display: inline-flex; align-items: center; gap: 6px;}
+.selected-symbol-indicator {border: 1px solid var(--cyan); color: var(--cyan); padding: 1px 4px; font-family: "IBM Plex Mono", monospace; font-size: 8px; text-transform: uppercase;}
 .dense-table-wrap.is-compact .table-scroll {max-height: 440px;}
 .table-empty-state {min-height: 130px; display: grid; place-items: center; align-content: center; gap: 7px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 10px; text-align: center;}
 .table-empty-state svg {width: 24px; height: 24px; color: var(--subtle);}
@@ -198,6 +200,12 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
 .stock-price {display: grid; justify-items: end;}
 .stock-price strong {font-family: "IBM Plex Mono", monospace; font-size: 27px;}
 .stock-price small {color: var(--subtle);}
+.stock-header-actions {display: flex; align-items: flex-end; justify-content: flex-end; gap: 12px; min-width: 0;}
+.stock-symbol-search {position: relative; display: grid; grid-template-columns: minmax(210px, 320px) auto; align-items: center; gap: 6px;}
+.stock-symbol-search label {height: 34px; border: 1px solid var(--border-strong); background: var(--surface); display: flex; align-items: center; gap: 7px; padding: 0 9px; color: var(--muted);}
+.stock-symbol-search input {min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--text);}
+.stock-symbol-search button {height: 34px; border: 1px solid var(--blue); background: #163052; color: var(--text); padding: 0 11px; cursor: pointer;}
+.stock-symbol-search [role="alert"] {position: absolute; top: 38px; left: 0; z-index: 3; width: 100%; border: 1px solid var(--red); background: var(--surface); color: var(--red); padding: 5px 8px; font-size: 10px;}
 .stock-summary {display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--border); background: var(--surface);}
 .stock-summary > div {min-height: 58px; border-right: 1px solid var(--border); padding: 9px; display: grid; gap: 4px; align-content: center;}
 .stock-summary > div:last-child {border-right: 0;}
@@ -214,14 +222,35 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
 .evidence-value small {font-size: 9px; color: var(--subtle); overflow-wrap: anywhere;}
 .evidence-value b {font-size: 9px; color: var(--amber);}
 .evidence-value.is-unavailable {border-style: dashed;}
-.price-volume-chart, .chart-empty {width: 100%; height: 420px;}
+.price-volume-chart {width: 100%; height: 520px;}
+.chart-empty {width: 100%; height: 420px;}
 .chart-empty {display: grid; place-items: center; border: 1px dashed var(--border-strong); color: var(--muted);}
 .price-chart-stack {display: grid; gap: 8px;}
-.chart-timeframe {width: 210px; grid-template-columns: repeat(3, 1fr); justify-self: end;}
-.chart-evidence-strip {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-bottom: 8px;}
+.chart-toolbar {display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0;}
+.chart-toolbar > span {color: var(--subtle); font-family: "IBM Plex Mono", monospace; font-size: 9px; text-align: right;}
+.chart-timeframe {width: min(380px, 100%); grid-template-columns: repeat(5, 1fr);}
+.chart-semantics-banner {min-height: 42px; margin-bottom: 8px; border: 1px solid var(--amber); border-left-width: 4px; padding: 7px 9px; display: flex; align-items: center; gap: 10px;}
+.chart-semantics-banner strong {color: var(--amber); font-family: "IBM Plex Mono", monospace; font-size: 10px;}
+.chart-semantics-banner > span:nth-child(2) {color: var(--muted); font-size: 10px; flex: 1;}
+.chart-evidence-strip {display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-bottom: 8px;}
 .chart-evidence-strip > div {min-height: 57px; border: 1px solid var(--border); padding: 7px; display: grid; align-content: center; gap: 3px; overflow: hidden;}
 .chart-evidence-strip span, .chart-evidence-strip small {color: var(--subtle); font-size: 9px;}
 .chart-evidence-strip strong {font-family: "IBM Plex Mono", monospace; font-size: 10px; overflow-wrap: anywhere;}
+.chart-tooltip {display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--border); background: var(--surface-2);}
+.chart-tooltip > div {min-width: 0; min-height: 42px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px 8px; display: grid; gap: 2px;}
+.chart-tooltip > div:nth-child(5n) {border-right: 0;}
+.chart-tooltip span {color: var(--subtle); font-size: 8px; text-transform: uppercase;}
+.chart-tooltip strong {font-family: "IBM Plex Mono", monospace; font-size: 10px; overflow-wrap: anywhere;}
+.chart-canvas-frame {position: relative; min-width: 0; border: 1px solid var(--border); overflow: hidden;}
+.chart-pane-label {position: absolute; left: 10px; z-index: 2; background: rgba(16, 26, 43, 0.88); color: var(--subtle); font-family: "IBM Plex Mono", monospace; font-size: 9px; padding: 3px 5px; pointer-events: none;}
+.candle-pane-label {top: 8px;}
+.volume-pane-label {bottom: 116px;}
+.chart-legend {display: flex; align-items: center; justify-content: flex-end; gap: 14px; color: var(--subtle); font-size: 9px;}
+.chart-legend span {display: inline-flex; align-items: center; gap: 5px;}
+.chart-legend i {width: 8px; height: 8px; display: inline-block;}
+.legend-up {background: var(--price-up);}
+.legend-down {background: var(--price-down);}
+.legend-discrepancy {border-radius: 50%; background: var(--amber);}
 
 .evidence-chart {width: 100%; min-width: 0;}
 .regime-grid {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px;}
@@ -271,6 +300,7 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
   .refresh-status-strip {grid-template-columns: repeat(3, minmax(0, 1fr));}
   .explorer-filters {grid-template-columns: repeat(4, minmax(120px, 1fr));}
   .state-definition-grid {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  .chart-evidence-strip {grid-template-columns: repeat(2, minmax(0, 1fr));}
 }
 
 @media (max-width: 1050px) {
@@ -292,5 +322,39 @@ svg {width: 16px; height: 16px; flex: 0 0 auto;}
   .freshness-meta {grid-column: auto;}
   .refresh-status-strip {grid-template-columns: repeat(2, minmax(0, 1fr));}
   .explorer-filters {grid-template-columns: repeat(2, minmax(120px, 1fr));}
-  .chart-evidence-strip {grid-template-columns: 1fr;}
+  .page-header {align-items: flex-start; flex-wrap: wrap;}
+  .page-actions {width: 100%;}
+  .stock-header-actions {width: 100%; justify-content: space-between;}
+  .chart-evidence-strip {grid-template-columns: repeat(2, minmax(0, 1fr));}
+}
+
+@media (max-width: 760px) {
+  :root {--sidebar-width: 0px;}
+  .workspace-shell {display: block;}
+  .sidebar {position: static; width: 100%; height: auto; padding: 0 8px; border-right: 0; border-bottom: 1px solid var(--border);}
+  .sidebar-title, .sidebar footer, .sidebar nav h2 {display: none;}
+  .sidebar nav {display: flex; overflow-x: auto; padding: 7px 0;}
+  .sidebar nav section {display: flex; margin: 0;}
+  .sidebar nav a {width: max-content; min-width: 42px; padding: 0 9px; border-left: 0; border-bottom: 2px solid transparent;}
+  .sidebar nav a.is-active {border-left: 0; border-bottom-color: var(--blue);}
+  .topbar {position: static; grid-template-columns: minmax(0, 1fr) 178px; grid-template-rows: 60px auto; min-height: 0;}
+  .brand-lockup {grid-column: 1; grid-row: 1;}
+  .mode-cluster {grid-column: 2; grid-row: 1; min-width: 0;}
+  .topbar-context {grid-column: 1 / -1; grid-row: 2;}
+  .workspace-content {padding: 12px 10px 28px;}
+  .workspace-footer {padding: 10px; font-size: 9px;}
+  .page-header h1 {font-size: 20px;}
+  .stock-header-actions {align-items: stretch; flex-direction: column-reverse;}
+  .stock-price {justify-items: start;}
+  .stock-symbol-search {grid-template-columns: minmax(0, 1fr) auto; width: 100%;}
+  .stock-summary {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  .evidence-grid, .chart-evidence-strip, .chart-tooltip {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  .chart-tooltip > div:nth-child(5n) {border-right: 1px solid var(--border);}
+  .chart-tooltip > div:nth-child(2n) {border-right: 0;}
+  .chart-toolbar {align-items: stretch; flex-direction: column;}
+  .chart-toolbar > span {text-align: left;}
+  .chart-timeframe {width: 100%;}
+  .chart-semantics-banner {align-items: flex-start; flex-direction: column;}
+  .chart-legend {justify-content: flex-start; flex-wrap: wrap;}
+  .price-volume-chart {height: 470px;}
 }

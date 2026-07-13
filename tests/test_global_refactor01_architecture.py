@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import re
 
 from fastapi.testclient import TestClient
 
@@ -187,6 +188,19 @@ def test_backend_refactor_preserves_openapi_and_all_public_responses() -> None:
         ).encode()
         assert response.status_code == 200, path
         assert hashlib.sha256(canonical).hexdigest() == baseline["api_response_sha256"][path], path
+
+
+def test_frontend_route_templates_match_registry_without_duplicate_literals() -> None:
+    routes_path = ROOT / "apps/premarket-workspace/src/lib/api/routes.ts"
+    source = routes_path.read_text(encoding="utf-8")
+    block = source.split("export const API_ROUTE_TEMPLATES = {", 1)[1].split("} as const;", 1)[0]
+    frontend_routes = set(re.findall(r'^\s+\w+: "(/api/[^"]+)",$', block, re.MULTILINE))
+
+    assert frontend_routes == BASELINE_API_PATHS
+    for path in (ROOT / "apps/premarket-workspace/src").rglob("*"):
+        if path == routes_path or path.suffix not in {".ts", ".tsx"} or ".test." in path.name:
+            continue
+        assert not re.findall(r'["\'](/api/[^"\']+)["\']', path.read_text(encoding="utf-8")), path
 
 
 def test_new_architecture_has_explicit_acyclic_dependency_directions() -> None:

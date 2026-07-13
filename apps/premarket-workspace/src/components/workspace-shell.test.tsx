@@ -57,6 +57,7 @@ describe("workspace application shell", () => {
   it("resolves available, locked, hybrid, and symbol-detail routes", () => {
     expect(resolveWorkspacePage("/").pageId).toBe(1);
     expect(resolveWorkspacePage("/stocks/000333.SZ")).toMatchObject({pageId: 4, symbol: "000333.SZ"});
+    expect(resolveWorkspacePage("/stocks/000333.SZ/chart")).toMatchObject({pageId: 4, symbol: "000333.SZ", view: "chart"});
     expect(resolveWorkspacePage("/quant/regime")).toMatchObject({pageId: 14, kind: "HYBRID"});
     expect(resolveWorkspacePage("/quant/recommendation-tiering")).toMatchObject({pageId: 17, kind: "LOCKED"});
     expect(resolveWorkspacePage("/system/provenance").pageId).toBe(23);

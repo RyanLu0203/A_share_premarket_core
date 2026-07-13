@@ -4,11 +4,18 @@ export interface ResolvedWorkspacePage {
   pageId: number;
   kind: PageState;
   symbol?: string;
+  view?: "chart";
 }
 
 export function resolveWorkspacePage(pathname: string): ResolvedWorkspacePage {
   if (pathname.startsWith("/stocks/") && pathname.split("/")[2]) {
-    return {pageId: 4, kind: "AVAILABLE", symbol: decodeURIComponent(pathname.split("/")[2]).toUpperCase()};
+    const segments = pathname.split("/");
+    return {
+      pageId: 4,
+      kind: "AVAILABLE",
+      symbol: decodeURIComponent(segments[2]).toUpperCase(),
+      view: segments[3] === "chart" ? "chart" : undefined,
+    };
   }
   const item = flattenNavigation(navigationGroups).find((candidate) => candidate.path === pathname);
   if (!item) return {pageId: 1, kind: "AVAILABLE"};
