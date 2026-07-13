@@ -23,6 +23,8 @@ from ashare_premarket.interfaces.registry import api_paths, load_interface_regis
 
 
 ROOT = Path(__file__).resolve().parents[1]
+POSIX_FRONTEND_COMMAND = "npm run dev --prefix apps/premarket-workspace"
+WINDOWS_FRONTEND_COMMAND = "npm.cmd run dev --prefix apps/premarket-workspace"
 BASELINE_API_PATHS = {
     "/api/command-center",
     "/api/data-quality",
@@ -77,10 +79,18 @@ def test_canonical_interface_registry_is_unique_and_complete() -> None:
     registry = load_interface_registry(ROOT)
     interfaces = registry["interfaces"]
     routes = registry["api_routes"]
+    frontend = next(row for row in interfaces if row["name"] == "workspace_frontend")
 
+    assert registry["schema_version"] == "1.1"
     assert registry["authoritative_branch"] == "project-current"
+    assert len(interfaces) == 14
     assert len({row["name"] for row in interfaces}) == len(interfaces)
     assert len({row["command"] for row in interfaces}) == len(interfaces)
+    assert frontend["command"] == POSIX_FRONTEND_COMMAND
+    assert frontend["platform_commands"] == {
+        "posix": POSIX_FRONTEND_COMMAND,
+        "windows": WINDOWS_FRONTEND_COMMAND,
+    }
     assert {row["path"] for row in routes} == BASELINE_API_PATHS
     assert all(row["methods"] == ["GET"] for row in routes)
     assert len({row["name"] for row in routes}) == 22
@@ -113,6 +123,9 @@ def test_registry_resolves_real_locked_capability_source() -> None:
 
 def test_program_doctor_reports_repository_interfaces_and_locks() -> None:
     report = collect_doctor_report(ROOT)
+    frontend = next(
+        row for row in report["canonical_commands"] if row["name"] == "workspace_frontend"
+    )
 
     assert report["authoritative_branch"] == "project-current"
     assert report["current_branch"] == "codex-max/global-codebase-consolidation-stock-chart01"
@@ -123,7 +136,28 @@ def test_program_doctor_reports_repository_interfaces_and_locks() -> None:
     assert report["ready_factor_count"] == 0
     assert report["locked_capabilities"]["dashboard"] is False
     assert report["locked_capabilities"]["broker_live_trading"] is False
-    assert report["canonical_commands"]
+    assert len(report["canonical_commands"]) == 14
+    assert frontend["command"] == POSIX_FRONTEND_COMMAND
+    assert frontend["platform_commands"] == {
+        "posix": POSIX_FRONTEND_COMMAND,
+        "windows": WINDOWS_FRONTEND_COMMAND,
+    }
+
+
+def test_module_doctor_text_uses_posix_canonical_command_and_labels_windows_alternative() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "ashare_premarket", "doctor", "--root", str(ROOT)],
+        cwd=ROOT,
+        env={**__import__("os").environ, "PYTHONPATH": str(ROOT / "src")},
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert f"workspace_frontend: {POSIX_FRONTEND_COMMAND}" in result.stdout
+    assert f"workspace_frontend: {WINDOWS_FRONTEND_COMMAND}" not in result.stdout
+    assert f"posix: {POSIX_FRONTEND_COMMAND}" in result.stdout
+    assert f"windows: {WINDOWS_FRONTEND_COMMAND}" in result.stdout
 
 
 def test_module_doctor_json_command_is_machine_readable() -> None:
@@ -137,9 +171,17 @@ def test_module_doctor_json_command_is_machine_readable() -> None:
 
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
+    frontend = next(
+        row for row in payload["canonical_commands"] if row["name"] == "workspace_frontend"
+    )
     assert payload["current_commit"]
     assert len(payload["api_routes"]) == 22
     assert payload["ready_factor_count"] == 0
+    assert frontend["command"] == POSIX_FRONTEND_COMMAND
+    assert frontend["platform_commands"] == {
+        "posix": POSIX_FRONTEND_COMMAND,
+        "windows": WINDOWS_FRONTEND_COMMAND,
+    }
 
 
 def test_public_command_inventory_covers_every_python_script() -> None:

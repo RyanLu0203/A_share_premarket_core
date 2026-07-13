@@ -21,15 +21,19 @@ def collect_doctor_report(root: Path | None = None) -> dict[str, Any]:
     refresh = _read_json(base / REFRESH_POINTER)
     workspace = _read_json(base / WORKSPACE_MANIFEST)
     keys = [str(key) for key in registry["doctor_capabilities"]]
+    canonical_commands: list[dict[str, Any]] = []
+    for row in registry["interfaces"]:
+        if row["visibility"] != "public":
+            continue
+        command = {"name": row["name"], "command": row["command"], "purpose": row["purpose"]}
+        if "platform_commands" in row:
+            command["platform_commands"] = dict(row["platform_commands"])
+        canonical_commands.append(command)
     return {
         "authoritative_branch": registry["authoritative_branch"],
         "current_branch": _git(base, "branch", "--show-current"),
         "current_commit": _git(base, "rev-parse", "HEAD"),
-        "canonical_commands": [
-            {"name": row["name"], "command": row["command"], "purpose": row["purpose"]}
-            for row in registry["interfaces"]
-            if row["visibility"] == "public"
-        ],
+        "canonical_commands": canonical_commands,
         "api_routes": registry["api_routes"],
         "frontend_url": registry["frontend_url"],
         "latest_snapshot": snapshot.get("snapshot_date", "UNAVAILABLE"),
@@ -53,6 +57,8 @@ def print_doctor_report(root: Path | None = None, *, as_json: bool = False) -> N
     print("Canonical commands:")
     for row in report["canonical_commands"]:
         print(f"  {row['name']}: {row['command']}")
+        for platform, command in row.get("platform_commands", {}).items():
+            print(f"    {platform}: {command}")
     print("API routes:")
     for row in report["api_routes"]:
         print(f"  {','.join(row['methods'])} {row['path']}")
@@ -77,4 +83,3 @@ def _read_json(path: Path) -> dict[str, Any]:
         return {}
     payload = json.loads(path.read_text(encoding="utf-8"))
     return payload if isinstance(payload, dict) else {}
-

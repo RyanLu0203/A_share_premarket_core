@@ -6,6 +6,7 @@ from typing import Any
 
 
 REGISTRY_PATH = "configs/project/canonical_interfaces.json"
+SUPPORTED_SCHEMA_VERSIONS = {"1.0", "1.1"}
 
 
 def repository_root() -> Path:
@@ -15,7 +16,7 @@ def repository_root() -> Path:
 def load_interface_registry(root: Path | None = None) -> dict[str, Any]:
     base = (root or repository_root()).resolve()
     payload = json.loads((base / REGISTRY_PATH).read_text(encoding="utf-8"))
-    if payload.get("schema_version") != "1.0":
+    if payload.get("schema_version") not in SUPPORTED_SCHEMA_VERSIONS:
         raise ValueError("unsupported canonical interface registry schema")
     return payload
 
@@ -30,4 +31,3 @@ def api_path(name: str, root: Path | None = None) -> str:
         return api_paths(root)[name]
     except KeyError as exc:
         raise KeyError(f"unknown canonical API route: {name}") from exc
-

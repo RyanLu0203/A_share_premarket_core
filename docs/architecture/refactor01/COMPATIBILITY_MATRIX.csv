@@ -7,6 +7,8 @@ apps/premarket-workspace/src/lib/page-data.ts,apps/premarket-workspace/src/lib/a
 apps/premarket-workspace/src/lib/page-data.test.ts,apps/premarket-workspace/src/lib/api/page-plan.test.ts,INTERNAL_REPLACED,,STRONGER,true,Replacement covers all pages and complete stock workspace bundle
 python scripts/run_premarket_workspace.py,python scripts/run_premarket_workspace.py,PRESERVED,,EXACT,false,Canonical local launcher unchanged
 python scripts/run_premarket_workspace_api.py,python scripts/run_premarket_workspace_api.py,PRESERVED,,EXACT,false,Canonical loopback API launcher unchanged
+npm run dev --prefix apps/premarket-workspace,configs/project/canonical_interfaces.json workspace_frontend.command,PRESERVED,,EXACT,false,Canonical POSIX and macOS frontend command
+npm.cmd run dev --prefix apps/premarket-workspace,configs/project/canonical_interfaces.json workspace_frontend.platform_commands.windows,PRESERVED,,EXACT,false,Explicit Windows frontend alternative
 python scripts/run_daily_incremental_evidence_refresh.py,python scripts/run_daily_incremental_evidence_refresh.py,PRESERVED,,EXACT,false,Daily operational command unchanged
 python scripts/run_goal_daily_incremental_evidence_refresh01.py,python scripts/run_goal_daily_incremental_evidence_refresh01.py,PRESERVED,,EXACT,false,Deterministic daily replay unchanged
 python scripts/run_premarket_position_management.py,python scripts/run_premarket_position_management.py,PRESERVED,,EXACT,false,OPM01 command unchanged

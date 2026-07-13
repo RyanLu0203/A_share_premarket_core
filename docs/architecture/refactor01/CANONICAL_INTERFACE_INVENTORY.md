@@ -8,7 +8,7 @@ and `docs/architecture/CANONICAL_PROGRAM_INTERFACES.md`.
 | Local workspace | `python scripts/run_premarket_workspace.py` | `scripts/run_premarket_workspace.py` | service | Correct launcher, but confused with goal runner |
 | Workspace check | `python scripts/run_premarket_workspace.py --check` | same | environment validation | Does not print all canonical interfaces or locks |
 | Workspace API | `python scripts/run_premarket_workspace_api.py` | `ashare_premarket.dashboard.api` | service | API implementation and route registry are combined |
-| Frontend only | `npm.cmd run dev -- --hostname 127.0.0.1 --port 3000` | `apps/premarket-workspace` | service | API URL must be supplied separately |
+| Frontend only | `npm run dev --prefix apps/premarket-workspace` (POSIX/macOS); `npm.cmd run dev --prefix apps/premarket-workspace` (Windows) | `apps/premarket-workspace` | service | Final registry makes the POSIX command canonical and labels the Windows alternative explicitly |
 | Daily operation | `python scripts/run_daily_incremental_evidence_refresh.py` | daily refresh application | live/replay operational | Name resembles deterministic goal runner |
 | Daily deterministic replay | `python scripts/run_goal_daily_incremental_evidence_refresh01.py` | daily refresh goal | governance replay | Regenerates evidence; not the normal daily command |
 | OPM01 operation | `python scripts/run_premarket_position_management.py` | OPM application | live/replay operational | Confused with goal runner |

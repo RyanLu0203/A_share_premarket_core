@@ -2,9 +2,13 @@
 
 ## Result
 
+Active architecture consolidation and stock-chart workspace completion.
+
 The active workspace now has explicit domain, application, dashboard read-model, interface, and
 governance boundaries. Stable scientific and historical modules remain in place where relocation
 would create checksum and behavior risk.
+
+This work does not claim that all repository bloat or all duplicate historical code was removed.
 
 The machine source of truth is `configs/project/canonical_interfaces.json`. The public doctor is
 `python -m ashare_premarket doctor`. The local workspace remains
@@ -15,7 +19,7 @@ The machine source of truth is `configs/project/canonical_interfaces.json`. The 
 | Measure | Baseline | Final |
 |---|---:|---:|
 | Production files | 376 | 413 |
-| Production LOC | 79,014 | 80,300 |
+| Production LOC | 79,014 | 80,305 |
 | Public API routes | 22 GET / 0 write | 22 GET / 0 write |
 | Frontend pages | 23 | 23 |
 | Frontend tests | 25 | 35 |
@@ -71,10 +75,13 @@ broker, paper execution, production, and DQN/RL remain locked.
 
 ## Deferred Debt
 
-Two historical Python dependency cycles and duplicated readers in checksummed historical goal
-modules remain. The V0 viewer and uncalled provider-health helper remain historical compatibility
-evidence. Removing them without a dedicated evidence migration would violate the safe-deletion
-rules.
+- Historical duplicate reader groups remain in checksummed goal modules.
+- Historical scripts remain where removal requires separate ownership and evidence review.
+- Checksummed dependency cycles remain in historical Python modules.
+- Compatibility-only V0/provider evidence remains preserved.
+
+Removing this debt without a dedicated evidence migration would violate the safe-deletion rules;
+that migration is outside this PR.
 
 ## Rollback
 

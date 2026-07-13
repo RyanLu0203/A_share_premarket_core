@@ -74,7 +74,7 @@
       "visibility": "public"
     },
     {
-      "command": "npm.cmd run dev --prefix apps/premarket-workspace",
+      "command": "npm run dev --prefix apps/premarket-workspace",
       "expected_failure": "Fails when frontend dependencies or the configured local API are unavailable.",
       "input_contract": "NEXT_PUBLIC_PREMARKET_API_URL and optional Next.js host/port flags.",
       "mode_behavior": "Presentation-only consumer of the read-only API.",
@@ -82,6 +82,10 @@
       "name": "workspace_frontend",
       "network_behavior": "Calls the configured loopback API only.",
       "output_contract": "Next.js local workspace.",
+      "platform_commands": {
+        "posix": "npm run dev --prefix apps/premarket-workspace",
+        "windows": "npm.cmd run dev --prefix apps/premarket-workspace"
+      },
       "purpose": "Run the workspace frontend independently.",
       "visibility": "public"
     },
@@ -206,5 +210,5 @@
       "visibility": "public"
     }
   ],
-  "schema_version": "1.0"
+  "schema_version": "1.1"
 }
