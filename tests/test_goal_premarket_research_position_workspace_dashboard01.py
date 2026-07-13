@@ -174,6 +174,10 @@ def test_watchlist_exposes_approved_candidates_without_fabricating_snapshot_evid
     assert candidate["band_status"] == "EVIDENCE_PENDING"
     assert candidate["current_weight"] is None
     assert "002475.SZ" in payload["eligible_symbols"]
+    blocked = {row["symbol"]: row for row in payload["candidates"] if row["governance_status"] == "blocked_pending"}
+    assert set(blocked) >= {"601138.SH", "601208.SH"}
+    assert all(row["band_status"] == "BLOCKED_PENDING_OBSERVATION_ONLY" for row in blocked.values())
+    assert all(row["observation_only"] is True for row in blocked.values())
 
 
 def test_stock_market_and_fundamentals_keep_different_evidence_dates_visible() -> None:

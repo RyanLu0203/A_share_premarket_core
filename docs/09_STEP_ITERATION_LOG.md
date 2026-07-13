@@ -1817,3 +1817,4 @@ evidence gap?
 - Verified the API now reports `READY_WITH_WARNINGS`, latest data `2026-07-10`, and snapshot integrity `VERIFIED`.
 - Repaired structured-field table search and verified `Home Appliances` returns only Midea Group.
 - Enabled approved but out-of-snapshot symbols as explicit browser-local `EVIDENCE_PENDING` watchlist candidates; added `002475.SZ` without fabricating price, position-band, or risk evidence.
+- Established a browser-local three-name observation basket for `002475.SZ`, `601138.SH`, and `601208.SH`; the two blocked/pending symbols remain `BLOCKED_PENDING_OBSERVATION_ONLY`, with no simulated trades, weights, returns, P&L, or recommendations.

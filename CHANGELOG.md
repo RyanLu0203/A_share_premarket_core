@@ -6,6 +6,7 @@
 - Fixed dense-table search across structured evidence fields such as industry, exchange, and board.
 - Added explicit `EVIDENCE_PENDING` watchlist rows for approved symbols outside the latest OPM snapshot, with no fabricated market, position, or risk values.
 - Added visible watchlist add success/failure feedback and enabled `002475.SZ` as an approved browser-local watchlist candidate.
+- Added explicit browser-local observation-only eligibility for blocked/pending symbols, labeled `BLOCKED_PENDING_OBSERVATION_ONLY`, without admitting them to active evidence, position, recommendation, or execution outputs.
 - Preserved the 41-symbol validated OPM snapshot boundary and every recommendation/execution lock.
 
 ## 2026-07-12 - macOS AKShare/Sina Daily Refresh operations

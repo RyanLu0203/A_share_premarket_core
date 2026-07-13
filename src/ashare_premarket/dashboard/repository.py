@@ -567,15 +567,20 @@ class PremarketWorkspaceRepository:
         current = self.stocks()
         current_symbols = {row["symbol"] for row in current}
         identity = self._identity_map()
+        approved = {row["symbol"]: row for row in self.store.csv("configs/universe/approved_symbols.csv") if row.get("approval_status") == "approved"}
+        configured = {row["symbol"]: row for row in self.store.csv("configs/universe/candidate_symbols.csv") if row.get("symbol")}
+        eligible = sorted(set(approved) | {symbol for symbol, row in configured.items() if row.get("universe_group") == "blocked_pending"})
         candidates = []
-        for row in self.store.csv("configs/universe/approved_symbols.csv"):
-            symbol = row.get("symbol", "")
-            if row.get("approval_status") != "approved" or not symbol or symbol in current_symbols:
+        for symbol in eligible:
+            if symbol in current_symbols:
                 continue
             known = identity.get(symbol, {})
             name = known.get("name") or symbol
-            sector = known.get("sector") or row.get("sector")
-            unavailable = self._unavailable("approved watchlist candidate is not present in the latest validated OPM snapshot")
+            sector = known.get("sector") or approved.get(symbol, {}).get("sector")
+            blocked_pending = configured.get(symbol, {}).get("universe_group") == "blocked_pending"
+            state = "BLOCKED_PENDING_OBSERVATION_ONLY" if blocked_pending else "EVIDENCE_PENDING"
+            reason = "blocked/pending symbol is observation-only and excluded from active outputs" if blocked_pending else "approved watchlist candidate is not present in the latest validated OPM snapshot"
+            unavailable = self._unavailable(reason)
             candidates.append(
                 {
                     "symbol": symbol,
@@ -592,12 +597,14 @@ class PremarketWorkspaceRepository:
                     "current_weight": None,
                     "band_min": None,
                     "band_max": None,
-                    "band_status": "EVIDENCE_PENDING",
+                    "band_status": state,
                     "risk_contribution": None,
                     "confidence": None,
                     "abstain": True,
-                    "abstention_reason": "not_in_current_validated_snapshot",
-                    "provider_quality": "EVIDENCE_PENDING",
+                    "abstention_reason": "blocked_pending_observation_only" if blocked_pending else "not_in_current_validated_snapshot",
+                    "provider_quality": state,
+                    "governance_status": "blocked_pending" if blocked_pending else "approved_evidence_pending",
+                    "observation_only": True,
                     "portfolio_mode": HOLDINGS_MODE_LABEL,
                     "research_only": True,
                 }

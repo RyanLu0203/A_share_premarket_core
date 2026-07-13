@@ -59,3 +59,4 @@ Uninstalling unloads and removes only these two user launch-agent plists. It doe
 - Network ingestion remains explicitly scoped to the daily runner. Ordinary deterministic replay continues to use the committed calendar and network-disabled provider behavior.
 - The workspace resolves stale mutable pointers against newer verified immutable snapshots. If the UI shows an older date after a successful refresh, restart `com.ashare.premarket.workspace` and check `/api/status` before rerunning ingestion.
 - Approved symbols outside the current OPM snapshot may be added to the browser-local watchlist as `EVIDENCE_PENDING`; unavailable price, band, weight, and risk fields remain `N/A` until a separately governed evidence expansion admits them.
+- Blocked/pending symbols may appear only in the browser-local observation basket as `BLOCKED_PENDING_OBSERVATION_ONLY`. This label never unlocks active outputs, paper positions, simulated orders, P&L, or advice.
