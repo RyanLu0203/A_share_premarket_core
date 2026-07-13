@@ -180,6 +180,30 @@
       "output_contract": "Safety gate PASS/BLOCKED report.",
       "purpose": "Verify locked boundaries and repository safety.",
       "visibility": "public"
+    },
+    {
+      "command": "python scripts/run_goal_global_codebase_consolidation_stock_chart01.py",
+      "expected_failure": "Returns nonzero when interfaces, exact deterministic parity, deletion references, chart requirements, or locked capabilities drift.",
+      "input_contract": "Baseline metrics, canonical registry, committed evidence, refactored source, and compatibility matrix.",
+      "mode_behavior": "Deterministic architecture and research-workspace governance replay.",
+      "module": "ashare_premarket.governance.goal_global_codebase_consolidation_stock_chart01",
+      "name": "global_refactor_replay",
+      "network_behavior": "No network access.",
+      "output_contract": "Global refactor manifest, exact parity report, and review report.",
+      "purpose": "Regenerate evidence for the controlled architecture refactor and selected-stock chart goal.",
+      "visibility": "public"
+    },
+    {
+      "command": "python scripts/audit_goal_global_codebase_consolidation_stock_chart01.py",
+      "expected_failure": "Returns nonzero when regenerated facts differ from the committed manifest or parity evidence.",
+      "input_contract": "Committed global refactor manifest, parity report, source, and locked capability state.",
+      "mode_behavior": "Independent deterministic audit; no services are launched.",
+      "module": "ashare_premarket.governance.goal_global_codebase_consolidation_stock_chart01",
+      "name": "global_refactor_audit",
+      "network_behavior": "No network access.",
+      "output_contract": "PASS/BLOCKED global refactor audit report.",
+      "purpose": "Audit exact compatibility, parity, deletion, chart, and governance facts.",
+      "visibility": "public"
     }
   ],
   "schema_version": "1.0"

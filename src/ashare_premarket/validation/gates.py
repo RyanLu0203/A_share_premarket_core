@@ -334,6 +334,8 @@ def run_program_validation_profile(root: Path) -> bool:
         ("python scripts/audit_goal_regime_label_research01_gate.py", [sys.executable, "scripts/audit_goal_regime_label_research01_gate.py"]),
         ("python scripts/run_goal_architecture_refactor03_gate.py", [sys.executable, "scripts/run_goal_architecture_refactor03_gate.py"]),
         ("python scripts/audit_goal_architecture_refactor03_gate.py", [sys.executable, "scripts/audit_goal_architecture_refactor03_gate.py"]),
+        ("python scripts/run_goal_global_codebase_consolidation_stock_chart01.py", [sys.executable, "scripts/run_goal_global_codebase_consolidation_stock_chart01.py"]),
+        ("python scripts/audit_goal_global_codebase_consolidation_stock_chart01.py", [sys.executable, "scripts/audit_goal_global_codebase_consolidation_stock_chart01.py"]),
         ("python scripts/audit_workflow_status.py", [sys.executable, "scripts/audit_workflow_status.py"]),
         ("python scripts/run_safety_gate.py", [sys.executable, "scripts/run_safety_gate.py"]),
         ("python scripts/run_adapter_audit.py", [sys.executable, "scripts/run_adapter_audit.py"]),

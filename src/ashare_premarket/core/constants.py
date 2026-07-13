@@ -179,6 +179,8 @@ PUBLIC_COMMANDS = [
     "scripts/run_premarket_workspace_api.py",
     "scripts/run_goal_premarket_research_position_workspace_dashboard01.py",
     "scripts/audit_goal_premarket_research_position_workspace_dashboard01.py",
+    "scripts/run_goal_global_codebase_consolidation_stock_chart01.py",
+    "scripts/audit_goal_global_codebase_consolidation_stock_chart01.py",
     "scripts/run_daily_incremental_evidence_refresh.py",
     "scripts/run_goal_daily_incremental_evidence_refresh01.py",
     "scripts/audit_goal_daily_incremental_evidence_refresh01.py",
