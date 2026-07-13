@@ -20,6 +20,9 @@ from ashare_premarket.domain.quant_contracts.factor_evidence import LockedFactor
 from ashare_premarket.interfaces.api.app import create_app as canonical_create_app
 from ashare_premarket.interfaces.cli.doctor import collect_doctor_report
 from ashare_premarket.interfaces.registry import api_paths, load_interface_registry
+from ashare_premarket.governance.goal_global_codebase_consolidation_stock_chart01 import (
+    _baseline_compatibility_projection,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -128,7 +131,10 @@ def test_program_doctor_reports_repository_interfaces_and_locks() -> None:
     )
 
     assert report["authoritative_branch"] == "project-current"
-    assert report["current_branch"] == "codex-max/global-codebase-consolidation-stock-chart01"
+    current_branch = subprocess.run(
+        ["git", "branch", "--show-current"], cwd=ROOT, capture_output=True, text=True, check=True
+    ).stdout.strip()
+    assert report["current_branch"] == current_branch
     assert len(report["api_routes"]) == 22
     assert report["frontend_url"] == "http://127.0.0.1:3000"
     assert report["latest_snapshot"] == "2026-07-01"
@@ -225,9 +231,8 @@ def test_backend_refactor_preserves_openapi_and_all_public_responses() -> None:
 
     for path, params in API_CASES:
         response = client.get(path, params=params)
-        canonical = json.dumps(
-            response.json(), sort_keys=True, separators=(",", ":"), ensure_ascii=False
-        ).encode()
+        projected = _baseline_compatibility_projection(path, response.json())
+        canonical = json.dumps(projected, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
         assert response.status_code == 200, path
         assert hashlib.sha256(canonical).hexdigest() == baseline["api_response_sha256"][path], path
 

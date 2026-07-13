@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 - GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
+
+- Ported the runtime operational fixes onto the PR #29 refactored architecture
+  without reverting the consolidation or restoring deleted monolithic
+  repository code.
+- Added an ignored, approved-source AKShare/Sina runtime trading calendar with
+  explicit network opt-in, atomic writes, checksum/provenance validation,
+  coverage status, PIT-safe schedule semantics, and fail-closed behavior.
+- Added deterministic latest-snapshot selection with immutable artifact and
+  latest-pointer checksums, explicit stale-pointer recovery, bounded live-date
+  selection, and strict replay validation.
+- Added launchd-compatible macOS workspace and weekday daily-refresh runners,
+  installation/status/check/uninstall commands, local logs, and an operations
+  runbook. The daily runner only refreshes evidence and invokes the
+  research-only OPM snapshot path.
+- Separated blocked system readiness from available historical replay and
+  available-with-warning research dashboard panels. Quant pages remain locked.
+- Preserved `ready_factor_count = 0` and all RecTiering, recommendation,
+  BUY/SELL/HOLD, trading, broker, paper execution, production, factor-mining,
+  and DQN/RL locks.
+
 ## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 - Added a controlled T-1 daily evidence refresh with committed replay, bounded

@@ -63,6 +63,28 @@ If the governed trading calendar does not cover the next session, live mode
 returns `TRADING_CALENDAR_COVERAGE_MISSING` with unresolved target/cutoff fields
 instead of guessing an exchange date or returning an application error.
 
+## macOS Daily Operation
+
+Issue #30 restores a source-backed local runtime calendar, deterministic
+checksum-validated latest-snapshot resolution, and user-level launchd support
+without reverting the PR #29 architecture. The committed calendar fixture is
+not extended with guessed weekdays. The runtime calendar is ignored local
+evidence from the approved AKShare/Sina calendar function and requires explicit
+network authorization.
+
+```bash
+.venv/bin/python scripts/install_macos_launchd.py --check
+.venv/bin/python scripts/install_macos_launchd.py
+.venv/bin/python scripts/install_macos_launchd.py --status
+.venv/bin/python scripts/run_macos_daily_refresh.py --check
+```
+
+See [macOS launchd daily refresh](docs/operations/MACOS_LAUNCHD_DAILY_REFRESH.md)
+for installation, manual execution, status, logs, and uninstall commands.
+System readiness still fails closed when operational evidence is invalid;
+verified historical replay and immutable research views remain available with
+an explicit warning. Quant and execution capabilities remain locked.
+
 Current Codex Max entrypoint: `project-current`.
 Latest confirmed pre-governance commit:
 `e216aac7cac188f401e970a03defca73b11aa449`.

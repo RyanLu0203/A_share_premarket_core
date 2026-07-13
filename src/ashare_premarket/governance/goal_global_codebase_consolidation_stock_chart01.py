@@ -162,9 +162,16 @@ def _collect_parity(root: Path) -> dict[str, Any]:
     expected_responses = dict(baseline["api_response_sha256"])
     for path, params in API_CASES:
         response = client.get(path, params=params)
-        current = _json_sha256(response.json())
+        projected = _baseline_compatibility_projection(path, response.json())
+        current = _json_sha256(projected)
         expected = str(expected_responses[path])
-        response_rows[path] = {"status_code": response.status_code, "baseline_sha256": expected, "final_sha256": current, "exact": response.status_code == 200 and current == expected}
+        response_rows[path] = {
+            "status_code": response.status_code,
+            "baseline_sha256": expected,
+            "final_sha256": current,
+            "exact": response.status_code == 200 and current == expected,
+            "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
+        }
 
     artifacts_exact = all(row["exact"] for row in artifacts.values())
     responses_exact = all(row["exact"] for row in response_rows.values())
@@ -316,6 +323,51 @@ def _report(manifest: dict[str, Any], parity: dict[str, Any]) -> str:
 def _json_sha256(value: Any) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
     return hashlib.sha256(payload).hexdigest()
+
+
+def _baseline_compatibility_projection(path: str, payload: Any) -> Any:
+    """Project additive Issue #30 status fields onto the frozen PR #29 response contract."""
+
+    runtime_status_fields = {
+        "system_readiness_status",
+        "historical_replay_status",
+        "research_dashboard_status",
+        "research_panels_enabled",
+        "quant_page_status",
+        "snapshot_resolution_status",
+        "snapshot_resolution_warnings",
+        "snapshot_pointer_date",
+        "snapshot_latest_discovered_date",
+        "snapshot_stale",
+        "calendar_source",
+        "calendar_coverage_end",
+        "calendar_freshness_status",
+        "calendar_evidence_status",
+    }
+
+    def strip_status(value: dict[str, Any]) -> dict[str, Any]:
+        return {key: item for key, item in value.items() if key not in runtime_status_fields}
+
+    if not isinstance(payload, dict):
+        return payload
+    projected = dict(payload)
+    if path == "/api/status":
+        return strip_status(projected)
+    if path == "/api/command-center" and isinstance(projected.get("status"), dict):
+        projected["status"] = strip_status(projected["status"])
+        provider_health = projected.get("provider_health")
+        if isinstance(provider_health, dict):
+            provider_health = dict(provider_health)
+            provider_health.pop("trading_calendar", None)
+            projected["provider_health"] = provider_health
+    elif path == "/api/data-quality" and isinstance(projected.get("status"), dict):
+        projected["status"] = strip_status(projected["status"])
+    elif path == "/api/provider-health":
+        projected.pop("trading_calendar", None)
+    elif path == "/api/snapshots":
+        projected.pop("latest_resolution", None)
+        projected.pop("historical_replay_status", None)
+    return projected
 
 
 def _sha256(path: Path) -> str:

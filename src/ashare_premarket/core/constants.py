@@ -182,6 +182,8 @@ PUBLIC_COMMANDS = [
     "scripts/run_goal_global_codebase_consolidation_stock_chart01.py",
     "scripts/audit_goal_global_codebase_consolidation_stock_chart01.py",
     "scripts/run_daily_incremental_evidence_refresh.py",
+    "scripts/run_macos_daily_refresh.py",
+    "scripts/install_macos_launchd.py",
     "scripts/run_goal_daily_incremental_evidence_refresh01.py",
     "scripts/audit_goal_daily_incremental_evidence_refresh01.py",
     "scripts/run_program_doctor.py",

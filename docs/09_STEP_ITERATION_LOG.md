@@ -1,5 +1,38 @@
 # 09 Step Iteration Log
 
+## 2026-07-13 - GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
+
+Status: `PASS`, pending human PR review.
+
+What changed:
+
+- Adapted selected runtime behavior from `codex/akshare-sina-launchd` onto the
+  PR #29 refactored `project-current`; no revert, blind cherry-pick, or
+  monolithic repository restoration was used.
+- Added approved-source runtime calendar sync with atomic local writes,
+  checksum/provenance/PIT metadata, explicit coverage status, and fail-closed
+  configured-evidence handling. No weekday is inferred as a trading session.
+- Added deterministic snapshot resolution with pointer checksum validation,
+  immutable payload validation, explicit stale-pointer recovery, and strict
+  historical replay selection.
+- Added user-level macOS launchd runners plus install, check, status, manual
+  refresh, log inspection, and uninstall documentation.
+- Separated operational readiness from historical replay, research dashboard,
+  and quant capability state.
+
+Validation evidence:
+
+- Targeted runtime, daily-refresh, and dashboard backend tests.
+- Frontend dashboard tests and production checks.
+- Full pytest, PIT/leakage/safety audits, macOS compatibility checks, and a
+  clean remote-branch clone verification before PR handoff.
+
+Safety:
+
+- `ready_factor_count` remains zero.
+- RecTiering, Recommendation, action labels, trading, broker, paper execution,
+  production, factor mining, and DQN/RL remain locked or absent.
+
 ## 2026-07-11 - GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 Status: `PASS`.

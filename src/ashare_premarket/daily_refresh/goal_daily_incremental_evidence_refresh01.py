@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 
 from ashare_premarket.core.boundary import implementation_file_sha256
 from ashare_premarket.core.io import read_csv, write_csv
+from ashare_premarket.data.trading_calendar import CalendarEvidenceError, trading_calendar_status
 from ashare_premarket.portfolio_risk.goal_premarket_position_management_operational01 import (
     DEFAULT_REPLAY_TARGET_TRADING_DATE,
     evaluate_canonical_freshness,
@@ -95,6 +96,7 @@ def resolve_daily_refresh_context(
     replay_date: str | None = None,
 ) -> dict[str, str]:
     execution_value = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
+    execution_dt = _execution_datetime(execution_value, replay_date)
     try:
         context = resolve_run_context(
             root,
@@ -102,11 +104,21 @@ def resolve_daily_refresh_context(
             target_trading_date=target_trading_date,
             replay_date=replay_date,
         )
-        return {**context, "calendar_status": "PASS", "calendar_reason": ""}
-    except ValueError as exc:
-        if "trading day configured" not in str(exc):
+        calendar = trading_calendar_status(root, context["target_trading_date"])
+        return {
+            **context,
+            "calendar_status": "PASS",
+            "calendar_reason": "",
+            "calendar_source": str(calendar.get("source", "unavailable")),
+            "calendar_coverage_end": str(calendar.get("coverage_end", "")),
+            "calendar_freshness_status": str(calendar.get("freshness_status", "UNAVAILABLE")),
+            "calendar_evidence_status": str(calendar.get("status", "UNAVAILABLE")),
+        }
+    except (CalendarEvidenceError, ValueError) as exc:
+        if not isinstance(exc, CalendarEvidenceError) and "trading day configured" not in str(exc):
             raise
-        execution_dt = _execution_datetime(execution_value, replay_date)
+        calendar = trading_calendar_status(root, execution_dt.date().isoformat())
+        reason = str(calendar.get("reason") or "TRADING_CALENDAR_COVERAGE_MISSING")
         mode = "deterministic_replay" if replay_date else "daily_operational"
         generated_at = f"{replay_date}T08:30:00+08:00" if replay_date else execution_dt.isoformat(timespec="seconds")
         return {
@@ -120,7 +132,11 @@ def resolve_daily_refresh_context(
             "expected_previous_trading_date": "UNRESOLVED",
             "data_cutoff": "UNRESOLVED",
             "calendar_status": "BLOCKED",
-            "calendar_reason": "TRADING_CALENDAR_COVERAGE_MISSING",
+            "calendar_reason": reason,
+            "calendar_source": str(calendar.get("source", "unavailable")),
+            "calendar_coverage_end": str(calendar.get("coverage_end", "")),
+            "calendar_freshness_status": str(calendar.get("freshness_status", "INVALID_OR_UNAVAILABLE")),
+            "calendar_evidence_status": str(calendar.get("status", "BLOCKED")),
         }
 
 
@@ -726,7 +742,7 @@ def _write_governance_files(root: Path) -> None:
                 "incremental_input_fields:",
                 "  required: [trade_date, symbol, close, source_provider, provider_timestamp, pit_available_date, no_lookahead_status, suspension_status, adjustment_policy]",
                 "  optional: [return_1d, quarantine_reason]",
-                "validation_reason_codes: [TRADING_CALENDAR_COVERAGE_MISSING, STALE_SOURCE_DATA, FUTURE_DATA_AFTER_PIT_CUTOFF, MISSING_REQUIRED_EVIDENCE, INVALID_PROVIDER_STATE, INVALID_TIMESTAMP, PIT_VIOLATION, CHECKSUM_MISMATCH, INVALID_QUARANTINE_STATE, INVALID_EVIDENCE_SCHEMA, OPM_EXECUTION_FAILED, SNAPSHOT_INTEGRITY_FAILED]",
+                "validation_reason_codes: [TRADING_CALENDAR_COVERAGE_MISSING, TRADING_CALENDAR_EVIDENCE_INVALID, STALE_SOURCE_DATA, FUTURE_DATA_AFTER_PIT_CUTOFF, MISSING_REQUIRED_EVIDENCE, INVALID_PROVIDER_STATE, INVALID_TIMESTAMP, PIT_VIOLATION, CHECKSUM_MISMATCH, INVALID_QUARANTINE_STATE, INVALID_EVIDENCE_SCHEMA, OPM_EXECUTION_FAILED, SNAPSHOT_INTEGRITY_FAILED]",
                 "t_minus_one_required: true",
                 "pit_fail_closed: true",
                 "provider_reconciliation_preserved: true",
@@ -759,6 +775,8 @@ def _write_governance_files(root: Path) -> None:
                 "3. Validate freshness, required-symbol missingness, provider state, timestamps, PIT availability, quarantine state, and checksums.",
                 "4. Stop before OPM when any fail-closed check is blocked.",
                 "5. On success, call OPM with the validated canonical evidence and publish its immutable snapshot for the read-only workspace.",
+                "",
+                "For macOS daily operation, the runner first synchronizes ignored local calendar evidence from the approved AKShare/Sina `tool_trade_date_hist_sina` source. Only dates returned by that source are represented as trading sessions. The CSV checksum, provider/function provenance, coverage boundary, and PIT schedule semantics must validate before target/T-1 resolution. A missing, corrupt, or unavailable configured runtime calendar blocks the run and never falls back silently to a shorter committed fixture.",
                 "",
                 "## Evidence semantics",
                 "",
