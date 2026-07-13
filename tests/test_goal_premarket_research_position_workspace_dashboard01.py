@@ -83,6 +83,42 @@ def test_dashboard_store_observes_refresh_and_snapshot_pointer_updates_without_r
         assert store.latest_snapshot_date() == date
 
 
+def test_dashboard_store_prefers_newer_immutable_success_over_stale_mutable_pointers(tmp_path: Path) -> None:
+    store = CommittedEvidenceStore(tmp_path)
+    snapshot_root = tmp_path / "outputs/research/premarket_position_management"
+    refresh_root = tmp_path / "outputs/research/daily_incremental_evidence_refresh"
+    for date in ("2026-07-01", "2026-07-13"):
+        path = snapshot_root / date / "manifest.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps({"snapshot_date": date}), encoding="utf-8")
+    (snapshot_root / "latest_manifest.json").write_text(json.dumps({"snapshot_date": "2026-07-01"}), encoding="utf-8")
+
+    canonical = refresh_root / "2026-07-13/canonical_market_data.csv"
+    canonical.parent.mkdir(parents=True)
+    canonical.write_text("trade_date,symbol\n2026-07-10,000333.SZ\n", encoding="utf-8")
+    snapshot_manifest = snapshot_root / "2026-07-13/manifest.json"
+    immutable = {
+        "refresh_status": "SUCCEEDED",
+        "target_trading_date": "2026-07-13",
+        "expected_previous_trading_date": "2026-07-10",
+        "latest_available_data_date": "2026-07-10",
+        "snapshot_manifest_path": snapshot_manifest.relative_to(tmp_path).as_posix(),
+        "snapshot_version": f"sha256:{hashlib.sha256(snapshot_manifest.read_bytes()).hexdigest()[:16]}",
+        "canonical_evidence_path": canonical.relative_to(tmp_path).as_posix(),
+        "canonical_evidence_checksum": hashlib.sha256(canonical.read_bytes()).hexdigest(),
+    }
+    (refresh_root / "2026-07-13/refresh_manifest.json").write_text(json.dumps(immutable), encoding="utf-8")
+    (refresh_root / "latest_refresh.json").write_text(
+        json.dumps({"refresh_status": "SUCCEEDED", "target_trading_date": "2026-07-01"}),
+        encoding="utf-8",
+    )
+
+    assert store.latest_snapshot_date() == "2026-07-13"
+    status = store.refresh_status()
+    assert status["target_trading_date"] == "2026-07-13"
+    assert status["refresh_manifest_integrity"] == "VERIFIED"
+
+
 def test_live_status_blocks_stale_t_minus_one_without_self_reference() -> None:
     status = _repo().status(
         mode="live",
@@ -127,6 +163,17 @@ def test_stock_contract_uses_real_evidence_and_explicit_unavailable_values() -> 
     assert midea["market_cap"]["value"] is None
     assert midea["market_cap"]["availability"] == "UNAVAILABLE"
     assert "committed evidence" in midea["market_cap"]["reason"]
+
+
+def test_watchlist_exposes_approved_candidates_without_fabricating_snapshot_evidence() -> None:
+    payload = _repo().watchlist_seed()
+    candidate = next(row for row in payload["candidates"] if row["symbol"] == "002475.SZ")
+
+    assert candidate["display_name"] == "Luxshare Precision"
+    assert candidate["latest_price"]["availability"] == "UNAVAILABLE"
+    assert candidate["band_status"] == "EVIDENCE_PENDING"
+    assert candidate["current_weight"] is None
+    assert "002475.SZ" in payload["eligible_symbols"]
 
 
 def test_stock_market_and_fundamentals_keep_different_evidence_dates_visible() -> None:

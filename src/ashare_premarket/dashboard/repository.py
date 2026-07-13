@@ -54,10 +54,17 @@ class PremarketWorkspaceRepository:
         snapshot_date: str | None = None,
         execution_time: datetime | str | None = None,
     ) -> dict[str, Any]:
-        selected = snapshot_date or self.store.latest_snapshot_date()
+        context: dict[str, Any] = {}
+        if mode == "live":
+            execution = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
+            context = resolve_daily_refresh_context(self.root, execution_time=execution, replay_date=None)
+            target = str(context.get("target_trading_date", ""))
+            selected = snapshot_date or self.store.snapshot_date_at_or_before(target) or self.store.latest_snapshot_date()
+        else:
+            selected = snapshot_date or self.store.latest_snapshot_date()
         manifest = self.store.snapshot_manifest(selected)
         verified, checksum_failures = self.store.verify_snapshot(selected)
-        refresh = self.store.refresh_status()
+        refresh = self.store.refresh_status(selected if mode == "replay" else None)
         if mode == "replay":
             result = {
                 "execution_mode": "deterministic_replay",
@@ -74,8 +81,6 @@ class PremarketWorkspaceRepository:
                 "current_panels_enabled": manifest.get("freshness_state") == "READY",
             }
         elif mode == "live":
-            execution = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
-            context = resolve_daily_refresh_context(self.root, execution_time=execution, replay_date=None)
             if context.get("calendar_status") == "BLOCKED":
                 freshness = {
                     "state": "BLOCKED",
@@ -559,7 +564,51 @@ class PremarketWorkspaceRepository:
         }
 
     def watchlist_seed(self) -> dict[str, Any]:
-        return {"storage": "browser_local_storage", "server_writes": False, "symbols": [row["symbol"] for row in self.stocks()[:8]]}
+        current = self.stocks()
+        current_symbols = {row["symbol"] for row in current}
+        identity = self._identity_map()
+        candidates = []
+        for row in self.store.csv("configs/universe/approved_symbols.csv"):
+            symbol = row.get("symbol", "")
+            if row.get("approval_status") != "approved" or not symbol or symbol in current_symbols:
+                continue
+            known = identity.get(symbol, {})
+            name = known.get("name") or symbol
+            sector = known.get("sector") or row.get("sector")
+            unavailable = self._unavailable("approved watchlist candidate is not present in the latest validated OPM snapshot")
+            candidates.append(
+                {
+                    "symbol": symbol,
+                    "display_name": name,
+                    "company_name": self._available(name, None, "configs/universe/candidate_symbols.csv", "APPROVED_CONFIG"),
+                    "exchange": self._available(_exchange(symbol), None, "symbol_suffix", "DERIVED"),
+                    "board": self._available(_board(symbol), None, "symbol_prefix", "DERIVED"),
+                    "industry": self._available(sector, None, "configs/universe/approved_symbols.csv", "APPROVED_CONFIG"),
+                    "latest_price": unavailable,
+                    "price_change": unavailable,
+                    "market_cap": unavailable,
+                    "pe_ttm": unavailable,
+                    "pb": unavailable,
+                    "current_weight": None,
+                    "band_min": None,
+                    "band_max": None,
+                    "band_status": "EVIDENCE_PENDING",
+                    "risk_contribution": None,
+                    "confidence": None,
+                    "abstain": True,
+                    "abstention_reason": "not_in_current_validated_snapshot",
+                    "provider_quality": "EVIDENCE_PENDING",
+                    "portfolio_mode": HOLDINGS_MODE_LABEL,
+                    "research_only": True,
+                }
+            )
+        return {
+            "storage": "browser_local_storage",
+            "server_writes": False,
+            "symbols": [row["symbol"] for row in current[:8]],
+            "candidates": candidates,
+            "eligible_symbols": sorted(current_symbols | {row["symbol"] for row in candidates}),
+        }
 
     def _stock_row(self, symbol: str, snapshot_date: str | None) -> dict[str, Any]:
         row = next((item for item in self.stocks(snapshot_date) if item["symbol"] == symbol), None)

@@ -56,6 +56,7 @@ describe("functional workspace pages", () => {
   });
 
   it("persists watchlist additions and supports removal", () => {
+    localStorage.clear();
     render(<WatchlistPage seed={["000333.SZ"]} stocks={[{symbol: "000333.SZ", display_name: "Midea Group", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Home Appliances"}, latest_price: {value: 72.1}, price_change: {value: 0.01}, market_cap: evidenceUnavailable, pe_ttm: {value: 15}, pb: {value: 2}, current_weight: 0.02, band_min: 0.01, band_max: 0.03, band_status: "WITHIN_BAND", risk_contribution: 0.02, confidence: 1, abstain: false, provider_quality: "accepted"}, {symbol: "002475.SZ", display_name: "Luxshare Precision", exchange: {value: "Shenzhen"}, board: {value: "Main"}, industry: {value: "Electronics"}, latest_price: {value: 30}, price_change: {value: -0.01}, market_cap: evidenceUnavailable, pe_ttm: {value: 20}, pb: {value: 3}, current_weight: 0.02, band_min: 0.01, band_max: 0.03, band_status: "WITHIN_BAND", risk_contribution: 0.02, confidence: 1, abstain: false, provider_quality: "accepted"}]} />);
     expect(screen.getByText("Market cap")).toBeVisible();
     expect(screen.getByText("Band min")).toBeVisible();
@@ -63,6 +64,7 @@ describe("functional workspace pages", () => {
     fireEvent.change(screen.getByLabelText("Add symbol"), {target: {value: "002475.SZ"}});
     fireEvent.click(screen.getByRole("button", {name: "Add to watchlist"}));
     expect(screen.getByText("Luxshare Precision")).toBeVisible();
+    expect(screen.getByText("002475.SZ added")).toBeVisible();
     fireEvent.click(screen.getByRole("button", {name: "Remove 000333.SZ"}));
     expect(screen.queryByText("Midea Group")).not.toBeInTheDocument();
   });

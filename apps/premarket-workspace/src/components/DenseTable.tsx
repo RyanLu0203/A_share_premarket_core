@@ -17,6 +17,7 @@ export function DenseTable<T extends object>({rows, columns, searchPlaceholder =
   const defs = useMemo<ColumnDef<T>[]>(() => columns.map((column) => ({
     id: String(column.key),
     accessorFn: (row) => (row as Record<string, unknown>)[String(column.key)],
+    enableGlobalFilter: true,
     header: column.label,
     cell: (context) => column.render ? column.render(context.row.original) : String(context.getValue() ?? "N/A"),
   })), [columns]);
@@ -29,6 +30,8 @@ export function DenseTable<T extends object>({rows, columns, searchPlaceholder =
     onSortingChange: setSorting,
     onGlobalFilterChange: setFilter,
     onPaginationChange: setPagination,
+    getColumnCanGlobalFilter: () => true,
+    globalFilterFn: (row, columnId, value) => searchable(row.getValue(columnId)).includes(String(value).trim().toLocaleLowerCase()),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -43,4 +46,10 @@ export function DenseTable<T extends object>({rows, columns, searchPlaceholder =
     {filteredCount ? <div className="table-scroll"><table><thead>{table.getHeaderGroups().map((group) => <tr key={group.id}>{group.headers.map((header) => <th key={header.id}><button onClick={header.column.getToggleSortingHandler()}>{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() === "asc" ? <ChevronUp /> : header.column.getIsSorted() === "desc" ? <ChevronDown /> : <ChevronsUpDown />}</button></th>)}</tr>)}</thead><tbody>{table.getRowModel().rows.map((row) => <tr key={row.id}>{row.getVisibleCells().map((cell) => <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}</tr>)}</tbody></table></div> : <div className="table-empty-state"><Database aria-hidden="true" /><strong>NO COMMITTED EVIDENCE ROWS MATCH THIS VIEW</strong></div>}
     <div className="table-footer"><span className="table-count">{firstRow}-{lastRow} / {filteredCount} filtered / {rows.length} rows</span><div className="pagination-controls"><button className="icon-button" aria-label="Previous table page" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}><ChevronLeft aria-hidden="true" /></button><span>Page {pagination.pageIndex + 1} of {pageCount}</span><button className="icon-button" aria-label="Next table page" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}><ChevronRight aria-hidden="true" /></button></div></div>
   </div>;
+}
+
+function searchable(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "object") return Object.values(value as Record<string, unknown>).map(searchable).join(" ");
+  return String(value).toLocaleLowerCase();
 }

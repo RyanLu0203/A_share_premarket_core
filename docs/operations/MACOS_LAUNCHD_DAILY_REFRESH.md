@@ -57,3 +57,5 @@ Uninstalling unloads and removes only these two user launch-agent plists. It doe
 - Inspect `workspace.stderr.log`, `workspace.stdout.log`, `daily-refresh.stderr.log`, and `daily-refresh.stdout.log` in the launchd log directory.
 - A provider fallback warning is recoverable evidence, not silent success. A missing expected T-1 row, missing symbol, invalid timestamp, checksum failure, or unrecovered provider failure remains blocked.
 - Network ingestion remains explicitly scoped to the daily runner. Ordinary deterministic replay continues to use the committed calendar and network-disabled provider behavior.
+- The workspace resolves stale mutable pointers against newer verified immutable snapshots. If the UI shows an older date after a successful refresh, restart `com.ashare.premarket.workspace` and check `/api/status` before rerunning ingestion.
+- Approved symbols outside the current OPM snapshot may be added to the browser-local watchlist as `EVIDENCE_PENDING`; unavailable price, band, weight, and risk fields remain `N/A` until a separately governed evidence expansion admits them.

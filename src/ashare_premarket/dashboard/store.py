@@ -9,7 +9,6 @@ from typing import Any
 
 
 SNAPSHOT_ROOT = "outputs/research/premarket_position_management"
-LATEST_POINTER = f"{SNAPSHOT_ROOT}/latest_manifest.json"
 CANONICAL_MARKET = "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv"
 PROVIDER_PANEL = "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv"
 DAILY_REFRESH_LATEST = "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json"
@@ -49,11 +48,12 @@ class CommittedEvidenceStore:
         )
 
     def latest_snapshot_date(self) -> str:
-        pointer = self._json_uncached(LATEST_POINTER)
-        selected = str(pointer.get("snapshot_date", ""))
-        if selected in self.snapshot_dates():
-            return selected
-        return self.snapshot_dates()[-1] if self.snapshot_dates() else ""
+        dates = self.snapshot_dates()
+        return dates[-1] if dates else ""
+
+    def snapshot_date_at_or_before(self, value: str) -> str:
+        eligible = tuple(date for date in self.snapshot_dates() if date <= value)
+        return eligible[-1] if eligible else ""
 
     def snapshot_manifest(self, snapshot_date: str | None = None) -> dict[str, Any]:
         selected = snapshot_date or self.latest_snapshot_date()
@@ -104,8 +104,21 @@ class CommittedEvidenceStore:
     def canonical_dates(self, snapshot_date: str | None = None) -> tuple[str, ...]:
         return tuple(sorted({row["trade_date"] for row in self.canonical_rows(snapshot_date)}))
 
-    def refresh_status(self) -> dict[str, Any]:
+    def refresh_status(self, snapshot_date: str | None = None) -> dict[str, Any]:
+        if snapshot_date:
+            path = self._path(f"outputs/research/daily_incremental_evidence_refresh/{snapshot_date}/refresh_manifest.json")
+            if path.exists():
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                payload["refresh_manifest_path"] = path.relative_to(self.root).as_posix()
+                payload["refresh_manifest_integrity"] = self._verify_immutable_refresh(payload)
+                return payload
         payload = self._json_uncached(DAILY_REFRESH_LATEST)
+        immutable_path, immutable = self._latest_immutable_refresh()
+        if immutable_path and str(immutable.get("target_trading_date", "")) > str(payload.get("target_trading_date", "")):
+            payload = immutable
+            payload["refresh_manifest_path"] = immutable_path.relative_to(self.root).as_posix()
+            payload["refresh_manifest_integrity"] = self._verify_immutable_refresh(payload)
+            return payload
         relative = str(payload.get("refresh_manifest_path", ""))
         expected = str(payload.get("refresh_manifest_checksum", ""))
         if not relative or not expected:
@@ -115,6 +128,31 @@ class CommittedEvidenceStore:
         actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else "missing"
         payload["refresh_manifest_integrity"] = "VERIFIED" if actual == expected else "FAILED"
         return payload
+
+    def _latest_immutable_refresh(self) -> tuple[Path | None, dict[str, Any]]:
+        base = self._path("outputs/research/daily_incremental_evidence_refresh")
+        candidates = sorted(
+            (child / "refresh_manifest.json" for child in base.iterdir() if child.is_dir()),
+            key=lambda path: path.parent.name,
+        ) if base.exists() else []
+        for path in reversed(candidates):
+            if not path.exists():
+                continue
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if payload.get("refresh_status") == "SUCCEEDED":
+                return path, payload
+        return None, {}
+
+    def _verify_immutable_refresh(self, payload: dict[str, Any]) -> str:
+        relative = str(payload.get("snapshot_manifest_path", ""))
+        expected = str(payload.get("snapshot_version", "")).removeprefix("sha256:")[:16]
+        path = self._path(relative) if relative else None
+        if not path or not expected or not path.exists():
+            return "FAILED"
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        snapshot_date = str(payload.get("snapshot_date", payload.get("target_trading_date", "")))
+        verified, _ = self.verify_snapshot(snapshot_date)
+        return "VERIFIED" if actual.startswith(expected) and verified else "FAILED"
 
     def snapshot_version(self, snapshot_date: str | None = None) -> str:
         selected = snapshot_date or self.latest_snapshot_date()

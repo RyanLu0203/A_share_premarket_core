@@ -1809,3 +1809,11 @@ evidence gap?
 - Added user-level macOS launchd installers for workspace startup and weekday 07:45 refresh, with ignored local logs and explicit network gates.
 - Verified one bounded source-backed run for target `2026-07-13`: 41/41 primary attempts were recovered by Sina, validation passed, snapshot integrity was verified, and a launchd rerun exited idempotently.
 - Preserved `ready_factor_count = 0` and all recommendation, broker, order, trading, production, factor-promotion, and DQN/RL locks.
+
+# 2026-07-13 - Workspace runtime pointer and interaction repair
+
+- Diagnosed a stale mutable snapshot pointer that masked the verified `2026-07-13` immutable snapshot and caused a false `STALE_SOURCE_DATA` block.
+- Changed live default selection to the newest valid immutable snapshot, while historical live-as-of checks select the latest snapshot at or before the target date.
+- Verified the API now reports `READY_WITH_WARNINGS`, latest data `2026-07-10`, and snapshot integrity `VERIFIED`.
+- Repaired structured-field table search and verified `Home Appliances` returns only Midea Group.
+- Enabled approved but out-of-snapshot symbols as explicit browser-local `EVIDENCE_PENDING` watchlist candidates; added `002475.SZ` without fabricating price, position-band, or risk evidence.

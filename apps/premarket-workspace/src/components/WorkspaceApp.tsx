@@ -91,7 +91,7 @@ export function WorkspaceApp() {
 function renderPage(pageId: number, data: Record<string, unknown>, symbol: string | undefined, onSnapshot: (date: string) => void) {
   switch (pageId) {
     case 1: return <CommandCenterPage data={data.command as React.ComponentProps<typeof CommandCenterPage>["data"]} />;
-    case 2: return <WatchlistPage seed={record(data.watchlist).symbols as string[] ?? []} stocks={(record(data.stocks).rows ?? []) as React.ComponentProps<typeof WatchlistPage>["stocks"]} />;
+    case 2: return <WatchlistPage seed={record(data.watchlist).symbols as string[] ?? []} stocks={watchlistStocks(data)} />;
     case 3: return <StockExplorerPage data={data.stocks as React.ComponentProps<typeof StockExplorerPage>["data"]} />;
     case 4: return <StockDetailPage detail={record(data.detail) as React.ComponentProps<typeof StockDetailPage>["detail"]} market={record(data.market)} fundamentals={record(data.fundamentals)} risk={record(data.risk)} position={record(data.position)} />;
     case 5: return <MarketContextPage data={record(data.marketContext)} />;
@@ -108,6 +108,13 @@ function renderPage(pageId: number, data: Record<string, unknown>, symbol: strin
     case 23: return <ProvenancePage data={record(data.provenance)} />;
     default: return <ErrorState message={`Unknown workspace page ${pageId}${symbol ? ` for ${symbol}` : ""}`} />;
   }
+}
+
+function watchlistStocks(data: Record<string, unknown>): React.ComponentProps<typeof WatchlistPage>["stocks"] {
+  const current = (record(data.stocks).rows ?? []) as React.ComponentProps<typeof WatchlistPage>["stocks"];
+  const candidates = (record(data.watchlist).candidates ?? []) as React.ComponentProps<typeof WatchlistPage>["stocks"];
+  const currentSymbols = new Set(current.map((row) => row.symbol));
+  return [...current, ...candidates.filter((row) => !currentSymbols.has(row.symbol))];
 }
 
 function record(value: unknown): Record<string, unknown> {return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};}

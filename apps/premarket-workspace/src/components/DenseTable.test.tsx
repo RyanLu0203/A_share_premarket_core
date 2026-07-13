@@ -22,4 +22,18 @@ describe("DenseTable pagination", () => {
 
     expect(screen.getByText("NO COMMITTED EVIDENCE ROWS MATCH THIS VIEW")).toBeVisible();
   });
+
+  it("searches evidence values nested inside provenance objects", () => {
+    const rows = [
+      {symbol: "000333.SZ", industry: {value: "Home Appliances", source: "configured"}},
+      {symbol: "000001.SZ", industry: {value: "Banking", source: "configured"}},
+    ];
+    render(<DenseTable rows={rows} columns={[{key: "symbol", label: "Symbol"}, {key: "industry", label: "Industry"}]} searchPlaceholder="Search securities" />);
+
+    fireEvent.change(screen.getByRole("textbox", {name: "Search securities"}), {target: {value: "Home Appliances"}});
+
+    expect(screen.getByText("000333.SZ")).toBeVisible();
+    expect(screen.queryByText("000001.SZ")).not.toBeInTheDocument();
+    expect(screen.getByText("1-1 / 1 filtered / 2 rows")).toBeVisible();
+  });
 });

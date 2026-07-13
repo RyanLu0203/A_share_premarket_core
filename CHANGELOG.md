@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 - Workspace latest-snapshot, search, and approved-watchlist repair
+
+- Fixed live workspace selection so newer verified immutable snapshots take precedence over stale mutable pointers while historical replay remains point-in-time safe.
+- Fixed dense-table search across structured evidence fields such as industry, exchange, and board.
+- Added explicit `EVIDENCE_PENDING` watchlist rows for approved symbols outside the latest OPM snapshot, with no fabricated market, position, or risk values.
+- Added visible watchlist add success/failure feedback and enabled `002475.SZ` as an approved browser-local watchlist candidate.
+- Preserved the 41-symbol validated OPM snapshot boundary and every recommendation/execution lock.
+
 ## 2026-07-12 - macOS AKShare/Sina Daily Refresh operations
 
 - Added AKShare/Sina same-session fallback recovery to the governed Daily Refresh provider ladder while preserving primary failure provenance and fail-closed validation.

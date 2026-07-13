@@ -1,6 +1,15 @@
 # Project State
 
-Last updated: 2026-07-12
+Last updated: 2026-07-13
+
+## 2026-07-13 Workspace Runtime Repair
+
+- The live workspace now selects the newest valid immutable OPM snapshot instead of allowing stale mutable pointers to hide a later verified snapshot.
+- Current verified state is target `2026-07-13`, T-1/latest data `2026-07-10`, `READY_WITH_WARNINGS`, snapshot `sha256:9d0c65fc55127165`.
+- Dense-table search now includes values nested in evidence/provenance objects, so industry, exchange, and board searches match their visible values.
+- Browser-local watchlists accept approved symbols not yet present in the current OPM snapshot. These rows are explicitly `EVIDENCE_PENDING`, with price, band, weight, and risk fields unavailable rather than fabricated.
+- `002475.SZ` (Luxshare Precision) remains approved and can be watched, but it has not been promoted into the current 41-symbol OPM evidence/risk snapshot.
+- All research, recommendation, broker, order, and trading locks remain unchanged.
 
 ## macOS Daily Refresh Operations
 
