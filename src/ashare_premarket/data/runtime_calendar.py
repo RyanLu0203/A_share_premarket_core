@@ -42,9 +42,7 @@ def sync_runtime_trading_calendar(root: Path, allow_network: bool = False) -> Pa
 
     committed = _read_rows(root / "configs/project/trading_calendar.csv")
     committed_trading = {row["date"] for row in committed if row.get("is_trading_day") == "true"}
-    missing_committed = sorted(committed_trading - set(trading_dates))
-    if missing_committed:
-        raise RuntimeError("approved trading-calendar source conflicts with committed trading-day evidence")
+    committed_fixture_conflicts = sorted(committed_trading - set(trading_dates))
 
     rows = [
         {
@@ -62,6 +60,13 @@ def sync_runtime_trading_calendar(root: Path, allow_network: bool = False) -> Pa
         "provider": APPROVED_PROVIDER,
         "function": APPROVED_FUNCTION,
         "approved_evidence_source": True,
+        "runtime_authority": "approved_provider_schedule",
+        "committed_fixture_role": "deterministic_research_fixture_non_authoritative_for_runtime_schedule",
+        "committed_fixture_consistency_status": (
+            "MATCH" if not committed_fixture_conflicts else "DIFFERENCES_RECORDED_NON_AUTHORITATIVE"
+        ),
+        "committed_fixture_conflict_count": len(committed_fixture_conflicts),
+        "committed_fixture_conflict_dates": committed_fixture_conflicts,
         "coverage_start": trading_dates[0],
         "coverage_end": trading_dates[-1],
         "latest_confirmed_trading_day": trading_dates[-1],

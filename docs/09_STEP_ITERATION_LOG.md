@@ -1,5 +1,38 @@
 # 09 Step Iteration Log
 
+## 2026-07-14 - GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
+
+Status: `PASS` on `codex/runtime-calendar-source-authority-fix`, pending human
+PR review; deployment remains blocked pending merge into `project-current`.
+
+What changed:
+
+- Reproduced a live runtime-calendar block caused by the committed research
+  fixture marking `2026-06-19` as a session while the approved provider and
+  official SSE/SZSE holiday notices mark it as closed.
+- Kept the committed deterministic fixture unchanged for historical replay.
+- Made the approved provider schedule authoritative for ignored local runtime
+  sessions and recorded fixture disagreements in validated provenance metadata.
+- Exposed runtime authority and fixture-consistency fields through calendar
+  status without weakening source, checksum, coverage, atomic-write, or PIT
+  validation.
+
+Validation evidence:
+
+- `406 passed` in the full Python suite.
+- Canonical program validation profile: `PASS`.
+- Live approved-provider calendar-only integration: `VERIFIED`; one recorded
+  non-authoritative fixture disagreement (`2026-06-19`).
+- Global refactor, workspace, Daily Refresh, workflow, safety, destructive,
+  adapter, PIT/leakage, and Windows compatibility audits: `PASS`.
+
+Safety:
+
+- No inferred weekday or committed fixture disagreement becomes a runtime
+  trading session.
+- All recommendation, action, trading, broker, production, factor-mining, and
+  DQN/RL locks remain unchanged.
+
 ## 2026-07-13 - GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
 
 Status: `PASS`, pending human PR review.

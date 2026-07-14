@@ -66,11 +66,44 @@ def test_runtime_calendar_uses_only_approved_source_sessions_and_exposes_freshne
     assert status["source"] == "akshare_sina"
     assert status["coverage_end"] == "2026-07-14"
     assert status["pit_status"] == "PASSED_SCHEDULE_EVIDENCE_ONLY"
+    assert status["runtime_authority"] == "approved_provider_schedule"
+    assert status["committed_fixture_consistency_status"] == "MATCH"
+    assert status["committed_fixture_conflict_count"] == 0
 
     context = resolve_daily_refresh_context(tmp_path, execution_time="2026-07-13T07:45:00+08:00")
     assert context["calendar_status"] == "PASS"
     assert context["target_trading_date"] == "2026-07-13"
     assert context["expected_previous_trading_date"] == "2026-07-10"
+
+
+def test_runtime_calendar_records_non_authoritative_committed_fixture_conflicts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _write_csv(
+        tmp_path / "configs/project/trading_calendar.csv",
+        [
+            {"date": "2026-07-10", "is_trading_day": "true", "session_note": "regular"},
+            {"date": "2026-07-11", "is_trading_day": "true", "session_note": "regular"},
+        ],
+    )
+    monkeypatch.setattr(
+        runtime_calendar.importlib,
+        "import_module",
+        lambda _name: SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows()),
+    )
+
+    output = runtime_calendar.sync_runtime_trading_calendar(tmp_path, allow_network=True)
+    metadata_path = tmp_path / runtime_calendar.RUNTIME_CALENDAR_METADATA
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_PATH", str(output))
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_METADATA_PATH", str(metadata_path))
+
+    assert "2026-07-11" not in output.read_text(encoding="utf-8")
+    assert metadata["runtime_authority"] == "approved_provider_schedule"
+    assert metadata["committed_fixture_consistency_status"] == "DIFFERENCES_RECORDED_NON_AUTHORITATIVE"
+    assert metadata["committed_fixture_conflict_count"] == 1
+    assert metadata["committed_fixture_conflict_dates"] == ["2026-07-11"]
+    assert trading_calendar_status(tmp_path, "2026-07-13")["status"] == "VERIFIED"
 
 
 def test_configured_runtime_calendar_fails_closed_if_missing_or_tampered(
