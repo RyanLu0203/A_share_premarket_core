@@ -23,6 +23,29 @@ Provider unavailability, missing coverage, corrupted metadata, checksum
 failure, stale T-1 evidence, or OPM failure returns nonzero and fails closed.
 Raw provider payloads are not persisted.
 
+## Runtime schedule authority and replay fixtures
+
+The committed `configs/project/trading_calendar.csv` is a deterministic
+research fixture. It remains the historical replay default when no runtime
+calendar is configured, but it is not an exchange-schedule authority for a
+network-authorized macOS run.
+
+For runtime synchronization, only sessions returned by the approved
+AKShare/Sina `tool_trade_date_hist_sina` source are written. If the committed
+fixture declares a date that the approved source does not, the date is not
+inferred or copied into the runtime calendar. The disagreement is recorded in
+the ignored metadata as `committed_fixture_conflict_count`,
+`committed_fixture_conflict_dates`, and
+`committed_fixture_consistency_status`. Calendar status exposes the same
+fields for audit.
+
+This separation is required because the deterministic fixture historically
+marked `2026-06-19` as regular, while both the approved provider and the
+[Shanghai Stock Exchange Dragon Boat Festival notice](https://www.sse.com.cn/disclosure/announcement/general/c/c_20260611_10821419.shtml)
+identify `2026-06-19` as closed. Runtime metadata must still pass provider,
+function, checksum, coverage, row-count, source-only-session, and PIT checks;
+missing or tampered configured runtime evidence continues to fail closed.
+
 ## Prerequisites and checks
 
 From the authoritative checkout:

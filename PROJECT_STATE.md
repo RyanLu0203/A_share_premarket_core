@@ -1,6 +1,32 @@
 # Project State
 
-Last updated: 2026-07-13
+Last updated: 2026-07-14
+
+## GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
+
+The macOS live-calendar integration found that the deterministic committed
+research fixture marks `2026-06-19` as a trading day, while the approved
+AKShare/Sina schedule and official SSE/SZSE Dragon Boat Festival notices mark
+that date as closed.
+
+- Status: `PASS` on `codex/runtime-calendar-source-authority-fix`, pending
+  human PR review; deployment remains blocked until the fix is merged into
+  `project-current`.
+- Runtime authority: only the approved provider schedule supplies runtime
+  trading sessions. The committed fixture remains unchanged and continues to
+  serve deterministic historical research replay only.
+- Provenance: committed-fixture disagreements are recorded explicitly in
+  ignored runtime metadata and exposed through calendar status; they are not
+  silently converted into sessions.
+- Integrity: source identity, checksum, coverage, row count, atomic write, PIT
+  schedule semantics, and configured-evidence fail-closed validation remain
+  required.
+- Validation: 406 Python tests, the canonical validation profile, the live
+  calendar-only approved-provider integration, and global/workspace/daily
+  replay audits pass.
+- Governance: `ready_factor_count = 0`; recommendation, action labels,
+  trading, broker, paper execution, production, factor mining, and DQN/RL
+  remain locked or absent.
 
 ## GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
 

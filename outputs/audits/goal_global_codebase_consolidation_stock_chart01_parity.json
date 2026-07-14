@@ -5,132 +5,154 @@
     "rows": {
       "/api/command-center": {
         "baseline_sha256": "7b45a36da17160e287738c83227d75f97237367778574789be40f55fbc9c626f",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "7b45a36da17160e287738c83227d75f97237367778574789be40f55fbc9c626f",
         "status_code": 200
       },
       "/api/data-quality": {
         "baseline_sha256": "481c1d1dc56e0e21d9737ed39c04f681d5e2efb66039f595f155bdaffc823dd5",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "481c1d1dc56e0e21d9737ed39c04f681d5e2efb66039f595f155bdaffc823dd5",
         "status_code": 200
       },
       "/api/experiment": {
         "baseline_sha256": "734717fb7970b1a9650468e1788b7c5590cb57d6aafdc9fc8e19fa23b68b039e",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "734717fb7970b1a9650468e1788b7c5590cb57d6aafdc9fc8e19fa23b68b039e",
         "status_code": 200
       },
       "/api/health": {
         "baseline_sha256": "6a2107daecb93eb1f1c0caef55ee850246d5f8d8078615fac6e9d08c073437b1",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "6a2107daecb93eb1f1c0caef55ee850246d5f8d8078615fac6e9d08c073437b1",
         "status_code": 200
       },
       "/api/market/context": {
         "baseline_sha256": "c4963841f0360343697339ecc4e645b94ca1cc1d8ca626e2ad8b6bbfc36c3dbf",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "c4963841f0360343697339ecc4e645b94ca1cc1d8ca626e2ad8b6bbfc36c3dbf",
         "status_code": 200
       },
       "/api/portfolio/abstentions": {
         "baseline_sha256": "ea470a16f444d2c1ebfd6754368504be091ad52428e81f3663199da83d84eaec",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "ea470a16f444d2c1ebfd6754368504be091ad52428e81f3663199da83d84eaec",
         "status_code": 200
       },
       "/api/portfolio/bands": {
         "baseline_sha256": "767c164b6454950f59f8d3c33c5a622137af22efb0bb5783e1f4f56dcf746568",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "767c164b6454950f59f8d3c33c5a622137af22efb0bb5783e1f4f56dcf746568",
         "status_code": 200
       },
       "/api/portfolio/constraints": {
         "baseline_sha256": "e0a5a6ca1121f346ef59109a4230957ed8e37af75e1814a7cea1a7c05c6ae5a9",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "e0a5a6ca1121f346ef59109a4230957ed8e37af75e1814a7cea1a7c05c6ae5a9",
         "status_code": 200
       },
       "/api/portfolio/overview": {
         "baseline_sha256": "1983714b79678767e43c2711e9dfc3e15324c628e4b8360c96bd0e633a2b0ce6",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "1983714b79678767e43c2711e9dfc3e15324c628e4b8360c96bd0e633a2b0ce6",
         "status_code": 200
       },
       "/api/portfolio/risk": {
         "baseline_sha256": "d8e2895f8142b4a11aaf2368ac09c04d068cf01ce04dc0fb6ccac79ded898957",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "d8e2895f8142b4a11aaf2368ac09c04d068cf01ce04dc0fb6ccac79ded898957",
         "status_code": 200
       },
       "/api/provenance": {
         "baseline_sha256": "092c8701e17819e28dc46ecf5565e1b1aeb37f88cac7f54e7db175de1a7367c8",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "092c8701e17819e28dc46ecf5565e1b1aeb37f88cac7f54e7db175de1a7367c8",
         "status_code": 200
       },
       "/api/provider-health": {
         "baseline_sha256": "8d9d0c49cbb3ac922931c6b5588157ae8a5e11c8320d7b2f5b2ae1efebba2329",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "8d9d0c49cbb3ac922931c6b5588157ae8a5e11c8320d7b2f5b2ae1efebba2329",
         "status_code": 200
       },
       "/api/quant/capabilities": {
         "baseline_sha256": "9a1709dff2ba3f5549e76c2f5257a02bf92ae6f43416a087ab704ad409d69c28",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "9a1709dff2ba3f5549e76c2f5257a02bf92ae6f43416a087ab704ad409d69c28",
         "status_code": 200
       },
       "/api/snapshots": {
         "baseline_sha256": "056ae144f81b5dd3d9a972a0afe624dd6e713b5d329ef15c530695b64fe08a1c",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "056ae144f81b5dd3d9a972a0afe624dd6e713b5d329ef15c530695b64fe08a1c",
         "status_code": 200
       },
       "/api/status": {
         "baseline_sha256": "34292b4ff3e1b8b20a4d9249fed78c4d9150234207fad07e22999a7a2a160366",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "34292b4ff3e1b8b20a4d9249fed78c4d9150234207fad07e22999a7a2a160366",
         "status_code": 200
       },
       "/api/stocks": {
         "baseline_sha256": "9d718f5747b62d1d0380ad144edb18694327afc8eb918f866a2fd951d6f60624",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "9d718f5747b62d1d0380ad144edb18694327afc8eb918f866a2fd951d6f60624",
         "status_code": 200
       },
       "/api/stocks/000333.SZ": {
         "baseline_sha256": "8c4a5507124d63d246254180b7d868c5fc8e7e1acc426f50d83847455c0a1563",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "8c4a5507124d63d246254180b7d868c5fc8e7e1acc426f50d83847455c0a1563",
         "status_code": 200
       },
       "/api/stocks/000333.SZ/fundamentals": {
         "baseline_sha256": "d1fcd9b6489da5617a0a79ee3e41c5ae73f4e609f79d988fc34de0092ad32829",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "d1fcd9b6489da5617a0a79ee3e41c5ae73f4e609f79d988fc34de0092ad32829",
         "status_code": 200
       },
       "/api/stocks/000333.SZ/market": {
         "baseline_sha256": "7db6d9a3b53f9ad7617fea0423a5d28ba7ebe1e42ed124c981dd531e1e4822fb",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "7db6d9a3b53f9ad7617fea0423a5d28ba7ebe1e42ed124c981dd531e1e4822fb",
         "status_code": 200
       },
       "/api/stocks/000333.SZ/position": {
         "baseline_sha256": "276898643c277a6acc0a71e5526b25ff36b14e41494fba8398c6da23c2a4a113",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "276898643c277a6acc0a71e5526b25ff36b14e41494fba8398c6da23c2a4a113",
         "status_code": 200
       },
       "/api/stocks/000333.SZ/risk": {
         "baseline_sha256": "a8958a4be7d321e6914052d4cae4c2ac0b9f4ddf9a8e4147d9e42d5bac7131b3",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "a8958a4be7d321e6914052d4cae4c2ac0b9f4ddf9a8e4147d9e42d5bac7131b3",
         "status_code": 200
       },
       "/api/watchlists": {
         "baseline_sha256": "465edd2fa8c04dbbee49aa790207f868a243c3e3be8464a668e827ad328bf10f",
+        "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
         "final_sha256": "465edd2fa8c04dbbee49aa790207f868a243c3e3be8464a668e827ad328bf10f",
         "status_code": 200

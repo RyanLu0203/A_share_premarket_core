@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-14 - Runtime Calendar Source Authority Fix
+
+- Fixed a live macOS calendar-sync block when the deterministic committed
+  research fixture disagrees with the approved exchange-schedule provider.
+- Kept the committed fixture unchanged for replay and made only the approved
+  provider schedule authoritative for local runtime sessions.
+- Added explicit fixture-conflict provenance, status exposure, metadata
+  validation, and regression coverage while preserving atomic writes,
+  checksums, PIT semantics, and fail-closed configured-evidence validation.
+- Preserved `ready_factor_count = 0` and every recommendation, action,
+  execution, broker, production, factor-mining, and DQN/RL lock.
+
 ## 2026-07-13 - GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
 
 - Ported the runtime operational fixes onto the PR #29 refactored architecture

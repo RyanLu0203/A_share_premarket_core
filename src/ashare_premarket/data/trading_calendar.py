@@ -52,6 +52,12 @@ def trading_calendar_status(root: Path, required_date: str | None = None) -> dic
             "checksum_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
             "generated_at": payload.get("generated_at", "committed"),
             "pit_status": "PASSED_SCHEDULE_EVIDENCE_ONLY",
+            "runtime_authority": payload.get("runtime_authority", "committed_fixture"),
+            "committed_fixture_consistency_status": payload.get(
+                "committed_fixture_consistency_status", "NOT_APPLICABLE"
+            ),
+            "committed_fixture_conflict_count": payload.get("committed_fixture_conflict_count", 0),
+            "committed_fixture_conflict_dates": payload.get("committed_fixture_conflict_dates", []),
         }
     except (CalendarEvidenceError, OSError, json.JSONDecodeError) as exc:
         return {
@@ -151,12 +157,21 @@ def _validate_runtime_metadata(path: Path, metadata_path: Path, rows: list[dict[
         failures.append("status")
     if payload.get("provider") != APPROVED_PROVIDER or payload.get("function") != APPROVED_FUNCTION:
         failures.append("approved_source")
+    if payload.get("runtime_authority") != "approved_provider_schedule":
+        failures.append("runtime_authority")
     if payload.get("calendar_checksum_sha256") != actual:
         failures.append("checksum")
     if payload.get("coverage_start") != rows[0]["date"] or payload.get("coverage_end") != rows[-1]["date"]:
         failures.append("coverage")
     if payload.get("calendar_row_count") != len(rows):
         failures.append("row_count")
+    conflicts = payload.get("committed_fixture_conflict_dates")
+    if not isinstance(conflicts, list) or payload.get("committed_fixture_conflict_count") != len(conflicts):
+        failures.append("committed_fixture_conflicts")
+    consistency = payload.get("committed_fixture_consistency_status")
+    expected_consistency = "MATCH" if not conflicts else "DIFFERENCES_RECORDED_NON_AUTHORITATIVE"
+    if consistency != expected_consistency:
+        failures.append("committed_fixture_consistency")
     if any(row["is_trading_day"] != "true" for row in rows):
         failures.append("source_calendar_contains_inferred_session")
     if failures:
