@@ -29,6 +29,9 @@ export function FreshnessBanner({status}: {status: WorkspaceStatus}) {
         <RefreshField label="Validation" value={`Validation ${status.refresh_validation_status ?? "NOT_RUN"}`} />
         <RefreshField label="Blocked reason" value={status.refresh_blocked_reasons?.join(" / ") || "NONE"} className="refresh-blocked-reason" />
         <RefreshField label="Snapshot version" value={status.snapshot_version || "UNAVAILABLE"} />
+        <RefreshField label="Research dashboard" value={status.research_dashboard_status || "UNAVAILABLE"} />
+        <RefreshField label="Historical replay" value={status.historical_replay_status || "UNAVAILABLE"} />
+        <RefreshField label="Snapshot resolution" value={status.snapshot_resolution_status || "UNAVAILABLE"} />
       </div>
     </section>
   );

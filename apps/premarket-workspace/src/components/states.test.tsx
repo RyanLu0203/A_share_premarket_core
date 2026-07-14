@@ -36,10 +36,11 @@ describe("governed workspace states", () => {
     expect(screen.getByText("sha256:abc123")).toBeVisible();
   });
 
-  it("marks live current-state panels disabled while preserving replay evidence", () => {
+  it("separates blocked live readiness from available research and replay evidence", () => {
     render(<BlockedCurrentStateNotice />);
-    expect(screen.getByRole("alert")).toHaveTextContent("CURRENT-STATE PANELS DISABLED");
-    expect(screen.getByRole("alert")).toHaveTextContent("immutable snapshot evidence");
+    expect(screen.getByRole("alert")).toHaveTextContent("LIVE OPERATIONAL READINESS BLOCKED");
+    expect(screen.getByRole("alert")).toHaveTextContent("Research snapshot panels remain available");
+    expect(screen.getByRole("alert")).toHaveTextContent("historical replay remains available");
   });
 
   it("renders missing fundamentals without fallback numbers", () => {

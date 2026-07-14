@@ -8,6 +8,8 @@
 4. Stop before OPM when any fail-closed check is blocked.
 5. On success, call OPM with the validated canonical evidence and publish its immutable snapshot for the read-only workspace.
 
+For macOS daily operation, the runner first synchronizes ignored local calendar evidence from the approved AKShare/Sina `tool_trade_date_hist_sina` source. Only dates returned by that source are represented as trading sessions. The CSV checksum, provider/function provenance, coverage boundary, and PIT schedule semantics must validate before target/T-1 resolution. A missing, corrupt, or unavailable configured runtime calendar blocks the run and never falls back silently to a shorter committed fixture.
+
 ## Evidence semantics
 
 The primary provider row is never averaged with another source. Cross-provider adjustment semantics remain explicitly unresolved when direct metadata is unavailable. Existing discrepancy quarantine rows remain excluded from risk fitting.

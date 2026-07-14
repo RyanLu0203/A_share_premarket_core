@@ -24,6 +24,7 @@ ALLOWED_FINANCE_DOMAINS = [
     "80.push2.eastmoney.com",
     "82.push2.eastmoney.com",
     "quote.eastmoney.com",
+    "finance.sina.com.cn",
 ]
 
 FUNCTION_TARGET_DOMAINS = {
@@ -31,6 +32,7 @@ FUNCTION_TARGET_DOMAINS = {
     "stock_zh_a_spot_em": "82.push2.eastmoney.com",
     "stock_zh_a_hist": "push2his.eastmoney.com",
     "index_zh_a_hist": "80.push2.eastmoney.com",
+    "tool_trade_date_hist_sina": "finance.sina.com.cn",
     "run_goal06c6_source_backed_engineering_pilot_bundle": "akshare_finance_domains",
     "import akshare": "local_dependency_import",
 }

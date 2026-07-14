@@ -76,10 +76,29 @@ def test_dashboard_store_observes_refresh_and_snapshot_pointer_updates_without_r
 
     snapshot_root = tmp_path / "outputs/research/premarket_position_management"
     for date in ("2026-07-01", "2026-07-02"):
+        data = snapshot_root / date / "data.csv"
+        data.parent.mkdir(parents=True)
+        data.write_text("value\nverified\n", encoding="utf-8")
         path = snapshot_root / date / "manifest.json"
-        path.parent.mkdir(parents=True)
-        path.write_text(json.dumps({"snapshot_date": date}), encoding="utf-8")
-        (snapshot_root / "latest_manifest.json").write_text(json.dumps({"snapshot_date": date}), encoding="utf-8")
+        path.write_text(
+            json.dumps(
+                {
+                    "snapshot_date": date,
+                    "checksums": {"data.csv": hashlib.sha256(data.read_bytes()).hexdigest()},
+                }
+            ),
+            encoding="utf-8",
+        )
+        (snapshot_root / "latest_manifest.json").write_text(
+            json.dumps(
+                {
+                    "snapshot_date": date,
+                    "snapshot_manifest_path": path.relative_to(tmp_path).as_posix(),
+                    "snapshot_manifest_checksum": hashlib.sha256(path.read_bytes()).hexdigest(),
+                }
+            ),
+            encoding="utf-8",
+        )
         assert store.latest_snapshot_date() == date
 
 

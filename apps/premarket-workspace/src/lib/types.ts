@@ -29,4 +29,19 @@ export interface WorkspaceStatus {
   refresh_manifest_integrity?: string;
   refresh_blocked_reasons?: string[];
   snapshot_version?: string;
+  system_readiness_status?: string;
+  historical_replay_status?: string;
+  research_dashboard_status?: string;
+  research_panels_enabled?: boolean;
+  quant_page_status?: string;
+  snapshot_resolution_status?: string;
+  snapshot_resolution_warnings?: string[];
+  snapshot_pointer_date?: string;
+  snapshot_latest_discovered_date?: string;
+  snapshot_stale?: boolean;
+  calendar_status?: string;
+  calendar_source?: string;
+  calendar_coverage_end?: string;
+  calendar_freshness_status?: string;
+  calendar_evidence_status?: string;
 }

@@ -17,10 +17,21 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
         snapshot_date: str | None = None,
         execution_time: datetime | str | None = None,
     ) -> dict[str, Any]:
-        selected = snapshot_date or self.store.latest_snapshot_date()
+        context: dict[str, Any] = {}
+        if mode == "live":
+            execution = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
+            context = resolve_daily_refresh_context(self.root, execution_time=execution, replay_date=None)
+            target = str(context.get("target_trading_date", ""))
+            boundary = target if target and target != "UNRESOLVED" else None
+            resolution = self.store.resolve_snapshot(snapshot_date, max_date=boundary)
+        elif mode == "replay":
+            resolution = self.store.resolve_snapshot(snapshot_date, replay=True)
+        else:
+            raise ValueError("mode must be 'live' or 'replay'")
+        selected = str(resolution["selected_date"])
         manifest = self.store.snapshot_manifest(selected)
         verified, checksum_failures = self.store.verify_snapshot(selected)
-        refresh = self.store.refresh_status()
+        refresh = self.store.refresh_status(selected if mode == "replay" else None)
         if mode == "replay":
             result = {
                 "execution_mode": "deterministic_replay",
@@ -31,14 +42,12 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
                 "target_trading_date": manifest.get("target_trading_date"),
                 "expected_previous_trading_date": manifest.get("expected_previous_trading_date"),
                 "data_cutoff": manifest.get("data_cutoff"),
-                "latest_available_data_date": manifest.get("latest_available_data_date"),
-                "readiness_state": manifest.get("readiness_state"),
+                "latest_available_data_date": manifest.get("latest_available_data_date") or manifest.get("latest_available_canonical_date"),
+                "readiness_state": manifest.get("readiness_state") or manifest.get("daily_readiness_state"),
                 "freshness_code": manifest.get("freshness_code"),
-                "current_panels_enabled": manifest.get("freshness_state") == "READY",
+                "current_panels_enabled": verified,
             }
         elif mode == "live":
-            execution = execution_time.isoformat() if isinstance(execution_time, datetime) else execution_time
-            context = resolve_daily_refresh_context(self.root, execution_time=execution, replay_date=None)
             if context.get("calendar_status") == "BLOCKED":
                 freshness = {
                     "state": "BLOCKED",
@@ -51,13 +60,14 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
                 **context,
                 "snapshot_date": selected,
                 "latest_available_data_date": freshness["latest_available_canonical_date"],
-                "readiness_state": "BLOCKED" if freshness["state"] == "BLOCKED" else manifest.get("readiness_state"),
+                "readiness_state": "BLOCKED" if freshness["state"] == "BLOCKED" else manifest.get("readiness_state") or manifest.get("daily_readiness_state"),
                 "freshness_code": freshness["freshness_code"],
                 "current_panels_enabled": freshness["state"] != "BLOCKED",
             }
-        else:
-            raise ValueError("mode must be 'live' or 'replay'")
         if mode == "live" and (refresh.get("refresh_status") == "BLOCKED" or refresh.get("refresh_manifest_integrity") == "FAILED"):
+            result["readiness_state"] = "BLOCKED"
+            result["current_panels_enabled"] = False
+        if resolution.get("system_blocking"):
             result["readiness_state"] = "BLOCKED"
             result["current_panels_enabled"] = False
         refresh_reasons = refresh.get("blocked_reasons", [])
@@ -67,6 +77,9 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
             refresh_reasons = [*refresh_reasons, "REFRESH_MANIFEST_CHECKSUM_MISMATCH"]
         if result.get("readiness_state") == "BLOCKED" and result.get("freshness_code") not in refresh_reasons:
             refresh_reasons = [*refresh_reasons, result.get("freshness_code")]
+        snapshot_warnings = list(resolution.get("warnings", []))
+        system_readiness = str(result.get("readiness_state") or "BLOCKED")
+        research_status = "AVAILABLE_WITH_WARNING" if system_readiness == "BLOCKED" or snapshot_warnings else "AVAILABLE"
         return {
             **result,
             "provider_state": "WARNINGS_QUARANTINED",
@@ -81,6 +94,16 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
             "refresh_manifest_integrity": refresh.get("refresh_manifest_integrity", "UNAVAILABLE"),
             "refresh_blocked_reasons": refresh_reasons,
             "snapshot_version": refresh.get("snapshot_version") if refresh.get("snapshot_date") == selected else self.store.snapshot_version(selected),
+            "system_readiness_status": system_readiness,
+            "historical_replay_status": "AVAILABLE" if verified else "BLOCKED",
+            "research_dashboard_status": research_status,
+            "research_panels_enabled": verified,
+            "quant_page_status": "LOCKED_GOVERNANCE",
+            "snapshot_resolution_status": resolution.get("resolution_status"),
+            "snapshot_resolution_warnings": snapshot_warnings,
+            "snapshot_pointer_date": resolution.get("pointer_date"),
+            "snapshot_latest_discovered_date": resolution.get("latest_discovered_date"),
+            "snapshot_stale": resolution.get("stale", False),
             "research_only": True,
             "not_trading_advice": True,
             "not_for_execution": True,

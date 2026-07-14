@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from ashare_premarket.dashboard.repositories.base import WorkspaceRepositoryBase
+from ashare_premarket.data.trading_calendar import trading_calendar_status
 
 
 class SystemEvidenceRepository(WorkspaceRepositoryBase):
@@ -47,6 +50,10 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
                 "latest_available_data_date": manifest.get("latest_available_data_date"),
                 "freshness_code": manifest.get("freshness_code"),
             },
+            "trading_calendar": trading_calendar_status(
+                self.root,
+                datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat(),
+            ),
             "snapshot_date": selected,
         }
 
@@ -62,7 +69,13 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
             manifest = self.store.snapshot_manifest(date)
             verified, failures = self.store.verify_snapshot(date)
             rows.append({**manifest, "snapshot_version": self.store.snapshot_version(date), "snapshot_integrity": "VERIFIED" if verified else "FAILED", "checksum_failures": failures})
-        return {"latest": self.store.latest_snapshot_date(), "snapshots": rows}
+        resolution = self.store.resolve_snapshot()
+        return {
+            "latest": resolution["selected_date"],
+            "latest_resolution": resolution,
+            "historical_replay_status": "AVAILABLE" if any(row["snapshot_integrity"] == "VERIFIED" for row in rows) else "BLOCKED",
+            "snapshots": rows,
+        }
 
     def provenance(self, snapshot_date: str | None = None) -> dict[str, Any]:
         selected = snapshot_date or self.store.latest_snapshot_date()

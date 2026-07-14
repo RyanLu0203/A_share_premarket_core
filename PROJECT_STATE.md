@@ -1,6 +1,37 @@
 # Project State
 
-Last updated: 2026-07-11
+Last updated: 2026-07-13
+
+## GOAL-RUNTIME-OPERATIONAL-RESTORATION-01
+
+Issue #30 restores the bounded local runtime on top of the PR #29 global
+codebase consolidation without reverting or bypassing the refactored
+interfaces.
+
+- Status: `PASS` on `codexmax/issue-30`, pending human PR review.
+- Calendar: the committed fixture remains unchanged. An ignored runtime
+  calendar is synchronized from the approved AKShare/Sina exchange calendar
+  only with explicit network authorization. Only source-returned sessions are
+  marked as trading days; checksum, provenance, coverage, and PIT metadata are
+  verified before use. Missing or invalid configured runtime evidence fails
+  closed without falling back silently.
+- Snapshot resolution: explicit replay requires a checksum-verified immutable
+  snapshot. Live resolution is date-bounded and deterministic, validates the
+  latest pointer and every selected snapshot, exposes stale/invalid pointer
+  recovery, and marks any older research fallback as system-blocking.
+- macOS: user-level launchd support runs the local read-only workspace and a
+  weekday 07:45 calendar/evidence refresh. The daily runner performs only the
+  approved calendar sync, bounded T-1 evidence refresh, and research-only OPM
+  snapshot handoff.
+- Dashboard: operational system readiness may be `BLOCKED` while verified
+  historical replay remains `AVAILABLE` and research panels remain
+  `AVAILABLE_WITH_WARNING`. Quant pages remain governance-locked.
+- `ready_factor_count = 0`; RecTiering, Recommendation, BUY/SELL/HOLD,
+  trading, broker, paper execution, production, factor mining, and DQN/RL
+  remain locked or absent.
+
+Operational documentation:
+`docs/operations/MACOS_LAUNCHD_DAILY_REFRESH.md`.
 
 ## Codex Operating System Gate
 
