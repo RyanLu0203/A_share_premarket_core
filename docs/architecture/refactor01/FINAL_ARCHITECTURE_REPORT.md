@@ -67,8 +67,12 @@ action, recommendation, target-price, or order markers.
 ## Parity And Locks
 
 The final parity runner compares five critical artifacts, canonical OpenAPI, and all 22 API
-responses to baseline SHA-256 values. Every comparison is exact. Snapshot schema and all accepted
-scientific/operational semantics are unchanged.
+responses to baseline SHA-256 values. Every comparison must be exact. PR #33 deliberately
+reconciles the two mutable daily-refresh artifact hashes and the two response projections that
+consume them to the truthful fail-closed `BLOCKED` state. The immutable accepted snapshot,
+canonical market data, OpenAPI, remaining 20 responses, and scientific contracts are unchanged.
+Passing architecture parity therefore means the code and contract are valid; it does not claim
+that a current operational snapshot exists or that deployment is ready.
 
 `ready_factor_count` remains 0 with `LOCKED_NO_READY_FACTORS`. Recommendation Tiering, trading,
 broker, paper execution, production, and DQN/RL remain locked.

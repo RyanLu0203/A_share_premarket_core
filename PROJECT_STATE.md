@@ -41,11 +41,19 @@ The authoritative PR #32 merge was verified at
   `stock_zh_a_hist_tx` / Tencent only as a candidate secondary source. It is not
   activated and requires explicit approval, schema/consistency/freshness tests,
   full provenance, and no-silent-fallback enforcement.
-- Validation: 39 focused provider/network/runtime-policy tests pass and
-  compileall passes. The full suite is `410 passed, 2 failed`, and the canonical
-  profile is `116/117 PASS`; the two assertions still hard-code the former
-  successful refresh state and response hash rather than the truthful current
-  `BLOCKED` evidence.
+- Architecture baseline: the two blocked daily-refresh artifact hashes and the
+  `/api/experiment` and `/api/provenance` hashes that consume them are
+  deliberately reconciled. The other 20 GET response hashes, OpenAPI,
+  canonical market data, and immutable snapshot hashes remain unchanged.
+  Deterministic replay tests restore all seven mutable operational files.
+- Validation: compileall passes, the full Python suite is `412 passed`, and the
+  canonical profile is `117/117 PASS`. Architecture parity is exact while the
+  current operational refresh remains `BLOCKED` with no snapshot. Safety,
+  workflow, adapter, PIT, leakage, destructive-change, and macOS prerequisite
+  checks pass.
+- Next goal: a specification-only, non-activated run-level East Money-to-
+  Tencent complete-batch failover contract is recorded at
+  `docs/governance/NEXT_GOAL_GOVERNED_AKSHARE_SECONDARY_UPSTREAM.md`.
 - Governance: no replay was represented as live data, no silent fallback was
   used, and recommendation, trading, broker, production, factor-mining, and
   DQN/RL boundaries remain locked.

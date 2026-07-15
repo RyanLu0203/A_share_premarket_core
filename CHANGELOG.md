@@ -29,10 +29,16 @@
 - Added an inactive, test-covered AKShare Tencent upstream policy proposal with
   explicit activation, provenance, consistency, freshness, conflict, and
   no-silent-fallback gates. No secondary source was activated.
-- Focused provider/network/runtime-policy validation passed 39 tests. The full
-  suite recorded 410 passes and two stale architecture-baseline failures
-  because the truthful latest refresh is now `BLOCKED`, and the canonical
-  profile consequently recorded 116/117 commands passing.
+- Reconciled the architecture baseline to the truthful blocked refresh
+  manifest, validation, experiment, and provenance inputs. Added replay-test
+  restoration so deterministic validation cannot replace committed live
+  `BLOCKED` evidence with replay `SUCCEEDED` evidence.
+- Full validation now passes: Python compileall, 412 Python tests, all 117
+  canonical profile commands, architecture parity across five critical
+  artifacts/OpenAPI/22 GET responses, and safety/workflow/adapter/PIT/leakage/
+  macOS checks. Operational readiness remains explicitly `BLOCKED`.
+- Added a specification-only next goal for governed, complete-batch,
+  run-level East Money-to-Tencent failover. It is not implemented or activated.
 
 ## 2026-07-14 - Runtime Calendar Source Authority Fix
 

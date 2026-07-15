@@ -185,25 +185,33 @@ current T-1 coverage, full provenance, and fail-closed conflict handling.
 Source selection must occur before a run; silent mid-run fallback and partial
 snapshots remain forbidden.
 
+## Architecture baseline reconciliation
+
+The blocked daily-refresh manifest and validation hashes were deliberately
+reconciled together with the `/api/experiment` and `/api/provenance` response
+hashes that consume those files. All 22 response projections were recalculated;
+only those two responses changed. Replacing only their refresh inputs with the
+former `origin/project-current` artifacts reproduces the former hashes exactly.
+
+The other 20 GET response hashes, OpenAPI, canonical market data, immutable
+snapshot pointer, and immutable `2026-07-01` snapshot remain unchanged.
+Deterministic replay tests now restore the seven mutable refresh outputs after
+validation, so test execution cannot overwrite committed `BLOCKED` live state.
+See `docs/architecture/refactor01/PR33_BLOCKED_RUNTIME_BASELINE_RECONCILIATION.md`.
+
 ## Validation
 
 - Focused provider/network/runtime-policy suite: `39 passed`
 - Python 3.12.13 compileall: `PASS`
-- Full Python suite: `410 passed, 2 failed`; one existing Starlette/httpx
-  deprecation warning. Both failures are stale mutable-runtime baseline
-  assertions in `tests/test_global_refactor01_architecture.py`: the tests still
-  require `latest_refresh_status=SUCCEEDED` and the former
-  `/api/experiment` response hash, while the truthful current refresh evidence
-  is `BLOCKED` after the 7/41 live result.
-- Canonical program profile: `116 / 117 PASS`, overall `BLOCKED`; the sole
-  failed command was the same full Python suite. The other 116 canonical
-  commands passed.
+- Full Python suite: `412 passed`; one existing Starlette/httpx deprecation
+  warning
+- Canonical program profile: `117 / 117 PASS`
+- Architecture parity: `EXACT_PARITY` for five critical artifacts, OpenAPI,
+  and all 22 projected GET responses
 - Safety, workflow, adapter, destructive-change, PIT, leakage, workspace, and
   macOS prerequisite audits/checks: `PASS`
-- Frontend lint: `PASS`
-- Frontend typecheck: `PASS`
-- Frontend tests: `35 passed` across 12 files
-- Frontend production build: `PASS`
+- Frontend source changed in this reconciliation: `false`; prior PR #33
+  frontend lint, typecheck, 35 tests, and production build remain `PASS`
 
 No new live acceptance run was made after the matrix because no responsible
 request-level implementation fix was supported by the evidence. The existing

@@ -18,10 +18,10 @@
         "status_code": 200
       },
       "/api/experiment": {
-        "baseline_sha256": "734717fb7970b1a9650468e1788b7c5590cb57d6aafdc9fc8e19fa23b68b039e",
+        "baseline_sha256": "7a4b14f4c9c2d83fa6699941c16d689726f6e910e471f45cc52e06467b385e8a",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "734717fb7970b1a9650468e1788b7c5590cb57d6aafdc9fc8e19fa23b68b039e",
+        "final_sha256": "7a4b14f4c9c2d83fa6699941c16d689726f6e910e471f45cc52e06467b385e8a",
         "status_code": 200
       },
       "/api/health": {
@@ -74,10 +74,10 @@
         "status_code": 200
       },
       "/api/provenance": {
-        "baseline_sha256": "092c8701e17819e28dc46ecf5565e1b1aeb37f88cac7f54e7db175de1a7367c8",
+        "baseline_sha256": "50a4cfe81007546f0cbce770e4aee2671ed0d05a87f0e84e10b021a90716d27e",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "092c8701e17819e28dc46ecf5565e1b1aeb37f88cac7f54e7db175de1a7367c8",
+        "final_sha256": "50a4cfe81007546f0cbce770e4aee2671ed0d05a87f0e84e10b021a90716d27e",
         "status_code": 200
       },
       "/api/provider-health": {
@@ -170,15 +170,15 @@
         "path": "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv"
       },
       "daily_refresh_manifest": {
-        "baseline_sha256": "0262dff84118eeba1f1d4ba37e8890eb28146ef55e2558814b071c169bad2dad",
+        "baseline_sha256": "21fcf987e52110cd709fc274ee43efd28e72b4cfe6eeaccc0a6324f84012f064",
         "exact": true,
-        "final_sha256": "0262dff84118eeba1f1d4ba37e8890eb28146ef55e2558814b071c169bad2dad",
+        "final_sha256": "21fcf987e52110cd709fc274ee43efd28e72b4cfe6eeaccc0a6324f84012f064",
         "path": "outputs/research/goal_daily_incremental_evidence_refresh01_refresh_manifest.json"
       },
       "daily_refresh_validation": {
-        "baseline_sha256": "2542af6e57b0acac3e6bd7c282c00c1adf0dff9202aec18b17225af600ea4f54",
+        "baseline_sha256": "ab1fe37accc9798522d8803a631919a561b7f31ac36c53af27ce041e4e8b0f84",
         "exact": true,
-        "final_sha256": "2542af6e57b0acac3e6bd7c282c00c1adf0dff9202aec18b17225af600ea4f54",
+        "final_sha256": "ab1fe37accc9798522d8803a631919a561b7f31ac36c53af27ce041e4e8b0f84",
         "path": "outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv"
       },
       "opm_latest_pointer": {

@@ -52,13 +52,28 @@ Validation evidence:
 
 - Focused provider/network/runtime-policy suite: `39 passed`.
 - Python compileall: `PASS`.
-- Full Python suite: `410 passed, 2 failed`. Both failures are the global
-  architecture test's stale assumptions that the latest refresh is
-  `SUCCEEDED` and that `/api/experiment` still has its pre-blocked hash.
-- Canonical validation profile: `116/117 PASS`, overall `BLOCKED`; the only
-  failed command is the same full test suite.
+- Reconciled only the two blocked daily-refresh critical-artifact hashes and
+  the `/api/experiment` and `/api/provenance` projections that consume them.
+  Reconstructing those responses with only their former input artifacts
+  reproduces the former hashes exactly; all other projected response hashes
+  remain unchanged.
+- Deterministic replay validation now restores the seven mutable operational
+  refresh files after the test, preserving committed `BLOCKED` live evidence.
+- Full Python suite: `412 passed` with one existing Starlette/httpx warning.
+- Canonical validation profile: `117/117 PASS`.
+- Architecture parity: five critical artifacts, OpenAPI, and all 22 GET
+  response projections `EXACT_PARITY` while operational readiness is
+  `BLOCKED` and the current snapshot path is empty.
+- Safety, workflow, adapter, PIT, leakage, destructive-change, workspace, and
+  macOS prerequisite checks: `PASS`.
 - No second canonical live run, snapshot validation, or idempotency run was
   eligible because no request-level implementation fix was demonstrated.
+
+Next-goal specification:
+
+- Added `docs/governance/NEXT_GOAL_GOVERNED_AKSHARE_SECONDARY_UPSTREAM.md` for
+  complete-batch run-level failover only. Tencent is not implemented or
+  activated in PR #33.
 
 Deployment boundary:
 
