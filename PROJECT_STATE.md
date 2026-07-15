@@ -1,6 +1,37 @@
 # Project State
 
-Last updated: 2026-07-14
+Last updated: 2026-07-15
+
+## GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
+
+The authoritative PR #32 merge was verified at
+`d3563eab97f4e422d3da9a6e32430510d4043867`, including fix commit
+`7f54f24f1e62f3509f4297162e21c2ef27ffb322`. Recovery work is isolated on
+`codex/macos-live-refresh-and-provider-recovery`.
+
+- Code repair: the macOS runner now passes `replay_date=None` explicitly, so a
+  live run cannot inherit the goal runner's deterministic replay default.
+- Network repair: direct provider calls remove upper/lowercase proxy variables,
+  disable Requests environment/system proxy rediscovery for the scoped call,
+  restore process state, keep TLS verification and a 30-second timeout, and
+  preserve proxy use only behind explicit authorization.
+- Calendar: approved AKShare/Sina evidence is `VERIFIED`, covers
+  `1990-12-19` through `2026-12-31`, contains 8,797 sessions, has checksum
+  `db13387fd42cb1ef98bbde07a12d2f8c64c438eeea940926d4ec49b2a5263d14`,
+  keeps `2026-06-19` closed, and resolves target `2026-07-15` with T-1
+  `2026-07-14`.
+- Deployment status: `BLOCKED_EXTERNAL_RUNTIME`. The 41 bounded T-1 stock
+  calls returned 0 accepted rows and 41 `BROWSER_NET_EMPTY_RESPONSE`
+  failures. The macOS network extension resolves finance hosts into
+  `198.18.0.0/15` and routes both fake and real provider IPs over `utun4`;
+  its configured listener at `127.0.0.1:1082` also rejects the exact provider
+  request. No snapshot was created and no launch agents or services were
+  installed or started.
+- Governance: no replay was represented as live data, no silent fallback was
+  used, and recommendation, trading, broker, production, factor-mining, and
+  DQN/RL boundaries remain locked.
+- Recovery evidence:
+  `docs/operations/MACOS_LIVE_REFRESH_PROVIDER_RECOVERY_2026-07-15.md`.
 
 ## GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
 

@@ -7,6 +7,12 @@
     "cli_flag": "--allow-network"
   },
   "provider_timeout_seconds": 30,
+  "proxy_policy": {
+    "default_mode": "finance_direct_requests_proxy_discovery_disabled",
+    "explicit_proxy_authorization_env": "ASHARE_ALLOW_EXPLICIT_FINANCE_PROXY",
+    "explicit_proxy_authorization_values": ["1", "true", "TRUE", "yes", "YES"],
+    "silent_proxy_fallback_allowed": false
+  },
   "retry_policy": {
     "max_retries": 2,
     "backoff_seconds": 2,

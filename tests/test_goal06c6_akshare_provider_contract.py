@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import importlib
+from types import SimpleNamespace
 
+import ashare_premarket.providers.akshare_provider as akshare_provider
 from ashare_premarket.providers.akshare_provider import (
+    DEFAULT_PROVIDER_TIMEOUT_SECONDS,
     akshare_function_signatures,
     load_a_share_code_name_list,
     load_benchmark_ohlcv_daily,
@@ -40,3 +43,56 @@ def test_schema_normalization_uses_canonical_english_fields() -> None:
     assert rows[0]["symbol"] == "600036.SH"
     assert code_to_symbol("600036") == "600036.SH"
     assert symbol_to_provider_code("600036.SH") == "600036"
+
+
+def test_provider_call_passes_bounded_timeout(monkeypatch) -> None:
+    received: dict[str, object] = {}
+
+    def stock_zh_a_hist(symbol: str, timeout: int | None = None) -> list[dict[str, object]]:
+        received.update(symbol=symbol, timeout=timeout)
+        return [{"ok": True}]
+
+    provider = SimpleNamespace(stock_zh_a_hist=stock_zh_a_hist)
+    real_import = akshare_provider.importlib.import_module
+    monkeypatch.setattr(akshare_provider, "akshare_available", lambda: True)
+    monkeypatch.setattr(
+        akshare_provider.importlib,
+        "import_module",
+        lambda name: provider if name == "akshare" else real_import(name),
+    )
+
+    result = akshare_provider._call(
+        "stock_zh_a_hist",
+        {"symbol": "600036"},
+        True,
+        lambda raw: (raw, True, "normalized"),
+    )
+
+    assert result.attempt["status"] == "PASS"
+    assert received == {"symbol": "600036", "timeout": DEFAULT_PROVIDER_TIMEOUT_SECONDS}
+
+
+def test_provider_failure_remains_failed_without_silent_fallback(monkeypatch) -> None:
+    def stock_zh_a_hist(symbol: str, timeout: int | None = None) -> list[dict[str, object]]:
+        raise RuntimeError("ProxyError: Cannot connect to proxy")
+
+    provider = SimpleNamespace(stock_zh_a_hist=stock_zh_a_hist)
+    real_import = akshare_provider.importlib.import_module
+    monkeypatch.setattr(akshare_provider, "akshare_available", lambda: True)
+    monkeypatch.setattr(
+        akshare_provider.importlib,
+        "import_module",
+        lambda name: provider if name == "akshare" else real_import(name),
+    )
+
+    result = akshare_provider._call(
+        "stock_zh_a_hist",
+        {"symbol": "600036"},
+        True,
+        lambda raw: (raw, True, "normalized"),
+    )
+
+    assert result.rows == []
+    assert result.raw is None
+    assert result.attempt["status"] == "FAIL"
+    assert result.attempt["failure_class"] == "FINANCE_DIRECT_CHILD_ENV_CLEANED_BUT_PROVIDER_STILL_PROXY_FAILED"

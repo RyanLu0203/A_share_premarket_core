@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-15 - macOS live refresh and provider recovery
+
+- Forced the launchd/macOS daily runner into true live mode by passing
+  `replay_date=None` instead of inheriting the deterministic replay default.
+- Added scoped Requests proxy-discovery control, upper/lowercase proxy cleanup,
+  explicit configured-proxy authorization, process-state restoration, and a
+  bounded AKShare timeout without disabling TLS or adding fallback data.
+- Added regression coverage for live/replay separation, system-proxy
+  rediscovery, configured proxy preservation, timeout propagation, and
+  fail-closed provider behavior.
+- Verified the approved runtime calendar and reproduced the remaining external
+  VPN/TUN route block: 41 bounded live calls returned no accepted T-1 rows, so
+  no snapshot, launchd installation, or service/browser acceptance was allowed.
+
 ## 2026-07-14 - Runtime Calendar Source Authority Fix
 
 - Fixed a live macOS calendar-sync block when the deterministic committed

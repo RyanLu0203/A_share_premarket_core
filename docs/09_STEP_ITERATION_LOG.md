@@ -1,5 +1,46 @@
 # 09 Step Iteration Log
 
+## 2026-07-15 - GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
+
+Status: `CODE_REPAIR_PASS_DEPLOYMENT_BLOCKED_EXTERNAL_RUNTIME` on
+`codex/macos-live-refresh-and-provider-recovery`.
+
+What changed:
+
+- Verified authoritative `origin/project-current` at merge commit `d3563eab`
+  with PR #32 fix commit `7f54f24f` in its ancestry.
+- Added an explicit live-mode argument to the macOS daily runner and a
+  regression test that fails if it falls back to the goal runner's replay
+  default.
+- Replaced environment-only proxy cleanup with scoped Requests proxy-discovery
+  suppression, process restoration, explicit proxy authorization, and a
+  bounded provider timeout. No TLS bypass or fallback source was introduced.
+
+Live evidence:
+
+- Approved AKShare/Sina calendar: `VERIFIED`; 8,797 sessions through
+  `2026-12-31`; checksum
+  `db13387fd42cb1ef98bbde07a12d2f8c64c438eeea940926d4ec49b2a5263d14`;
+  `2026-06-19` closed.
+- Live context: target `2026-07-15`, T-1 `2026-07-14`, execution mode
+  `daily_operational`, evidence mode `live_bounded_fetch`.
+- Provider result: 41 attempts, 41 `BROWSER_NET_EMPTY_RESPONSE`, 0 accepted
+  rows. The last committed data date remained `2026-06-30`; validation blocked
+  on provider state, missing evidence, and staleness. No current snapshot was
+  written.
+- Reproducible host evidence: macOS finance DNS answers are synthetic
+  `198.18.0.x`, both synthetic and real provider IPs route through `utun4`, and
+  the enabled `127.0.0.1:1082` proxy listener rejects the exact Eastmoney
+  request. This is outside the repository's scoped Requests policy.
+
+Deployment boundary:
+
+- launchd installation, ports 8000/3000, API probes, and browser acceptance
+  were not started because the required live snapshot does not exist.
+- No stale process or old launchd job is active. All locked recommendation,
+  trading, broker, production, factor-mining, and DQN/RL capabilities remain
+  locked.
+
 ## 2026-07-14 - GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
 
 Status: `PASS` on `codex/runtime-calendar-source-authority-fix`, pending human
