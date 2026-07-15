@@ -29,6 +29,23 @@ The authoritative PR #32 merge was verified at
   The bounded live refresh accepted 7 of 41 required T-1 rows and blocked on
   34 missing/failed provider rows. No snapshot was created and no launch agents
   or services were installed or started.
+- Request diagnosis: the canonical successes clustered at positions 27, 30,
+  and 32-36, but a controlled matrix made both previously successful and
+  failed symbols fail identically in isolated processes, after pauses, with
+  existing session behavior, with a reused session, and through the exact
+  application provider wrapper in fresh child processes. All 20 requests ended
+  before HTTP status as `ConnectionError(RemoteDisconnected)`. Root cause is
+  classified `INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE`; no
+  pacing/retry or symbol-normalization code change is justified.
+- Upstream governance: an inactive proposal names AKShare
+  `stock_zh_a_hist_tx` / Tencent only as a candidate secondary source. It is not
+  activated and requires explicit approval, schema/consistency/freshness tests,
+  full provenance, and no-silent-fallback enforcement.
+- Validation: 39 focused provider/network/runtime-policy tests pass and
+  compileall passes. The full suite is `410 passed, 2 failed`, and the canonical
+  profile is `116/117 PASS`; the two assertions still hard-code the former
+  successful refresh state and response hash rather than the truthful current
+  `BLOCKED` evidence.
 - Governance: no replay was represented as live data, no silent fallback was
   used, and recommendation, trading, broker, production, factor-mining, and
   DQN/RL boundaries remain locked.

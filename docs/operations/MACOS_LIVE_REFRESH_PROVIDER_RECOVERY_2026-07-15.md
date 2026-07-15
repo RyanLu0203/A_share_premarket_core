@@ -110,17 +110,107 @@ The repository's scoped Requests policy is still working for the application
 path, but PR #33 is not ready to merge because the canonical live refresh has
 not produced a complete accepted T-1 snapshot.
 
+## Request-level comparison
+
+The 41-row request table is recorded at
+`docs/operations/MACOS_LIVE_REFRESH_REQUEST_ATTEMPTS_2026-07-15.csv`.
+Shadowrocket recorded exactly 41 direct connections between `11:30:03` and
+`11:30:26`, matching the sorted application request sequence. The original
+application run did not persist request elapsed time, HTTP status, response
+bytes, or terminal exception details. Those historical cells are explicitly
+marked `not captured`; none are inferred or fabricated.
+
+- All 41 calls used AKShare `stock_zh_a_hist`, East Money daily kline, `qfq`,
+  `klt=101`, `fqt=1`, `beg=end=20260714`, the same fields and public `ut`
+  value, and Shenzhen market prefix `secid=0`.
+- The application was sequential with a configured 0.2-second minimum interval
+  and no application retry. AKShare `requests.get` constructs a new Requests
+  session per call, so the canonical burst did not reuse HTTP connections.
+- Accepted rows occurred at positions 27, 30, and 32–36, 15–21 seconds after
+  the first request. Failures occurred before, inside, and after that window.
+- The success cluster is evidence of temporal/intermittent upstream
+  availability, but the interleaved failures show that request order alone is
+  not a deterministic acceptance rule.
+- Symbol, exchange, date, adjustment, endpoint family, query shape, concurrency,
+  and configured request headers do not distinguish the accepted and rejected
+  groups.
+
+## Controlled four-symbol matrix
+
+The 20-row matrix is recorded at
+`docs/operations/MACOS_LIVE_REFRESH_CONTROLLED_MATRIX_2026-07-15.csv`.
+It used prior successes `002594.SZ` and `002920.SZ` plus prior failures
+`000002.SZ` and `300628.SZ`.
+
+- Isolated fresh process: 0/4 accepted.
+- Same isolated requests repeated after a 3-second pause: 0/4 accepted.
+- Exact AKShare `requests.get` behavior, sequential with no added pause: 0/4
+  accepted.
+- One deliberately reused HTTP session, sequential with 5-second pauses: 0/4
+  accepted.
+- Exact application `load_stock_ohlcv_daily` wrapper in a fresh child process,
+  one-second bounded spacing: 0/4 accepted. The wrapper classified all four as
+  `BROWSER_NET_EMPTY_RESPONSE` and returned no normalized rows.
+- Every result was `BROWSER_NET_EMPTY_RESPONSE`; every terminal exception was
+  Requests `ConnectionError` wrapping `RemoteDisconnected` before any HTTP
+  status or response body.
+- For the initial 16 raw-request probes, total elapsed time ranged from 0.171
+  to 0.754 seconds (mean 0.367); send time ranged from 0.161 to 0.301 seconds
+  (mean 0.211). For the four exact application-wrapper probes, total wrapper
+  elapsed time ranged from 0.383 to 1.504 seconds and transport time from 0.150
+  to 1.260 seconds.
+- Headers were constant: `python-requests/2.34.2`, `Accept: */*`, and
+  `Connection: keep-alive`.
+
+Previously accepted symbols therefore fail when requested alone. The evidence
+rejects a symbol-normalization, exchange, concurrency, connection-reuse, or
+simple burst-pacing defect. It supports
+`INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE` as the root-cause
+classification. Responsible pauses did not recover the endpoint, so no retry,
+backoff, or pacing change is justified from this observation window.
+
+## Inactive upstream-source proposal
+
+Because the primary endpoint remains structurally unreliable, an explicit
+proposal is recorded at
+`configs/providers/akshare_stock_history_upstream_policy_proposal.yaml`.
+The current primary remains AKShare `stock_zh_a_hist` / East Money. AKShare
+`stock_zh_a_hist_tx` / Tencent Securities is named only as a candidate
+secondary source. It is not callable by the runtime and cannot activate
+automatically.
+
+Activation requires explicit user approval, a resolved Tencent volume/amount
+schema contract, bounded overlap and adjustment-consistency checks, complete
+current T-1 coverage, full provenance, and fail-closed conflict handling.
+Source selection must occur before a run; silent mid-run fallback and partial
+snapshots remain forbidden.
+
 ## Validation
 
+- Focused provider/network/runtime-policy suite: `39 passed`
 - Python 3.12.13 compileall: `PASS`
-- Python suite: `410 passed`; one existing Starlette/httpx deprecation warning
-- Canonical program profile: `117 / 117 PASS`
+- Full Python suite: `410 passed, 2 failed`; one existing Starlette/httpx
+  deprecation warning. Both failures are stale mutable-runtime baseline
+  assertions in `tests/test_global_refactor01_architecture.py`: the tests still
+  require `latest_refresh_status=SUCCEEDED` and the former
+  `/api/experiment` response hash, while the truthful current refresh evidence
+  is `BLOCKED` after the 7/41 live result.
+- Canonical program profile: `116 / 117 PASS`, overall `BLOCKED`; the sole
+  failed command was the same full Python suite. The other 116 canonical
+  commands passed.
 - Safety, workflow, adapter, destructive-change, PIT, leakage, workspace, and
   macOS prerequisite audits/checks: `PASS`
 - Frontend lint: `PASS`
 - Frontend typecheck: `PASS`
 - Frontend tests: `35 passed` across 12 files
 - Frontend production build: `PASS`
+
+No new live acceptance run was made after the matrix because no responsible
+request-level implementation fix was supported by the evidence. The existing
+7/41 canonical result remains current and blocked. Calendar synchronization
+was not repeated because no acceptance refresh was eligible; the last verified
+calendar evidence remains the provider-backed result above. No snapshot or
+idempotency checksum exists for this blocked run.
 
 ## Deferred deployment acceptance
 

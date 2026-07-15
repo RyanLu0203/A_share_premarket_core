@@ -33,6 +33,32 @@ Live evidence:
   missing/failed required rows. The latest available data date advanced to
   `2026-07-14`, but validation blocked on provider state and missing evidence.
   No current snapshot was written and no idempotency pass was run.
+- Historical request comparison: all calls were sequential Shenzhen
+  `stock_zh_a_hist` requests with the same endpoint/date/adjustment/header
+  contract. Successes clustered at positions 27, 30, and 32-36 but failures
+  occurred before, within, and after the cluster.
+- Controlled matrix: prior-success and prior-failure symbols all failed when
+  isolated, repeated after a pause, executed with existing session behavior,
+  executed through a reused session with 5-second pauses, and invoked through
+  the exact application provider wrapper in fresh child processes. All 20 calls
+  ended as `ConnectionError(RemoteDisconnected)` before HTTP status or body.
+- Root cause: `INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE`. No
+  symbol fix, pacing change, or retry/backoff change was implemented because
+  the matrix did not demonstrate one.
+- Recorded an inactive AKShare Tencent secondary-source policy proposal. It is
+  not part of runtime selection and cannot silently activate.
+
+Validation evidence:
+
+- Focused provider/network/runtime-policy suite: `39 passed`.
+- Python compileall: `PASS`.
+- Full Python suite: `410 passed, 2 failed`. Both failures are the global
+  architecture test's stale assumptions that the latest refresh is
+  `SUCCEEDED` and that `/api/experiment` still has its pre-blocked hash.
+- Canonical validation profile: `116/117 PASS`, overall `BLOCKED`; the only
+  failed command is the same full test suite.
+- No second canonical live run, snapshot validation, or idempotency run was
+  eligible because no request-level implementation fix was demonstrated.
 
 Deployment boundary:
 

@@ -18,6 +18,21 @@
   longer attempted `127.0.0.1:1082`, but the exact East Money kline endpoint
   still closed direct requests for some symbols; the canonical run accepted 7
   of 41 T-1 rows, blocked 34 missing/failed rows, and wrote no snapshot.
+- Added a complete 41-row request reconstruction using committed refresh
+  evidence and exact Shadowrocket direct-connection timestamps. Historical
+  response fields that were not persisted are explicitly marked unavailable.
+- Ran a controlled 20-request, four-symbol process/session/pacing matrix,
+  including four calls through the exact application provider wrapper. Both
+  prior successes and failures ended identically as fast remote closes with no
+  HTTP response, ruling out symbol normalization and simple burst/session
+  behavior as demonstrated fixes.
+- Added an inactive, test-covered AKShare Tencent upstream policy proposal with
+  explicit activation, provenance, consistency, freshness, conflict, and
+  no-silent-fallback gates. No secondary source was activated.
+- Focused provider/network/runtime-policy validation passed 39 tests. The full
+  suite recorded 410 passes and two stale architecture-baseline failures
+  because the truthful latest refresh is now `BLOCKED`, and the canonical
+  profile consequently recorded 116/117 commands passing.
 
 ## 2026-07-14 - Runtime Calendar Source Authority Fix
 
