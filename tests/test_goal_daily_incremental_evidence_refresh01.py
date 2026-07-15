@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterator
 import hashlib
 import json
 from pathlib import Path
@@ -21,6 +22,34 @@ from ashare_premarket.portfolio_risk import goal_premarket_position_management_o
 ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "outputs/research/goal_daily_incremental_evidence_refresh01_"
 MANIFEST = "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json"
+REPLAY_MUTABLE_OPERATIONAL_OUTPUTS = (
+    "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json",
+    "outputs/audits/goal_daily_incremental_evidence_refresh01_report.md",
+    "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json",
+    "outputs/research/goal_daily_incremental_evidence_refresh01_experiment_readiness_contract.csv",
+    "outputs/research/goal_daily_incremental_evidence_refresh01_refresh_manifest.json",
+    "outputs/research/goal_daily_incremental_evidence_refresh01_run_summary.csv",
+    "outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv",
+)
+
+
+@pytest.fixture
+def preserve_committed_operational_refresh_state() -> Iterator[None]:
+    """Keep deterministic replay validation from replacing current live evidence."""
+
+    originals = {
+        relative: (ROOT / relative).read_bytes() if (ROOT / relative).exists() else None
+        for relative in REPLAY_MUTABLE_OPERATIONAL_OUTPUTS
+    }
+    try:
+        yield
+    finally:
+        for relative, content in originals.items():
+            path = ROOT / relative
+            if content is None:
+                path.unlink(missing_ok=True)
+            else:
+                path.write_bytes(content)
 
 
 def _write_csv(path: Path, rows: list[dict[str, object]]) -> None:
@@ -247,7 +276,9 @@ def test_opm_accepts_only_repository_local_validated_canonical_evidence() -> Non
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
-def test_goal_replay_is_deterministic_integrates_opm_and_keeps_locks() -> None:
+def test_goal_replay_is_deterministic_integrates_opm_and_keeps_locks(
+    preserve_committed_operational_refresh_state: None,
+) -> None:
     assert daily_refresh.run_goal_daily_incremental_evidence_refresh01(ROOT) is True
     first = (ROOT / MANIFEST).read_text(encoding="utf-8")
     assert daily_refresh.audit_goal_daily_incremental_evidence_refresh01(ROOT) is True

@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-07-15 - macOS live refresh and provider recovery
+
+- Forced the launchd/macOS daily runner into true live mode by passing
+  `replay_date=None` instead of inheriting the deterministic replay default.
+- Added scoped Requests proxy-discovery control, upper/lowercase proxy cleanup,
+  explicit configured-proxy authorization, process-state restoration, and a
+  bounded AKShare timeout without disabling TLS or adding fallback data.
+- Added regression coverage for live/replay separation, system-proxy
+  rediscovery, configured proxy preservation, timeout propagation, and
+  fail-closed provider behavior.
+- Verified the approved runtime calendar and reproduced the remaining external
+  VPN/TUN route block: 41 bounded live calls returned no accepted T-1 rows, so
+  no snapshot, launchd installation, or service/browser acceptance was allowed.
+- After `push2his.eastmoney.com` split routing was verified, reran the scoped
+  provider checks and bounded live refresh. The application provider path no
+  longer attempted `127.0.0.1:1082`, but the exact East Money kline endpoint
+  still closed direct requests for some symbols; the canonical run accepted 7
+  of 41 T-1 rows, blocked 34 missing/failed rows, and wrote no snapshot.
+- Added a complete 41-row request reconstruction using committed refresh
+  evidence and exact Shadowrocket direct-connection timestamps. Historical
+  response fields that were not persisted are explicitly marked unavailable.
+- Ran a controlled 20-request, four-symbol process/session/pacing matrix,
+  including four calls through the exact application provider wrapper. Both
+  prior successes and failures ended identically as fast remote closes with no
+  HTTP response, ruling out symbol normalization and simple burst/session
+  behavior as demonstrated fixes.
+- Added an inactive, test-covered AKShare Tencent upstream policy proposal with
+  explicit activation, provenance, consistency, freshness, conflict, and
+  no-silent-fallback gates. No secondary source was activated.
+- Reconciled the architecture baseline to the truthful blocked refresh
+  manifest, validation, experiment, and provenance inputs. Added replay-test
+  restoration so deterministic validation cannot replace committed live
+  `BLOCKED` evidence with replay `SUCCEEDED` evidence.
+- Full validation now passes: Python compileall, 412 Python tests, all 117
+  canonical profile commands, architecture parity across five critical
+  artifacts/OpenAPI/22 GET responses, and safety/workflow/adapter/PIT/leakage/
+  macOS checks. Operational readiness remains explicitly `BLOCKED`.
+- Added a specification-only next goal for governed, complete-batch,
+  run-level East Money-to-Tencent failover. It is not implemented or activated.
+
 ## 2026-07-14 - Runtime Calendar Source Authority Fix
 
 - Fixed a live macOS calendar-sync block when the deterministic committed

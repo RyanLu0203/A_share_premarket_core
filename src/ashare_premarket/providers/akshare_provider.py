@@ -18,6 +18,7 @@ from ashare_premarket.providers.schema_normalization import (
 )
 
 PROVIDER_ID = "akshare"
+DEFAULT_PROVIDER_TIMEOUT_SECONDS = 30
 
 
 @dataclass
@@ -115,7 +116,7 @@ def _call(
     try:
         ak = importlib.import_module("akshare")
         fn = getattr(ak, function_name)
-        call_kwargs = _filter_kwargs(fn, kwargs)
+        call_kwargs = _filter_kwargs(fn, {**kwargs, "timeout": DEFAULT_PROVIDER_TIMEOUT_SECONDS})
         with scoped_finance_network_env(function_name, network_enabled=True) as scoped_context:
             network_context = scoped_context
             raw = fn(**call_kwargs)

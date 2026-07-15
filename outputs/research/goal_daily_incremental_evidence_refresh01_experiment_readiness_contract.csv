@@ -1,5 +1,5 @@
 field_name,frozen_value,prepared_at,experiment_status,performance_claim,paper_trading_started,broker_trading_started
-experiment_date_range,not_started_start_and_end_unset,2026-07-01T08:30:00+08:00,PREPARED_NOT_STARTED,none,false,false
-snapshot_lineage,daily_refresh_manifest->outputs/research/premarket_position_management/2026-07-01/manifest.json,2026-07-01T08:30:00+08:00,PREPARED_NOT_STARTED,none,false,false
-evaluation_metadata,chronological_only;future_outcomes_unobserved;no_final_holdout_tuning,2026-07-01T08:30:00+08:00,PREPARED_NOT_STARTED,none,false,false
-baseline_reference,research_reference_portfolio_and_frozen_opm_policy,2026-07-01T08:30:00+08:00,PREPARED_NOT_STARTED,none,false,false
+experiment_date_range,not_started_start_and_end_unset,2026-07-15T11:30:03+08:00,PREPARED_NOT_STARTED,none,false,false
+snapshot_lineage,daily_refresh_manifest->no_valid_snapshot,2026-07-15T11:30:03+08:00,PREPARED_NOT_STARTED,none,false,false
+evaluation_metadata,chronological_only;future_outcomes_unobserved;no_final_holdout_tuning,2026-07-15T11:30:03+08:00,PREPARED_NOT_STARTED,none,false,false
+baseline_reference,research_reference_portfolio_and_frozen_opm_policy,2026-07-15T11:30:03+08:00,PREPARED_NOT_STARTED,none,false,false

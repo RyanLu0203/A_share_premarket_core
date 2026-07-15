@@ -108,6 +108,21 @@ Network permission is scoped to the calendar and bounded evidence refresh.
 Ordinary workspace and deterministic replay processes do not receive provider
 network authorization.
 
+The default finance-provider mode removes uppercase and lowercase proxy
+variables for the synchronous call and disables Requests environment/system
+proxy discovery. This prevents an enabled macOS system proxy from being
+silently rediscovered after environment cleanup. A deliberately configured
+proxy remains supported only when
+`ASHARE_ALLOW_EXPLICIT_FINANCE_PROXY=1` is set alongside the normal network
+authorization. TLS verification and provider timeouts remain enabled; provider
+failure never triggers a replay or local-data fallback.
+
+If the provider still returns empty responses while DNS answers are in
+`198.18.0.0/15` and routes traverse a `utun` interface, the host VPN/TUN layer
+is still intercepting so-called direct traffic. Correct the local VPN/proxy
+route, then rerun the manual daily command. Do not install the launch agents
+until the live run creates and verifies the current snapshot.
+
 ## Local files and logs
 
 - Calendar: `outputs/local/runtime/trading_calendar.csv`

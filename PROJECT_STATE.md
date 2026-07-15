@@ -1,6 +1,64 @@
 # Project State
 
-Last updated: 2026-07-14
+Last updated: 2026-07-15
+
+## GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
+
+The authoritative PR #32 merge was verified at
+`d3563eab97f4e422d3da9a6e32430510d4043867`, including fix commit
+`7f54f24f1e62f3509f4297162e21c2ef27ffb322`. Recovery work is isolated on
+`codex/macos-live-refresh-and-provider-recovery`.
+
+- Code repair: the macOS runner now passes `replay_date=None` explicitly, so a
+  live run cannot inherit the goal runner's deterministic replay default.
+- Network repair: direct provider calls remove upper/lowercase proxy variables,
+  disable Requests environment/system proxy rediscovery for the scoped call,
+  restore process state, keep TLS verification and a 30-second timeout, and
+  preserve proxy use only behind explicit authorization.
+- Calendar: approved AKShare/Sina evidence is `VERIFIED`, covers
+  `1990-12-19` through `2026-12-31`, contains 8,797 sessions, has checksum
+  `db13387fd42cb1ef98bbde07a12d2f8c64c438eeea940926d4ec49b2a5263d14`,
+  keeps `2026-06-19` closed, and resolves target `2026-07-15` with T-1
+  `2026-07-14`.
+- Deployment status: `BLOCKED_PARTIAL_PROVIDER_AVAILABILITY`. After
+  Shadowrocket split routing was verified for `push2his.eastmoney.com`, the
+  approved calendar sync still passed and resolved target `2026-07-15` with
+  T-1 `2026-07-14`. The exact unwrapped AKShare request still attempted
+  `127.0.0.1:1082`, while the application child-process provider path did not
+  and instead connected directly to synthetic `198.18.0.39:443` over `utun4`.
+  The bounded live refresh accepted 7 of 41 required T-1 rows and blocked on
+  34 missing/failed provider rows. No snapshot was created and no launch agents
+  or services were installed or started.
+- Request diagnosis: the canonical successes clustered at positions 27, 30,
+  and 32-36, but a controlled matrix made both previously successful and
+  failed symbols fail identically in isolated processes, after pauses, with
+  existing session behavior, with a reused session, and through the exact
+  application provider wrapper in fresh child processes. All 20 requests ended
+  before HTTP status as `ConnectionError(RemoteDisconnected)`. Root cause is
+  classified `INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE`; no
+  pacing/retry or symbol-normalization code change is justified.
+- Upstream governance: an inactive proposal names AKShare
+  `stock_zh_a_hist_tx` / Tencent only as a candidate secondary source. It is not
+  activated and requires explicit approval, schema/consistency/freshness tests,
+  full provenance, and no-silent-fallback enforcement.
+- Architecture baseline: the two blocked daily-refresh artifact hashes and the
+  `/api/experiment` and `/api/provenance` hashes that consume them are
+  deliberately reconciled. The other 20 GET response hashes, OpenAPI,
+  canonical market data, and immutable snapshot hashes remain unchanged.
+  Deterministic replay tests restore all seven mutable operational files.
+- Validation: compileall passes, the full Python suite is `412 passed`, and the
+  canonical profile is `117/117 PASS`. Architecture parity is exact while the
+  current operational refresh remains `BLOCKED` with no snapshot. Safety,
+  workflow, adapter, PIT, leakage, destructive-change, and macOS prerequisite
+  checks pass.
+- Next goal: a specification-only, non-activated run-level East Money-to-
+  Tencent complete-batch failover contract is recorded at
+  `docs/governance/NEXT_GOAL_GOVERNED_AKSHARE_SECONDARY_UPSTREAM.md`.
+- Governance: no replay was represented as live data, no silent fallback was
+  used, and recommendation, trading, broker, production, factor-mining, and
+  DQN/RL boundaries remain locked.
+- Recovery evidence:
+  `docs/operations/MACOS_LIVE_REFRESH_PROVIDER_RECOVERY_2026-07-15.md`.
 
 ## GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
 

@@ -1,0 +1,74 @@
+{
+  "proposal_id": "akshare_stock_history_upstream_policy_proposal01",
+  "status": "proposal_only_not_activated",
+  "research_only": true,
+  "network_enabled_by_default": false,
+  "primary_upstream": {
+    "provider_library": "akshare",
+    "function": "stock_zh_a_hist",
+    "upstream_source": "eastmoney",
+    "endpoint_family": "https://push2his.eastmoney.com/api/qt/stock/kline/get",
+    "selection_status": "current_approved_primary"
+  },
+  "proposed_secondary_upstream": {
+    "provider_library": "akshare",
+    "function": "stock_zh_a_hist_tx",
+    "upstream_source": "tencent_securities",
+    "endpoint_family": "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get",
+    "selection_status": "candidate_only_not_callable_by_runtime",
+    "known_schema_gap": "volume_and_amount_semantics_require_explicit_mapping_and validation_before_approval"
+  },
+  "activation_conditions": [
+    "explicit_user_approval_after_review_of_this_contract",
+    "primary_upstream_failure_reproduced_across_isolated_and_responsibly_paced_requests_in_at_least_two_observation_windows",
+    "secondary_function_schema_normalization_and_timeout_contract_tests_pass",
+    "bounded_overlap_source_consistency_audit_passes",
+    "current_t_minus_one_freshness_and_full_required_symbol_coverage_pass",
+    "source_is_selected_before_the_run_and_never_changed_silently_mid_run"
+  ],
+  "required_provenance": [
+    "provider_library",
+    "provider_library_version",
+    "akshare_function",
+    "upstream_source",
+    "endpoint_family",
+    "normalized_non_sensitive_request_parameters",
+    "request_observation_time",
+    "trade_date_coverage",
+    "row_count",
+    "payload_checksum_or_normalized_row_checksum",
+    "execution_mode",
+    "source_selection_reason"
+  ],
+  "source_consistency_checks": {
+    "bounded_overlap_required": true,
+    "key": "trade_date+symbol",
+    "required_fields": ["open", "high", "low", "close"],
+    "adjustment_policy": "qfq_must_be_explicit_and_equivalent",
+    "volume_amount_semantics": "must_be_resolved_before_activation",
+    "material_ohlc_conflict_policy": "quarantine_and_block_snapshot",
+    "missing_overlap_policy": "block_secondary_approval"
+  },
+  "freshness_and_coverage": {
+    "required_trade_date": "current_resolved_t_minus_one",
+    "required_symbol_coverage": "all_existing_contract_required_symbols",
+    "partial_snapshot_allowed": false,
+    "stale_data_allowed": false
+  },
+  "failure_and_retry_policy": {
+    "silent_fallback_allowed": false,
+    "automatic_secondary_activation_allowed": false,
+    "unlimited_retries_allowed": false,
+    "tls_verification_required": true,
+    "retry_after_must_be_respected_when_present": true,
+    "bounded_pacing_backoff_requires_separate_demonstrated_root_cause": true
+  },
+  "locked_boundaries": [
+    "recommendation",
+    "trading",
+    "broker",
+    "production",
+    "factor_mining",
+    "dqn_rl"
+  ]
+}

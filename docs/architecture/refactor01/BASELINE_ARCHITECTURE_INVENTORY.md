@@ -113,6 +113,14 @@ The exact headers and baseline hashes are recorded in `baseline_metrics.json`. T
 manifest and latest pointer were byte-identical after Pytest, direct replay, and the complete
 validation profile.
 
+PR #33 deliberately reconciles only the mutable daily-refresh manifest and validation hashes,
+plus the `/api/experiment` and `/api/provenance` projections that consume the truthful blocked
+refresh evidence. The immutable `2026-07-01` snapshot hashes, canonical market-data hash,
+OpenAPI hash, route count, and the other 20 projected API response hashes remain unchanged.
+Deterministic replay tests restore the committed operational files after validation and cannot
+replace `BLOCKED` live evidence with a replay `SUCCEEDED` result. The proof and exact inputs are
+recorded in `PR33_BLOCKED_RUNTIME_BASELINE_RECONCILIATION.md`.
+
 ## Governance Baseline
 
 - `ready_factor_count = 0`

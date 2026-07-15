@@ -161,6 +161,7 @@ def _summary_payload(
     )
     local_network_issues = _classes_matching(events, "requires_network_fix")
     requires_user_action = _classes_matching(events, "requires_user_action")
+    selected_network = isolation_evidence("", network_enabled)
     return {
         "goal_id": "GOAL-06C.6A",
         "run_id": run_id,
@@ -170,8 +171,8 @@ def _summary_payload(
         "goal06d_allowed_to_proceed": False,
         "network_enabled": network_enabled,
         "finance_ingestion_scope": "finance_only",
-        "system_proxy_inheritance_allowed": False,
-        "child_proxy_env_cleanup_proven": True,
+        "system_proxy_inheritance_allowed": selected_network.inherit_system_proxy,
+        "child_proxy_env_cleanup_proven": bool(network_enabled and not selected_network.inherit_system_proxy),
         "parent_environment_mutation_check": "PASS_RESTORED",
         "fake_data_used": False,
         "silent_proxy_fallback_used": False,
@@ -181,7 +182,7 @@ def _summary_payload(
         "akshare_version": akshare_version,
         "target_functions_inspected": manifest.get("akshare_function_signatures", {}),
         "explicit_ingestion_attempted": bool(network_enabled and attempts),
-        "selected_network_mode": "finance_direct_child_env_proxy_cleanup" if network_enabled else "network_disabled_by_policy",
+        "selected_network_mode": selected_network.network_mode,
         "allowed_finance_domains": ALLOWED_FINANCE_DOMAINS,
         "observed_domains": sorted({str(event["target_domain"]) for event in events}),
         "event_count": len(events),

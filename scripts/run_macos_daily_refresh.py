@@ -52,7 +52,12 @@ def main() -> int:
             f"expected_t_minus_one={context['expected_previous_trading_date']}"
         )
         return 0
-    passed = run_goal_daily_incremental_evidence_refresh01(ROOT, print_summary=True, allow_network=True)
+    passed = run_goal_daily_incremental_evidence_refresh01(
+        ROOT,
+        print_summary=True,
+        allow_network=True,
+        replay_date=None,
+    )
     return 0 if passed else 1
 
 

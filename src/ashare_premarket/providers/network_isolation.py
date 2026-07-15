@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import os
+import threading
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Iterator
+
+EXPLICIT_FINANCE_PROXY_ENV = "ASHARE_ALLOW_EXPLICIT_FINANCE_PROXY"
+_PROXY_SCOPE_LOCK = threading.RLock()
 
 PROXY_ENV_KEYS = (
     "HTTP_PROXY",
@@ -93,43 +97,73 @@ def child_proxy_env_present_after_cleanup(env: dict[str, str] | None = None) -> 
     return parent_proxy_env_present(child)
 
 
+def explicit_finance_proxy_authorized(env: dict[str, str] | None = None) -> bool:
+    environment = env or os.environ
+    return str(environment.get(EXPLICIT_FINANCE_PROXY_ENV, "")).strip().lower() in {"1", "true", "yes"}
+
+
 def isolation_evidence(function_name: str, network_enabled: bool, target_domain: str | None = None) -> NetworkIsolationEvidence:
     domain = target_domain or target_domain_for_function(function_name)
     parent_has_proxy = parent_proxy_env_present()
-    child_has_proxy = child_proxy_env_present_after_cleanup()
-    mode = "network_disabled_by_policy" if not network_enabled else "finance_direct_child_env_proxy_cleanup"
+    explicit_proxy = network_enabled and explicit_finance_proxy_authorized()
+    child_has_proxy = parent_has_proxy if explicit_proxy else child_proxy_env_present_after_cleanup()
+    mode = (
+        "network_disabled_by_policy"
+        if not network_enabled
+        else "finance_explicit_proxy_authorized"
+        if explicit_proxy
+        else "finance_direct_requests_proxy_discovery_disabled"
+    )
     return NetworkIsolationEvidence(
         network_scope="finance_only",
         network_mode=mode,
-        inherit_system_proxy=False if network_enabled else False,
+        inherit_system_proxy=explicit_proxy,
         parent_proxy_env_present=parent_has_proxy,
         child_proxy_env_present_after_cleanup=child_has_proxy,
         target_domain=domain,
         domain_allowed=domain_allowed(domain),
         parent_environment_restored=True,
-        proxy_keys_removed_for_scope=";".join(PROXY_ENV_KEYS),
-        safe_notes="finance-only direct env removes proxy variables for scoped provider calls",
+        proxy_keys_removed_for_scope="" if explicit_proxy else ";".join(PROXY_ENV_KEYS),
+        safe_notes=(
+            "finance-only proxy use explicitly authorized; configured proxy discovery preserved"
+            if explicit_proxy
+            else "finance-only direct mode removes proxy variables and disables Requests environment/system proxy discovery"
+        ),
     )
 
 
 @contextmanager
 def scoped_finance_network_env(function_name: str, network_enabled: bool) -> Iterator[dict[str, object]]:
-    """Temporarily removes proxy vars for one provider call, then restores them."""
-    original = {key: os.environ.get(key) for key in PROXY_ENV_KEYS}
-    target_domain = target_domain_for_function(function_name)
-    evidence = isolation_evidence(function_name, network_enabled, target_domain).to_dict()
-    if network_enabled:
-        for key in PROXY_ENV_KEYS:
-            os.environ.pop(key, None)
-        evidence["child_proxy_env_present_after_cleanup"] = parent_proxy_env_present()
-        evidence["inherit_system_proxy"] = False
-    try:
-        yield evidence
-    finally:
-        for key, value in original.items():
-            if value is None:
+    """Apply one synchronous finance-provider proxy policy and restore process state."""
+    with _PROXY_SCOPE_LOCK:
+        original = {key: os.environ.get(key) for key in PROXY_ENV_KEYS}
+        target_domain = target_domain_for_function(function_name)
+        evidence = isolation_evidence(function_name, network_enabled, target_domain).to_dict()
+        explicit_proxy = network_enabled and explicit_finance_proxy_authorized()
+        requests_sessions = None
+        original_get_environ_proxies = None
+        if network_enabled and not explicit_proxy:
+            for key in PROXY_ENV_KEYS:
                 os.environ.pop(key, None)
-            else:
-                os.environ[key] = value
-        restored = all(os.environ.get(key) == value for key, value in original.items())
-        evidence["parent_environment_restored"] = restored
+            evidence["child_proxy_env_present_after_cleanup"] = parent_proxy_env_present()
+            evidence["inherit_system_proxy"] = False
+            try:
+                from requests import sessions as requests_sessions_module
+
+                requests_sessions = requests_sessions_module
+                original_get_environ_proxies = requests_sessions.get_environ_proxies
+                requests_sessions.get_environ_proxies = lambda _url, no_proxy=None: {}
+            except ImportError:
+                requests_sessions = None
+        try:
+            yield evidence
+        finally:
+            if requests_sessions is not None and original_get_environ_proxies is not None:
+                requests_sessions.get_environ_proxies = original_get_environ_proxies
+            for key, value in original.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+            restored = all(os.environ.get(key) == value for key, value in original.items())
+            evidence["parent_environment_restored"] = restored

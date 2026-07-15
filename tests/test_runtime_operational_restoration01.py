@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -233,6 +234,46 @@ def test_launchd_contract_is_local_bounded_and_checksum_guarded(tmp_path: Path) 
     assert already_refreshed(tmp_path, context) is True
     (snapshot_manifest.parent / "data.csv").write_text("value\ntampered\n", encoding="utf-8")
     assert already_refreshed(tmp_path, context) is False
+
+
+def test_macos_daily_refresh_explicitly_selects_live_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    import scripts.run_macos_daily_refresh as macos_refresh
+
+    # main() intentionally mutates these in its short-lived launchd process;
+    # register them with monkeypatch so the in-process test restores them.
+    monkeypatch.setenv("ASHARE_ALLOW_NETWORK_INGESTION", "test-placeholder")
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_PATH", "test-placeholder")
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_METADATA_PATH", "test-placeholder")
+
+    context = {
+        "calendar_status": "PASS",
+        "calendar_source": "akshare_sina",
+        "calendar_coverage_end": "2026-12-31",
+        "calendar_freshness_status": "CURRENT",
+        "target_trading_date": "2026-07-14",
+        "expected_previous_trading_date": "2026-07-13",
+    }
+    received: dict[str, object] = {}
+    monkeypatch.setattr(
+        macos_refresh,
+        "sync_runtime_trading_calendar",
+        lambda _root, allow_network: macos_refresh.ROOT / "outputs/local/runtime/trading_calendar.csv",
+    )
+    monkeypatch.setattr(macos_refresh, "resolve_daily_refresh_context", lambda _root: context)
+    monkeypatch.setattr(macos_refresh, "already_refreshed", lambda _root, _context: False)
+
+    def run_refresh(_root: Path, **kwargs: object) -> bool:
+        received.update(kwargs)
+        return True
+
+    monkeypatch.setattr(macos_refresh, "run_goal_daily_incremental_evidence_refresh01", run_refresh)
+    monkeypatch.setattr(sys, "argv", ["run_macos_daily_refresh.py", "--allow-network"])
+
+    assert macos_refresh.main() == 0
+    assert received["allow_network"] is True
+    assert "replay_date" in received
+    assert received["replay_date"] is None
 
 
 def _write_csv(path: Path, rows: list[dict[str, str]]) -> None:

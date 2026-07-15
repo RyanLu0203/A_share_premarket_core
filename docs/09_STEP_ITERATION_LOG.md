@@ -1,5 +1,88 @@
 # 09 Step Iteration Log
 
+## 2026-07-15 - GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
+
+Status: `CODE_REPAIR_PASS_DEPLOYMENT_BLOCKED_EXTERNAL_RUNTIME` on
+`codex/macos-live-refresh-and-provider-recovery`.
+
+What changed:
+
+- Verified authoritative `origin/project-current` at merge commit `d3563eab`
+  with PR #32 fix commit `7f54f24f` in its ancestry.
+- Added an explicit live-mode argument to the macOS daily runner and a
+  regression test that fails if it falls back to the goal runner's replay
+  default.
+- Replaced environment-only proxy cleanup with scoped Requests proxy-discovery
+  suppression, process restoration, explicit proxy authorization, and a
+  bounded provider timeout. No TLS bypass or fallback source was introduced.
+
+Live evidence:
+
+- Approved AKShare/Sina calendar: `VERIFIED`; 8,797 sessions through
+  `2026-12-31`; checksum
+  `db13387fd42cb1ef98bbde07a12d2f8c64c438eeea940926d4ec49b2a5263d14`;
+  `2026-06-19` closed.
+- Live context: target `2026-07-15`, T-1 `2026-07-14`, execution mode
+  `daily_operational`, evidence mode `live_bounded_fetch`.
+- Updated provider result after Shadowrocket split routing was verified:
+  unwrapped AKShare still attempted `127.0.0.1:1082`; the application
+  child-process provider path did not and connected directly to
+  `198.18.0.39:443` over `utun4`. The exact Eastmoney kline endpoint closed
+  without an HTTP status for the probed symbol/date.
+- Bounded canonical refresh result: 41 attempts, 7 accepted T-1 rows, and 34
+  missing/failed required rows. The latest available data date advanced to
+  `2026-07-14`, but validation blocked on provider state and missing evidence.
+  No current snapshot was written and no idempotency pass was run.
+- Historical request comparison: all calls were sequential Shenzhen
+  `stock_zh_a_hist` requests with the same endpoint/date/adjustment/header
+  contract. Successes clustered at positions 27, 30, and 32-36 but failures
+  occurred before, within, and after the cluster.
+- Controlled matrix: prior-success and prior-failure symbols all failed when
+  isolated, repeated after a pause, executed with existing session behavior,
+  executed through a reused session with 5-second pauses, and invoked through
+  the exact application provider wrapper in fresh child processes. All 20 calls
+  ended as `ConnectionError(RemoteDisconnected)` before HTTP status or body.
+- Root cause: `INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE`. No
+  symbol fix, pacing change, or retry/backoff change was implemented because
+  the matrix did not demonstrate one.
+- Recorded an inactive AKShare Tencent secondary-source policy proposal. It is
+  not part of runtime selection and cannot silently activate.
+
+Validation evidence:
+
+- Focused provider/network/runtime-policy suite: `39 passed`.
+- Python compileall: `PASS`.
+- Reconciled only the two blocked daily-refresh critical-artifact hashes and
+  the `/api/experiment` and `/api/provenance` projections that consume them.
+  Reconstructing those responses with only their former input artifacts
+  reproduces the former hashes exactly; all other projected response hashes
+  remain unchanged.
+- Deterministic replay validation now restores the seven mutable operational
+  refresh files after the test, preserving committed `BLOCKED` live evidence.
+- Full Python suite: `412 passed` with one existing Starlette/httpx warning.
+- Canonical validation profile: `117/117 PASS`.
+- Architecture parity: five critical artifacts, OpenAPI, and all 22 GET
+  response projections `EXACT_PARITY` while operational readiness is
+  `BLOCKED` and the current snapshot path is empty.
+- Safety, workflow, adapter, PIT, leakage, destructive-change, workspace, and
+  macOS prerequisite checks: `PASS`.
+- No second canonical live run, snapshot validation, or idempotency run was
+  eligible because no request-level implementation fix was demonstrated.
+
+Next-goal specification:
+
+- Added `docs/governance/NEXT_GOAL_GOVERNED_AKSHARE_SECONDARY_UPSTREAM.md` for
+  complete-batch run-level failover only. Tencent is not implemented or
+  activated in PR #33.
+
+Deployment boundary:
+
+- launchd installation, ports 8000/3000, API probes, and browser acceptance
+  were not started because the required live snapshot does not exist.
+- No stale process or old launchd job is active. All locked recommendation,
+  trading, broker, production, factor-mining, and DQN/RL capabilities remain
+  locked.
+
 ## 2026-07-14 - GOAL-RUNTIME-CALENDAR-SOURCE-AUTHORITY-FIX-01
 
 Status: `PASS` on `codex/runtime-calendar-source-authority-fix`, pending human
