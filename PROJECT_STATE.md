@@ -20,13 +20,15 @@ The authoritative PR #32 merge was verified at
   `db13387fd42cb1ef98bbde07a12d2f8c64c438eeea940926d4ec49b2a5263d14`,
   keeps `2026-06-19` closed, and resolves target `2026-07-15` with T-1
   `2026-07-14`.
-- Deployment status: `BLOCKED_EXTERNAL_RUNTIME`. The 41 bounded T-1 stock
-  calls returned 0 accepted rows and 41 `BROWSER_NET_EMPTY_RESPONSE`
-  failures. The macOS network extension resolves finance hosts into
-  `198.18.0.0/15` and routes both fake and real provider IPs over `utun4`;
-  its configured listener at `127.0.0.1:1082` also rejects the exact provider
-  request. No snapshot was created and no launch agents or services were
-  installed or started.
+- Deployment status: `BLOCKED_PARTIAL_PROVIDER_AVAILABILITY`. After
+  Shadowrocket split routing was verified for `push2his.eastmoney.com`, the
+  approved calendar sync still passed and resolved target `2026-07-15` with
+  T-1 `2026-07-14`. The exact unwrapped AKShare request still attempted
+  `127.0.0.1:1082`, while the application child-process provider path did not
+  and instead connected directly to synthetic `198.18.0.39:443` over `utun4`.
+  The bounded live refresh accepted 7 of 41 required T-1 rows and blocked on
+  34 missing/failed provider rows. No snapshot was created and no launch agents
+  or services were installed or started.
 - Governance: no replay was represented as live data, no silent fallback was
   used, and recommendation, trading, broker, production, factor-mining, and
   DQN/RL boundaries remain locked.

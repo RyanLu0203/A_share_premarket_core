@@ -13,6 +13,11 @@
 - Verified the approved runtime calendar and reproduced the remaining external
   VPN/TUN route block: 41 bounded live calls returned no accepted T-1 rows, so
   no snapshot, launchd installation, or service/browser acceptance was allowed.
+- After `push2his.eastmoney.com` split routing was verified, reran the scoped
+  provider checks and bounded live refresh. The application provider path no
+  longer attempted `127.0.0.1:1082`, but the exact East Money kline endpoint
+  still closed direct requests for some symbols; the canonical run accepted 7
+  of 41 T-1 rows, blocked 34 missing/failed rows, and wrote no snapshot.
 
 ## 2026-07-14 - Runtime Calendar Source Authority Fix
 

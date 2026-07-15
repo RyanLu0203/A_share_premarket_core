@@ -24,14 +24,15 @@ Live evidence:
   `2026-06-19` closed.
 - Live context: target `2026-07-15`, T-1 `2026-07-14`, execution mode
   `daily_operational`, evidence mode `live_bounded_fetch`.
-- Provider result: 41 attempts, 41 `BROWSER_NET_EMPTY_RESPONSE`, 0 accepted
-  rows. The last committed data date remained `2026-06-30`; validation blocked
-  on provider state, missing evidence, and staleness. No current snapshot was
-  written.
-- Reproducible host evidence: macOS finance DNS answers are synthetic
-  `198.18.0.x`, both synthetic and real provider IPs route through `utun4`, and
-  the enabled `127.0.0.1:1082` proxy listener rejects the exact Eastmoney
-  request. This is outside the repository's scoped Requests policy.
+- Updated provider result after Shadowrocket split routing was verified:
+  unwrapped AKShare still attempted `127.0.0.1:1082`; the application
+  child-process provider path did not and connected directly to
+  `198.18.0.39:443` over `utun4`. The exact Eastmoney kline endpoint closed
+  without an HTTP status for the probed symbol/date.
+- Bounded canonical refresh result: 41 attempts, 7 accepted T-1 rows, and 34
+  missing/failed required rows. The latest available data date advanced to
+  `2026-07-14`, but validation blocked on provider state and missing evidence.
+  No current snapshot was written and no idempotency pass was run.
 
 Deployment boundary:
 
