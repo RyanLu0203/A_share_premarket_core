@@ -1,2 +1,2 @@
 goal,refresh_status,validation_status,blocked_reasons,target_trading_date,expected_previous_trading_date,latest_available_data_date,execution_timestamp,execution_mode,opm_executed,opm_snapshot_integrity,snapshot_version,research_only,not_for_execution
-GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01,SUCCEEDED,PASS,,2026-07-15,2026-07-14,2026-07-14,2026-07-15T21:20:00+08:00,daily_operational,true,VERIFIED,sha256:8bb1154998565855,true,true
+GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01,SUCCEEDED,PASS,,2026-07-16,2026-07-15,2026-07-15,2026-07-16T20:11:05+08:00,daily_operational,true,VERIFIED,sha256:fa3ea3c250c3c317,true,true

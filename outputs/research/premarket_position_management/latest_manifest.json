@@ -1,6 +1,6 @@
 {
   "latest_pointer_policy": "points_to_latest_validated_snapshot_without_rewriting_history",
-  "snapshot_date": "2026-07-15",
-  "snapshot_manifest_checksum": "8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2",
-  "snapshot_manifest_path": "outputs/research/premarket_position_management/2026-07-15/manifest.json"
+  "snapshot_date": "2026-07-16",
+  "snapshot_manifest_checksum": "fa3ea3c250c3c317d86906383f724079c1d338f89aa9a5df0adb8dbc0122fb25",
+  "snapshot_manifest_path": "outputs/research/premarket_position_management/2026-07-16/manifest.json"
 }

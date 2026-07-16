@@ -306,6 +306,24 @@ output, factor-mining output, DQN/RL output, or predictive-validity claims.
 
 ## Source Evidence Warnings
 
+### Issue #36 operational stock-history contract
+
+- Canonical daily refresh uses only AKShare `stock_zh_a_hist_tx` / Tencent and
+  requires a complete single-source current-T-1 qfq batch.
+- East Money is excluded from canonical refresh. Its separate probe is
+  disabled by default, bounded, and cannot affect rows, selection, checksums,
+  snapshots, freshness, coverage, or success status.
+- The Tencent sixth exported field is volume in `手`; canonical monetary amount
+  remains null/unavailable. Volume is never copied into amount and unavailable
+  amount is never represented as zero.
+- Exact field order, schema, symbol mapping, unique keys, dates, finite values,
+  OHLC relationships, volume, PIT, provenance, full coverage, qfq, and separate
+  independent verification all fail closed.
+- Governed BJ mapping is validated syntactically. BJ is outside the current
+  enabled 41-symbol universe, and the current Tencent AKShare endpoint does not
+  return its expected BJ schema; a future BJ admission therefore fails closed
+  pending separately approved evidence.
+
 - CNINFO did not cover `002475.SZ` in inspected source evidence.
 - Tencent returned no usable rows under bounded variants.
 - These warnings are documented and do not block deterministic GOAL-06B

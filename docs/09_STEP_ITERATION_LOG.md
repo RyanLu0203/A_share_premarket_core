@@ -1,5 +1,44 @@
 # 09 Step Iteration Log
 
+## 2026-07-16 - GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01
+
+Status: `IMPLEMENTED_LIVE_ACCEPTANCE_PASS_NOT_DEPLOYED` on
+`codex/tencent-primary-operational-hardening`.
+
+Implementation:
+
+- Created directly from authoritative `origin/project-current` at
+  `040048b557f62837fce72ecde2cccba4615d42d7`; no PR #35 feature-branch state or
+  local Mac runtime state was used.
+- Canonical refresh now calls Tencent directly. East Money canonical requests
+  are structurally zero, probe-only invocation is separate and disabled by
+  default, and no failback or per-symbol mixing path exists.
+- Added exact Tencent schema/order and row-integrity gates, explicit exchange
+  mappings, nullable monetary amount, qfq-only adjustment, separate bounded
+  verification, failure taxonomy, and immutable-write preservation tests.
+
+Live evidence:
+
+- Approved live calendar resolved target `2026-07-16`, T-1 `2026-07-15`.
+- Both complete network runs selected Tencent immediately; 41/41 current T-1
+  rows were accepted from one source and East Money canonical requests were 0.
+- Batch SHA-256:
+  `596b0861a3abff07a4fc0e7342bfc17934a7586328d259b810a718a105384f96`.
+- Canonical SHA-256:
+  `51951e5d0c668df201492c03f14d6b5d166c2c5fe64c359e7ff6ad2c5ad8489f`.
+- Snapshot SHA-256:
+  `fa3ea3c250c3c317d86906383f724079c1d338f89aa9a5df0adb8dbc0122fb25`.
+- Refresh manifest SHA-256:
+  `bbbe7481d1510869c68bad200338e227a5304e8fb77fe3bb96e65e17642f98cc`.
+- Second run reacquired all 41 symbols over the network and returned identical
+  normalized/canonical/snapshot evidence; it did not use
+  `already_refreshed`.
+
+Boundary:
+
+- No launchd install, backend/frontend start, merge, recommendation unlock,
+  trading, broker, production-model, factor-mining, or DQN/RL action occurred.
+
 ## 2026-07-15 - GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
 
 Status: `CODE_REPAIR_PASS_DEPLOYMENT_BLOCKED_EXTERNAL_RUNTIME` on

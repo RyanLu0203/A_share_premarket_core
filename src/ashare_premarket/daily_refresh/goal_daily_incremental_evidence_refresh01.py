@@ -45,6 +45,7 @@ RUN_SUMMARY = PREFIX + "run_summary.csv"
 EXPERIMENT_CONTRACT = PREFIX + "experiment_readiness_contract.csv"
 REFRESH_MANIFEST = PREFIX + "refresh_manifest.json"
 REFRESH_ROOT = "outputs/research/daily_incremental_evidence_refresh"
+LOCAL_OPERATIONAL_RECORD_ROOT = "outputs/local/runtime/daily_incremental_evidence_refresh"
 LATEST_REFRESH = f"{REFRESH_ROOT}/latest_refresh.json"
 CANONICAL_DELTA_FILENAME = "canonical_delta.csv"
 CANONICAL_COMMITMENT_FILENAME = "canonical_evidence_commitment.json"
@@ -514,10 +515,12 @@ def run_goal_daily_incremental_evidence_refresh01(
         opm_executed = runner(
             root,
             print_summary=False,
-            # Freeze the already-resolved run clock across the refresh -> OPM
-            # boundary.  Passing the caller's raw ``None`` would make OPM take
-            # a second wall-clock timestamp and break immutable idempotency.
-            execution_time=None if replay_date else context["execution_time"],
+            # Immutable OPM content is keyed by target/T-1 evidence, not the
+            # wall clock of a particular acquisition attempt.  The actual
+            # observation time remains in the mutable refresh record; the
+            # snapshot uses the deterministic premarket decision timestamp so
+            # a second complete network run can prove a semantic no-op.
+            execution_time=None if replay_date else context["decision_asof_ts"],
             target_trading_date=context["target_trading_date"],
             replay_date=replay_date,
             canonical_evidence_path=canonical_override or None,
@@ -578,6 +581,12 @@ def run_goal_daily_incremental_evidence_refresh01(
     }
     refresh_manifest = {
         **latest,
+        # Immutable refresh evidence is keyed to the governed premarket
+        # decision clock. Attempt wall time remains in the mutable latest/local
+        # observability record and must not change the refresh commitment.
+        "last_attempt_time": context["decision_asof_ts"],
+        "last_successful_refresh_time": context["decision_asof_ts"] if refresh_succeeded else last_successful,
+        "execution_timestamp": context["decision_asof_ts"],
         "source_checksum": source_checksum,
         "canonical_evidence_checksum": canonical_checksum,
         "canonical_evidence_path": canonical_override or CANONICAL_MARKET,
@@ -587,6 +596,27 @@ def run_goal_daily_incremental_evidence_refresh01(
             {
                 "provider_attempt_total_count": len(upstream_run["all_attempts"]),
                 "upstream_acquisition": _upstream_manifest(upstream_run),
+                "daily_operational_observability": {
+                    "target_trading_date": context["target_trading_date"],
+                    "expected_previous_trading_date": context["expected_previous_trading_date"],
+                    "required_universe_size": upstream_run["required_symbol_count"],
+                    "accepted_symbol_count": upstream_run["operational_batch"]["accepted_symbol_count"],
+                    "tencent_request_count": len(upstream_run["all_attempts"]),
+                    "tencent_failure_count": sum(1 for attempt in upstream_run["all_attempts"] if not attempt.get("accepted")),
+                    "east_money_canonical_request_count": 0,
+                    "normalized_batch_sha256": upstream_run["operational_batch"]["batch_checksum"],
+                    "canonical_sha256": canonical_checksum,
+                    "snapshot_id": latest.get("snapshot_id", ""),
+                    "snapshot_checksum": latest.get("snapshot_checksum", ""),
+                    "amount_availability": "UNAVAILABLE_NULL_NOT_ZERO",
+                    "schema_result": upstream_run["operational_batch"]["schema_result"],
+                    "corporate_action_result": upstream_run["independent_verification"].get("adjustment_result", "BLOCKED"),
+                    "independent_verification_result": upstream_run["independent_verification"].get("status", "BLOCKED"),
+                    "elapsed_seconds": "RECORDED_IN_LOCAL_RUNTIME_OBSERVABILITY",
+                    "bounded_retry_count": upstream_run["operational_batch"]["retry_count"],
+                    "idempotency_evidence_path": IDEMPOTENCY,
+                    "local_runtime_record_path": f"{LOCAL_OPERATIONAL_RECORD_ROOT}/{context['target_trading_date']}.json",
+                },
             }
             if upstream_run
             else {}
@@ -652,6 +682,17 @@ def run_goal_daily_incremental_evidence_refresh01(
         write_json(root / IDEMPOTENCY, idempotency)
         latest["idempotency_status"] = idempotency["status"]
         latest["idempotency_evidence_path"] = IDEMPOTENCY
+        write_json(
+            root / LOCAL_OPERATIONAL_RECORD_ROOT / f"{context['target_trading_date']}.json",
+            {
+                **dict(refresh_manifest["daily_operational_observability"]),
+                "last_attempt_time": context["generated_at"],
+                "last_successful_refresh_time": last_successful,
+                "elapsed_seconds": upstream_run["operational_batch"]["elapsed_seconds"],
+                "idempotency_result": idempotency["status"],
+                "refresh_manifest_checksum": refresh_manifest_checksum,
+            },
+        )
     write_json(root / LATEST_REFRESH, latest)
 
     _write_governance_files(root)
@@ -740,6 +781,14 @@ def _fetch_network_incremental(
         return [], [{"status": "FAIL", "failure_class": "NETWORK_DISABLED_BY_POLICY"}], {}
     expected = context["expected_previous_trading_date"]
     run = run_governed_stock_history_batch(root, required_symbols, expected, True)
+    field_contract = dict(run.get("operational_batch", {}).get("operational_field_contract", {}))
+    if run.get("east_money_canonical_request_count") != 0:
+        raise RuntimeError("east_money_canonical_request_count_must_be_zero")
+    if run.get("selected_rows") and (
+        field_contract.get("status") != "PASS"
+        or field_contract.get("amount_null_count") != len(run["selected_rows"])
+    ):
+        raise RuntimeError("TENCENT_AMOUNT_UNAVAILABLE contract not preserved")
     rows = [
         {
             **row,
@@ -748,7 +797,7 @@ def _fetch_network_incremental(
             "pit_available_date": expected,
             "no_lookahead_status": "passed_current_or_past_only",
             "suspension_status": "trading",
-            "adjustment_policy": run.get("primary_batch", {}).get("adjustment_policy", "qfq"),
+            "adjustment_policy": run.get("operational_batch", {}).get("adjustment_policy", "qfq"),
         }
         for row in run["selected_rows"]
     ]
@@ -774,13 +823,17 @@ def _upstream_manifest(run: dict[str, object]) -> dict[str, object]:
         "selected_function": run["selected_function"],
         "selected_endpoint_family": run["selected_endpoint_family"],
         "selected_batch_checksum": run["selected_batch_checksum"],
-        "primary_batch": batch_summary(run["primary_batch"]),
-        "secondary_activation": run["secondary_activation"],
-        "secondary_batch": batch_summary(run["secondary_batch"]),
+        "operational_primary": run["operational_primary"],
+        "operational_batch": batch_summary(run["operational_batch"]),
+        "east_money_mode": run["east_money_mode"],
+        "east_money_canonical_request_count": run["east_money_canonical_request_count"],
+        "automatic_failback_to_east_money": run["automatic_failback_to_east_money"],
         "source_consistency_contract_version": run["source_consistency_contract_version"],
         "source_consistency_result": run["source_consistency_result"],
-        "discarded_primary_row_count": run["discarded_primary_row_count"],
+        "independent_verification": run["independent_verification"],
+        "independent_verification_rows_mixed_into_canonical": run["independent_verification_rows_mixed_into_canonical"],
         "no_per_symbol_mixing": run["no_per_symbol_mixing"],
+        "single_canonical_source": run["single_canonical_source"],
         "full_coverage": run["full_coverage"],
         "tls_verification_preserved": run["tls_verification_preserved"],
         "bounded_attempts": run["bounded_attempts"],

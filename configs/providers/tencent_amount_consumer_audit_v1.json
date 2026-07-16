@@ -1,0 +1,54 @@
+{
+  "contract_id": "tencent-amount-unavailable-consumer-audit-v1",
+  "canonical_amount_state": "UNAVAILABLE_NULL_NOT_ZERO",
+  "consumers": [
+    {
+      "path": "src/ashare_premarket/daily_refresh/goal_daily_incremental_evidence_refresh01.py",
+      "scope": "enabled_operational",
+      "disposition": "canonical merge consumes close and provenance only; monetary amount is not synthesized",
+      "required_tokens": ["raw.get(\"close\", raw.get(\"canonical_close\"))", "TENCENT_AMOUNT_UNAVAILABLE"]
+    },
+    {
+      "path": "src/ashare_premarket/portfolio_risk/goal_premarket_position_management_operational01.py",
+      "scope": "enabled_operational",
+      "disposition": "position-management handoff consumes canonical close/return evidence and has no amount dependency",
+      "required_tokens": ["canonical = read_csv(canonical_path)", "canonical_return_1d"]
+    },
+    {
+      "path": "src/ashare_premarket/dashboard/repositories/base.py",
+      "scope": "enabled_read_only_projection",
+      "disposition": "empty or null numeric evidence converts to None, never zero",
+      "required_tokens": ["return float(value) if value not in {None, \"\"} else None"]
+    },
+    {
+      "path": "apps/premarket-workspace/src/components/PriceVolumeChart.tsx",
+      "scope": "enabled_read_only_projection",
+      "disposition": "non-numeric amount is displayed as UNAVAILABLE",
+      "required_tokens": ["if (typeof value !== \"number\" || !Number.isFinite(value)) return \"UNAVAILABLE\""]
+    },
+    {
+      "path": "src/ashare_premarket/risk_tiering/goal_risk_tiering01.py",
+      "scope": "separate_research_only_committed_panel",
+      "disposition": "missing amount sets insufficient evidence and blocks promotion; it is not a Tencent canonical consumer",
+      "required_tokens": ["rules.append(\"MISSING_AMOUNT\")", "insufficient = True"]
+    },
+    {
+      "path": "src/ashare_premarket/risk_tiering/goal_risk_tiering011.py",
+      "scope": "separate_research_only_committed_panel",
+      "disposition": "missing amount adds data-quality/liquidity risk and marks evidence insufficient",
+      "required_tokens": ["amount = _float_or_none", "if amount is None:", "insufficient = True"]
+    },
+    {
+      "path": "src/ashare_premarket/providers/provider_ladder.py",
+      "scope": "separate_review_only_ingestion",
+      "disposition": "requires numeric amount from its own source-backed provider contract and is not called by Tencent canonical refresh",
+      "required_tokens": ["liquidity_proxy", "provider_mode"]
+    },
+    {
+      "path": "src/ashare_premarket/research/goal_regime_label_research01.py",
+      "scope": "separate_research_only_committed_panel",
+      "disposition": "filters unavailable amount values instead of defaulting null to zero",
+      "required_tokens": ["if _float(row.get(\"amount\")) is not None", "if liquidity_proxy is None and amount_values"]
+    }
+  ]
+}

@@ -24,6 +24,7 @@ from ashare_premarket.providers.governed_stock_history import (
     audit_qfq_corporate_action_event,
     compare_cross_source_rows,
     run_governed_stock_history_batch,
+    run_east_money_probe,
     audit_cross_source_fixture,
     validate_operational_field_contract,
 )
@@ -60,6 +61,7 @@ def _result(symbol: str, date: str, *, failure: str = "", close: float = 10.0) -
             "volume": 100.0,
             "amount": None,
             "quality_flags": "SOURCE_BACKED;TENCENT_AMOUNT_UNAVAILABLE",
+            "volume_unit": "hand",
         }]
         if passed
         else []
@@ -89,9 +91,9 @@ def test_tencent_symbol_mapping(canonical: str, provider: str) -> None:
     assert tencent_symbol(canonical) == provider
 
 
-@pytest.mark.parametrize("symbol", ["000002", "usAAPL", "000002.HK", "bad.SZ"])
+@pytest.mark.parametrize("symbol", ["000002", "usAAPL", "000002.HK", "bad.SZ", "000002.SH", "600036.SZ"])
 def test_tencent_symbol_mapping_rejects_invalid_contract(symbol: str) -> None:
-    with pytest.raises(ValueError, match="unsupported_canonical_symbol"):
+    with pytest.raises(ValueError, match="unsupported_canonical_symbol|canonical_symbol_exchange_mismatch"):
         tencent_symbol(symbol)
 
 
@@ -117,6 +119,20 @@ def test_tencent_normalizer_fails_closed_on_missing_or_duplicate_required_fields
     assert normalize_tencent_stock_ohlcv_schema(duplicate, "000002.SZ")[1] is False
 
 
+@pytest.mark.parametrize(
+    "frame",
+    [
+        pd.DataFrame([{"date": "2026-07-14", "open": 3, "high": 3, "low": 3, "close": 3, "amount": 1}]),
+        pd.DataFrame([{"date": "2026-07-14", "open": 3, "close": 3, "high": 3, "low": 3, "amount": 1, "extra": 1}]),
+        pd.DataFrame([{"date": "2026-07-14", "open": 3, "close": 3, "high": 2, "low": 3, "amount": 1}]),
+        pd.DataFrame([{"date": "2026-07-14", "open": 3, "close": 3, "high": 3, "low": 4, "amount": 1}]),
+        pd.DataFrame([{"date": "2026-07-14", "open": float("nan"), "close": 3, "high": 3, "low": 3, "amount": 1}]),
+    ],
+)
+def test_tencent_schema_order_drift_and_semantic_corruption_fail_closed(frame: pd.DataFrame) -> None:
+    assert normalize_tencent_stock_ohlcv_schema(frame, "000002.SZ")[1] is False
+
+
 def test_primary_normalizer_does_not_turn_missing_amount_into_observed_zero() -> None:
     rows, valid, _ = normalize_stock_ohlcv_schema(
         [{"日期": "2026-07-14", "开盘": 3.03, "最高": 3.05, "最低": 2.99, "收盘": 3.05, "成交量": 838587}],
@@ -127,145 +143,88 @@ def test_primary_normalizer_does_not_turn_missing_amount_into_observed_zero() ->
     assert "AMOUNT_UNAVAILABLE" in rows[0]["quality_flags"]
 
 
-def test_complete_primary_is_selected_and_secondary_is_never_called(tmp_path: Path) -> None:
-    secondary_calls: list[str] = []
+def test_tencent_is_immediate_only_canonical_source_and_east_money_count_is_zero(tmp_path: Path) -> None:
+    calls: list[str] = []
 
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start)
-
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        secondary_calls.append(symbol)
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+        calls.append(symbol)
         return _result(symbol, start)
 
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, secondary_loader=secondary, sleep=lambda _: None
+        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None
     )
-    assert run["state"] == "PRIMARY_SELECTED"
-    assert run["selected_upstream_source"] == "East Money"
-    assert run["full_coverage"] is True
-    assert secondary_calls == []
-
-
-def test_approved_primary_endpoint_failure_discards_partial_batch_and_reacquires_all_symbols(tmp_path: Path) -> None:
-    secondary_calls: list[str] = []
-
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start, failure="BROWSER_NET_EMPTY_RESPONSE") if symbol == "600036.SH" else _result(symbol, start, close=9)
-
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        secondary_calls.append(symbol)
-        return _result(symbol, start, close=10)
-
-    run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, secondary_loader=secondary, sleep=lambda _: None
-    )
-    assert run["state"] == "SECONDARY_SELECTED"
-    assert run["secondary_activation"]["reason"] == "APPROVED_PRIMARY_ENDPOINT_FAILURE"
-    assert run["discarded_primary_row_count"] == 1
-    assert secondary_calls == ["000002.SZ", "600036.SH"]
-    assert {row["upstream_source"] for row in run["selected_rows"]} == {"Tencent"}
-    assert run["secondary_batch"]["source_consistency_result"] == "PASS"
-    assert run["source_consistency_result"]["status"] == "PASS"
-    assert [attempt["request_sequence"] for attempt in run["all_attempts"]] == [1, 2, 3, 4]
-    assert [attempt["batch_request_sequence"] for attempt in run["all_attempts"]] == [1, 2, 1, 2]
-
-
-def test_qfq_production_fixture_allows_complete_secondary_while_hfq_finding_is_nonblocking(tmp_path: Path) -> None:
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start, failure="BROWSER_NET_EMPTY_RESPONSE")
-
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start)
-
-    run = run_governed_stock_history_batch(
-        _root(tmp_path, production_fixture=True),
-        {"000002.SZ", "000333.SZ"},
-        "2026-07-14",
-        True,
-        primary_loader=primary,
-        secondary_loader=secondary,
-        sleep=lambda _: None,
-    )
-
-    assert run["secondary_activation"]["activated"] is True
-    assert run["secondary_activation"]["reason"] == "APPROVED_PRIMARY_ENDPOINT_FAILURE"
-    assert run["secondary_batch"]["accepted_symbol_count"] == 2
-    assert run["secondary_batch"]["source_consistency_result"] == "PASS"
-    assert run["source_consistency_result"]["status"] == "PASS"
-    assert run["source_consistency_result"]["production_adjustment_policy"] == "qfq_only"
-    assert run["source_consistency_result"]["hfq_research_audit"]["status"] == "BLOCKED"
-    assert run["source_consistency_result"]["hfq_research_audit"]["production_gate_effect"] == "NON_BLOCKING_RESEARCH_ONLY"
-    assert run["state"] == "SECONDARY_SELECTED"
-    assert len(run["selected_rows"]) == 2
+    assert run["state"] == "TENCENT_PRIMARY_SELECTED"
     assert run["selected_upstream_source"] == "Tencent"
-    assert len(run["selected_batch_checksum"]) == 64
+    assert calls == ["000002.SZ", "600036.SH"]
+    assert run["east_money_canonical_request_count"] == 0
+    assert run["automatic_failback_to_east_money"] is False
+    assert {row["upstream_source"] for row in run["selected_rows"]} == {"Tencent"}
+    assert run["independent_verification_rows_mixed_into_canonical"] is False
     assert run["full_coverage"] is True
-    assert run["no_per_symbol_mixing"] is True
 
 
-@pytest.mark.parametrize("failure", ["TLS_SSL_FAILURE", "EXTERNAL_PROXY_ENVIRONMENT_FAILURE", "MISSING_EXACT_T_MINUS_ONE_ROW", "ZERO_ROWS_RETURNED"])
-def test_local_unapproved_or_ambiguous_failures_never_activate_secondary(tmp_path: Path, failure: str) -> None:
-    secondary_calls: list[str] = []
-
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+@pytest.mark.parametrize(
+    "failure",
+    ["EXTERNAL_NETWORK_TIMEOUT", "DNS_RESOLUTION_FAILURE", "TLS_SSL_FAILURE", "EMPTY_RESPONSE", "HTML_RETURNED_INSTEAD_OF_DATA", "HTTP_429_RATE_LIMITED"],
+)
+def test_tencent_failures_fail_closed_without_failback(tmp_path: Path, failure: str) -> None:
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
         return _result(symbol, start, failure=failure)
 
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        secondary_calls.append(symbol)
-        return _result(symbol, start)
-
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, primary_loader=primary, secondary_loader=secondary, sleep=lambda _: None
+        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None
     )
-    assert run["state"] == "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
+    assert run["state"] == "TENCENT_PRIMARY_BLOCKED"
     assert run["selected_rows"] == []
-    assert secondary_calls == []
+    assert run["east_money_canonical_request_count"] == 0
+    assert len(run["all_attempts"]) == 1
 
 
-def test_secondary_incomplete_fails_closed_without_primary_secondary_mixing(tmp_path: Path) -> None:
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+def test_partial_and_final_symbol_failure_discard_complete_tencent_batch(tmp_path: Path) -> None:
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
         return _result(symbol, start, failure="CONNECTION_RESET") if symbol == "600036.SH" else _result(symbol, start)
 
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start, failure="ZERO_ROWS_RETURNED") if symbol == "000002.SZ" else _result(symbol, start)
-
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, secondary_loader=secondary, sleep=lambda _: None
+        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None
     )
-    assert run["state"] == "SECONDARY_BLOCKED"
+    assert run["operational_batch"]["accepted_symbol_count"] == 1
     assert run["selected_rows"] == []
     assert run["full_coverage"] is False
-    assert run["discarded_primary_row_count"] == 1
+    assert run["all_attempts"][-1]["symbol"] == "600036.SH"
 
 
-def test_mixed_approved_and_local_primary_failure_does_not_activate_secondary(tmp_path: Path) -> None:
-    secondary_calls: list[str] = []
-
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        failure = "CONNECTION_RESET" if symbol == "000002.SZ" else "TLS_SSL_FAILURE"
-        return _result(symbol, start, failure=failure)
-
-    def secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        secondary_calls.append(symbol)
-        return _result(symbol, start)
-
-    run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, secondary_loader=secondary, sleep=lambda _: None
+def test_east_money_probe_is_separate_bounded_and_has_no_canonical_effect(tmp_path: Path) -> None:
+    report = run_east_money_probe(
+        _root(tmp_path), {"000002.SZ", "600036.SH"}, "2026-07-14", True,
+        loader=lambda symbol, start, end, adjustment, enabled: _result(symbol, start), sleep=lambda _: None,
     )
-    assert run["state"] == "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
-    assert run["secondary_activation"]["approved_failure_count"] == 1
-    assert run["secondary_activation"]["unapproved_or_local_failure_count"] == 1
-    assert secondary_calls == []
+    assert report["mode"] == "probe_only"
+    assert report["enabled_by_default"] is False
+    assert report["canonical_effect"] == "NONE"
+    assert report["mutates_snapshot_state"] is False
+    assert report["automatic_failback_effect"] == "FORBIDDEN"
+
+
+def test_independent_verification_failure_blocks_tencent_selection(tmp_path: Path) -> None:
+    run = run_governed_stock_history_batch(
+        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True,
+        tencent_loader=lambda symbol, start, end, adjustment, enabled: _result(symbol, start),
+        independent_verifier=lambda root, policy, symbols: {"status": "BLOCKED", "reason": "INDEPENDENT_MISMATCH"},
+        sleep=lambda _: None,
+    )
+    assert run["state"] == "TENCENT_PRIMARY_BLOCKED"
+    assert run["operational_batch"]["complete"] is True
+    assert run["selected_rows"] == []
 
 
 def test_loader_exception_is_recorded_as_local_defect_and_never_fails_over(tmp_path: Path) -> None:
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
         raise ValueError(f"unsupported_canonical_symbol:{symbol}")
 
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"bad.SZ"}, "2026-07-14", True, primary_loader=primary, sleep=lambda _: None
+        _root(tmp_path), {"bad.SZ"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None
     )
-    assert run["state"] == "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
+    assert run["state"] == "TENCENT_PRIMARY_BLOCKED"
     assert run["all_attempts"][0]["failure_class"] == "SYMBOL_NORMALIZATION_FAILED"
     assert run["all_attempts"][0]["exception_type"] == "ValueError"
 
@@ -333,8 +292,9 @@ def test_versioned_qfq_corporate_action_fixture_covers_sse_szse_and_required_uni
     assert all(event["qfq_formula_result"] == "PASS" for event in result["qfq_corporate_action_events"])
     assert all(event["qfq_continuity"]["status"] == "PASS" for event in result["qfq_corporate_action_events"])
     assert result["hfq_runtime_enabled"] is False
+    assert result["hfq_runtime_status"] == "UNSUPPORTED_DISABLED"
     assert result["hfq_research_audit"]["status"] == "BLOCKED"
-    assert result["hfq_research_audit"]["production_gate_effect"] == "NON_BLOCKING_RESEARCH_ONLY"
+    assert result["hfq_research_audit"]["production_gate_effect"] == "OUTSIDE_ENABLED_SCOPE_UNSUPPORTED_DISABLED"
     assert result["amount_semantics_result"] == "PASS"
     assert len(result["fixture_checksum"]) == 64
     assert len(result["corporate_action_fixture_checksum"]) == 64
@@ -394,6 +354,7 @@ def test_amount_null_is_distinct_from_observed_zero_and_amount_consumers_fail_cl
         "volume": 838587,
         "amount": None,
         "quality_flags": "SOURCE_BACKED;TENCENT_AMOUNT_UNAVAILABLE",
+        "volume_unit": "hand",
     }
     nullable = validate_operational_field_contract([row])
     required = validate_operational_field_contract([row], require_amount=True)
@@ -408,19 +369,38 @@ def test_amount_null_is_distinct_from_observed_zero_and_amount_consumers_fail_cl
     assert zero["amount_observed_zero_count"] == 1
 
 
-def test_stale_tencent_row_blocks_secondary_selection(tmp_path: Path) -> None:
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
-        return _result(symbol, start, failure="BROWSER_NET_EMPTY_RESPONSE")
-
-    def stale_secondary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+def test_stale_tencent_row_blocks_primary_selection(tmp_path: Path) -> None:
+    def stale_tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
         return _result(symbol, "2026-07-11")
 
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, primary_loader=primary, secondary_loader=stale_secondary, sleep=lambda _: None
+        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, tencent_loader=stale_tencent, sleep=lambda _: None
     )
-    assert run["state"] == "SECONDARY_BLOCKED"
+    assert run["state"] == "TENCENT_PRIMARY_BLOCKED"
     assert run["selected_rows"] == []
-    assert run["secondary_batch"]["pit_result"] == "BLOCKED"
+    assert run["operational_batch"]["pit_result"] == "BLOCKED"
+    assert run["all_attempts"][0]["rejection_reason"] == "STALE_OR_OUTSIDE_REQUEST_WINDOW"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "reason"),
+    [
+        (lambda rows: [rows[0], deepcopy(rows[0])], "DUPLICATE_ROWS_DETECTED"),
+        (lambda rows: [{**rows[0], "trade_date": "2026-07-15"}], "FUTURE_DATED_RESPONSE"),
+    ],
+)
+def test_duplicate_and_future_tencent_rows_fail_closed(tmp_path: Path, mutation, reason: str) -> None:
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+        result = _result(symbol, start)
+        result.rows = mutation(result.rows)
+        result.attempt["rows_returned"] = len(result.rows)
+        return result
+
+    run = run_governed_stock_history_batch(
+        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None
+    )
+    assert run["selected_rows"] == []
+    assert run["all_attempts"][0]["rejection_reason"] == reason
 
 
 def test_missing_provenance_blocks_complete_batch(tmp_path: Path) -> None:
@@ -430,23 +410,24 @@ def test_missing_provenance_blocks_complete_batch(tmp_path: Path) -> None:
         return result
 
     run = run_governed_stock_history_batch(
-        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, primary_loader=incomplete_provenance, sleep=lambda _: None
+        _root(tmp_path), {"000002.SZ"}, "2026-07-14", True, tencent_loader=incomplete_provenance, sleep=lambda _: None
     )
     assert run["selected_rows"] == []
-    assert run["primary_batch"]["provenance_result"] == "BLOCKED"
-    assert run["state"] == "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
+    assert run["operational_batch"]["provenance_result"] == "BLOCKED"
+    assert run["state"] == "TENCENT_PRIMARY_BLOCKED"
 
 
-def test_identical_run_is_idempotent_at_normalized_batch_boundary(tmp_path: Path) -> None:
-    def primary(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
+def test_identical_complete_network_equivalent_run_is_idempotent_at_normalized_batch_boundary(tmp_path: Path) -> None:
+    def tencent(symbol: str, start: str, end: str, adjustment: str, enabled: bool) -> ProviderResult:
         return _result(symbol, start)
 
     root = _root(tmp_path)
-    first = run_governed_stock_history_batch(root, {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, sleep=lambda _: None)
-    second = run_governed_stock_history_batch(root, {"000002.SZ", "600036.SH"}, "2026-07-14", True, primary_loader=primary, sleep=lambda _: None)
+    first = run_governed_stock_history_batch(root, {"000002.SZ", "600036.SH"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None)
+    second = run_governed_stock_history_batch(root, {"000002.SZ", "600036.SH"}, "2026-07-14", True, tencent_loader=tencent, sleep=lambda _: None)
     assert first["selected_batch_checksum"] == second["selected_batch_checksum"]
     assert first["selected_rows"] == second["selected_rows"]
-    assert first["selected_upstream_source"] == second["selected_upstream_source"] == "East Money"
+    assert first["selected_upstream_source"] == second["selected_upstream_source"] == "Tencent"
+    assert first["east_money_canonical_request_count"] == second["east_money_canonical_request_count"] == 0
 
 
 def test_bounded_canonical_commitment_reconstructs_ignored_full_materialization(tmp_path: Path) -> None:

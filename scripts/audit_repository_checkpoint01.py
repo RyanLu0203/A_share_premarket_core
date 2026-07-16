@@ -158,7 +158,8 @@ def _check_docs(failures: list[str]) -> None:
 
 def _check_workflow_locks(failures: list[str]) -> None:
     path = ROOT / "configs/project/workflow_status.csv"
-    rows = {row["workflow_id"]: row for row in csv.DictReader(path.open(newline="", encoding="utf-8"))}
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = {row["workflow_id"]: row for row in csv.DictReader(handle)}
     checkpoint = rows.get("goal_repository_checkpoint01_arch03_stable_snapshot_and_codex_max_entrypoint_gate", {})
     if checkpoint.get("status") != "implemented_governance_only":
         failures.append("GOAL-REPOSITORY-CHECKPOINT-01 workflow row is not implemented_governance_only")

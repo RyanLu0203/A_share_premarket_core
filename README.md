@@ -50,6 +50,22 @@ Daily operational run:
 python scripts/run_daily_incremental_evidence_refresh.py
 ```
 
+The canonical live path uses AKShare `stock_zh_a_hist_tx` / Tencent directly
+as its sole operational source. It requires one complete current-T-1 qfq batch;
+partial coverage and provider mixing fail closed. East Money is not a fallback
+and its canonical request count is always zero. Its separately invoked,
+disabled-by-default bounded health probe is:
+
+```bash
+python scripts/run_east_money_health_probe.py --trade-date YYYY-MM-DD --allow-network
+```
+
+Probe output is local diagnostic evidence only and cannot affect canonical
+rows, provider selection, checksums, freshness, coverage, snapshots, or refresh
+status. Tencent's sixth AKShare export is volume in `手`; monetary `amount` is
+explicitly unavailable/null and is never zero-filled. qfq is the only enabled
+production adjustment; hfq is `UNSUPPORTED_DISABLED`.
+
 An owner-supplied bounded CSV can be passed with `--evidence-file`; live
 provider access additionally requires `--allow-network` or the existing
 environment opt-in. Deterministic governance replay uses

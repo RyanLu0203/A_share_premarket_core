@@ -88,6 +88,13 @@ def tencent_symbol(symbol: str) -> str:
     code, separator, exchange = symbol.strip().upper().partition(".")
     if not separator or len(code) != 6 or not code.isdigit() or exchange not in {"SH", "SZ", "BJ"}:
         raise ValueError(f"unsupported_canonical_symbol:{symbol}")
+    valid_market = (
+        (exchange == "SH" and code.startswith(("5", "6", "9")))
+        or (exchange == "SZ" and code.startswith(("0", "2", "3")))
+        or (exchange == "BJ" and code.startswith(("4", "8", "92")))
+    )
+    if not valid_market:
+        raise ValueError(f"canonical_symbol_exchange_mismatch:{symbol}")
     return f"{exchange.lower()}{code}"
 
 
@@ -114,6 +121,11 @@ def load_stock_ohlcv_daily_tencent(
         date_end=end_date,
     )
     result.attempt["endpoint_family"] = "web.ifzq.gtimg.cn;proxy.finance.qq.com"
+    if symbol.upper().endswith(".BJ") and result.attempt.get("status") != "PASS":
+        result.attempt["failure_class"] = "TENCENT_BJ_UPSTREAM_UNSUPPORTED"
+        result.attempt["rejection_reason"] = "TENCENT_BJ_UPSTREAM_UNSUPPORTED"
+        result.attempt["retry_allowed"] = False
+        result.attempt["notes"] = "governed BJ mapping is valid; Tencent history returned no supported day series"
     return result
 
 

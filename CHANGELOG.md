@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-16 - Tencent primary operational hardening
+
+Status: implemented and live-accepted on the Issue #36 feature branch; not a
+deployment claim.
+
+- Promoted AKShare `stock_zh_a_hist_tx` / Tencent to the direct canonical
+  operational primary and removed East Money from canonical source selection.
+  East Money now exists only behind a separate, disabled-by-default bounded
+  probe; automatic failback and per-symbol mixing are forbidden.
+- Added strict Tencent exported-column order, schema, exchange mapping,
+  current-T-1, key uniqueness, OHLC, finite-value, volume, future/stale,
+  full-universe, PIT, provenance, and complete-batch gates.
+- Formalized the sixth Tencent field as volume in `手`; canonical monetary
+  amount remains null/unavailable. Added an audited amount-consumer inventory
+  proving null is not interpreted as zero.
+- Kept qfq as the only production adjustment, marked hfq
+  `UNSUPPORTED_DISABLED`, and separated bounded corporate-action/independent
+  verification from the canonical Tencent rows.
+- Added deterministic provider and atomic-write failure tests covering
+  timeout, DNS, TLS, empty/malformed responses, partial/final-symbol failure,
+  interruption, schema drift, stale, duplicate, and future rows. Every failure
+  preserves the previous immutable snapshot.
+- Replaced the deprecated Starlette/httpx compatibility path with `httpx2`
+  while keeping supported FastAPI/httpx bounds; the normal suite is
+  warning-free.
+- Completed two genuine network runs for dynamic target `2026-07-16` / T-1
+  `2026-07-15`: Tencent 41/41, East Money canonical requests 0, identical batch
+  and snapshot checksums, and no `already_refreshed` shortcut.
+
 ## 2026-07-15 - governed AKShare East Money-to-Tencent secondary upstream
 
 Status: `IMPLEMENTED_RESEARCH_ONLY_PASS`; ready for feature-branch review.
