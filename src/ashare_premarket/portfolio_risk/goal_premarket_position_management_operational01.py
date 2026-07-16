@@ -5,6 +5,8 @@ import hashlib
 import io
 import json
 import math
+import os
+import tempfile
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -114,8 +116,7 @@ FORBIDDEN_TEXT = ["BUY", "SELL", "HOLD", "order_quantity", "target_price", "brok
 
 
 def write_text(path: Path, body: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(body.encode("utf-8"))
+    _atomic_write_bytes(path, body.encode("utf-8"))
 
 
 def write_json(path: Path, payload: dict[str, object]) -> None:
@@ -1306,9 +1307,26 @@ def _config_payload(predecessor_manifest: dict[str, object], preferred_policy: d
 
 
 def _write_immutable_text(path: Path, body: str) -> None:
-    if path.exists() and path.read_text(encoding="utf-8") != body:
-        raise RuntimeError(f"refuse_conflicting_snapshot_overwrite:{path}")
+    if path.exists():
+        if path.read_text(encoding="utf-8") != body:
+            raise RuntimeError(f"refuse_conflicting_snapshot_overwrite:{path}")
+        return
     write_text(path, body)
+
+
+def _atomic_write_bytes(path: Path, body: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent, delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(body)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
 
 
 def _csv_text(rows: list[dict[str, object]]) -> str:

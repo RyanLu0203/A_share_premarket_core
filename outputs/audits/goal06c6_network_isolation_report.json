@@ -6,7 +6,10 @@
     "push2his.eastmoney.com",
     "80.push2.eastmoney.com",
     "82.push2.eastmoney.com",
-    "quote.eastmoney.com"
+    "quote.eastmoney.com",
+    "finance.sina.com.cn",
+    "web.ifzq.gtimg.cn",
+    "proxy.finance.qq.com"
   ],
   "child_proxy_env_cleanup_proven": true,
   "cloakbrowser_or_bypass_used": false,
@@ -20,7 +23,7 @@
     "www.bse.cn"
   ],
   "parent_environment_mutation_check": "PASS_RESTORED",
-  "selected_network_mode": "finance_direct_child_env_proxy_cleanup",
+  "selected_network_mode": "finance_direct_requests_proxy_discovery_disabled",
   "silent_proxy_fallback_used": false,
   "status": "PASS_WITH_WARNINGS",
   "system_proxy_inheritance_allowed": false

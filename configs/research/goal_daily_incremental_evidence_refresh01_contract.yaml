@@ -16,7 +16,7 @@ pit_fail_closed: true
 provider_reconciliation_preserved: true
 quarantine_preserved: true
 no_silent_averaging: true
-adjustment_convention_status: unresolved
+adjustment_convention_status: live_akshare_qfq_governed; predecessor_evidence_explicitly_unresolved
 network_default: disabled
 immutable_success_manifest: true
 source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf

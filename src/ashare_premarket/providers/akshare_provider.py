@@ -3,6 +3,8 @@ from __future__ import annotations
 import importlib
 import importlib.util
 import inspect
+import time
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,6 +16,7 @@ from ashare_premarket.providers.schema_normalization import (
     normalize_code_name_schema,
     normalize_spot_schema,
     normalize_stock_ohlcv_schema,
+    normalize_tencent_stock_ohlcv_schema,
     symbol_to_provider_code,
 )
 
@@ -37,7 +40,7 @@ def akshare_function_signatures() -> dict[str, str]:
         return {}
     ak = importlib.import_module("akshare")
     signatures = {}
-    for name in ["stock_info_a_code_name", "stock_zh_a_spot_em", "stock_zh_a_hist", "index_zh_a_hist"]:
+    for name in ["stock_info_a_code_name", "stock_zh_a_spot_em", "stock_zh_a_hist", "stock_zh_a_hist_tx", "index_zh_a_hist"]:
         fn = getattr(ak, name, None)
         signatures[name] = str(inspect.signature(fn)) if fn else "missing"
     return signatures
@@ -81,6 +84,39 @@ def load_stock_ohlcv_daily(symbol: str, start_date: str, end_date: str, adjust_p
     )
 
 
+def tencent_symbol(symbol: str) -> str:
+    code, separator, exchange = symbol.strip().upper().partition(".")
+    if not separator or len(code) != 6 or not code.isdigit() or exchange not in {"SH", "SZ", "BJ"}:
+        raise ValueError(f"unsupported_canonical_symbol:{symbol}")
+    return f"{exchange.lower()}{code}"
+
+
+def load_stock_ohlcv_daily_tencent(
+    symbol: str,
+    start_date: str,
+    end_date: str,
+    adjust_policy: str,
+    network_enabled: bool,
+) -> ProviderResult:
+    kwargs = {
+        "symbol": tencent_symbol(symbol),
+        "start_date": start_date.replace("-", ""),
+        "end_date": end_date.replace("-", ""),
+        "adjust": adjust_policy,
+    }
+    result = _call(
+        "stock_zh_a_hist_tx",
+        kwargs,
+        network_enabled,
+        lambda raw: normalize_tencent_stock_ohlcv_schema(raw, symbol),
+        symbol=symbol,
+        date_start=start_date,
+        date_end=end_date,
+    )
+    result.attempt["endpoint_family"] = "web.ifzq.gtimg.cn;proxy.finance.qq.com"
+    return result
+
+
 def load_benchmark_ohlcv_daily(benchmark_symbol: str, start_date: str, end_date: str, network_enabled: bool) -> ProviderResult:
     kwargs = {
         "symbol": benchmark_symbol,
@@ -108,6 +144,8 @@ def _call(
     date_start: str = "",
     date_end: str = "",
 ) -> ProviderResult:
+    start_monotonic = time.monotonic()
+    started_at = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
     if not network_enabled:
         return _empty_result(function_name, symbol, date_start, date_end, "NETWORK_DISABLED_BY_POLICY", "network disabled by policy")
     if not akshare_available():
@@ -136,10 +174,19 @@ def _call(
             retry_allowed=classification.retry_allowed,
             response_type=type(raw).__name__,
             notes=notes,
+            attempt_ts=started_at,
+            elapsed_seconds=round(time.monotonic() - start_monotonic, 6),
+            request_parameters=call_kwargs,
+            endpoint_family=network_context.get("target_domain", ""),
+            akshare_version=str(getattr(ak, "__version__", "unknown")),
+            exception_type="",
+            terminal_exception_message="",
+            network_context=network_context,
         )
         return ProviderResult(rows=rows, attempt=attempt, raw=raw)
     except Exception as exc:  # provider/runtime failure path
         classification = classify_provider_failure(exc=exc, context=network_context)
+        status_code = getattr(getattr(exc, "response", None), "status_code", "")
         return ProviderResult(
             rows=[],
             attempt=make_attempt(
@@ -155,6 +202,15 @@ def _call(
                 schema_valid=False,
                 retry_allowed=classification.retry_allowed,
                 notes=classification.notes,
+                attempt_ts=started_at,
+                elapsed_seconds=round(time.monotonic() - start_monotonic, 6),
+                request_parameters=kwargs,
+                endpoint_family=network_context.get("target_domain", ""),
+                akshare_version=_akshare_version(),
+                exception_type=type(exc).__name__,
+                terminal_exception_message=str(exc),
+                http_status=str(status_code),
+                network_context=network_context,
             ),
         )
 
@@ -198,3 +254,10 @@ def _empty_result(
             notes=notes,
         ),
     )
+
+
+def _akshare_version() -> str:
+    try:
+        return str(getattr(importlib.import_module("akshare"), "__version__", "unknown"))
+    except Exception:
+        return "unavailable"

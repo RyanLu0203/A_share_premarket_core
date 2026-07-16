@@ -29,12 +29,15 @@ ALLOWED_FINANCE_DOMAINS = [
     "82.push2.eastmoney.com",
     "quote.eastmoney.com",
     "finance.sina.com.cn",
+    "web.ifzq.gtimg.cn",
+    "proxy.finance.qq.com",
 ]
 
 FUNCTION_TARGET_DOMAINS = {
     "stock_info_a_code_name": "www.bse.cn",
     "stock_zh_a_spot_em": "82.push2.eastmoney.com",
     "stock_zh_a_hist": "push2his.eastmoney.com",
+    "stock_zh_a_hist_tx": "proxy.finance.qq.com",
     "index_zh_a_hist": "80.push2.eastmoney.com",
     "tool_trade_date_hist_sina": "finance.sina.com.cn",
     "run_goal06c6_source_backed_engineering_pilot_bundle": "akshare_finance_domains",

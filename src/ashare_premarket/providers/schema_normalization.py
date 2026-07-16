@@ -11,28 +11,92 @@ def normalize_stock_ohlcv_schema(data: Any, symbol: str, source_id: str = "aksha
     normalized = []
     for row in rows:
         trade_date = _value(row, ["日期", "date", "trade_date"])
-        open_value = _value(row, ["开盘", "open"])
-        close_value = _value(row, ["收盘", "close"])
-        high_value = _value(row, ["最高", "high"])
-        low_value = _value(row, ["最低", "low"])
-        if trade_date in {"", None} or close_value in {"", None}:
-            continue
+        values = {
+            "open": _strict_float(_value(row, ["开盘", "open"], None)),
+            "high": _strict_float(_value(row, ["最高", "high"], None)),
+            "low": _strict_float(_value(row, ["最低", "low"], None)),
+            "close": _strict_float(_value(row, ["收盘", "close"], None)),
+            "volume": _strict_float(_value(row, ["成交量", "volume"], None)),
+        }
+        if trade_date in {"", None} or any(value is None for value in values.values()):
+            return [], False, "missing required East Money date/OHLCV fields"
+        amount = _strict_float(_value(row, ["成交额", "amount"], None))
+        turnover = _strict_float(_value(row, ["换手率", "turnover_rate"], None))
+        quality_flags = ["SOURCE_BACKED"]
+        if amount is None:
+            quality_flags.append("AMOUNT_UNAVAILABLE")
+        if turnover is None:
+            quality_flags.append("TURNOVER_RATE_UNAVAILABLE")
         normalized.append(
             {
                 "trade_date": str(trade_date)[:10],
                 "symbol": symbol,
-                "open": _float(open_value),
-                "high": _float(high_value),
-                "low": _float(low_value),
-                "close": _float(close_value),
-                "volume": _float(_value(row, ["成交量", "volume"], 0)),
-                "amount": _float(_value(row, ["成交额", "amount"], 0)),
-                "turnover_rate": _float(_value(row, ["换手率", "turnover_rate"], 0)),
+                **values,
+                "amount": amount,
+                "turnover_rate": turnover,
                 "source_id": source_id,
-                "quality_flags": "SOURCE_BACKED",
+                "quality_flags": ";".join(quality_flags),
             }
         )
     return normalized, bool(normalized), "normalized_stock_ohlcv" if normalized else "missing required stock OHLCV columns"
+
+
+def normalize_tencent_stock_ohlcv_schema(
+    data: Any,
+    symbol: str,
+    source_id: str = "akshare_stock_zh_a_hist_tx",
+) -> tuple[list[dict[str, object]], bool, str]:
+    """Normalize AKShare's Tencent history without misrepresenting field semantics.
+
+    ``stock_zh_a_hist_tx`` exposes six columns and names the sixth ``amount``.
+    AKShare documents that field in ``手`` and cross-source fixtures prove a
+    scale-1 match to East Money's ``成交量``.  The official AKShare function
+    discards Tencent's separate monetary-amount field, so canonical ``amount``
+    is deliberately unavailable rather than guessed or zero-filled.
+    """
+
+    rows = _records(data)
+    normalized: list[dict[str, object]] = []
+    seen_dates: set[str] = set()
+    for row in rows:
+        trade_date = str(_value(row, ["date", "日期", "trade_date"], ""))[:10]
+        values = {
+            "open": _strict_float(_value(row, ["open", "开盘"], None)),
+            "high": _strict_float(_value(row, ["high", "最高"], None)),
+            "low": _strict_float(_value(row, ["low", "最低"], None)),
+            "close": _strict_float(_value(row, ["close", "收盘"], None)),
+            # AKShare's Tencent adapter mislabels this source volume column.
+            "volume": _strict_float(_value(row, ["amount"], None)),
+        }
+        if not trade_date or any(value is None for value in values.values()):
+            return [], False, "tencent_missing_required_date_ohlcv_or_source_volume"
+        if trade_date in seen_dates:
+            return [], False, f"tencent_duplicate_trade_date:{trade_date}"
+        if values["close"] <= 0 or values["volume"] < 0:
+            return [], False, f"tencent_invalid_price_or_volume:{trade_date}"
+        seen_dates.add(trade_date)
+        normalized.append(
+            {
+                "trade_date": trade_date,
+                "symbol": symbol,
+                **values,
+                "amount": None,
+                "turnover_rate": None,
+                "source_id": source_id,
+                "quality_flags": "SOURCE_BACKED;TENCENT_AMOUNT_UNAVAILABLE",
+                "source_volume_field": "akshare_amount_mislabeled_as_amount",
+                "volume_semantics": "tencent_volume_unit_hand_scale_1_to_eastmoney_volume",
+                "amount_semantics": "unavailable_from_stock_zh_a_hist_tx",
+            }
+        )
+    normalized.sort(key=lambda row: str(row["trade_date"]))
+    return (
+        normalized,
+        bool(normalized),
+        "normalized_tencent_stock_ohlcv;amount_unavailable_from_official_akshare_function"
+        if normalized
+        else "missing required Tencent stock OHLCV rows",
+    )
 
 
 def normalize_benchmark_schema(data: Any, benchmark_symbol: str, source_id: str = "akshare_index_zh_a_hist") -> tuple[list[dict[str, object]], bool, str]:
@@ -129,3 +193,13 @@ def _float(value: Any) -> float:
         return float(str(value).replace(",", ""))
     except (TypeError, ValueError):
         return 0.0
+
+
+def _strict_float(value: Any) -> float | None:
+    try:
+        if value in {"", None, "-"}:
+            return None
+        parsed = float(str(value).replace(",", ""))
+        return parsed if parsed == parsed and parsed not in {float("inf"), float("-inf")} else None
+    except (TypeError, ValueError):
+        return None

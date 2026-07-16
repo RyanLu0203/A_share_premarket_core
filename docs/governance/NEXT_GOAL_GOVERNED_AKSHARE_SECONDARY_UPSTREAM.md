@@ -6,20 +6,22 @@
 
 ## Status And Boundary
 
-Status: `SPECIFICATION_ONLY_NOT_IMPLEMENTED_NOT_ACTIVATED`
+Status: `ISSUE_34_IMPLEMENTED_RESEARCH_ONLY_PASS`
 
-This goal is not part of PR #33 implementation. It must not activate Tencent,
-change runtime provider selection, create a snapshot, or claim operational
-deployment. It preserves TLS verification, bounded execution, fail-closed
-evidence rules, and every recommendation, trading, broker, production,
-factor-mining, and DQN/RL lock.
+This goal was deliberately excluded from PR #33. GitHub Issue #34 now provides
+the separate explicit authority to implement and validate the governed
+secondary. The complete live acceptance and identical idempotency run now
+pass. TLS verification, bounded execution,
+fail-closed evidence rules, and every recommendation, trading, broker,
+production, factor-mining, and DQN/RL lock remain mandatory.
 
 ## Provider Roles
 
 - Application provider library: AKShare.
 - Primary: `stock_zh_a_hist` / East Money /
   `push2his.eastmoney.com/api/qt/stock/kline/get`.
-- Candidate secondary: `stock_zh_a_hist_tx` / Tencent Securities /
+- Governed secondary: `stock_zh_a_hist_tx` / Tencent Securities /
+  `web.ifzq.gtimg.cn` plus
   `proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get`.
 - Selection grain: one complete refresh run, never individual symbols.
 
@@ -43,29 +45,34 @@ factor-mining, and DQN/RL lock.
 
 ## Approved Primary-Failure Condition Contract
 
-Implementation must propose and test a concrete condition for explicit review.
-It must be based on bounded batch evidence such as transport failure rate,
-missing required T-1 coverage, repeated endpoint-level remote closes, or an
-approved provider-state classification. It must not use per-symbol opportunism,
-identity rotation, TLS bypass, unbounded retrying, or an undocumented heuristic.
-
-The condition, thresholds, observation window, total-attempt cap, wall-clock
-cap, and source-selection reason must be written into the run manifest. Tencent
-activation remains disabled until the condition and contract receive explicit
-user approval.
+Issue #34 approves activation only after a complete bounded primary batch has
+less than 100% required T-1 coverage, at least one missing symbol is classified
+as `BROWSER_NET_EMPTY_RESPONSE`, `CONNECTION_RESET`,
+`HTTP_429_RATE_LIMITED`, or `HTTP_5XX_PROVIDER_ERROR`, and every missing symbol
+is explained by an approved endpoint failure rather than a local or integrity
+defect. Each upstream has one attempt per required symbol, a 30-second provider
+timeout, and a 1,800-second batch wall-clock cap. No retry, per-symbol
+opportunism, identity rotation, TLS bypass, or undocumented heuristic is used.
 
 ## Normalization And Semantic Research
 
 - Normalize SZSE/SSE symbols to the canonical `NNNNNN.SZ` / `NNNNNN.SH`
   contract and prove the Tencent request-code mapping for both exchanges.
-- Define a complete normalized daily schema for trade date, open, high, low,
-  close, volume, amount, source timestamp, adjustment mode, and provenance.
-- Determine from AKShare implementation and bounded source evidence what
-  Tencent's `amount` field represents, including unit and scaling. Do not infer
-  volume from amount or silently substitute one for the other.
-- Prove that Tencent `qfq` adjustment semantics match the primary contract, or
-  reject activation. Corporate-action and date-boundary behavior require
-  explicit fixtures.
+- The normalized daily schema carries trade date, symbol, open, high, low,
+  close, volume, explicitly unavailable monetary amount, adjustment mode, and
+  request/batch provenance.
+- AKShare 1.18.64 truncates Tencent output to six columns and labels the sixth
+  `amount`. Three-source overlap samples prove that this value exactly equals
+  East Money `成交量`; it is source volume in `手` with canonical scale 1. The separate
+  Tencent monetary-amount field exists in the raw endpoint at 10,000-CNY scale
+  but is discarded by `stock_zh_a_hist_tx`. The adapter therefore maps the
+  misleading export to volume and records monetary amount as unavailable; it
+  never invents, substitutes, or zero-fills the missing value.
+- Production adjustment is qfq only. Corporate-action and date-boundary
+  behavior require versioned authoritative-company/exchange evidence,
+  Tencent unadjusted/qfq rows, approved-calendar alignment, formula
+  verification, and continuity checks. hfq is runtime-disabled research
+  evidence and cannot block or satisfy the qfq production gate.
 
 ## Cross-Source Consistency Contract
 
@@ -74,12 +81,18 @@ grain covering both exchanges and representative corporate-action histories.
 
 - Dates must align to the approved trading calendar.
 - OHLC comparison must use explicit absolute and relative price tolerances.
-- Amount comparison must use a separate tolerance only after units and scaling
-  are resolved.
+- Volume must match exactly in the shared provider unit. A diagnostic-only raw
+  monetary-amount fixture may use `100 CNY` absolute or `1e-6` relative
+  tolerance after applying the observed 10,000-CNY scale; this raw diagnostic
+  is never promoted to canonical Tencent output.
 - Tolerances must be proposed from observed precision/rounding evidence,
   versioned, and approved; they must not be selected to force a pass.
-- Duplicate keys, missing overlap, material OHLC conflicts, adjustment
-  conflicts, and unresolved amount semantics block secondary approval.
+- Duplicate keys, missing ordinary qfq overlap, material OHLC conflicts, qfq
+  adjustment conflicts, and unresolved amount semantics block secondary
+  approval. When the bounded primary corporate window closes before HTTP/body
+  evidence, the approved classification is
+  `PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE`; governed authoritative-terms
+  triangulation is then required.
 - Cross-source comparison is an approval audit, not permission to mix rows in
   a canonical run.
 
@@ -115,8 +128,8 @@ be committed.
    SZSE symbols.
 6. The normalized Tencent schema is complete, and `amount` meaning, unit, and
    scaling are documented and tested.
-7. Adjustment semantics and corporate-action behavior are verified against the
-   approved contract.
+7. qfq adjustment semantics and corporate-action behavior are verified against
+   the approved contract; hfq remains disabled and non-blocking.
 8. A bounded overlap audit compares dates and OHLC fields across both sources.
 9. Separate, evidence-backed price and amount tolerances are versioned and
    tested, including fail cases just outside each tolerance.
@@ -135,9 +148,25 @@ be committed.
 16. All recommendation, trading, broker, production, factor-mining, and DQN/RL
     capabilities remain locked.
 
-## Required Decision Before Implementation
+## Implementation Evidence
 
-The user must explicitly approve the primary-failure condition, Tencent schema
-and amount semantics, adjustment contract, consistency tolerances, and
-single-upstream run policy. Until then, the existing inactive proposal remains
-non-callable and East Money failure remains fail-closed.
+- Policy: `configs/providers/akshare_governed_stock_history_v1.json`.
+- State machine: `src/ashare_premarket/providers/governed_stock_history.py`.
+- Versioned normalized fixture:
+  `configs/providers/fixtures/eastmoney_tencent_consistency_v1.csv`.
+- Versioned qfq corporate-action fixture:
+  `configs/providers/fixtures/tencent_qfq_corporate_action_v2.json`.
+- Bounded fresh-clone evidence: a 41-row T-1 canonical delta plus a versioned
+  base+delta checksum commitment; the duplicate full canonical materialization
+  remains local and ignored.
+- Tests: `tests/test_governed_akshare_secondary_upstream.py`.
+
+The approved qfq contract passes SSE `603836.SH` and required-universe SZSE
+`000333.SZ` authoritative-terms triangulation as well as ordinary SSE/SZSE/
+ChiNext direct overlap. Two identical full live runs selected Tencent for all
+41 symbols with batch checksum
+`a95459ff4be28e5acf48c7fb056490f470034d6949599119da8fa8277b95f5b5`
+and snapshot checksum
+`8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2`.
+The 600036.SH hfq difference remains explicitly documented as non-production
+research evidence and is never used by the runtime selector.

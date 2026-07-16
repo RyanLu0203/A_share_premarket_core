@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "outputs/research/goal_daily_incremental_evidence_refresh01_"
 MANIFEST = "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json"
 REPLAY_MUTABLE_OPERATIONAL_OUTPUTS = (
+    "configs/project/workflow_status.csv",
     "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json",
     "outputs/audits/goal_daily_incremental_evidence_refresh01_report.md",
     "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json",
@@ -30,6 +31,7 @@ REPLAY_MUTABLE_OPERATIONAL_OUTPUTS = (
     "outputs/research/goal_daily_incremental_evidence_refresh01_refresh_manifest.json",
     "outputs/research/goal_daily_incremental_evidence_refresh01_run_summary.csv",
     "outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv",
+    *opm01.REQUIRED_ARTIFACTS,
 )
 
 
@@ -129,7 +131,7 @@ def test_incremental_merge_uses_primary_provider_without_averaging() -> None:
     assert latest["canonical_return_1d"] == "0.2"
     assert latest["source_provider"] == "akshare"
     assert latest["provider_overlap_status"] == "single_approved_provider_no_overlap_evidence"
-    assert latest["adjustment_convention_status"] == "unresolved_cross_provider_adjustment_convention"
+    assert latest["adjustment_convention_status"] == "qfq_governed_single_upstream"
     assert latest["risk_model_eligible"] == "true"
     assert daily_refresh.NO_SILENT_AVERAGING is True
 
@@ -161,6 +163,25 @@ def test_source_checksum_is_stable_across_git_line_endings(tmp_path: Path) -> No
     crlf.write_bytes(b"trade_date,symbol\r\n2026-06-30,000001.SZ\r\n")
 
     assert daily_refresh._sha256_normalized_text_file(lf) == daily_refresh._sha256_normalized_text_file(crlf)
+
+
+def test_daily_refresh_atomic_write_replaces_complete_bytes_without_temp_residue(tmp_path: Path) -> None:
+    path = tmp_path / "nested/evidence.json"
+    daily_refresh.write_text(path, "first\n")
+    daily_refresh.write_text(path, "second\n")
+    assert path.read_bytes() == b"second\n"
+    assert list(path.parent.glob(f".{path.name}.*.tmp")) == []
+
+
+def test_provider_attempt_idempotency_ignores_only_request_timing(tmp_path: Path) -> None:
+    path = tmp_path / "attempts.csv"
+    base = {field: "" for field in daily_refresh.ATTEMPT_FIELDS}
+    base.update({"symbol": "000002.SZ", "status": "PASS", "attempt_ts": "first", "elapsed_seconds": "1.0"})
+    assert daily_refresh._write_idempotent_provider_attempts(path, [base]) == "FIRST_IMMUTABLE_ATTEMPT_EVIDENCE_WRITE"
+    rerun = {**base, "attempt_ts": "second", "elapsed_seconds": "2.0"}
+    assert daily_refresh._write_idempotent_provider_attempts(path, [rerun]) == "PASS_SEMANTIC_MATCH_EXISTING_IMMUTABLE_EVIDENCE"
+    with pytest.raises(RuntimeError, match="refuse_non_idempotent_provider_attempt_overwrite"):
+        daily_refresh._write_idempotent_provider_attempts(path, [{**rerun, "status": "FAIL"}])
 
 
 @pytest.mark.parametrize(
@@ -231,6 +252,55 @@ def test_validation_failure_does_not_call_opm(tmp_path: Path) -> None:
     assert latest["refresh_status"] == "BLOCKED"
     assert "STALE_SOURCE_DATA" in latest["blocked_reasons"]
     assert latest["snapshot_manifest_path"] == ""
+
+
+def test_refresh_passes_the_frozen_resolved_clock_to_opm(tmp_path: Path) -> None:
+    _write_csv(
+        tmp_path / "configs/project/trading_calendar.csv",
+        [
+            {"date": "2026-06-30", "is_trading_day": "true", "session_note": "regular"},
+            {"date": "2026-07-01", "is_trading_day": "true", "session_note": "regular"},
+            {"date": "2026-07-02", "is_trading_day": "true", "session_note": "regular"},
+        ],
+    )
+    _write_csv(tmp_path / daily_refresh.CANONICAL_MARKET, [_canonical_row("000001.SZ", "2026-06-30")])
+    _write_csv(tmp_path / daily_refresh.REFERENCE_PORTFOLIO, [{"symbol": "000001.SZ", "reference_weight": "1"}])
+    evidence = tmp_path / "incremental.csv"
+    _write_csv(
+        evidence,
+        [
+            {
+                "trade_date": "2026-07-01",
+                "symbol": "000001.SZ",
+                "close": "11",
+                "source_provider": "akshare",
+                "provider_timestamp": "2026-07-01",
+                "pit_available_date": "2026-07-01",
+                "no_lookahead_status": "passed_current_or_past_only",
+                "suspension_status": "trading",
+                "adjustment_policy": "qfq",
+            }
+        ],
+    )
+    received: dict[str, object] = {}
+
+    def fake_opm(*args: object, **kwargs: object) -> bool:
+        received.update(kwargs)
+        return True
+
+    result = daily_refresh.run_goal_daily_incremental_evidence_refresh01(
+        tmp_path,
+        execution_time="2026-07-02T09:01:02+08:00",
+        target_trading_date="2026-07-02",
+        replay_date=None,
+        evidence_file=evidence,
+        opm_runner=fake_opm,
+    )
+
+    assert result is False  # the fake runner intentionally writes no snapshot
+    assert received["execution_time"] == "2026-07-02T09:01:02+08:00"
+    assert received["target_trading_date"] == "2026-07-02"
+    assert received["replay_date"] is None
 
 
 def test_calendar_coverage_gap_is_fail_closed_without_guessing_a_trading_day(tmp_path: Path) -> None:

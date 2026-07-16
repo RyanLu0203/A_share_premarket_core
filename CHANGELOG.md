@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-07-15 - governed AKShare East Money-to-Tencent secondary upstream
+
+Status: `IMPLEMENTED_RESEARCH_ONLY_PASS`; ready for feature-branch review.
+
+- Added a versioned complete-run source-selection state machine. It always
+  terminates the full bounded East Money batch before evaluating the approved
+  endpoint-failure condition and, when authorized, discards partial primary
+  rows and reacquires the entire universe through Tencent.
+- Added the official AKShare `stock_zh_a_hist_tx` adapter with SH, SZ,
+  ChiNext, and BJ mapping, scoped Tencent host allowlisting, bounded timeout,
+  TLS preservation, and no proxy or identity bypass.
+- Resolved the misleading Tencent `amount` export through bounded overlap:
+  the field is volume in `手` at scale 1 to East Money. True monetary
+  amount is discarded by the official AKShare function and remains explicitly
+  unavailable rather than inferred or zero-filled.
+- Added versioned OHLC, volume, diagnostic amount, adjustment, and
+  corporate-action fixtures and fail-closed consistency checks. Missing,
+  duplicate, stale, PIT-invalid, conflicting, semantically unresolved, or
+  incomplete evidence cannot become a current snapshot.
+- Expanded request/batch provenance, normalized checksums, global request
+  sequencing, source-selection decisions, atomic snapshot writes, and
+  idempotency evidence.
+- Added comprehensive focused tests for primary-only success, approved and
+  prohibited transitions, complete secondary reacquisition, no mixing,
+  mappings, semantics, adjustment, tolerance boundaries, stale data, PIT,
+  provenance, checksums, atomic writes, replay isolation, and idempotency.
+- Preserved every recommendation, target-price, order, trading, broker,
+  production-model, factor-mining, and DQN/RL lock; launchd and services remain
+  outside this goal.
+- Defined qfq as the only production adjustment. Added authoritative-terms
+  corporate-action triangulation for SSE `603836.SH` and required-universe
+  SZSE `000333.SZ`; formula, continuity, calendar, and just-outside tolerance
+  tests pass. hfq remains disabled and non-blocking research evidence.
+- Fixed the refresh-to-OPM clock boundary so both stages use the already
+  resolved execution timestamp; atomic guards preserved all evidence during
+  diagnosis and a regression test covers the prior second-clock defect.
+- Completed two identical full live runs: Tencent 41/41, no mixed source,
+  batch checksum `a95459ff4be28e5acf48c7fb056490f470034d6949599119da8fa8277b95f5b5`,
+  snapshot checksum `8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2`,
+  and idempotency PASS.
+- Reconciled exactly five read-only API response hashes and three runtime
+  artifact hashes to the truthful second snapshot. OpenAPI, 22 GET/zero write
+  routes, historical replay, canonical market evidence, and all locks remain
+  unchanged. Full Python is `448 passed`; canonical profile is `117/117 PASS`.
+- Added a bounded 41-row T-1 delta and base-plus-delta checksum commitment so
+  fresh clones verify the live snapshot without committing a duplicate 12.4 MB
+  full canonical market materialization.
+
 ## 2026-07-15 - macOS live refresh and provider recovery
 
 - Forced the launchd/macOS daily runner into true live mode by passing

@@ -2,6 +2,64 @@
 
 Last updated: 2026-07-15
 
+## GOAL-GOVERNED-AKSHARE-TENCENT-SECONDARY-UPSTREAM-01
+
+Issue #34 is `IMPLEMENTED_RESEARCH_ONLY_PASS` on
+`codex/governed-akshare-tencent-secondary-upstream`, based exactly on the
+authoritative PR #33 merge `c7a271fefe12936266de73fedfad233869e4d79e`.
+
+- AKShare remains the application provider. East Money
+  `stock_zh_a_hist` remains primary and Tencent `stock_zh_a_hist_tx` is the
+  only governed secondary candidate.
+- Source selection is once per complete run. The bounded East Money batch must
+  terminate before evaluation; an approved endpoint failure may launch one
+  complete Tencent reacquisition, and every partial primary row is discarded.
+  Per-symbol mixing and silent fallback are prohibited.
+- Approved activation classes are `BROWSER_NET_EMPTY_RESPONSE`,
+  `CONNECTION_RESET`, `HTTP_429_RATE_LIMITED`, and
+  `HTTP_5XX_PROVIDER_ERROR`. TLS, proxy, symbol, schema, stale-date, PIT,
+  checksum, calendar, and other local/integrity failures never activate the
+  secondary.
+- Tencent mapping is explicit for SH, SZ/ChiNext, and BJ symbols. AKShare
+  1.18.64 labels Tencent's sixth exported field `amount`, but bounded overlap
+  evidence proves it is volume in `手` at scale 1 to East Money `成交量`.
+  The official function discards Tencent's monetary-amount field;
+  canonical monetary amount is therefore explicitly unavailable and is never
+  zero-filled or inferred.
+- Versioned tolerances are OHLC absolute `0.01 CNY` or relative `0.0005`,
+  exact volume equality in provider units, and a diagnostic-only raw Tencent
+  monetary-amount comparison of `100 CNY` absolute or `1e-6` relative. This
+  diagnostic amount is not exposed as canonical provider output.
+- Production adjustment is qfq only. Ordinary SSE/SZSE/ChiNext overlap and
+  authoritative-terms corporate-action triangulation for SSE `603836.SH` and
+  required-universe SZSE `000333.SZ` pass formula, continuity, calendar, and
+  tolerance gates. Missing primary corporate rows are classified
+  `PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE`. hfq remains disabled and its
+  600036.SH discrepancy is non-blocking research evidence only.
+- Request evidence records global and batch sequence, function, upstream,
+  endpoint family, parameters, timing, HTTP evidence when exposed, rows,
+  latest date, exception, acceptance, rejection, retry count, AKShare version,
+  network scope, and batch checksum. Snapshot and refresh writes use atomic
+  replace with immutable conflict guards.
+- Two complete live runs selected Tencent for all 41 current T-1 rows with no
+  mixing. Batch checksum is `a95459ff4be28e5acf48c7fb056490f470034d6949599119da8fa8277b95f5b5`;
+  snapshot checksum is `8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2`;
+  idempotency is `PASS_IDENTICAL_NORMALIZED_BATCH_AND_IMMUTABLE_SNAPSHOT`.
+- The duplicate 12.4 MB full canonical materialization remains local and
+  ignored. A committed 41-row T-1 delta plus a versioned base+delta commitment
+  reconstructs its checksum exactly for fresh-clone snapshot verification.
+- Python 3.12 compileall passes, full Python is `448 passed`, and the canonical
+  profile is `117/117 PASS`. Architecture, safety, workflow, adapter, PIT,
+  leakage, provider-failure, and macOS prerequisite checks pass.
+- All recommendation, target-price, order, trading, broker, production-model,
+  factor-mining, and DQN/RL capabilities remain locked. No launchd agent or
+  frontend/backend service is installed or started by this goal.
+- Requirement-by-requirement completion audit:
+  `docs/operations/ISSUE34_REQUIREMENT_COMPLETION_AUDIT_2026-07-15.md`.
+- The five truthful read-only API projection changes caused by the second
+  snapshot are deliberately reconciled; OpenAPI, 22-GET/zero-write topology,
+  historical replay, and all downstream locks are unchanged.
+
 ## GOAL-MACOS-LIVE-REFRESH-AND-PROVIDER-RECOVERY-01
 
 The authoritative PR #32 merge was verified at
@@ -37,10 +95,9 @@ The authoritative PR #32 merge was verified at
   before HTTP status as `ConnectionError(RemoteDisconnected)`. Root cause is
   classified `INTERMITTENT_STRUCTURAL_PRIMARY_UPSTREAM_REMOTE_CLOSE`; no
   pacing/retry or symbol-normalization code change is justified.
-- Upstream governance: an inactive proposal names AKShare
-  `stock_zh_a_hist_tx` / Tencent only as a candidate secondary source. It is not
-  activated and requires explicit approval, schema/consistency/freshness tests,
-  full provenance, and no-silent-fallback enforcement.
+- Upstream governance: PR #33 recorded an inactive AKShare Tencent proposal.
+  Issue #34 subsequently supplied the explicit authority and acceptance
+  contract for the separate governed implementation described above.
 - Architecture baseline: the two blocked daily-refresh artifact hashes and the
   `/api/experiment` and `/api/provenance` hashes that consume them are
   deliberately reconciled. The other 20 GET response hashes, OpenAPI,

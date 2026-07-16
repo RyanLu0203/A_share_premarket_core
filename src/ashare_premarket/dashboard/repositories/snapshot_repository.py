@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import io
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -13,6 +14,8 @@ LATEST_POINTER = f"{SNAPSHOT_ROOT}/latest_manifest.json"
 CANONICAL_MARKET = "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv"
 PROVIDER_PANEL = "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv"
 DAILY_REFRESH_LATEST = "outputs/research/daily_incremental_evidence_refresh/latest_refresh.json"
+CANONICAL_COMMITMENT_VERSION = "canonical-base-plus-t1-delta-v1"
+CANONICAL_COMMITMENT_FILENAME = "canonical_evidence_commitment.json"
 
 
 class CommittedEvidenceStore:
@@ -169,10 +172,9 @@ class CommittedEvidenceStore:
         canonical_path = str(manifest.get("canonical_evidence_path", ""))
         canonical_checksum = str(manifest.get("canonical_evidence_checksum", ""))
         if canonical_path and canonical_checksum:
-            path = self._path(canonical_path)
-            actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else "missing"
-            if actual != canonical_checksum:
-                failures.append("canonical_evidence")
+            _, canonical_failure = self._canonical_evidence_rows(manifest, requested)
+            if canonical_failure:
+                failures.append(f"canonical_evidence:{canonical_failure}")
         return not failures, failures
 
     def canonical_rows(self, snapshot_date: str | None = None) -> tuple[dict[str, str], ...]:
@@ -180,12 +182,84 @@ class CommittedEvidenceStore:
         manifest = self.snapshot_manifest(selected) if selected else {}
         relative = str(manifest.get("canonical_evidence_path") or CANONICAL_MARKET)
         expected = str(manifest.get("canonical_evidence_checksum", ""))
-        path = self._path(relative)
         if expected:
-            actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else "missing"
-            if actual != expected:
-                raise ValueError("canonical evidence checksum mismatch")
+            rows, failure = self._canonical_evidence_rows(manifest, selected)
+            if failure:
+                raise ValueError(f"canonical evidence checksum mismatch:{failure}")
+            return rows
         return self.csv(relative)
+
+    def _canonical_evidence_rows(
+        self,
+        manifest: dict[str, Any],
+        snapshot_date: str,
+    ) -> tuple[tuple[dict[str, str], ...], str]:
+        relative = str(manifest.get("canonical_evidence_path", ""))
+        expected = str(manifest.get("canonical_evidence_checksum", ""))
+        full_path = self._path(relative)
+        if full_path.exists():
+            actual = hashlib.sha256(full_path.read_bytes()).hexdigest()
+            return (self.csv(relative), "") if actual == expected else ((), "FULL_CHECKSUM_MISMATCH")
+
+        commitment_relative = (
+            f"outputs/research/daily_incremental_evidence_refresh/{snapshot_date}/"
+            f"{CANONICAL_COMMITMENT_FILENAME}"
+        )
+        commitment = self._json_uncached(commitment_relative)
+        if not commitment:
+            return (), "FULL_MISSING_AND_COMMITMENT_MISSING"
+        if commitment.get("version") != CANONICAL_COMMITMENT_VERSION:
+            return (), "COMMITMENT_VERSION_INVALID"
+        if commitment.get("canonical_full_path") != relative or commitment.get("canonical_full_checksum") != expected:
+            return (), "COMMITMENT_FULL_IDENTITY_MISMATCH"
+        if commitment.get("target_trading_date") != snapshot_date:
+            return (), "COMMITMENT_TARGET_DATE_MISMATCH"
+        if commitment.get("expected_previous_trading_date") != manifest.get("expected_previous_trading_date"):
+            return (), "COMMITMENT_T_MINUS_ONE_MISMATCH"
+
+        base_relative = str(commitment.get("canonical_base_path", ""))
+        delta_relative = str(commitment.get("canonical_delta_path", ""))
+        base_path = self._path(base_relative)
+        delta_path = self._path(delta_relative)
+        for path, checksum, label in (
+            (base_path, str(commitment.get("canonical_base_checksum", "")), "BASE"),
+            (delta_path, str(commitment.get("canonical_delta_checksum", "")), "DELTA"),
+        ):
+            if not path.exists():
+                return (), f"{label}_MISSING"
+            if hashlib.sha256(path.read_bytes()).hexdigest() != checksum:
+                return (), f"{label}_CHECKSUM_MISMATCH"
+
+        fields = list(map(str, commitment.get("canonical_field_order", [])))
+        base_fields, base_rows = _read_csv_with_fields(base_path)
+        delta_fields, delta_rows = _read_csv_with_fields(delta_path)
+        # The predecessor panel may predate additive canonical provenance
+        # columns.  Daily refresh normalization supplies those fields as empty
+        # strings before appending the T-1 delta, so reproduce that exact shape.
+        expected_base_order = [field for field in fields if field in base_fields]
+        if not fields or base_fields != expected_base_order or delta_fields != fields:
+            return (), "CANONICAL_FIELD_ORDER_MISMATCH"
+        base_rows = [{field: row.get(field, "") for field in fields} for row in base_rows]
+        if len(delta_rows) != int(commitment.get("canonical_delta_row_count", -1)):
+            return (), "DELTA_ROW_COUNT_MISMATCH"
+        expected_t_minus_one = str(commitment.get("expected_previous_trading_date", ""))
+        if any(row.get("trade_date") != expected_t_minus_one for row in delta_rows):
+            return (), "DELTA_DATE_MISMATCH"
+
+        base_keys = [(row.get("trade_date", ""), row.get("symbol", "")) for row in base_rows]
+        delta_keys = [(row.get("trade_date", ""), row.get("symbol", "")) for row in delta_rows]
+        if len(set(base_keys)) != len(base_keys) or len(set(delta_keys)) != len(delta_keys):
+            return (), "DUPLICATE_CANONICAL_KEY"
+        if set(base_keys) & set(delta_keys):
+            return (), "BASE_DELTA_KEY_OVERLAP"
+        reconstructed = sorted([*base_rows, *delta_rows], key=lambda row: (row["trade_date"], row["symbol"]))
+        buffer = io.StringIO()
+        writer = csv.DictWriter(buffer, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(reconstructed)
+        if hashlib.sha256(buffer.getvalue().encode("utf-8")).hexdigest() != expected:
+            return (), "RECONSTRUCTED_FULL_CHECKSUM_MISMATCH"
+        return tuple(reconstructed), ""
 
     @lru_cache(maxsize=1)
     def provider_panel_rows(self) -> tuple[dict[str, str], ...]:
@@ -292,3 +366,9 @@ class CommittedEvidenceStore:
             "snapshot_date": selected,
             "reason": "" if verified else f"SNAPSHOT_CHECKSUM_MISMATCH:{','.join(failures)}",
         }
+
+
+def _read_csv_with_fields(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        return list(reader.fieldnames or []), [dict(row) for row in reader]

@@ -1,10 +1,10 @@
 # GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01
 
 Status: `PASS`
-Refresh status: `BLOCKED`
-Validation status: `BLOCKED`
-OPM snapshot integrity: `NOT_RUN`
-Snapshot version: ``
+Refresh status: `SUCCEEDED`
+Validation status: `PASS`
+OPM snapshot integrity: `VERIFIED`
+Snapshot version: `sha256:8bb1154998565855`
 
 The controlled T-1 evidence gate runs before OPM. Blocked evidence cannot create or advance an OPM snapshot.
 

@@ -5,6 +5,9 @@ import importlib
 import json
 import re
 from pathlib import Path
+from collections.abc import Iterator
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,6 +20,7 @@ HANDOFF_PATH = "docs/research/GOAL_PREMARKET_POSITION_MANAGEMENT_OPERATIONAL01_G
 DOC_PATH = "docs/research/GOAL_PREMARKET_POSITION_MANAGEMENT_OPERATIONAL01_PREMARKET_POSITION_MANAGEMENT.md"
 
 REQUIRED_OUTPUTS = [
+    "configs/project/workflow_status.csv",
     PREFIX + "holdings_snapshot_contract.csv",
     PREFIX + "daily_data_readiness.csv",
     PREFIX + "daily_portfolio_risk_state.csv",
@@ -39,6 +43,22 @@ REQUIRED_OUTPUTS = [
 ]
 
 FORBIDDEN_PATTERN = re.compile(r"\b(BUY|SELL|HOLD)\b|order_quantity|target_price|broker_order|live_broker", re.I)
+
+
+@pytest.fixture(autouse=True, scope="module")
+def preserve_committed_live_opm_state() -> Iterator[None]:
+    """Deterministic OPM tests must not replace the committed current pointer."""
+
+    originals = {relative: (ROOT / relative).read_bytes() if (ROOT / relative).exists() else None for relative in REQUIRED_OUTPUTS}
+    try:
+        yield
+    finally:
+        for relative, content in originals.items():
+            path = ROOT / relative
+            if content is None:
+                path.unlink(missing_ok=True)
+            else:
+                path.write_bytes(content)
 
 
 def _module():
