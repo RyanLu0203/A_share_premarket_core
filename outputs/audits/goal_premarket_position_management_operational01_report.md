@@ -4,12 +4,12 @@ Status: `PASS_WITH_WARNINGS`
 
 - Daily readiness: `READY_WITH_WARNINGS`
 - Execution mode: `daily_operational`
-- Generated at: `2026-07-15T21:20:00+08:00`
-- Decision as-of: `2026-07-15T08:30:00+08:00`
-- Target trading date: `2026-07-15`
-- Expected previous trading date: `2026-07-14`
-- Data cutoff: `2026-07-14`
-- Latest available canonical date: `2026-07-14`
+- Generated at: `2026-07-16T08:30:00+08:00`
+- Decision as-of: `2026-07-16T08:30:00+08:00`
+- Target trading date: `2026-07-16`
+- Expected previous trading date: `2026-07-15`
+- Data cutoff: `2026-07-15`
+- Latest available canonical date: `2026-07-15`
 - Freshness code: `FRESH_T_MINUS_ONE_DATA`
 - Holdings mode: `research_reference_portfolio`
 - Risk state: `normal_risk_review_only`

@@ -1,15 +1,15 @@
 {
   "attempt_evidence_result": "PASS_SEMANTIC_MATCH_EXISTING_IMMUTABLE_EVIDENCE",
-  "canonical_evidence_checksum": "88f2571000e740042bbd5acc8085267fbfd9fa1f8e8828eedf4a2356437d1052",
+  "canonical_evidence_checksum": "51951e5d0c668df201492c03f14d6b5d166c2c5fe64c359e7ff6ad2c5ad8489f",
   "execution_mode": "daily_operational",
-  "execution_time_input": "2026-07-15T21:20:00+08:00",
-  "expected_previous_trading_date": "2026-07-14",
+  "execution_time_input": "2026-07-16T20:11:05+08:00",
+  "expected_previous_trading_date": "2026-07-15",
   "goal": "GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01",
   "no_per_symbol_mixing": true,
-  "refresh_manifest_checksum": "bc9f8424495477b289e78b35ab74137b461bf3cc91a395853a8179ba6b04b84f",
-  "selected_batch_checksum": "a95459ff4be28e5acf48c7fb056490f470034d6949599119da8fa8277b95f5b5",
+  "refresh_manifest_checksum": "bbbe7481d1510869c68bad200338e227a5304e8fb77fe3bb96e65e17642f98cc",
+  "selected_batch_checksum": "596b0861a3abff07a4fc0e7342bfc17934a7586328d259b810a718a105384f96",
   "selected_upstream": "Tencent",
-  "snapshot_checksum": "8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2",
+  "snapshot_checksum": "fa3ea3c250c3c317d86906383f724079c1d338f89aa9a5df0adb8dbc0122fb25",
   "status": "PASS_IDENTICAL_NORMALIZED_BATCH_AND_IMMUTABLE_SNAPSHOT",
-  "target_trading_date": "2026-07-15"
+  "target_trading_date": "2026-07-16"
 }

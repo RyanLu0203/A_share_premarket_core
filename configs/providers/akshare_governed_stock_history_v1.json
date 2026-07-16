@@ -1,30 +1,35 @@
 {
-  "policy_id": "akshare-governed-stock-history-v1",
+  "policy_id": "akshare-tencent-primary-operational-v2",
   "application_provider": "AKShare",
   "selection_scope": "complete_run",
-  "primary": {
-    "function": "stock_zh_a_hist",
-    "upstream": "East Money",
-    "endpoint_family": "push2his.eastmoney.com"
-  },
-  "secondary": {
+  "operational_primary": {
     "function": "stock_zh_a_hist_tx",
     "upstream": "Tencent",
     "endpoint_family": "web.ifzq.gtimg.cn;proxy.finance.qq.com",
-    "activation_mode": "explicit_approved_primary_failure_only"
+    "selection_mode": "immediate_only_canonical_source"
   },
-  "approved_primary_failure_classes": [
-    "BROWSER_NET_EMPTY_RESPONSE",
-    "CONNECTION_RESET",
-    "HTTP_429_RATE_LIMITED",
-    "HTTP_5XX_PROVIDER_ERROR"
-  ],
+  "east_money": {
+    "mode": "probe_only",
+    "function": "stock_zh_a_hist",
+    "endpoint_family": "push2his.eastmoney.com",
+    "canonical_request_count_required": 0,
+    "probe_enabled_by_default": false,
+    "probe_max_symbol_count": 4,
+    "automatic_failback_allowed": false
+  },
+  "automatic_failback_to_east_money": false,
   "attempts_per_symbol_per_batch": 1,
   "provider_timeout_seconds": 30,
   "max_batch_wall_clock_seconds": 1800,
   "min_seconds_between_symbol_calls": 0.2,
   "required_coverage_ratio": 1.0,
   "adjustment_policy": "qfq",
+  "tencent_export_schema": {
+    "exact_columns_in_order": ["date", "open", "close", "high", "low", "amount"],
+    "normalized_columns_in_order": ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"],
+    "sixth_exported_field_semantics": "volume",
+    "sixth_exported_field_unit": "hand"
+  },
   "cross_source_contract_version": "eastmoney-tencent-qfq-production-v2",
   "cross_source_tolerances": {
     "ohlc_absolute_cny": 0.01,
@@ -65,7 +70,15 @@
     "unadjusted_fixture_audit_enabled": true,
     "hfq_runtime_enabled": false,
     "hfq_research_audit_enabled": true,
-    "hfq_findings_block_qfq_production": false
+    "hfq_findings_block_qfq_production": false,
+    "hfq_status": "UNSUPPORTED_DISABLED"
+  },
+  "independent_verification": {
+    "mode": "bounded_validation_only_never_canonical",
+    "fixture": "configs/providers/fixtures/eastmoney_tencent_consistency_v1.csv",
+    "required_enabled_scope_markets": ["SSE", "SZSE", "CHINEXT"],
+    "bj_policy": "mapping_validated_but_provider_data_unsupported_fail_closed_if_governed_universe_contains_bj",
+    "may_mix_rows_into_canonical_snapshot": false
   },
   "allow_per_symbol_source_mixing": false,
   "allow_silent_fallback": false,

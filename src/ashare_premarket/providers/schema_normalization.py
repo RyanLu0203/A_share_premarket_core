@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from datetime import date
+import math
 from typing import Any
 
 STOCK_COLUMNS = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount", "turnover_rate", "source_id", "quality_flags"]
 BENCHMARK_COLUMNS = ["trade_date", "benchmark_symbol", "open", "high", "low", "close", "volume", "amount", "source_id", "quality_flags"]
+TENCENT_EXPORTED_COLUMNS = ["date", "open", "close", "high", "low", "amount"]
 
 
 def normalize_stock_ohlcv_schema(data: Any, symbol: str, source_id: str = "akshare_stock_zh_a_hist") -> tuple[list[dict[str, object]], bool, str]:
@@ -55,25 +58,46 @@ def normalize_tencent_stock_ohlcv_schema(
     is deliberately unavailable rather than guessed or zero-filled.
     """
 
+    exported_columns = _column_names(data)
+    if exported_columns != TENCENT_EXPORTED_COLUMNS:
+        return (
+            [],
+            False,
+            "tencent_schema_drift_exact_columns_required:"
+            + ",".join(TENCENT_EXPORTED_COLUMNS)
+            + ":observed:"
+            + ",".join(exported_columns),
+        )
     rows = _records(data)
     normalized: list[dict[str, object]] = []
     seen_dates: set[str] = set()
     for row in rows:
-        trade_date = str(_value(row, ["date", "日期", "trade_date"], ""))[:10]
+        trade_date = str(row.get("date", ""))
+        try:
+            date.fromisoformat(trade_date)
+        except ValueError:
+            return [], False, f"tencent_invalid_trade_date:{trade_date}"
         values = {
-            "open": _strict_float(_value(row, ["open", "开盘"], None)),
-            "high": _strict_float(_value(row, ["high", "最高"], None)),
-            "low": _strict_float(_value(row, ["low", "最低"], None)),
-            "close": _strict_float(_value(row, ["close", "收盘"], None)),
+            "open": _strict_float(row.get("open")),
+            "high": _strict_float(row.get("high")),
+            "low": _strict_float(row.get("low")),
+            "close": _strict_float(row.get("close")),
             # AKShare's Tencent adapter mislabels this source volume column.
-            "volume": _strict_float(_value(row, ["amount"], None)),
+            "volume": _strict_float(row.get("amount")),
         }
         if not trade_date or any(value is None for value in values.values()):
             return [], False, "tencent_missing_required_date_ohlcv_or_source_volume"
         if trade_date in seen_dates:
             return [], False, f"tencent_duplicate_trade_date:{trade_date}"
-        if values["close"] <= 0 or values["volume"] < 0:
+        if not all(math.isfinite(value) for value in values.values()):
+            return [], False, f"tencent_non_finite_price_or_volume:{trade_date}"
+        prices = [values[field] for field in ("open", "high", "low", "close")]
+        if any(value <= 0 for value in prices) or values["volume"] < 0:
             return [], False, f"tencent_invalid_price_or_volume:{trade_date}"
+        if values["high"] < max(values["open"], values["close"], values["low"]):
+            return [], False, f"tencent_invalid_ohlc_high_relationship:{trade_date}"
+        if values["low"] > min(values["open"], values["close"], values["high"]):
+            return [], False, f"tencent_invalid_ohlc_low_relationship:{trade_date}"
         seen_dates.add(trade_date)
         normalized.append(
             {
@@ -85,7 +109,8 @@ def normalize_tencent_stock_ohlcv_schema(
                 "source_id": source_id,
                 "quality_flags": "SOURCE_BACKED;TENCENT_AMOUNT_UNAVAILABLE",
                 "source_volume_field": "akshare_amount_mislabeled_as_amount",
-                "volume_semantics": "tencent_volume_unit_hand_scale_1_to_eastmoney_volume",
+                "volume_unit": "hand",
+                "volume_semantics": "tencent_sixth_exported_field_is_volume_in_hand",
                 "amount_semantics": "unavailable_from_stock_zh_a_hist_tx",
             }
         )
@@ -176,6 +201,14 @@ def _records(data: Any) -> list[dict[str, Any]]:
         return list(data.to_dict("records"))
     if isinstance(data, list):
         return [dict(row) for row in data]
+    return []
+
+
+def _column_names(data: Any) -> list[str]:
+    if hasattr(data, "columns"):
+        return [str(value) for value in data.columns]
+    if isinstance(data, list) and data:
+        return [str(value) for value in data[0].keys()]
     return []
 
 

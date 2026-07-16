@@ -125,7 +125,8 @@ def test_regime02_workflow_row_implemented_and_downstream_locked() -> None:
     run_goal_regime_label_research02_gate(ROOT)
     import csv
 
-    workflow = {row["workflow_id"]: row for row in csv.DictReader((ROOT / "configs/project/workflow_status.csv").open(encoding="utf-8"))}
+    with (ROOT / "configs/project/workflow_status.csv").open(encoding="utf-8") as handle:
+        workflow = {row["workflow_id"]: row for row in csv.DictReader(handle)}
     regime02 = workflow["goal_regime_label_research02_expanded_market_regime_label_refinement_gate"]
     assert regime02["status"] == "implemented_research_only"
     assert regime02["implemented_in_repo"] == "true"

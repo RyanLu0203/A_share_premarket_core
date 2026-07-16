@@ -16,16 +16,9 @@ from ashare_premarket.providers.akshare_provider import (
 )
 
 POLICY_PATH = "configs/providers/akshare_governed_stock_history_v1.json"
-POLICY_ID = "akshare-governed-stock-history-v1"
+POLICY_ID = "akshare-tencent-primary-operational-v2"
 CONSISTENCY_FIXTURE_PATH = "configs/providers/fixtures/eastmoney_tencent_consistency_v1.csv"
 CORPORATE_ACTION_FIXTURE_PATH = "configs/providers/fixtures/tencent_qfq_corporate_action_v2.json"
-APPROVED_PRIMARY_FAILURE_CLASSES = {
-    "BROWSER_NET_EMPTY_RESPONSE",
-    "CONNECTION_RESET",
-    "HTTP_429_RATE_LIMITED",
-    "HTTP_5XX_PROVIDER_ERROR",
-}
-
 Loader = Callable[[str, str, str, str, bool], ProviderResult]
 
 
@@ -33,12 +26,22 @@ def load_policy(root: Path) -> dict[str, object]:
     payload = json.loads((root / POLICY_PATH).read_text(encoding="utf-8"))
     if payload.get("policy_id") != POLICY_ID:
         raise ValueError("governed_stock_history_policy_id_mismatch")
+    operational = dict(payload.get("operational_primary", {}))
+    east_money = dict(payload.get("east_money", {}))
+    if operational.get("function") != "stock_zh_a_hist_tx" or operational.get("upstream") != "Tencent":
+        raise ValueError("governed_stock_history_tencent_must_be_operational_primary")
+    if east_money.get("mode") != "probe_only" or east_money.get("canonical_request_count_required") != 0:
+        raise ValueError("governed_stock_history_east_money_must_be_probe_only")
+    if payload.get("automatic_failback_to_east_money") is not False or east_money.get("automatic_failback_allowed") is not False:
+        raise ValueError("governed_stock_history_automatic_failback_forbidden")
     if payload.get("allow_per_symbol_source_mixing") is not False or payload.get("allow_silent_fallback") is not False:
         raise ValueError("governed_stock_history_policy_weakens_source_selection")
     if payload.get("adjustment_policy") != "qfq":
         raise ValueError("governed_stock_history_production_adjustment_must_be_qfq")
     if dict(payload.get("non_production_adjustments", {})).get("hfq_runtime_enabled") is not False:
         raise ValueError("governed_stock_history_hfq_must_remain_runtime_disabled")
+    if dict(payload.get("non_production_adjustments", {})).get("hfq_status") != "UNSUPPORTED_DISABLED":
+        raise ValueError("governed_stock_history_hfq_status_must_be_unsupported_disabled")
     return payload
 
 
@@ -48,66 +51,39 @@ def run_governed_stock_history_batch(
     expected_trade_date: str,
     network_enabled: bool,
     *,
-    primary_loader: Loader = load_stock_ohlcv_daily,
-    secondary_loader: Loader = load_stock_ohlcv_daily_tencent,
+    tencent_loader: Loader = load_stock_ohlcv_daily_tencent,
+    independent_verifier: Callable[[Path, dict[str, object], set[str]], dict[str, object]] | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> dict[str, object]:
-    """Select one upstream for an entire run and fail closed on mixed evidence."""
+    """Acquire one complete Tencent batch; East Money never enters this path."""
 
     policy = load_policy(root)
-    consistency = audit_cross_source_fixture(root, policy)
+    verifier = independent_verifier or audit_independent_verification
+    verification = verifier(root, policy, required_symbols)
     adjustment = str(policy["adjustment_policy"])
     interval = float(policy["min_seconds_between_symbol_calls"])
     wall_clock = float(policy["max_batch_wall_clock_seconds"])
     started = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
-    primary = _run_complete_batch(
+    tencent = _run_complete_batch(
         required_symbols,
         expected_trade_date,
         adjustment,
         network_enabled,
-        "primary",
-        "East Money",
-        "stock_zh_a_hist",
-        primary_loader,
+        "operational_primary",
+        "Tencent",
+        "stock_zh_a_hist_tx",
+        tencent_loader,
         interval,
         wall_clock,
         sleep,
     )
-    activation = evaluate_secondary_activation(primary, policy)
-    secondary: dict[str, object] | None = None
-    selected = primary
-    state = "PRIMARY_SELECTED" if primary["complete"] else "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
-    discarded_primary_rows = 0
-    if activation["activated"]:
-        discarded_primary_rows = len(primary["rows"])
-        secondary = _run_complete_batch(
-            required_symbols,
-            expected_trade_date,
-            adjustment,
-            network_enabled,
-            "secondary",
-            "Tencent",
-            "stock_zh_a_hist_tx",
-            secondary_loader,
-            interval,
-            wall_clock,
-            sleep,
-        )
-        for attempt in secondary["attempts"]:
-            attempt["request_sequence"] = len(primary["attempts"]) + int(attempt["batch_request_sequence"])
-        secondary["source_consistency_result"] = consistency["status"]
-        selected = secondary
-        state = "SECONDARY_SELECTED" if secondary["complete"] and consistency["status"] == "PASS" else "SECONDARY_BLOCKED"
-        if consistency["status"] != "PASS":
-            secondary["complete"] = False
-            secondary["source_consistency_result"] = "BLOCKED"
-    elif not primary["complete"]:
-        state = "PRIMARY_BLOCKED_SECONDARY_NOT_APPROVED"
-
-    selected_rows = list(selected["rows"]) if selected["complete"] else []
-    selected_source = str(selected["upstream_source"]) if selected["complete"] else ""
-    all_attempts = [*primary["attempts"], *(secondary["attempts"] if secondary else [])]
+    verification_passed = verification.get("status") == "PASS"
+    selected_complete = bool(tencent["complete"]) and verification_passed
+    selected_rows = list(tencent["rows"]) if selected_complete else []
+    selected_source = "Tencent" if selected_complete else ""
+    state = "TENCENT_PRIMARY_SELECTED" if selected_complete else "TENCENT_PRIMARY_BLOCKED"
+    all_attempts = list(tencent["attempts"])
     return {
         "policy_id": POLICY_ID,
         "state": state,
@@ -117,56 +93,91 @@ def run_governed_stock_history_batch(
         "required_symbols": sorted(required_symbols),
         "required_symbol_count": len(required_symbols),
         "selected_upstream_source": selected_source,
-        "selected_upstream_reason": (
-            "PRIMARY_COMPLETE_FULL_COVERAGE"
-            if state == "PRIMARY_SELECTED"
-            else "APPROVED_PRIMARY_ENDPOINT_FAILURE_COMPLETE_SECONDARY_REACQUISITION"
-            if state == "SECONDARY_SELECTED"
-            else "NO_ELIGIBLE_COMPLETE_SINGLE_UPSTREAM_BATCH"
-        ),
-        "selected_function": str(selected["function_name"]) if selected_source else "",
-        "selected_endpoint_family": str(selected["endpoint_family"]) if selected_source else "",
-        "selected_batch_checksum": str(selected["batch_checksum"]) if selected_source else "",
+        "selected_upstream_reason": "TENCENT_OPERATIONAL_PRIMARY_COMPLETE" if selected_complete else "TENCENT_INCOMPLETE_OR_VERIFICATION_BLOCKED",
+        "selected_function": "stock_zh_a_hist_tx" if selected_source else "",
+        "selected_endpoint_family": str(tencent["endpoint_family"]) if selected_source else "",
+        "selected_batch_checksum": str(tencent["batch_checksum"]) if selected_source else "",
         "selected_rows": selected_rows,
-        "selected_attempts": list(selected["attempts"]),
+        "selected_attempts": list(tencent["attempts"]),
         "all_attempts": all_attempts,
-        "primary_batch": primary,
-        "secondary_activation": activation,
-        "secondary_batch": secondary,
+        "operational_batch": tencent,
+        "operational_primary": "Tencent",
+        "east_money_mode": "probe_only",
+        "east_money_canonical_request_count": 0,
+        "automatic_failback_to_east_money": False,
         "source_consistency_contract_version": policy["cross_source_contract_version"],
-        "source_consistency_result": consistency,
-        "discarded_primary_row_count": discarded_primary_rows,
+        "source_consistency_result": verification,
+        "independent_verification": verification,
+        "independent_verification_rows_mixed_into_canonical": False,
         "no_per_symbol_mixing": True,
-        "full_coverage": bool(selected["complete"]),
+        "single_canonical_source": len({str(row.get("upstream_source")) for row in selected_rows}) <= 1,
+        "full_coverage": selected_complete,
         "tls_verification_preserved": True,
-        "bounded_attempts": len(all_attempts) <= len(required_symbols) * 2,
+        "bounded_attempts": len(all_attempts) <= len(required_symbols),
+    }
+
+
+def run_east_money_probe(
+    root: Path,
+    symbols: set[str],
+    expected_trade_date: str,
+    network_enabled: bool,
+    *,
+    loader: Loader = load_stock_ohlcv_daily,
+    sleep: Callable[[float], None] = time.sleep,
+) -> dict[str, object]:
+    """Run the separately invoked health probe; it has no canonical outputs."""
+
+    policy = load_policy(root)
+    probe_policy = dict(policy["east_money"])
+    if len(symbols) > int(probe_policy["probe_max_symbol_count"]):
+        raise ValueError("east_money_probe_symbol_limit_exceeded")
+    batch = _run_complete_batch(
+        symbols,
+        expected_trade_date,
+        "qfq",
+        network_enabled,
+        "probe_only",
+        "East Money",
+        "stock_zh_a_hist",
+        loader,
+        float(policy["min_seconds_between_symbol_calls"]),
+        float(policy["max_batch_wall_clock_seconds"]),
+        sleep,
+    )
+    return {
+        "policy_id": POLICY_ID,
+        "mode": "probe_only",
+        "enabled_by_default": False,
+        "expected_trade_date": expected_trade_date,
+        "symbols": sorted(symbols),
+        "attempts": batch["attempts"],
+        "health_status": "AVAILABLE" if batch["complete"] else "DEGRADED_OR_UNAVAILABLE",
+        "canonical_effect": "NONE",
+        "automatic_failback_effect": "FORBIDDEN",
+        "mutates_snapshot_state": False,
+        "alters_provider_selection": False,
+        "alters_canonical_checksums": False,
     }
 
 
 def evaluate_secondary_activation(primary: dict[str, object], policy: dict[str, object]) -> dict[str, object]:
-    failures = [attempt for attempt in primary["attempts"] if not bool(attempt.get("accepted"))]
-    failure_classes = sorted({str(attempt.get("failure_class", "")) for attempt in failures})
-    approved = set(str(value) for value in policy["approved_primary_failure_classes"])
-    approved_failures = [attempt for attempt in failures if str(attempt.get("failure_class", "")) in approved]
-    local_or_unapproved = [attempt for attempt in failures if str(attempt.get("failure_class", "")) not in approved]
-    incomplete = float(primary["coverage_ratio"]) < float(policy["required_coverage_ratio"])
-    activated = incomplete and bool(approved_failures) and not local_or_unapproved
-    if not incomplete:
-        reason = "PRIMARY_COMPLETE"
-    elif local_or_unapproved:
-        reason = "PRIMARY_FAILURE_NOT_APPROVED_FOR_SECONDARY"
-    elif not approved_failures:
-        reason = "NO_APPROVED_PRIMARY_ENDPOINT_FAILURE"
-    else:
-        reason = "APPROVED_PRIMARY_ENDPOINT_FAILURE"
+    """Historical API retained only to prove automatic failback is disabled."""
+
     return {
-        "activated": activated,
-        "reason": reason,
-        "primary_coverage_ratio": primary["coverage_ratio"],
-        "failure_classes": failure_classes,
-        "approved_failure_count": len(approved_failures),
-        "unapproved_or_local_failure_count": len(local_or_unapproved),
-        "evaluated_after_primary_batch_terminated": True,
+        "activated": False,
+        "reason": "AUTOMATIC_FAILBACK_TO_EAST_MONEY_FORBIDDEN",
+        "primary_coverage_ratio": primary.get("coverage_ratio", 0.0),
+        "failure_classes": sorted(
+            {
+                str(attempt.get("failure_class", ""))
+                for attempt in primary.get("attempts", [])
+                if not bool(attempt.get("accepted"))
+            }
+        ),
+        "approved_failure_count": 0,
+        "unapproved_or_local_failure_count": 0,
+        "evaluated_after_primary_batch_terminated": False,
     }
 
 
@@ -206,8 +217,15 @@ def compare_cross_source_rows(
     }
 
 
-def audit_cross_source_fixture(root: Path, policy: dict[str, object] | None = None) -> dict[str, object]:
+def audit_independent_verification(
+    root: Path,
+    policy: dict[str, object] | None = None,
+    required_symbols: set[str] | None = None,
+) -> dict[str, object]:
+    """Audit bounded non-canonical evidence without making provider calls."""
+
     policy = policy or load_policy(root)
+    required_symbols = required_symbols or set()
     path = root / CONSISTENCY_FIXTURE_PATH
     corporate_path = root / CORPORATE_ACTION_FIXTURE_PATH
     if not path.exists() or not corporate_path.exists():
@@ -246,7 +264,20 @@ def audit_cross_source_fixture(root: Path, policy: dict[str, object] | None = No
         hfq_research = compare_cross_source_rows(hfq_primary, hfq_secondary, dict(policy["cross_source_tolerances"]))
     except (KeyError, TypeError, ValueError) as exc:
         return {"status": "BLOCKED", "reason": "INVALID_VERSIONED_CROSS_SOURCE_FIXTURE", "detail": str(exc)}
-    status = "PASS" if comparison["status"] == "PASS" and corporate_ok and amount_semantics_ok else "BLOCKED"
+    ordinary_markets = {
+        "CHINEXT" if str(row["symbol"]).startswith("3") else "SSE" if str(row["symbol"]).endswith(".SH") else "SZSE"
+        for row in overlap
+        if row["source"] == "Tencent"
+    }
+    required_markets = set(map(str, dict(policy["independent_verification"])["required_enabled_scope_markets"]))
+    ordinary_scope_ok = required_markets.issubset(ordinary_markets)
+    bj_required = any(symbol.endswith(".BJ") for symbol in required_symbols)
+    bj_result = "BLOCKED_REQUIRED_UNIVERSE_BJ_UNSUPPORTED" if bj_required else "OUTSIDE_ENABLED_UNIVERSE_MAPPING_FAIL_CLOSED"
+    status = (
+        "PASS"
+        if comparison["status"] == "PASS" and corporate_ok and amount_semantics_ok and ordinary_scope_ok and not bj_required
+        else "BLOCKED"
+    )
     return {
         "status": status,
         "reason": "" if status == "PASS" else "SOURCE_SEMANTIC_OR_QFQ_ADJUSTMENT_CONTRACT_FAILED",
@@ -263,12 +294,26 @@ def audit_cross_source_fixture(root: Path, policy: dict[str, object] | None = No
         "qfq_required_universe_event_result": "PASS" if required_universe_ok else "BLOCKED",
         "primary_unavailable_classification": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
         "hfq_runtime_enabled": False,
+        "hfq_runtime_status": "UNSUPPORTED_DISABLED",
         "hfq_research_audit": {
             **hfq_research,
-            "production_gate_effect": "NON_BLOCKING_RESEARCH_ONLY",
+            "production_gate_effect": "OUTSIDE_ENABLED_SCOPE_UNSUPPORTED_DISABLED",
         },
         "amount_semantics_result": "PASS" if amount_semantics_ok else "BLOCKED",
+        "verification_mode": "bounded_validation_only_never_canonical",
+        "canonical_row_contribution_count": 0,
+        "ordinary_market_coverage": sorted(ordinary_markets),
+        "ordinary_enabled_scope_result": "PASS" if ordinary_scope_ok else "BLOCKED",
+        "bj_mapping_result": bj_result,
+        "bj_provider_data_supported": False,
+        "required_universe_contains_bj": bj_required,
     }
+
+
+def audit_cross_source_fixture(root: Path, policy: dict[str, object] | None = None) -> dict[str, object]:
+    """Backward-compatible name for the historical bounded evidence audit."""
+
+    return audit_independent_verification(root, policy, set())
 
 
 def audit_qfq_corporate_action_event(
@@ -414,6 +459,7 @@ def validate_operational_field_contract(
     rows: list[dict[str, object]],
     *,
     require_amount: bool = False,
+    amount_must_be_unavailable: bool = False,
 ) -> dict[str, object]:
     """Keep Tencent amount null distinct from observed zero and fail closed on demand."""
 
@@ -421,10 +467,27 @@ def validate_operational_field_contract(
     failures: list[str] = []
     null_amount = 0
     zero_amount = 0
+    seen: set[tuple[str, str]] = set()
     for row in rows:
         key = f"{row.get('trade_date', '')}:{row.get('symbol', '')}"
+        identity = (str(row.get("trade_date", "")), str(row.get("symbol", "")))
+        if identity in seen:
+            failures.append(f"DUPLICATE_OPERATIONAL_KEY:{key}")
+        seen.add(identity)
         if any(row.get(field) in {None, ""} for field in required):
             failures.append(f"MISSING_REQUIRED_OPERATIONAL_FIELD:{key}")
+            continue
+        numeric = {field: float(row[field]) for field in ("open", "high", "low", "close", "volume")}
+        if not all(value == value and abs(value) != float("inf") for value in numeric.values()):
+            failures.append(f"NON_FINITE_OPERATIONAL_VALUE:{key}")
+        if any(numeric[field] <= 0 for field in ("open", "high", "low", "close")) or numeric["volume"] < 0:
+            failures.append(f"INVALID_OPERATIONAL_PRICE_OR_VOLUME:{key}")
+        if numeric["high"] < max(numeric["open"], numeric["close"], numeric["low"]):
+            failures.append(f"INVALID_OPERATIONAL_HIGH_RELATIONSHIP:{key}")
+        if numeric["low"] > min(numeric["open"], numeric["close"], numeric["high"]):
+            failures.append(f"INVALID_OPERATIONAL_LOW_RELATIONSHIP:{key}")
+        if row.get("volume_unit") != "hand":
+            failures.append(f"MISSING_TENCENT_VOLUME_UNIT_HAND:{key}")
         amount = row.get("amount")
         if amount is None:
             null_amount += 1
@@ -434,6 +497,8 @@ def validate_operational_field_contract(
                 failures.append(f"MISSING_REQUIRED_AMOUNT:{key}")
         elif float(amount) == 0.0:
             zero_amount += 1
+        if amount_must_be_unavailable and amount is not None:
+            failures.append(f"TENCENT_MONETARY_AMOUNT_MUST_REMAIN_UNAVAILABLE:{key}")
     return {
         "status": "PASS" if not failures else "BLOCKED",
         "reason": "" if not failures else "OPERATIONAL_FIELD_CONTRACT_FAILED",
@@ -443,6 +508,8 @@ def validate_operational_field_contract(
         "amount_observed_zero_count": zero_amount,
         "amount_null_is_distinct_from_zero": True,
         "amount_required": require_amount,
+        "amount_must_be_unavailable": amount_must_be_unavailable,
+        "volume_unit": "hand",
     }
 
 
@@ -479,10 +546,22 @@ def _run_complete_batch(
             attempts.append(attempt)
             continue
         matching = [row for row in result.rows if str(row.get("trade_date")) == expected and str(row.get("symbol")) == symbol]
-        accepted = str(result.attempt.get("status", "")).upper() == "PASS" and len(matching) == 1
+        exact_requested_window = len(result.rows) == 1 and len(matching) == 1
+        accepted = str(result.attempt.get("status", "")).upper() == "PASS" and exact_requested_window
         rejection = "" if accepted else str(result.attempt.get("failure_class", "")) or "MISSING_EXACT_T_MINUS_ONE_ROW"
         if not accepted and str(result.attempt.get("status", "")).upper() == "PASS":
-            rejection = "MISSING_EXACT_T_MINUS_ONE_ROW"
+            dates = [str(row.get("trade_date", "")) for row in result.rows]
+            keys = [(str(row.get("trade_date", "")), str(row.get("symbol", ""))) for row in result.rows]
+            if len(keys) != len(set(keys)):
+                rejection = "DUPLICATE_ROWS_DETECTED"
+            elif any(date > expected for date in dates):
+                rejection = "FUTURE_DATED_RESPONSE"
+            elif any(date < expected for date in dates):
+                rejection = "STALE_OR_OUTSIDE_REQUEST_WINDOW"
+            elif any(str(row.get("symbol", "")) != symbol for row in result.rows):
+                rejection = "SYMBOL_FORMAT_MISMATCH"
+            else:
+                rejection = "MISSING_EXACT_T_MINUS_ONE_ROW"
             result.attempt["failure_class"] = rejection
             result.attempt["status"] = "FAIL"
         enriched = {
@@ -508,10 +587,10 @@ def _run_complete_batch(
     provenance_ok = all(all(str(attempt.get(field, "")).strip() for field in provenance_fields) for attempt in attempts)
     rows = sorted(accepted_rows, key=lambda row: (str(row["trade_date"]), str(row["symbol"])))
     field_contract = (
-        validate_operational_field_contract(rows)
-        if batch_role == "secondary" and schema_ok
+        validate_operational_field_contract(rows, amount_must_be_unavailable=True)
+        if function_name == "stock_zh_a_hist_tx" and schema_ok
         else {
-            "status": "PASS_PRIMARY_CANONICAL_SCHEMA" if batch_role == "primary" else "BLOCKED_INCOMPLETE_BATCH",
+            "status": "PASS_PROBE_SCHEMA" if batch_role == "probe_only" and schema_ok else "BLOCKED_INCOMPLETE_BATCH",
             "amount_required": False,
         }
     )
@@ -531,7 +610,7 @@ def _run_complete_batch(
         "pit_result": "PASS" if pit_ok else "BLOCKED",
         "provenance_result": "PASS" if provenance_ok else "BLOCKED",
         "operational_field_contract": field_contract,
-        "source_consistency_result": "PASS_PRIMARY_CANONICAL_SOURCE" if batch_role == "primary" else "PENDING_VERSIONED_FIXTURE_AUDIT",
+        "source_consistency_result": "PENDING_INDEPENDENT_VERIFICATION" if function_name == "stock_zh_a_hist_tx" else "PROBE_ONLY_NOT_CANONICAL",
         "source_dates": sorted({str(row["trade_date"]) for row in rows}),
         "rows": rows,
         "attempts": attempts,

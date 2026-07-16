@@ -23,7 +23,7 @@
     "scripts/run_premarket_position_management.py": "8a0d25e727e8576fb6cca142d3676fcc5da673849c54367cb00a14b3545d8bb8",
     "src/ashare_premarket/core/boundary.py": "7c1cdbb0d2a900b9ab6081f7f83b29d6da76977c75b7f18a1e0b66b4e890b021",
     "src/ashare_premarket/core/workflow_preservation.py": "e5c4a4a3e1e14c9b0895e934a4be91380c6e2df8b79f4eeb0ab8132e1a443993",
-    "src/ashare_premarket/daily_refresh/goal_daily_incremental_evidence_refresh01.py": "c80c8003c482a13ff1e57b37b53ba71e9e2a416d8da2f55b85c8f94beaa8b454",
+    "src/ashare_premarket/daily_refresh/goal_daily_incremental_evidence_refresh01.py": "0dccfc7cd6aedee4b32989d29b08364b177074564e5db521fbec34a0b477fa81",
     "src/ashare_premarket/dashboard/repository.py": "2223dd652e25498fe4469357add8a3022341b4d7d8dd6be5746352db5d469126",
     "src/ashare_premarket/dashboard/store.py": "d6463e6616e063dff57d048bc1905c7180cd3648220d805492609f436ea6ff19",
     "src/ashare_premarket/portfolio_risk/goal_premarket_position_management_operational01.py": "fb9bc3d723e1faf2753cc6106ef6b136608f269053c63a149cf0da3fe8ed8357"
@@ -43,7 +43,7 @@
   "research_only": true,
   "risk_model_recalculated": false,
   "risk_model_source": "validated_predecessor_portfolio_risk_outputs",
-  "snapshot_version": "sha256:8bb1154998565855",
+  "snapshot_version": "sha256:fa3ea3c250c3c317",
   "status": "PASS",
   "trading_state": "locked_future",
   "validation_reason_codes": [],

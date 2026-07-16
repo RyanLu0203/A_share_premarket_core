@@ -1,5 +1,21 @@
 # CODEX Project Memory
 
+## Issue #36 Tencent Primary Authorization
+
+`GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01` authorizes real operational
+hardening of the existing daily evidence refresh. AKShare
+`stock_zh_a_hist_tx` / Tencent is the sole canonical operational source. East
+Money is probe-only, disabled by default, never a fallback, and must have zero
+canonical requests. A canonical run must use one complete current-T-1 qfq
+batch or fail closed while preserving the latest valid immutable snapshot.
+
+Tencent's sixth exported field is volume in `手`; canonical monetary amount is
+null/unavailable and must never be inferred or zero-filled. hfq is
+`UNSUPPORTED_DISABLED`. Independent verification is evidence-only and cannot
+contribute canonical rows. This authorization does not unlock recommendation,
+trading, broker, production-model, factor-mining, or DQN/RL functionality and
+does not authorize deployment, launchd, or service startup.
+
 ## Issue #24 Workspace Authorization
 
 `GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01` is implemented

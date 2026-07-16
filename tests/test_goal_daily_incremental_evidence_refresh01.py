@@ -173,6 +173,20 @@ def test_daily_refresh_atomic_write_replaces_complete_bytes_without_temp_residue
     assert list(path.parent.glob(f".{path.name}.*.tmp")) == []
 
 
+def test_interrupted_atomic_replace_preserves_last_valid_bytes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    path = tmp_path / "snapshot/latest.json"
+    daily_refresh.write_text(path, "last-valid\n")
+
+    def interrupted_replace(source: object, target: object) -> None:
+        raise InterruptedError("deterministic interruption during atomic replacement")
+
+    monkeypatch.setattr(daily_refresh.os, "replace", interrupted_replace)
+    with pytest.raises(InterruptedError, match="deterministic interruption"):
+        daily_refresh.write_text(path, "partial-new\n")
+    assert path.read_text(encoding="utf-8") == "last-valid\n"
+    assert list(path.parent.glob(f".{path.name}.*.tmp")) == []
+
+
 def test_provider_attempt_idempotency_ignores_only_request_timing(tmp_path: Path) -> None:
     path = tmp_path / "attempts.csv"
     base = {field: "" for field in daily_refresh.ATTEMPT_FIELDS}
@@ -254,7 +268,7 @@ def test_validation_failure_does_not_call_opm(tmp_path: Path) -> None:
     assert latest["snapshot_manifest_path"] == ""
 
 
-def test_refresh_passes_the_frozen_resolved_clock_to_opm(tmp_path: Path) -> None:
+def test_refresh_passes_deterministic_decision_clock_to_immutable_opm_snapshot(tmp_path: Path) -> None:
     _write_csv(
         tmp_path / "configs/project/trading_calendar.csv",
         [
@@ -298,7 +312,7 @@ def test_refresh_passes_the_frozen_resolved_clock_to_opm(tmp_path: Path) -> None
     )
 
     assert result is False  # the fake runner intentionally writes no snapshot
-    assert received["execution_time"] == "2026-07-02T09:01:02+08:00"
+    assert received["execution_time"] == "2026-07-02T08:30:00+08:00"
     assert received["target_trading_date"] == "2026-07-02"
     assert received["replay_date"] is None
 
@@ -382,7 +396,8 @@ def test_goal_replay_is_deterministic_integrates_opm_and_keeps_locks(
     refresh_manifest_path = ROOT / latest["refresh_manifest_path"]
     assert hashlib.sha256(refresh_manifest_path.read_bytes()).hexdigest() == latest["refresh_manifest_checksum"]
 
-    experiment = list(csv.DictReader((ROOT / (PREFIX + "experiment_readiness_contract.csv")).open(encoding="utf-8")))
+    with (ROOT / (PREFIX + "experiment_readiness_contract.csv")).open(encoding="utf-8") as handle:
+        experiment = list(csv.DictReader(handle))
     assert {row["field_name"] for row in experiment} == {
         "experiment_date_range",
         "snapshot_lineage",

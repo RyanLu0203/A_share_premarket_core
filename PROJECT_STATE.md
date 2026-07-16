@@ -1,6 +1,49 @@
 # Project State
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
+
+## GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01
+
+Issue #36 is implemented on
+`codex/tencent-primary-operational-hardening` from authoritative
+`project-current` commit `040048b557f62837fce72ecde2cccba4615d42d7`.
+
+- AKShare `stock_zh_a_hist_tx` / Tencent is the explicit operational primary
+  and is called directly for every canonical refresh. East Money is blocked
+  from canonical refresh: its canonical request count is exactly zero, it has
+  no automatic failback path, and its separately invoked health probe is
+  disabled by default and cannot influence canonical rows, checksums,
+  selection, freshness, coverage, snapshots, or status.
+- Complete-run source integrity is mandatory. A partial Tencent batch, mixed
+  source, schema/order drift, malformed or empty response, stale/future or
+  duplicate row, invalid OHLC/finite/volume evidence, interruption, timeout,
+  DNS/TLS failure, or final-symbol failure blocks the run and preserves the
+  last valid immutable snapshot.
+- Tencent's sixth AKShare export is volume in `手`. Canonical monetary `amount`
+  is explicitly null/unavailable, never copied from volume, and never
+  zero-filled. The versioned consumer inventory proves enabled downstream
+  consumers either preserve null or fail closed when amount is required.
+- Production adjustment is qfq only. Corporate-action verification remains
+  independently bounded and never contributes rows to the Tencent canonical
+  batch. hfq is `UNSUPPORTED_DISABLED`.
+- SH, SZ/ChiNext, and governed BJ symbol mapping is explicit. The current
+  governed 41-symbol universe contains no BJ symbol; the installed AKShare
+  Tencent function does not yield its expected schema for BJ, so any future BJ
+  admission fails closed as `TENCENT_BJ_UPSTREAM_UNSUPPORTED` until separately
+  governed evidence exists.
+- Two genuine complete network runs resolved target `2026-07-16` and T-1
+  `2026-07-15`, selected Tencent immediately, accepted 41/41 rows from exactly
+  one canonical source, made zero East Money canonical requests, and produced
+  identical normalized batch checksum
+  `596b0861a3abff07a4fc0e7342bfc17934a7586328d259b810a718a105384f96`.
+  Snapshot ID is `opm:2026-07-16:fa3ea3c250c3c317`; snapshot checksum is
+  `fa3ea3c250c3c317d86906383f724079c1d338f89aa9a5df0adb8dbc0122fb25`;
+  idempotency is
+  `PASS_IDENTICAL_NORMALIZED_BATCH_AND_IMMUTABLE_SNAPSHOT` without an
+  `already_refreshed` shortcut.
+- Deployment, launchd installation, and service startup are outside this
+  issue. Recommendation, trading, broker, production-model, factor-mining,
+  and DQN/RL capabilities remain locked.
 
 ## GOAL-GOVERNED-AKSHARE-TENCENT-SECONDARY-UPSTREAM-01
 

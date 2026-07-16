@@ -1,0 +1,340 @@
+{
+  "amount_consumer_inventory": [
+    {
+      "disposition": "canonical merge consumes close and provenance only; monetary amount is not synthesized",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/daily_refresh/goal_daily_incremental_evidence_refresh01.py",
+      "scope": "enabled_operational",
+      "status": "PASS"
+    },
+    {
+      "disposition": "position-management handoff consumes canonical close/return evidence and has no amount dependency",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/portfolio_risk/goal_premarket_position_management_operational01.py",
+      "scope": "enabled_operational",
+      "status": "PASS"
+    },
+    {
+      "disposition": "empty or null numeric evidence converts to None, never zero",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/dashboard/repositories/base.py",
+      "scope": "enabled_read_only_projection",
+      "status": "PASS"
+    },
+    {
+      "disposition": "non-numeric amount is displayed as UNAVAILABLE",
+      "missing_required_tokens": [],
+      "path": "apps/premarket-workspace/src/components/PriceVolumeChart.tsx",
+      "scope": "enabled_read_only_projection",
+      "status": "PASS"
+    },
+    {
+      "disposition": "missing amount sets insufficient evidence and blocks promotion; it is not a Tencent canonical consumer",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/risk_tiering/goal_risk_tiering01.py",
+      "scope": "separate_research_only_committed_panel",
+      "status": "PASS"
+    },
+    {
+      "disposition": "missing amount adds data-quality/liquidity risk and marks evidence insufficient",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/risk_tiering/goal_risk_tiering011.py",
+      "scope": "separate_research_only_committed_panel",
+      "status": "PASS"
+    },
+    {
+      "disposition": "requires numeric amount from its own source-backed provider contract and is not called by Tencent canonical refresh",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/providers/provider_ladder.py",
+      "scope": "separate_review_only_ingestion",
+      "status": "PASS"
+    },
+    {
+      "disposition": "filters unavailable amount values instead of defaulting null to zero",
+      "missing_required_tokens": [],
+      "path": "src/ashare_premarket/research/goal_regime_label_research01.py",
+      "scope": "separate_research_only_committed_panel",
+      "status": "PASS"
+    }
+  ],
+  "amount_consumer_inventory_checksum": "6460a20d0ba480e3c07483590e24675db14262cd0f76c55a0947b9a81967a109",
+  "checks": {
+    "all_amount_consumers_safe": true,
+    "amount_unavailable_not_zero": true,
+    "automatic_failback_forbidden": true,
+    "east_money_canonical_requests_zero": true,
+    "east_money_probe_only": true,
+    "hfq_unsupported_disabled": true,
+    "independent_rows_never_canonical": true,
+    "independent_verification": true,
+    "qfq_only": true,
+    "tencent_direct_function": true,
+    "tencent_operational_primary": true
+  },
+  "contract_id": "issue36-tencent-primary-operational-hardening-v1",
+  "deployment_performed": false,
+  "independent_verification": {
+    "adjustment_result": "PASS",
+    "amount_semantics_result": "PASS",
+    "bj_mapping_result": "OUTSIDE_ENABLED_UNIVERSE_MAPPING_FAIL_CLOSED",
+    "bj_provider_data_supported": false,
+    "canonical_row_contribution_count": 0,
+    "corporate_action_fixture_checksum": "cfbb787852c088a33f47df680976a039cb1a639ed55c7690a748596ec01671de",
+    "corporate_action_fixture_path": "configs/providers/fixtures/tencent_qfq_corporate_action_v2.json",
+    "fixture_checksum": "824e739a54a570cd2c91fb234999112788b178cfccb2590593e753ddc82dde3f",
+    "fixture_path": "configs/providers/fixtures/eastmoney_tencent_consistency_v1.csv",
+    "hfq_research_audit": {
+      "comparisons": [
+        {
+          "absolute_difference": 1.1899999999999977,
+          "field": "open",
+          "passed": false,
+          "symbol": "600036.SH",
+          "trade_date": "2026-07-08"
+        },
+        {
+          "absolute_difference": 1.210000000000008,
+          "field": "high",
+          "passed": false,
+          "symbol": "600036.SH",
+          "trade_date": "2026-07-08"
+        },
+        {
+          "absolute_difference": 1.1800000000000068,
+          "field": "low",
+          "passed": false,
+          "symbol": "600036.SH",
+          "trade_date": "2026-07-08"
+        },
+        {
+          "absolute_difference": 1.200000000000017,
+          "field": "close",
+          "passed": false,
+          "symbol": "600036.SH",
+          "trade_date": "2026-07-08"
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "volume",
+          "passed": true,
+          "symbol": "600036.SH",
+          "trade_date": "2026-07-08"
+        }
+      ],
+      "failures": [
+        "2026-07-08:600036.SH:open",
+        "2026-07-08:600036.SH:high",
+        "2026-07-08:600036.SH:low",
+        "2026-07-08:600036.SH:close"
+      ],
+      "production_gate_effect": "OUTSIDE_ENABLED_SCOPE_UNSUPPORTED_DISABLED",
+      "reason": "CROSS_SOURCE_TOLERANCE_EXCEEDED",
+      "status": "BLOCKED"
+    },
+    "hfq_runtime_enabled": false,
+    "hfq_runtime_status": "UNSUPPORTED_DISABLED",
+    "ohlcv_volume_result": "PASS",
+    "ordinary_enabled_scope_result": "PASS",
+    "ordinary_market_coverage": [
+      "CHINEXT",
+      "SSE",
+      "SZSE"
+    ],
+    "overlap_key_count": 3,
+    "primary_unavailable_classification": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+    "production_adjustment_policy": "qfq_only",
+    "qfq_corporate_action_events": [
+      {
+        "authoritative_evidence": {
+          "ex_date": "2026-06-22",
+          "publisher": "Shanghai Stock Exchange company announcement",
+          "record_date": "2026-06-18",
+          "symbol": "603836.SH",
+          "terms": "actual cash CNY 0.20 and capital-reserve transfer 0.4 share per share; SSE differential-distribution ex-right formula uses virtual cash CNY 0.197 and virtual transfer ratio 0.395",
+          "title": "603836 2025 annual equity distribution implementation announcement",
+          "url": "https://big5.sse.com.cn/site/cht/www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-06-13/603836_20260613_9W1I.pdf"
+        },
+        "calendar_alignment_result": "PASS",
+        "direct_qfq_overlap": {
+          "classification": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+          "reason": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "event_id": "sse_603836_20260622_cash_and_transfer",
+        "evidence_method": "GOVERNED_AUTHORITATIVE_TERMS_TRIANGULATION",
+        "exchange": "SSE",
+        "failure_reasons": [],
+        "formula_comparisons": [
+          {
+            "absolute_difference": 0.0050179211,
+            "cash_per_share": 0.197,
+            "expected_qfq_unrounded": 7.9949820789,
+            "field": "open",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 8.0,
+            "passed": true,
+            "share_ratio_per_share": 0.395,
+            "tolerance": 0.0051,
+            "unadjusted": 11.35
+          },
+          {
+            "absolute_difference": 0.0044802867,
+            "cash_per_share": 0.197,
+            "expected_qfq_unrounded": 8.1455197133,
+            "field": "high",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 8.15,
+            "passed": true,
+            "share_ratio_per_share": 0.395,
+            "tolerance": 0.0051,
+            "unadjusted": 11.56
+          },
+          {
+            "absolute_difference": 0.0010394265,
+            "cash_per_share": 0.197,
+            "expected_qfq_unrounded": 7.9089605735,
+            "field": "low",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 7.91,
+            "passed": true,
+            "share_ratio_per_share": 0.395,
+            "tolerance": 0.0051,
+            "unadjusted": 11.23
+          },
+          {
+            "absolute_difference": 0.0046594982,
+            "cash_per_share": 0.197,
+            "expected_qfq_unrounded": 8.0953405018,
+            "field": "close",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 8.1,
+            "passed": true,
+            "share_ratio_per_share": 0.395,
+            "tolerance": 0.0051,
+            "unadjusted": 11.49
+          }
+        ],
+        "primary_corporate_action_evidence_status": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+        "qfq_continuity": {
+          "absolute_difference": 0.0005777096,
+          "economic_return": 0.0042814133,
+          "ex_qfq_close": 8.13,
+          "ex_unadjusted_close": 8.13,
+          "observed_record_qfq_close": 8.1,
+          "qfq_return": 0.0037037037,
+          "record_unadjusted_close": 11.49,
+          "status": "PASS",
+          "theoretical_ex_reference_unrounded": 8.0953405018,
+          "tolerance": 0.0015
+        },
+        "qfq_formula_result": "PASS",
+        "required_universe": false,
+        "status": "PASS",
+        "symbol": "603836.SH",
+        "unadjusted_structural_result": "PASS"
+      },
+      {
+        "authoritative_evidence": {
+          "ex_date": "2026-06-29",
+          "publisher": "Midea Group Co., Ltd. via CNINFO",
+          "record_date": "2026-06-26",
+          "symbol": "000333.SZ",
+          "terms": "cash CNY 38 per 10 participating shares; differential distribution effective cash CNY 37.221885 per 10 total shares for ex-dividend calculation",
+          "title": "2025 annual A-share equity distribution implementation announcement",
+          "url": "https://static.cninfo.com.cn/finalpage/2026-07-01/1225400311.PDF"
+        },
+        "calendar_alignment_result": "PASS",
+        "direct_qfq_overlap": {
+          "classification": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+          "reason": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+          "status": "UNAVAILABLE"
+        },
+        "event_id": "szse_000333_20260629_cash_dividend",
+        "evidence_method": "GOVERNED_AUTHORITATIVE_TERMS_TRIANGULATION",
+        "exchange": "SZSE",
+        "failure_reasons": [],
+        "formula_comparisons": [
+          {
+            "absolute_difference": 0.0021885,
+            "cash_per_share": 3.7221885,
+            "expected_qfq_unrounded": 73.1578115,
+            "field": "open",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 73.16,
+            "passed": true,
+            "share_ratio_per_share": 0.0,
+            "tolerance": 0.0051,
+            "unadjusted": 76.88
+          },
+          {
+            "absolute_difference": 0.0021885,
+            "cash_per_share": 3.7221885,
+            "expected_qfq_unrounded": 75.2178115,
+            "field": "high",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 75.22,
+            "passed": true,
+            "share_ratio_per_share": 0.0,
+            "tolerance": 0.0051,
+            "unadjusted": 78.94
+          },
+          {
+            "absolute_difference": 0.0021885,
+            "cash_per_share": 3.7221885,
+            "expected_qfq_unrounded": 72.8878115,
+            "field": "low",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 72.89,
+            "passed": true,
+            "share_ratio_per_share": 0.0,
+            "tolerance": 0.0051,
+            "unadjusted": 76.61
+          },
+          {
+            "absolute_difference": 0.0021885,
+            "cash_per_share": 3.7221885,
+            "expected_qfq_unrounded": 74.8278115,
+            "field": "close",
+            "formula": "(unadjusted-cash_per_share)/(1+share_ratio_per_share)",
+            "observed_qfq": 74.83,
+            "passed": true,
+            "share_ratio_per_share": 0.0,
+            "tolerance": 0.0051,
+            "unadjusted": 78.55
+          }
+        ],
+        "primary_corporate_action_evidence_status": "PRIMARY_CORPORATE_ACTION_EVIDENCE_UNAVAILABLE",
+        "qfq_continuity": {
+          "absolute_difference": 3.02008e-05,
+          "economic_return": 0.0326374439,
+          "ex_qfq_close": 77.27,
+          "ex_unadjusted_close": 77.27,
+          "observed_record_qfq_close": 74.83,
+          "qfq_return": 0.0326072431,
+          "record_unadjusted_close": 78.55,
+          "status": "PASS",
+          "theoretical_ex_reference_unrounded": 74.8278115,
+          "tolerance": 0.0015
+        },
+        "qfq_formula_result": "PASS",
+        "required_universe": true,
+        "status": "PASS",
+        "symbol": "000333.SZ",
+        "unadjusted_structural_result": "PASS"
+      }
+    ],
+    "qfq_exchange_coverage": [
+      "SSE",
+      "SZSE"
+    ],
+    "qfq_required_universe_event_result": "PASS",
+    "reason": "",
+    "required_universe_contains_bj": false,
+    "status": "PASS",
+    "verification_mode": "bounded_validation_only_never_canonical"
+  },
+  "provider_policy_checksum": "4a0f20c9ec118484ecd34002307a4e6d5b0e5fd574dbab7574ba1409561bf727",
+  "provider_policy_path": "configs/providers/akshare_governed_stock_history_v1.json",
+  "services_started": false,
+  "status": "PASS"
+}
