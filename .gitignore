@@ -37,6 +37,12 @@ outputs/local/
 outputs/diagnostics/local_runtime_*.csv
 outputs/diagnostics/local_runtime_*.json
 outputs/diagnostics/local_run_*.md
+# Daily live refreshes retain the complete canonical materialization locally.
+# Commit only bounded manifests, validation, and request-level evidence.
+outputs/research/daily_incremental_evidence_refresh/*/canonical_market_data.csv
+# This is the mutable convenience copy; the dated immutable attempt log is the
+# review-facing evidence artifact.
+outputs/research/goal_daily_incremental_evidence_refresh01_provider_attempts.csv
 node_modules/
 .next/
 coverage/

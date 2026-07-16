@@ -1,0 +1,21 @@
+fixture_id,evidence_date,symbol,adjustment,source,function,endpoint_family,open,high,low,close,volume,monetary_amount,diagnostic_raw_monetary_amount_cny,semantic_status
+current_overlap_20260714,2026-07-14,000002.SZ,qfq,East Money,stock_zh_a_hist,push2his.eastmoney.com,3.03,3.05,2.99,3.05,838587,253676766,,canonical_eastmoney_fields
+current_overlap_20260714,2026-07-14,000002.SZ,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,3.03,3.05,2.99,3.05,838587,,253676800,akshare_amount_is_volume_true_amount_not_exported
+current_overlap_20260714,2026-07-14,600036.SH,qfq,East Money,stock_zh_a_hist,push2his.eastmoney.com,37.10,37.24,36.82,37.18,804154,2979122982,,canonical_eastmoney_fields
+current_overlap_20260714,2026-07-14,600036.SH,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,37.10,37.24,36.82,37.18,804154,,2979123000,akshare_amount_is_volume_true_amount_not_exported
+current_overlap_20260714,2026-07-14,300015.SZ,qfq,East Money,stock_zh_a_hist,push2his.eastmoney.com,8.25,8.40,8.22,8.40,836717,698442135,,canonical_eastmoney_fields
+current_overlap_20260714,2026-07-14,300015.SZ,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,8.25,8.40,8.22,8.40,836717,,698442100,akshare_amount_is_volume_true_amount_not_exported
+corporate_action_20260708,2026-07-08,600036.SH,unadjusted,East Money,stock_zh_a_hist,push2his.eastmoney.com,37.36,37.97,37.15,37.94,767135,2899053623,,bounded_live_probe_20260715
+corporate_action_20260708,2026-07-08,600036.SH,unadjusted,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,37.36,37.97,37.15,37.94,767135,,,official_function_adjustment_fixture
+corporate_action_20260708,2026-07-08,600036.SH,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,36.36,36.97,36.15,36.94,767135,,,official_function_adjustment_fixture
+corporate_action_20260708,2026-07-08,600036.SH,hfq,East Money,stock_zh_a_hist,push2his.eastmoney.com,203.97,206.36,203.15,206.24,767135,2899053623,,bounded_live_probe_20260715
+corporate_action_20260708,2026-07-08,600036.SH,hfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,202.78,205.15,201.97,205.04,767135,,,official_function_adjustment_fixture
+required_universe_corporate_action_20260629,2026-06-26,000333.SZ,unadjusted,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,76.88,78.94,76.61,78.55,449534,,,official_function_pre_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-29,000333.SZ,unadjusted,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,75.79,77.99,75.14,77.27,743258,,,official_function_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-30,000333.SZ,unadjusted,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,76.52,78.66,75.31,75.53,577509,,,official_function_post_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-26,000333.SZ,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,73.16,75.22,72.89,74.83,449534,,,official_function_pre_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-29,000333.SZ,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,75.79,77.99,75.14,77.27,743258,,,official_function_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-30,000333.SZ,qfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,76.52,78.66,75.31,75.53,577509,,,official_function_post_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-26,000333.SZ,hfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,362.28,370.00,361.26,368.54,449534,,,official_function_pre_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-29,000333.SZ,hfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,372.15,380.40,369.71,377.70,743258,,,official_function_ex_date_fixture
+required_universe_corporate_action_20260629,2026-06-30,000333.SZ,hfq,Tencent,stock_zh_a_hist_tx,web.ifzq.gtimg.cn;proxy.finance.qq.com,374.88,382.91,370.35,371.17,577509,,,official_function_post_ex_date_fixture

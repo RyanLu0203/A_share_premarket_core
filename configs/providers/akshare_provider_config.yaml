@@ -7,6 +7,7 @@
     "cli_flag": "--allow-network"
   },
   "provider_timeout_seconds": 30,
+  "governed_stock_history_policy": "configs/providers/akshare_governed_stock_history_v1.json",
   "inactive_upstream_policy_proposal": "configs/providers/akshare_stock_history_upstream_policy_proposal.yaml",
   "proxy_policy": {
     "default_mode": "finance_direct_requests_proxy_discovery_disabled",
@@ -29,6 +30,7 @@
     "stock_info_a_code_name": "candidate A-share code/name list",
     "stock_zh_a_spot_em": "current liquidity and market snapshot filter",
     "stock_zh_a_hist": "daily stock OHLCV",
+    "stock_zh_a_hist_tx": "governed whole-run secondary daily stock OHLCV",
     "index_zh_a_hist": "daily benchmark OHLCV"
   },
   "benchmark_symbols": ["000300"],

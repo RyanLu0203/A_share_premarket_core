@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 from ashare_premarket.core.io import write_csv
 
@@ -21,6 +22,22 @@ ATTEMPT_FIELDS = [
     "retry_allowed",
     "fallback_provider",
     "notes",
+    "request_sequence",
+    "batch_request_sequence",
+    "market_exchange",
+    "endpoint_family",
+    "elapsed_seconds",
+    "response_byte_length_if_available",
+    "latest_returned_trade_date",
+    "exception_type",
+    "terminal_exception_message",
+    "retry_count",
+    "accepted",
+    "rejection_reason",
+    "upstream_source",
+    "akshare_version",
+    "request_parameters",
+    "network_context",
 ]
 
 
@@ -40,6 +57,14 @@ def make_attempt(
     http_status: str = "",
     fallback_provider: str = "",
     notes: str = "",
+    attempt_ts: str = "local_runtime",
+    elapsed_seconds: float = 0.0,
+    request_parameters: dict[str, object] | None = None,
+    endpoint_family: object = "",
+    akshare_version: str = "",
+    exception_type: str = "",
+    terminal_exception_message: str = "",
+    network_context: dict[str, object] | None = None,
 ) -> dict[str, object]:
     return {
         "provider_id": provider_id,
@@ -47,7 +72,7 @@ def make_attempt(
         "symbol": symbol,
         "date_start": date_start,
         "date_end": date_end,
-        "attempt_ts": "local_runtime",
+        "attempt_ts": attempt_ts,
         "network_enabled": network_enabled,
         "status": status,
         "failure_class": failure_class,
@@ -58,6 +83,22 @@ def make_attempt(
         "retry_allowed": retry_allowed,
         "fallback_provider": fallback_provider,
         "notes": notes,
+        "request_sequence": "",
+        "batch_request_sequence": "",
+        "market_exchange": symbol.partition(".")[2],
+        "endpoint_family": endpoint_family,
+        "elapsed_seconds": elapsed_seconds,
+        "response_byte_length_if_available": "unavailable_at_akshare_dataframe_boundary",
+        "latest_returned_trade_date": "",
+        "exception_type": exception_type,
+        "terminal_exception_message": terminal_exception_message,
+        "retry_count": 0,
+        "accepted": status == "PASS",
+        "rejection_reason": "" if status == "PASS" else failure_class,
+        "upstream_source": "Tencent" if function_name == "stock_zh_a_hist_tx" else "East Money" if function_name == "stock_zh_a_hist" else "",
+        "akshare_version": akshare_version,
+        "request_parameters": json.dumps(request_parameters or {}, sort_keys=True, separators=(",", ":")),
+        "network_context": json.dumps(network_context or {}, sort_keys=True, separators=(",", ":")),
     }
 
 

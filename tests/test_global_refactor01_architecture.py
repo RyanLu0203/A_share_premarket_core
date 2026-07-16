@@ -137,8 +137,8 @@ def test_program_doctor_reports_repository_interfaces_and_locks() -> None:
     assert report["current_branch"] == current_branch
     assert len(report["api_routes"]) == 22
     assert report["frontend_url"] == "http://127.0.0.1:3000"
-    assert report["latest_snapshot"] == "2026-07-01"
-    assert report["latest_refresh_status"] == "BLOCKED"
+    assert report["latest_snapshot"] == "2026-07-15"
+    assert report["latest_refresh_status"] == "SUCCEEDED"
     assert report["ready_factor_count"] == 0
     assert report["locked_capabilities"]["dashboard"] is False
     assert report["locked_capabilities"]["broker_live_trading"] is False

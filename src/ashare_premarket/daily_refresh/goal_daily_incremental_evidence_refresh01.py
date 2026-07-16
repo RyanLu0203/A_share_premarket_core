@@ -5,7 +5,8 @@ import hashlib
 import io
 import json
 import math
-import time
+import os
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
@@ -20,8 +21,9 @@ from ashare_premarket.portfolio_risk.goal_premarket_position_management_operatio
     resolve_run_context,
     run_goal_premarket_position_management_operational01,
 )
-from ashare_premarket.providers.akshare_provider import load_stock_ohlcv_daily
-from ashare_premarket.providers.provider_registry import load_ingestion_config, network_enabled
+from ashare_premarket.providers.governed_stock_history import run_governed_stock_history_batch
+from ashare_premarket.providers.provider_attempt_log import ATTEMPT_FIELDS
+from ashare_premarket.providers.provider_registry import network_enabled
 
 
 GOAL_ID = "GOAL-DAILY-INCREMENTAL-EVIDENCE-REFRESH-01"
@@ -44,9 +46,14 @@ EXPERIMENT_CONTRACT = PREFIX + "experiment_readiness_contract.csv"
 REFRESH_MANIFEST = PREFIX + "refresh_manifest.json"
 REFRESH_ROOT = "outputs/research/daily_incremental_evidence_refresh"
 LATEST_REFRESH = f"{REFRESH_ROOT}/latest_refresh.json"
+CANONICAL_DELTA_FILENAME = "canonical_delta.csv"
+CANONICAL_COMMITMENT_FILENAME = "canonical_evidence_commitment.json"
+CANONICAL_COMMITMENT_VERSION = "canonical-base-plus-t1-delta-v1"
 MANIFEST = "outputs/audits/goal_daily_incremental_evidence_refresh01_manifest.json"
 REPORT = "outputs/audits/goal_daily_incremental_evidence_refresh01_report.md"
 AUDIT = "outputs/audits/goal_daily_incremental_evidence_refresh01_audit.md"
+PROVIDER_ATTEMPTS = PREFIX + "provider_attempts.csv"
+IDEMPOTENCY = PREFIX + "idempotency.json"
 DOC = "docs/research/GOAL_DAILY_INCREMENTAL_EVIDENCE_REFRESH01_DAILY_WORKFLOW.md"
 CONTRACT = "configs/research/goal_daily_incremental_evidence_refresh01_contract.yaml"
 
@@ -141,8 +148,7 @@ def resolve_daily_refresh_context(
 
 
 def write_text(path: Path, body: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(body.encode("utf-8"))
+    _atomic_write_bytes(path, body.encode("utf-8"))
 
 
 def write_json(path: Path, payload: dict[str, object]) -> None:
@@ -203,8 +209,16 @@ def merge_incremental_evidence(
                 "provider_overlap_status": "single_approved_provider_no_overlap_evidence",
                 "canonical_price_status": "accepted" if not quarantine_reason else "quarantined_provider_discrepancy",
                 "canonical_return_status": "accepted" if eligible else "quarantined_provider_discrepancy" if quarantine_reason else "insufficient_prior_price",
-                "adjustment_convention_status": "unresolved_cross_provider_adjustment_convention",
-                "raw_adjusted_semantics": f"{raw.get('adjustment_policy', 'unresolved')}_adjusted_primary;cross_provider_adjustment_unresolved",
+                "adjustment_convention_status": (
+                    "qfq_governed_single_upstream"
+                    if raw.get("adjustment_policy") == "qfq"
+                    else "unresolved_cross_provider_adjustment_convention"
+                ),
+                "raw_adjusted_semantics": (
+                    "qfq_adjusted_single_upstream;eastmoney_tencent_qfq_production_v2"
+                    if raw.get("adjustment_policy") == "qfq"
+                    else f"{raw.get('adjustment_policy', 'unresolved')}_adjusted_primary;cross_provider_adjustment_unresolved"
+                ),
                 "timestamp_alignment_status": "date_level_only_no_intraday_timestamp",
                 "provider_timestamp": raw.get("provider_timestamp", trade_date),
                 "pit_available_date": raw.get("pit_available_date", trade_date),
@@ -222,6 +236,67 @@ def merge_incremental_evidence(
         history.setdefault(symbol, []).append(row)
 
     return sorted([*normalized_base, *additions], key=lambda row: (row["trade_date"], row["symbol"]))
+
+
+def materialize_bounded_canonical_evidence(
+    root: Path,
+    target_trading_date: str,
+    expected_previous_trading_date: str,
+    candidate_rows: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
+    """Commit the full canonical checksum without duplicating its full payload.
+
+    The repository already contains the immutable predecessor canonical panel.
+    A live refresh therefore needs only the bounded T-1 delta plus a commitment
+    that proves the deterministic base+delta reconstruction.  The complete
+    materialization remains local and ignored.
+    """
+
+    immutable_dir = root / REFRESH_ROOT / target_trading_date
+    full_relative = f"{REFRESH_ROOT}/{target_trading_date}/canonical_market_data.csv"
+    delta_relative = f"{REFRESH_ROOT}/{target_trading_date}/{CANONICAL_DELTA_FILENAME}"
+    commitment_relative = f"{REFRESH_ROOT}/{target_trading_date}/{CANONICAL_COMMITMENT_FILENAME}"
+    base_path = root / CANONICAL_MARKET
+    full_path = root / full_relative
+    if not base_path.exists() or not full_path.exists():
+        raise ValueError("canonical_commitment_requires_base_and_full_materialization")
+
+    full_rows = [_canonical_shape(row) for row in (candidate_rows or read_csv(full_path))]
+    delta_rows = [row for row in full_rows if row["trade_date"] == expected_previous_trading_date]
+    if not delta_rows:
+        raise ValueError("canonical_commitment_missing_expected_t_minus_one_delta")
+    delta_keys = {(row["trade_date"], row["symbol"]) for row in delta_rows}
+    if len(delta_keys) != len(delta_rows):
+        raise ValueError("canonical_commitment_duplicate_delta_key")
+
+    base_rows = [_canonical_shape(row) for row in read_csv(base_path)]
+    base_keys = {(row["trade_date"], row["symbol"]) for row in base_rows}
+    if base_keys & delta_keys:
+        raise ValueError("canonical_commitment_base_delta_key_overlap")
+    reconstructed = sorted([*base_rows, *delta_rows], key=lambda row: (row["trade_date"], row["symbol"]))
+    reconstructed_text = _csv_text(reconstructed, CANONICAL_FIELDS)
+    full_checksum = _sha256_file(full_path)
+    if _sha256_text(reconstructed_text) != full_checksum:
+        raise ValueError("canonical_commitment_reconstruction_checksum_mismatch")
+
+    delta_path = root / delta_relative
+    _write_immutable_csv(delta_path, delta_rows, CANONICAL_FIELDS)
+    commitment = {
+        "version": CANONICAL_COMMITMENT_VERSION,
+        "merge_policy": "append_disjoint_t1_rows_then_sort_trade_date_symbol_v1",
+        "target_trading_date": target_trading_date,
+        "expected_previous_trading_date": expected_previous_trading_date,
+        "canonical_full_path": full_relative,
+        "canonical_full_checksum": full_checksum,
+        "canonical_base_path": CANONICAL_MARKET,
+        "canonical_base_checksum": _sha256_file(base_path),
+        "canonical_delta_path": delta_relative,
+        "canonical_delta_checksum": _sha256_file(delta_path),
+        "canonical_delta_row_count": len(delta_rows),
+        "canonical_field_order": CANONICAL_FIELDS,
+    }
+    _write_immutable_json(root / commitment_relative, commitment)
+    return {**commitment, "commitment_path": commitment_relative}
 
 
 def validate_refresh_evidence(
@@ -317,14 +392,36 @@ def validate_refresh_evidence(
         warnings.add("PROVIDER_DISCREPANCY_QUARANTINED")
     checks.append(_check("quarantine_preservation", f"quarantined_rows={len(quarantined)}", "quarantined rows remain risk_model_eligible=false", quarantine_ok, "INVALID_QUARANTINE_STATE" if not quarantine_ok else ""))
 
-    adjustment_unresolved = all(
+    adjustment_failures = [
+        row["symbol"]
+        for row in expected_rows
+        if (
+            row.get("adjustment_convention_status") != "qfq_governed_single_upstream"
+            if row.get("source_provider") == "akshare"
+            else row.get("adjustment_convention_status") != "unresolved_cross_provider_adjustment_convention"
+        )
+    ]
+    adjustment_unresolved = bool(expected_rows) and all(
         row.get("adjustment_convention_status") == "unresolved_cross_provider_adjustment_convention"
         for row in expected_rows
     )
-    if expected_rows and adjustment_unresolved:
+    if adjustment_unresolved:
         warnings.add("ADJUSTMENT_CONVENTION_UNRESOLVED")
-    checks.append(_check("adjustment_convention_disclosure", "UNRESOLVED" if adjustment_unresolved else "INVALID_OR_MISSING", "explicit unresolved status; no full reconciliation claim", adjustment_unresolved, "INVALID_PROVIDER_STATE" if not adjustment_unresolved else ""))
-    if not adjustment_unresolved:
+    adjustment_ok = not adjustment_failures
+    checks.append(
+        _check(
+            "adjustment_convention_disclosure",
+            "QFQ_GOVERNED" if expected_rows and not adjustment_unresolved and adjustment_ok else "UNRESOLVED" if adjustment_unresolved else "INVALID_OR_MISSING",
+            (
+                "explicit unresolved status; no full reconciliation claim"
+                if adjustment_unresolved
+                else "AKShare live rows use governed qfq; predecessor evidence retains explicit unresolved disclosure"
+            ),
+            adjustment_ok,
+            "INVALID_PROVIDER_STATE" if not adjustment_ok else "",
+        )
+    )
+    if not adjustment_ok:
         reasons.add("INVALID_PROVIDER_STATE")
 
     return {
@@ -360,6 +457,7 @@ def run_goal_daily_incremental_evidence_refresh01(
     }
     evidence_mode = "committed_evidence_replay"
     provider_attempts: list[dict[str, object]] = []
+    upstream_run: dict[str, object] = {}
     candidate_rows: list[dict[str, object]] = list(base_rows)
     source_path = root / CANONICAL_MARKET
     source_checksum_override = ""
@@ -375,7 +473,7 @@ def run_goal_daily_incremental_evidence_refresh01(
             candidate_rows = merge_incremental_evidence(base_rows, incremental, context["expected_previous_trading_date"])
         elif allow_network:
             evidence_mode = "live_bounded_fetch"
-            incremental, provider_attempts = _fetch_network_incremental(root, context, required_symbols)
+            incremental, provider_attempts, upstream_run = _fetch_network_incremental(root, context, required_symbols)
             source_checksum_override = _sha256_text(_csv_text(incremental))
             candidate_rows = merge_incremental_evidence(base_rows, incremental, context["expected_previous_trading_date"])
             source_path = root / CANONICAL_MARKET
@@ -399,27 +497,47 @@ def run_goal_daily_incremental_evidence_refresh01(
     opm_integrity = "NOT_RUN"
     snapshot_path = ""
     snapshot_version = ""
+    snapshot_checksum = ""
     blocked_reasons = list(validation["reason_codes"])
 
     if validation["status"] == "PASS":
         if evidence_mode != "committed_evidence_replay":
             canonical_override = f"{REFRESH_ROOT}/{context['target_trading_date']}/canonical_market_data.csv"
             _write_immutable_csv(root / canonical_override, [_canonical_shape(row) for row in candidate_rows], CANONICAL_FIELDS)
+            materialize_bounded_canonical_evidence(
+                root,
+                context["target_trading_date"],
+                context["expected_previous_trading_date"],
+                candidate_rows,
+            )
         runner = opm_runner or run_goal_premarket_position_management_operational01
         opm_executed = runner(
             root,
             print_summary=False,
-            execution_time=execution_time,
-            target_trading_date=target_trading_date,
+            # Freeze the already-resolved run clock across the refresh -> OPM
+            # boundary.  Passing the caller's raw ``None`` would make OPM take
+            # a second wall-clock timestamp and break immutable idempotency.
+            execution_time=None if replay_date else context["execution_time"],
+            target_trading_date=context["target_trading_date"],
             replay_date=replay_date,
             canonical_evidence_path=canonical_override or None,
             refresh_metadata={
                 "goal": GOAL_ID,
                 "evidence_mode": evidence_mode,
                 "canonical_checksum": canonical_checksum,
+                **(
+                    {
+                        "upstream_policy_id": upstream_run["policy_id"],
+                        "upstream_source": upstream_run["selected_upstream_source"],
+                        "upstream_function": upstream_run["selected_function"],
+                        "upstream_batch_checksum": upstream_run["selected_batch_checksum"],
+                    }
+                    if upstream_run
+                    else {}
+                ),
             },
         )
-        snapshot_path, snapshot_version, opm_integrity = _opm_snapshot_state(root, context["target_trading_date"])
+        snapshot_path, snapshot_version, opm_integrity, snapshot_checksum = _opm_snapshot_state(root, context["target_trading_date"])
         if not opm_executed:
             blocked_reasons.append("OPM_EXECUTION_FAILED")
         if opm_integrity != "VERIFIED":
@@ -446,6 +564,14 @@ def run_goal_daily_incremental_evidence_refresh01(
         "snapshot_date": context["target_trading_date"] if refresh_succeeded else "",
         "snapshot_manifest_path": snapshot_path if refresh_succeeded else "",
         "snapshot_version": snapshot_version if refresh_succeeded else "",
+        **(
+            {
+                "snapshot_id": f"opm:{context['target_trading_date']}:{snapshot_checksum[:16]}" if refresh_succeeded else "",
+                "snapshot_checksum": snapshot_checksum if refresh_succeeded else "",
+            }
+            if upstream_run
+            else {}
+        ),
         "refresh_manifest_path": f"{REFRESH_ROOT}/{context['target_trading_date']}/refresh_manifest.json" if refresh_succeeded else REFRESH_MANIFEST,
         "research_only": True,
         "not_for_execution": True,
@@ -457,12 +583,21 @@ def run_goal_daily_incremental_evidence_refresh01(
         "canonical_evidence_path": canonical_override or CANONICAL_MARKET,
         "validation_checksum": _sha256_text(_csv_text(validation["rows"])),
         "provider_attempt_count": len(provider_attempts),
+        **(
+            {
+                "provider_attempt_total_count": len(upstream_run["all_attempts"]),
+                "upstream_acquisition": _upstream_manifest(upstream_run),
+            }
+            if upstream_run
+            else {}
+        ),
         "provider_warning_codes": validation["warning_codes"],
         "no_silent_averaging": True,
-        "adjustment_convention_status": "UNRESOLVED",
+        "adjustment_convention_status": "QFQ_GOVERNED" if upstream_run else "UNRESOLVED",
         "quarantine_policy": "preserve_existing_and_exclude_flagged_rows_from_risk_model",
         "opm_executed": opm_executed,
         "opm_snapshot_integrity": opm_integrity,
+        **({"atomic_write_result": "PASS_ATOMIC_REPLACE_AND_IMMUTABLE_CONFLICT_GUARD"} if upstream_run else {}),
         "risk_model_recalculated": False,
         "risk_model_source": "validated_predecessor_portfolio_risk_outputs",
         "ready_factor_count": 0,
@@ -474,14 +609,49 @@ def run_goal_daily_incremental_evidence_refresh01(
     refresh_manifest_checksum = _sha256_text(json.dumps(refresh_manifest, indent=2, sort_keys=True) + "\n")
     latest["refresh_manifest_checksum"] = refresh_manifest_checksum
 
-    write_csv(root / VALIDATION, validation["rows"])
-    write_csv(root / RUN_SUMMARY, [_run_summary(context, validation, latest, opm_executed, opm_integrity)])
-    write_csv(root / EXPERIMENT_CONTRACT, _experiment_contract(context, latest))
+    _atomic_write_csv(root / VALIDATION, validation["rows"])
+    if upstream_run:
+        _atomic_write_csv(root / PROVIDER_ATTEMPTS, list(upstream_run.get("all_attempts", [])), ATTEMPT_FIELDS)
+    _atomic_write_csv(root / RUN_SUMMARY, [_run_summary(context, validation, latest, opm_executed, opm_integrity)])
+    _atomic_write_csv(root / EXPERIMENT_CONTRACT, _experiment_contract(context, latest))
     write_json(root / REFRESH_MANIFEST, refresh_manifest)
     if refresh_succeeded:
         immutable_dir = root / REFRESH_ROOT / context["target_trading_date"]
         _write_immutable_csv(immutable_dir / "validation.csv", validation["rows"])
         _write_immutable_json(immutable_dir / "refresh_manifest.json", refresh_manifest)
+        if upstream_run:
+            attempt_idempotency = _write_idempotent_provider_attempts(
+                immutable_dir / "provider_attempts.csv", list(upstream_run["all_attempts"])
+            )
+        else:
+            attempt_idempotency = "NOT_APPLICABLE"
+    else:
+        attempt_idempotency = "NOT_APPLICABLE"
+    if upstream_run:
+        idempotency = {
+            "goal": GOAL_ID,
+            "status": (
+                "PASS_IDENTICAL_NORMALIZED_BATCH_AND_IMMUTABLE_SNAPSHOT"
+                if attempt_idempotency == "PASS_SEMANTIC_MATCH_EXISTING_IMMUTABLE_EVIDENCE"
+                else "FIRST_SUCCESSFUL_LIVE_MATERIALIZATION"
+                if refresh_succeeded
+                else "NOT_ELIGIBLE_REFRESH_BLOCKED"
+            ),
+            "execution_mode": context["execution_mode"],
+            "execution_time_input": context["execution_time"],
+            "target_trading_date": context["target_trading_date"],
+            "expected_previous_trading_date": context["expected_previous_trading_date"],
+            "selected_upstream": upstream_run["selected_upstream_source"],
+            "selected_batch_checksum": upstream_run["selected_batch_checksum"],
+            "canonical_evidence_checksum": canonical_checksum,
+            "snapshot_checksum": snapshot_checksum,
+            "refresh_manifest_checksum": refresh_manifest_checksum,
+            "attempt_evidence_result": attempt_idempotency,
+            "no_per_symbol_mixing": upstream_run["no_per_symbol_mixing"],
+        }
+        write_json(root / IDEMPOTENCY, idempotency)
+        latest["idempotency_status"] = idempotency["status"]
+        latest["idempotency_evidence_path"] = IDEMPOTENCY
     write_json(root / LATEST_REFRESH, latest)
 
     _write_governance_files(root)
@@ -565,44 +735,66 @@ def _fetch_network_incremental(
     root: Path,
     context: dict[str, str],
     required_symbols: set[str],
-) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+) -> tuple[list[dict[str, object]], list[dict[str, object]], dict[str, object]]:
     if not network_enabled(True):
-        return [], [{"status": "FAIL", "failure_class": "NETWORK_DISABLED_BY_POLICY"}]
-    config = load_ingestion_config(root)
-    adjustment = str(config.get("adjustment_policy", "qfq"))
-    interval = float(dict(config.get("rate_limit_policy", {})).get("min_seconds_between_symbol_calls", 0.2))
+        return [], [{"status": "FAIL", "failure_class": "NETWORK_DISABLED_BY_POLICY"}], {}
     expected = context["expected_previous_trading_date"]
-    rows: list[dict[str, object]] = []
-    attempts: list[dict[str, object]] = []
-    for index, symbol in enumerate(sorted(required_symbols)):
-        if index and interval:
-            time.sleep(interval)
-        result = load_stock_ohlcv_daily(symbol, expected, expected, adjustment, True)
-        attempts.append(result.attempt)
-        for row in result.rows:
-            if str(row.get("trade_date")) == expected:
-                rows.append(
-                    {
-                        **row,
-                        "source_provider": "akshare",
-                        "provider_timestamp": expected,
-                        "pit_available_date": expected,
-                        "no_lookahead_status": "passed_current_or_past_only",
-                        "suspension_status": "trading",
-                        "adjustment_policy": adjustment,
-                    }
-                )
-    return rows, attempts
+    run = run_governed_stock_history_batch(root, required_symbols, expected, True)
+    rows = [
+        {
+            **row,
+            "source_provider": "akshare",
+            "provider_timestamp": expected,
+            "pit_available_date": expected,
+            "no_lookahead_status": "passed_current_or_past_only",
+            "suspension_status": "trading",
+            "adjustment_policy": run.get("primary_batch", {}).get("adjustment_policy", "qfq"),
+        }
+        for row in run["selected_rows"]
+    ]
+    return rows, list(run["selected_attempts"]), run
 
 
-def _opm_snapshot_state(root: Path, expected_date: str) -> tuple[str, str, str]:
+def _upstream_manifest(run: dict[str, object]) -> dict[str, object]:
+    if not run:
+        return {"policy_id": "not_applicable", "state": "not_applicable"}
+
+    def batch_summary(batch: dict[str, object] | None) -> dict[str, object] | None:
+        if batch is None:
+            return None
+        return {key: value for key, value in batch.items() if key not in {"rows", "attempts", "elapsed_seconds"}}
+
+    return {
+        "policy_id": run["policy_id"],
+        "state": run["state"],
+        "expected_trade_date": run["expected_trade_date"],
+        "required_symbols": run["required_symbols"],
+        "selected_upstream_source": run["selected_upstream_source"],
+        "selected_upstream_reason": run["selected_upstream_reason"],
+        "selected_function": run["selected_function"],
+        "selected_endpoint_family": run["selected_endpoint_family"],
+        "selected_batch_checksum": run["selected_batch_checksum"],
+        "primary_batch": batch_summary(run["primary_batch"]),
+        "secondary_activation": run["secondary_activation"],
+        "secondary_batch": batch_summary(run["secondary_batch"]),
+        "source_consistency_contract_version": run["source_consistency_contract_version"],
+        "source_consistency_result": run["source_consistency_result"],
+        "discarded_primary_row_count": run["discarded_primary_row_count"],
+        "no_per_symbol_mixing": run["no_per_symbol_mixing"],
+        "full_coverage": run["full_coverage"],
+        "tls_verification_preserved": run["tls_verification_preserved"],
+        "bounded_attempts": run["bounded_attempts"],
+    }
+
+
+def _opm_snapshot_state(root: Path, expected_date: str) -> tuple[str, str, str, str]:
     pointer = _read_json_if_exists(root / OPM_LATEST)
     if pointer.get("snapshot_date") != expected_date:
-        return "", "", "FAILED"
+        return "", "", "FAILED", ""
     relative = str(pointer.get("snapshot_manifest_path", ""))
     manifest_path = root / relative
     if not relative or not manifest_path.exists():
-        return "", "", "FAILED"
+        return "", "", "FAILED", ""
     manifest = _read_json_if_exists(manifest_path)
     failures = []
     for name, expected in dict(manifest.get("checksums", {})).items():
@@ -613,7 +805,7 @@ def _opm_snapshot_state(root: Path, expected_date: str) -> tuple[str, str, str]:
     manifest_checksum = _sha256_file(manifest_path)
     if pointer.get("snapshot_manifest_checksum") != manifest_checksum:
         failures.append("manifest.json")
-    return relative, f"sha256:{manifest_checksum[:16]}", "VERIFIED" if not failures else "FAILED"
+    return relative, f"sha256:{manifest_checksum[:16]}", "VERIFIED" if not failures else "FAILED", manifest_checksum
 
 
 def _run_summary(
@@ -748,7 +940,7 @@ def _write_governance_files(root: Path) -> None:
                 "provider_reconciliation_preserved: true",
                 "quarantine_preserved: true",
                 "no_silent_averaging: true",
-                "adjustment_convention_status: unresolved",
+                "adjustment_convention_status: live_akshare_qfq_governed; predecessor_evidence_explicitly_unresolved",
                 "network_default: disabled",
                 "immutable_success_manifest: true",
                 "source_checksum_policy: sha256_utf8_with_crlf_normalized_to_lf",
@@ -903,10 +1095,48 @@ def _write_immutable_json(path: Path, payload: dict[str, object]) -> None:
 
 
 def _write_immutable_text(path: Path, body: str) -> None:
-    if path.exists() and path.read_text(encoding="utf-8") != body:
-        raise RuntimeError(f"refuse_conflicting_refresh_overwrite:{path}")
+    if path.exists():
+        if path.read_text(encoding="utf-8") != body:
+            raise RuntimeError(f"refuse_conflicting_refresh_overwrite:{path}")
+        return
+    _atomic_write_bytes(path, body.encode("utf-8"))
+
+
+def _atomic_write_bytes(path: Path, body: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(body.encode("utf-8"))
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent, delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(body)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+
+
+def _atomic_write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str] | None = None) -> None:
+    _atomic_write_bytes(path, _csv_text(rows, fieldnames).encode("utf-8"))
+
+
+def _write_idempotent_provider_attempts(path: Path, rows: list[dict[str, object]]) -> str:
+    if not path.exists():
+        _write_immutable_csv(path, rows, ATTEMPT_FIELDS)
+        return "FIRST_IMMUTABLE_ATTEMPT_EVIDENCE_WRITE"
+    existing = read_csv(path)
+    ignored = {"attempt_ts", "elapsed_seconds"}
+
+    def projection(items: list[dict[str, object]]) -> list[dict[str, str]]:
+        return [
+            {field: _string(row.get(field, "")) for field in ATTEMPT_FIELDS if field not in ignored}
+            for row in items
+        ]
+
+    if projection(existing) != projection(rows):
+        raise RuntimeError(f"refuse_non_idempotent_provider_attempt_overwrite:{path}")
+    return "PASS_SEMANTIC_MATCH_EXISTING_IMMUTABLE_EVIDENCE"
 
 
 def _csv_text(rows: list[dict[str, object]], fieldnames: list[str] | None = None) -> str:

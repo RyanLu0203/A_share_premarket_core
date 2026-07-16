@@ -1950,3 +1950,44 @@ Next review question:
 Can GOAL-06C start as review-only expanded validation under the readiness report
 constraints, or should the next worker first close the documented Class D source
 evidence gap?
+## 2026-07-15 - Issue #34 governed AKShare run-level secondary upstream
+
+Status: `IMPLEMENTED_RESEARCH_ONLY_PASS`; ready for PR review, with deployment,
+launchd, and service startup outside scope.
+
+- Verified `origin/project-current` at the merged PR #33 commit
+  `c7a271fefe12936266de73fedfad233869e4d79e` and created only
+  `codex/governed-akshare-tencent-secondary-upstream`.
+- Implemented a versioned full-run East Money-first state machine with one
+  approved Tencent transition, complete secondary reacquisition, discarded
+  partial-primary rows, finite attempts/wall-clock, and no symbol-level mixing.
+- Proved that AKShare Tencent's exported `amount` column is source volume at
+  scale 1 against East Money for SSE, SZSE, and ChiNext samples. True monetary
+  amount is not exposed by the official function and remains explicitly
+  unavailable.
+- Added normalized consistency and adjustment fixtures, evidence-based
+  tolerances, request/batch provenance, source checksums, PIT/schema gates,
+  atomic immutable writes, and focused transition/failure/idempotency tests.
+- Applied the maintainer-approved qfq-only production policy. SSE `603836.SH`
+  and required-universe SZSE `000333.SZ` pass authoritative-terms,
+  unadjusted/qfq, approved-calendar, formula, and continuity triangulation;
+  hfq remains disabled, research-only, and non-blocking.
+- Distinguished Tencent `amount=null` from observed zero and proved the daily
+  operational/OPM path does not require monetary amount. Any future consumer
+  that declares amount required fails closed.
+- Fixed a demonstrated clock-lineage defect: OPM now receives the refresh's
+  resolved execution time instead of taking a second wall-clock sample.
+- Completed two identical live state-machine runs with target/T-1
+  `2026-07-15/2026-07-14`, Tencent 41/41, no source mixing, batch checksum
+  `a95459ff4be28e5acf48c7fb056490f470034d6949599119da8fa8277b95f5b5`,
+  snapshot checksum `8bb115499856585595e1f6e625bbea3e8d6de7c89a067992c2af9fe62685e3d2`,
+  and immutable idempotency PASS.
+- Deliberately reconciled five read-only API projections and three runtime
+  artifact hashes to the truthful second snapshot; OpenAPI, 22 GET/zero write
+  topology, historical replay, and all locked boundaries remain unchanged.
+- Excluded the duplicate 12.4 MB full canonical materialization and added a
+  bounded 41-row T-1 delta plus cryptographic base+delta reconstruction
+  commitment so fresh-clone snapshot verification remains exact.
+- Final validation: Python 3.12 compileall PASS, `448 passed`, canonical profile
+  `117/117 PASS`, plus architecture, safety, workflow, adapter, provider,
+  PIT, leakage, and macOS checks PASS.
