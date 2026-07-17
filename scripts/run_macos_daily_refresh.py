@@ -1,17 +1,31 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import importlib.util
 import os
 import platform
+from pathlib import Path
+from typing import Iterator
 
 from _bootstrap import ROOT
 from ashare_premarket.daily_refresh.goal_daily_incremental_evidence_refresh01 import (
+    IDEMPOTENCY,
+    REQUIRED_ARTIFACTS as DAILY_REQUIRED_ARTIFACTS,
+    WORKFLOW_STATUS,
     resolve_daily_refresh_context,
     run_goal_daily_incremental_evidence_refresh01,
 )
 from ashare_premarket.data.runtime_calendar import runtime_calendar_environment, sync_runtime_trading_calendar
 from ashare_premarket.ops.macos_launchd import already_refreshed
+from ashare_premarket.portfolio_risk.goal_premarket_position_management_operational01 import (
+    REQUIRED_ARTIFACTS as OPM_REQUIRED_ARTIFACTS,
+)
+
+
+MUTABLE_TRACKED_BASELINES = tuple(
+    dict.fromkeys((*DAILY_REQUIRED_ARTIFACTS, IDEMPOTENCY, WORKFLOW_STATUS, *OPM_REQUIRED_ARTIFACTS))
+)
 
 
 def main() -> int:
@@ -19,6 +33,11 @@ def main() -> int:
         description="Sync approved calendar evidence, refresh bounded T-1 evidence, and write one research-only OPM snapshot."
     )
     parser.add_argument("--allow-network", action="store_true", help="Required explicit provider-network authorization.")
+    parser.add_argument(
+        "--force-network-reacquisition",
+        action="store_true",
+        help="Run one complete bounded network acquisition even when today's immutable snapshot already exists.",
+    )
     parser.add_argument("--check", action="store_true", help="Check runner prerequisites without network access or writes.")
     args = parser.parse_args()
     if args.check:
@@ -45,20 +64,45 @@ def main() -> int:
         f"{calendar.relative_to(ROOT)} | source={context['calendar_source']} | "
         f"coverage_end={context['calendar_coverage_end']} | freshness={context['calendar_freshness_status']}"
     )
-    if already_refreshed(ROOT, context):
+    if already_refreshed(ROOT, context) and not args.force_network_reacquisition:
         print(
             "Daily evidence refresh: ALREADY_SUCCEEDED | "
             f"target={context['target_trading_date']} | "
             f"expected_t_minus_one={context['expected_previous_trading_date']}"
         )
         return 0
-    passed = run_goal_daily_incremental_evidence_refresh01(
-        ROOT,
-        print_summary=True,
-        allow_network=True,
-        replay_date=None,
-    )
+    with preserve_tracked_runtime_baselines(ROOT):
+        passed = run_goal_daily_incremental_evidence_refresh01(
+            ROOT,
+            print_summary=True,
+            allow_network=True,
+            replay_date=None,
+        )
     return 0 if passed else 1
+
+
+@contextmanager
+def preserve_tracked_runtime_baselines(root: Path) -> Iterator[None]:
+    """Keep immutable dated evidence while restoring mutable committed mirrors."""
+    existing: dict[str, bytes] = {}
+    absent: set[str] = set()
+    for relative in MUTABLE_TRACKED_BASELINES:
+        path = root / relative
+        if path.is_file():
+            existing[relative] = path.read_bytes()
+        else:
+            absent.add(relative)
+    try:
+        yield
+    finally:
+        for relative, content in existing.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+        for relative in absent:
+            path = root / relative
+            if path.is_file():
+                path.unlink()
 
 
 if __name__ == "__main__":

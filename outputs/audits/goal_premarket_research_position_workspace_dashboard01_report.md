@@ -6,7 +6,7 @@ Status: `PASS`
 
 - Pages registered: `23`.
 - Read-only API routes: `22`.
-- Source snapshot: `2026-07-15` with `VERIFIED` checksums.
+- Source snapshot: `2026-07-16` with `VERIFIED` checksums.
 - Stocks / bands / abstentions: `41` / `41` / `12`.
 - Constraints / substantive constraints: `13` / `7`.
 - Local watchlists persist only in browser local storage; the server exposes no write route.

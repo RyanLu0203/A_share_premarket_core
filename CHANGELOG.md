@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-17 - final macOS deployment API/UI and runtime-hygiene repair
+
+- Added truthful current operational evidence to the read-only workspace:
+  Tencent, AKShare function, qfq, amount unavailable, accepted/rejected counts,
+  East Money canonical request count, snapshot identity, checksums, and runtime
+  commit. Historical research and replay lineage remains separate.
+- Changed the approved workspace launcher to use the validated Next.js
+  production build by default; development startup is explicit opt-in.
+- Preserved committed mutable baselines around daily macOS execution while
+  retaining ignored immutable dated snapshots and local runtime evidence.
+- Added an explicit bounded second-network-acquisition option for idempotency
+  acceptance. No replay shortcut, fallback provider, lock removal, or i18n
+  change was introduced.
+
 ## 2026-07-16 - Tencent primary operational hardening
 
 Status: implemented and live-accepted on the Issue #36 feature branch; not a

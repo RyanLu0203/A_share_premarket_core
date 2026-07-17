@@ -1,5 +1,31 @@
 # 09 Step Iteration Log
 
+## 2026-07-17 - FINAL-MACOS-DEPLOYMENT-API-UI-REPAIR
+
+Status: `IMPLEMENTED_VALIDATION_PENDING_REVIEW_AND_DEPLOYMENT` on
+`codex/final-macos-deployment-api-ui-repair`.
+
+- Separated current Tencent operational acquisition evidence from historical
+  research snapshot/provider/chart lineage across status, Data Quality,
+  Provider Health, Provenance, Command Center, Stock Detail, and Stock Chart.
+  Explicit replay-date requests retain the established API architecture
+  projections.
+- Made the launchd workspace use the validated Next.js production build by
+  default and expose the exact runtime Git SHA to provenance.
+- Added bounded preservation of mutable tracked runtime mirrors around the
+  macOS daily refresh. Dated immutable evidence remains local and checksum
+  governed; successful daily operation no longer leaves the deployment
+  checkout dirty.
+- Added explicit complete-network reacquisition for two-run idempotency
+  acceptance, without changing the normal `already_refreshed` guard.
+- Preserved 22 GET routes, zero write routes, Tencent-only canonical refresh,
+  qfq-only production adjustment, amount-null semantics, and every downstream
+  product lock. No bilingual/i18n change is part of this work.
+- Validation: Python 3.12 compileall `PASS`; pytest warnings-as-errors
+  `463 passed`; canonical profile `117/117 PASS`; historical API architecture
+  and OpenAPI parity `PASS`; workspace audit `PASS`; frontend lint, typecheck,
+  `35/35` tests, and production build `PASS`.
+
 ## 2026-07-16 - GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01
 
 Status: `IMPLEMENTED_LIVE_ACCEPTANCE_PASS_NOT_DEPLOYED` on

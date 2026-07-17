@@ -35,7 +35,8 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
   const constraints = Array.isArray(position.constraints) ? position.constraints as Array<Record<string, unknown>> : [];
   const candles = Array.isArray(market.candles) ? market.candles as CandleRow[] : [];
   const cutoff = String(market.candlestick_latest_date ?? status?.data_cutoff ?? "UNAVAILABLE");
-  const source = String(market.candlestick_source ?? readSource(detail.latest_price) ?? "UNAVAILABLE");
+  const historicalSource = String(market.historical_chart_source ?? market.candlestick_source ?? "UNAVAILABLE");
+  const operationalSource = String(detail.operational_provider ?? market.current_operational_provider ?? readSource(detail.latest_price) ?? "UNAVAILABLE");
   const freshness = status?.freshness_code ?? String(detail.freshness_state ?? "UNAVAILABLE");
   return <div className="page-stack">
     <PageHeader
@@ -52,7 +53,7 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
       <Summary label="Latest validated close" value={readValue(market.latest_close) ?? readValue(detail.latest_price)} format="number" />
       <Summary label="Latest validated return" value={readValue(market.latest_return) ?? readValue(detail.price_change)} format="percent" />
       <Summary label="Data cutoff" value={cutoff} />
-      <Summary label="Provider" value={source} />
+      <Summary label="Operational provider" value={operationalSource} />
       <div><span>Freshness</span><StatusBadge state={freshness} /></div>
       <Summary label="Portfolio weight" value={detail.current_weight} format="percent" />
       <Summary label="Risk contribution" value={detail.risk_contribution} format="percent" />
@@ -68,7 +69,8 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
         <Panel title="Daily candlestick and volume" meta={`T-1 committed evidence through ${cutoff}`}>
           <div className="chart-semantics-banner"><strong>NOT A LIVE QUOTE</strong><span>{mode === "replay" ? "DETERMINISTIC REPLAY SNAPSHOT" : "LIVE READINESS VIEW OVER COMMITTED DATA"}</span><StatusBadge state={freshness} /></div>
           <div className="chart-evidence-strip">
-            <EvidenceMarker label="Provider lineage" value={source} detail={Array.isArray(detail.provider_lineage) ? detail.provider_lineage.join(" / ") : "UNAVAILABLE"} />
+            <EvidenceMarker label="Current operational provider" value={operationalSource} detail={`${String(detail.operational_function ?? "UNAVAILABLE")} / ${String(detail.operational_adjustment ?? "UNAVAILABLE")}`} />
+            <EvidenceMarker label="Historical chart panel" value={historicalSource} detail={`Research-only history through ${cutoff}; not the current operational acquisition batch`} />
             <EvidenceMarker label="Data quality" value={formatMarkerCounts(qualityMarkers)} />
             <EvidenceMarker label="Provider discrepancies" value={String(discrepancies.length)} detail={discrepancies.length ? "Amber DQ markers identify affected dates" : "No committed discrepancy marker for this symbol"} />
             <EvidenceMarker label="Validated regime context" value={String(latestRegime.regime ?? "UNAVAILABLE")} detail={`${String(latestRegime.trade_date ?? "UNAVAILABLE")} / ${String(latestRegime.confidence_tier ?? "UNAVAILABLE")}`} />

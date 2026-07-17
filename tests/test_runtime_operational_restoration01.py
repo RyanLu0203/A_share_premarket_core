@@ -36,6 +36,16 @@ class _Rows:
         ]
 
 
+def _mock_calendar_provider(monkeypatch: pytest.MonkeyPatch) -> None:
+    real_import = runtime_calendar.importlib.import_module
+    provider = SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows())
+
+    def import_module(name: str) -> object:
+        return provider if name == "akshare" else real_import(name)
+
+    monkeypatch.setattr(runtime_calendar.importlib, "import_module", import_module)
+
+
 def test_runtime_calendar_uses_only_approved_source_sessions_and_exposes_freshness(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -46,11 +56,7 @@ def test_runtime_calendar_uses_only_approved_source_sessions_and_exposes_freshne
             {"date": "2026-07-10", "is_trading_day": "true", "session_note": "regular"},
         ],
     )
-    monkeypatch.setattr(
-        runtime_calendar.importlib,
-        "import_module",
-        lambda _name: SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows()),
-    )
+    _mock_calendar_provider(monkeypatch)
 
     output = runtime_calendar.sync_runtime_trading_calendar(tmp_path, allow_network=True)
     monkeypatch.setenv("ASHARE_TRADING_CALENDAR_PATH", str(output))
@@ -87,11 +93,7 @@ def test_runtime_calendar_records_non_authoritative_committed_fixture_conflicts(
             {"date": "2026-07-11", "is_trading_day": "true", "session_note": "regular"},
         ],
     )
-    monkeypatch.setattr(
-        runtime_calendar.importlib,
-        "import_module",
-        lambda _name: SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows()),
-    )
+    _mock_calendar_provider(monkeypatch)
 
     output = runtime_calendar.sync_runtime_trading_calendar(tmp_path, allow_network=True)
     metadata_path = tmp_path / runtime_calendar.RUNTIME_CALENDAR_METADATA
@@ -117,11 +119,7 @@ def test_configured_runtime_calendar_fails_closed_if_missing_or_tampered(
     with pytest.raises(CalendarEvidenceError, match="unavailable"):
         trading_calendar(tmp_path)
 
-    monkeypatch.setattr(
-        runtime_calendar.importlib,
-        "import_module",
-        lambda _name: SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows()),
-    )
+    _mock_calendar_provider(monkeypatch)
     runtime_calendar.sync_runtime_trading_calendar(tmp_path, allow_network=True)
     missing.write_text(missing.read_text(encoding="utf-8") + "2026-07-15,true,tampered\n", encoding="utf-8")
     with pytest.raises(CalendarEvidenceError, match="checksum"):
@@ -136,11 +134,7 @@ def test_calendar_provider_failure_does_not_replace_last_verified_runtime_eviden
         tmp_path / "configs/project/trading_calendar.csv",
         [{"date": "2026-07-10", "is_trading_day": "true", "session_note": "regular"}],
     )
-    monkeypatch.setattr(
-        runtime_calendar.importlib,
-        "import_module",
-        lambda _name: SimpleNamespace(tool_trade_date_hist_sina=lambda: _Rows()),
-    )
+    _mock_calendar_provider(monkeypatch)
     output = runtime_calendar.sync_runtime_trading_calendar(tmp_path, allow_network=True)
     metadata = tmp_path / runtime_calendar.RUNTIME_CALENDAR_METADATA
     before = (output.read_bytes(), metadata.read_bytes())
@@ -274,6 +268,71 @@ def test_macos_daily_refresh_explicitly_selects_live_mode(monkeypatch: pytest.Mo
     assert received["allow_network"] is True
     assert "replay_date" in received
     assert received["replay_date"] is None
+
+
+def test_macos_daily_refresh_force_network_reacquisition_bypasses_shortcut(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    import scripts.run_macos_daily_refresh as macos_refresh
+
+    # main() intentionally mutates these in its short-lived launchd process;
+    # register them so this in-process test cannot leak runtime paths.
+    monkeypatch.setenv("ASHARE_ALLOW_NETWORK_INGESTION", "test-placeholder")
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_PATH", "test-placeholder")
+    monkeypatch.setenv("ASHARE_TRADING_CALENDAR_METADATA_PATH", "test-placeholder")
+
+    context = {
+        "calendar_status": "PASS",
+        "calendar_source": "akshare_sina",
+        "calendar_coverage_end": "2026-12-31",
+        "calendar_freshness_status": "CURRENT",
+        "target_trading_date": "2026-07-14",
+        "expected_previous_trading_date": "2026-07-13",
+    }
+    invoked = {"count": 0}
+    monkeypatch.setattr(
+        macos_refresh,
+        "sync_runtime_trading_calendar",
+        lambda _root, allow_network: macos_refresh.ROOT / "outputs/local/runtime/trading_calendar.csv",
+    )
+    monkeypatch.setattr(macos_refresh, "resolve_daily_refresh_context", lambda _root: context)
+    monkeypatch.setattr(macos_refresh, "already_refreshed", lambda _root, _context: True)
+    monkeypatch.setattr(
+        macos_refresh,
+        "run_goal_daily_incremental_evidence_refresh01",
+        lambda _root, **_kwargs: invoked.__setitem__("count", invoked["count"] + 1) or True,
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["run_macos_daily_refresh.py", "--allow-network", "--force-network-reacquisition"],
+    )
+
+    assert macos_refresh.main() == 0
+    assert invoked["count"] == 1
+
+
+def test_macos_runtime_preserves_tracked_baselines_but_keeps_immutable_evidence(
+    tmp_path: Path,
+) -> None:
+    from scripts.run_macos_daily_refresh import preserve_tracked_runtime_baselines
+
+    tracked = tmp_path / "outputs/research/goal_daily_incremental_evidence_refresh01_run_summary.csv"
+    tracked.parent.mkdir(parents=True)
+    tracked.write_text("state\ncommitted\n", encoding="utf-8")
+    created_mirror = tmp_path / "outputs/research/goal_daily_incremental_evidence_refresh01_idempotency.json"
+    immutable = tmp_path / "outputs/research/daily_incremental_evidence_refresh/2026-07-17/refresh_manifest.json"
+
+    with preserve_tracked_runtime_baselines(tmp_path):
+        tracked.write_text("state\nlive\n", encoding="utf-8")
+        created_mirror.write_text('{"status":"PASS"}\n', encoding="utf-8")
+        immutable.parent.mkdir(parents=True)
+        immutable.write_text('{"refresh_status":"SUCCEEDED"}\n', encoding="utf-8")
+
+    assert tracked.read_text(encoding="utf-8") == "state\ncommitted\n"
+    assert not created_mirror.exists()
+    assert immutable.is_file()
 
 
 def _write_csv(path: Path, rows: list[dict[str, str]]) -> None:

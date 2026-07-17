@@ -76,6 +76,7 @@ class StockRepository(WorkspaceRepositoryBase):
 
     def stock(self, symbol: str, snapshot_date: str | None = None) -> dict[str, Any]:
         stock = self._stock_row(symbol, snapshot_date)
+        operational = self._operational_refresh_context() if snapshot_date is None else {}
         detail = {
             **stock,
             "listing_date": self._unavailable(),
@@ -86,8 +87,19 @@ class StockRepository(WorkspaceRepositoryBase):
             "float_market_cap": self._unavailable(),
             "free_float_market_cap": self._unavailable(),
             "provider_lineage": ["akshare_sina", "baostock"],
-            "freshness_state": self.status("replay", snapshot_date)["freshness_code"],
+            "freshness_state": self.status("replay", snapshot_date)["freshness_code"]
+            if snapshot_date
+            else self.status("live")["freshness_code"],
         }
+        if snapshot_date is None:
+            detail.update(
+                {
+                    "historical_research_provider_lineage": ["akshare_sina", "baostock"],
+                    "operational_provider": operational.get("operational_provider"),
+                    "operational_function": operational.get("operational_function"),
+                    "operational_adjustment": operational.get("operational_adjustment"),
+                }
+            )
         return detail
 
     def stock_market(self, symbol: str, snapshot_date: str | None = None) -> dict[str, Any]:
@@ -127,7 +139,7 @@ class StockRepository(WorkspaceRepositoryBase):
             for row in self.store.csv("outputs/research/goal_regime_label_research02_refined_date_regime_labels.csv")
             if row.get("trade_date", "") <= cutoff
         ][-60:]
-        return {
+        result = {
             "symbol": symbol,
             "latest_close": stock["latest_price"],
             "latest_return": stock["price_change"],
@@ -152,6 +164,17 @@ class StockRepository(WorkspaceRepositoryBase):
             "live_quote_available": False,
             "research_only": True,
         }
+        if snapshot_date is None:
+            result.update(
+                {
+                    "historical_chart_source": "baostock_unadjusted" if candles else None,
+                    "historical_chart_data_cutoff": cutoff,
+                    "current_operational_provider": self._operational_refresh_context().get(
+                        "operational_provider"
+                    ),
+                }
+            )
+        return result
 
     def stock_fundamentals(self, symbol: str) -> dict[str, Any]:
         self._ensure_symbol(symbol)

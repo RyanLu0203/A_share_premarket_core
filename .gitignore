@@ -40,6 +40,10 @@ outputs/diagnostics/local_run_*.md
 # Daily live refreshes retain the complete canonical materialization locally.
 # Commit only bounded manifests, validation, and request-level evidence.
 outputs/research/daily_incremental_evidence_refresh/*/canonical_market_data.csv
+# Complete dated live-refresh and immutable snapshot directories are governed
+# local deployment evidence. Committed fixtures and baselines use named files.
+outputs/research/daily_incremental_evidence_refresh/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+outputs/research/premarket_position_management/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
 # This is the mutable convenience copy; the dated immutable attempt log is the
 # review-facing evidence artifact.
 outputs/research/goal_daily_incremental_evidence_refresh01_provider_attempts.csv

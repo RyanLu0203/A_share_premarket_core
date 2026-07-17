@@ -18,6 +18,9 @@ production trading, factor mining, or DQN/RL.
 5. Skip an already-completed target only when the refresh target, T-1,
    snapshot manifest version, and immutable snapshot payload checksums all
    verify.
+6. Restore committed mutable research baselines after the attempt while
+   retaining dated immutable snapshot/refresh evidence and ignored local
+   observability. A successful launchd refresh must not dirty tracked files.
 
 Provider unavailability, missing coverage, corrupted metadata, checksum
 failure, stale T-1 evidence, or OPM failure returns nonzero and fails closed.
@@ -53,7 +56,8 @@ From the authoritative checkout:
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e '.[data,test]'
-npm install --prefix apps/premarket-workspace
+npm ci --prefix apps/premarket-workspace
+npm run build --prefix apps/premarket-workspace
 .venv/bin/python scripts/install_macos_launchd.py --check
 .venv/bin/python scripts/run_macos_daily_refresh.py --check
 python scripts/run_premarket_workspace.py --check
@@ -74,7 +78,9 @@ This writes and loads:
 - `~/Library/LaunchAgents/com.ashare.premarket.workspace.plist`
 - `~/Library/LaunchAgents/com.ashare.premarket.daily-refresh.plist`
 
-The read-only workspace starts at login and is kept alive. Daily Refresh runs
+The read-only workspace starts the validated Next.js production build at login
+and is kept alive. Development mode is explicit opt-in and is not the approved
+launchd deployment mode. Daily Refresh runs
 Monday through Friday at 07:45 local time. To install and immediately request
 one refresh:
 
@@ -103,6 +109,17 @@ verified historical replay or research snapshot panels.
 ```bash
 .venv/bin/python scripts/run_macos_daily_refresh.py --allow-network
 ```
+
+For formal idempotency acceptance only, run a second complete bounded network
+acquisition explicitly:
+
+```bash
+.venv/bin/python scripts/run_macos_daily_refresh.py \
+  --allow-network --force-network-reacquisition
+```
+
+This option bypasses only the already-completed shortcut. It does not add
+retries, replay, source fallback, per-symbol mixing, or weaker evidence gates.
 
 Network permission is scoped to the calendar and bounded evidence refresh.
 Ordinary workspace and deterministic replay processes do not receive provider

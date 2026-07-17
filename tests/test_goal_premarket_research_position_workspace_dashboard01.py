@@ -236,6 +236,28 @@ def test_system_views_expose_required_freshness_and_lineage_fields() -> None:
     assert provenance["audit_status"] == "PASS"
 
 
+def test_live_system_views_separate_operational_tencent_from_historical_research_lineage(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ASHARE_RUNTIME_CODE_COMMIT", "0" * 40)
+    repo = _repo()
+    provider = repo.provider_health()
+    provenance = repo.provenance()
+    quality = repo.data_quality()
+
+    assert provider["canonical_decision"] == "tencent_operational_primary_via_akshare_stock_zh_a_hist_tx"
+    assert provider["operational_provider"] == "Tencent"
+    assert provider["operational_function"] == "stock_zh_a_hist_tx"
+    assert provider["east_money_canonical_request_count"] == 0
+    assert provider["adjustment_convention_status"] == "QFQ_ONLY"
+    assert provider["amount_availability"] == "UNAVAILABLE_NULL_NOT_ZERO"
+    assert provider["historical_research_provider_lineage"] == ["baostock", "akshare_sina"]
+    assert provenance["operational_source_lineage"][0] == "AKShare::stock_zh_a_hist_tx"
+    assert provenance["code_commit"] == "0" * 40
+    assert quality["status"]["execution_mode"] == "daily_operational"
+    assert quality["status"]["operational_provider"] == "Tencent"
+
+
 def test_fastapi_surface_is_read_only_and_exposes_required_views() -> None:
     client = TestClient(create_app(ROOT))
 
@@ -303,6 +325,7 @@ def test_workspace_launcher_check_validates_both_local_services() -> None:
     assert "workspace launcher check: PASS" in result.stdout
     assert "api=http://127.0.0.1:8000" in result.stdout
     assert "frontend=http://127.0.0.1:3000" in result.stdout
+    assert "default_frontend_mode=production" in result.stdout
 
 
 def test_goal_runner_and_audit_record_the_narrow_workspace_authorization() -> None:

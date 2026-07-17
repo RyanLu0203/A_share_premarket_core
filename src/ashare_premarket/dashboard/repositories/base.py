@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import os
 from pathlib import Path
 from typing import Any
 
@@ -100,6 +102,51 @@ class WorkspaceRepositoryBase:
 
     def _provider_quarantine(self) -> tuple[dict[str, str], ...]:
         return self.store.csv("outputs/research/goal_premarket_portfolio_risk_management01_provider_discrepancy_quarantine.csv")
+
+    def _operational_refresh_context(self) -> dict[str, Any]:
+        """Return bounded live acquisition identity without changing research lineage."""
+        refresh = self.store.refresh_status(self.store.latest_snapshot_date())
+        upstream = refresh.get("upstream_acquisition", {})
+        upstream = upstream if isinstance(upstream, dict) else {}
+        batch = upstream.get("operational_batch", {})
+        batch = batch if isinstance(batch, dict) else {}
+        observability = refresh.get("daily_operational_observability", {})
+        observability = observability if isinstance(observability, dict) else {}
+        refresh_path = str(refresh.get("refresh_manifest_path", ""))
+        refresh_checksum = ""
+        if refresh_path:
+            candidate = (self.root / refresh_path).resolve()
+            if candidate != self.root and self.root in candidate.parents and candidate.is_file():
+                refresh_checksum = hashlib.sha256(candidate.read_bytes()).hexdigest()
+        return {
+            "execution_mode": refresh.get("execution_mode"),
+            "evidence_mode": refresh.get("evidence_mode"),
+            "operational_provider": upstream.get("selected_upstream_source"),
+            "operational_function": upstream.get("selected_function"),
+            "operational_endpoint_family": upstream.get("selected_endpoint_family"),
+            "operational_policy_id": upstream.get("policy_id"),
+            "operational_adjustment": batch.get("adjustment_policy"),
+            "operational_batch_checksum": upstream.get("selected_batch_checksum"),
+            "canonical_checksum": refresh.get("canonical_evidence_checksum"),
+            "snapshot_id": refresh.get("snapshot_id"),
+            "snapshot_checksum": refresh.get("snapshot_checksum"),
+            "refresh_manifest_checksum": refresh_checksum,
+            "accepted_symbol_count": batch.get("accepted_symbol_count"),
+            "rejected_symbol_count": batch.get("rejected_symbol_count"),
+            "required_symbol_count": batch.get("required_symbol_count"),
+            "source_dates": batch.get("source_dates", []),
+            "amount_availability": observability.get("amount_availability"),
+            "east_money_canonical_request_count": upstream.get("east_money_canonical_request_count"),
+            "single_canonical_source": upstream.get("single_canonical_source"),
+            "automatic_failback_to_east_money": upstream.get("automatic_failback_to_east_money"),
+            "no_per_symbol_mixing": upstream.get("no_per_symbol_mixing"),
+            "independent_verification_status": (
+                upstream.get("independent_verification", {}).get("status")
+                if isinstance(upstream.get("independent_verification"), dict)
+                else None
+            ),
+            "runtime_code_commit": os.environ.get("ASHARE_RUNTIME_CODE_COMMIT", "UNAVAILABLE"),
+        }
 
     @staticmethod
     def _typed_band(row: dict[str, str]) -> dict[str, Any]:
