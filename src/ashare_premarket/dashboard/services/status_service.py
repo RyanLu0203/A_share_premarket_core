@@ -80,8 +80,10 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
         snapshot_warnings = list(resolution.get("warnings", []))
         system_readiness = str(result.get("readiness_state") or "BLOCKED")
         research_status = "AVAILABLE_WITH_WARNING" if system_readiness == "BLOCKED" or snapshot_warnings else "AVAILABLE"
+        operational = self._operational_refresh_context() if mode == "live" else {}
         return {
             **result,
+            **operational,
             "provider_state": "WARNINGS_QUARANTINED",
             "holdings_mode": HOLDINGS_MODE_LABEL,
             "portfolio_id": "research_reference_portfolio",
@@ -133,6 +135,6 @@ class WorkspaceStatusService(WorkspaceRepositoryBase):
             "top_risk_contributors": risk.get("largest_risk_contributors", "").split(";") if risk else [],
             "warnings": list(self.store.snapshot_csv("warnings.csv", selected)),
             "exposure": self.store.snapshot_csv("exposure_envelope.csv", selected)[0],
-            "provider_health": self.provider_health(selected),
+            "provider_health": self.provider_health(None if mode == "live" else selected),
             "risk_history": [self._snapshot_risk(date) for date in self.store.snapshot_dates()],
         }

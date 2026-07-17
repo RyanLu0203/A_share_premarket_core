@@ -15,7 +15,7 @@ export function usePageEvidence(pageId: number, symbol: string | undefined, mode
     ...item,
     path: withQuery(item.path, {
         mode: pageId === 1 ? mode : undefined,
-        snapshot_date: snapshotDate,
+        snapshot_date: mode === "replay" ? snapshotDate : undefined,
     }),
   })), [mode, pageId, snapshotDate, symbol]);
   const request = useCallback((signal: AbortSignal) => workspaceApi.bundle(plan, signal), [plan]);

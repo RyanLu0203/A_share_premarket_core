@@ -27,7 +27,7 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
     def data_quality(self, snapshot_date: str | None = None) -> dict[str, Any]:
         selected = snapshot_date or self.store.latest_snapshot_date()
         return {
-            "status": self.status("replay", selected),
+            "status": self.status("replay", selected) if snapshot_date else self.status("live"),
             "readiness_checks": list(self.store.snapshot_csv("data_readiness.csv", selected)),
             "quality_summary": list(self.store.csv("outputs/data_expansion/goal_data_expansion_research01/data_quality_summary.csv")),
             "quarantine": list(self._provider_quarantine()),
@@ -36,7 +36,7 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
     def provider_health(self, snapshot_date: str | None = None) -> dict[str, Any]:
         selected = snapshot_date or self.store.latest_snapshot_date()
         manifest = self.store.snapshot_manifest(selected)
-        return {
+        result = {
             "canonical_decision": "akshare_sina_primary_with_baostock_overlap_diagnostics",
             "comparison": list(self.store.csv("outputs/research/goal_premarket_portfolio_risk_management01_provider_comparison.csv")),
             "quarantine": list(self._provider_quarantine()),
@@ -55,6 +55,25 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
                 datetime.now(ZoneInfo("Asia/Shanghai")).date().isoformat(),
             ),
             "snapshot_date": selected,
+        }
+        if snapshot_date is not None:
+            return result
+        operational = self._operational_refresh_context()
+        return {
+            **result,
+            **operational,
+            "canonical_decision": "tencent_operational_primary_via_akshare_stock_zh_a_hist_tx",
+            "adjustment_convention_status": "QFQ_ONLY",
+            "provider_lineage": [operational["operational_provider"]]
+            if operational.get("operational_provider")
+            else [],
+            "historical_research_provider_lineage": list(manifest.get("provider_lineage", [])),
+            "source_freshness": {
+                "snapshot_date": selected,
+                "latest_available_data_date": result["source_freshness"]["latest_available_data_date"],
+                "freshness_code": result["source_freshness"]["freshness_code"],
+                "source_dates": operational.get("source_dates", []),
+            },
         }
 
     def experiment(self) -> dict[str, Any]:
@@ -82,7 +101,7 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
         manifest = self.store.snapshot_manifest(selected)
         workflow = next((row for row in self.store.csv("configs/project/workflow_status.csv") if row.get("workflow_id") == "goal_premarket_position_management_operational01"), {})
         workspace_audit = self.store.json("outputs/audits/goal_premarket_research_position_workspace_dashboard01_manifest.json")
-        return {
+        result = {
             "snapshot": manifest,
             "source_lineage": manifest.get("source_lineage", []),
             "provider_lineage": manifest.get("provider_lineage", []),
@@ -95,6 +114,21 @@ class SystemEvidenceRepository(WorkspaceRepositoryBase):
             "audit_status": workspace_audit.get("status", "UNAVAILABLE"),
             "workflow_state": workflow,
             "research_only": True,
+        }
+        if snapshot_date is not None:
+            return result
+        operational = self._operational_refresh_context()
+        return {
+            **result,
+            **operational,
+            "code_commit": operational["runtime_code_commit"],
+            "operational_source_lineage": [
+                f"AKShare::{operational['operational_function']}",
+                f"{operational['operational_provider']}::{operational['operational_endpoint_family']}",
+            ]
+            if operational.get("operational_provider") and operational.get("operational_function")
+            else [],
+            "historical_research_provider_lineage": list(manifest.get("provider_lineage", [])),
         }
 
     def watchlist_seed(self) -> dict[str, Any]:

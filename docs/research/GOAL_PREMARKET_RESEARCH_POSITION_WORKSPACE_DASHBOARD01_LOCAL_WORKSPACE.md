@@ -47,18 +47,28 @@ The browser does not calculate covariance, risk contribution, factor validity, p
 - Market and price evidence shows its provider and as-of date.
 - Fundamentals absent from committed evidence render as `N/A / UNAVAILABLE`; they are never invented.
 - Current live readiness fails closed when T-1 evidence is stale. The latest immutable replay remains selectable and clearly labeled.
-- Provider diagnostics keep close-price and return discrepancies separate. Adjustment convention remains `UNRESOLVED`, and no provider values are silently averaged.
+- Current operational evidence identifies Tencent / AKShare
+  `stock_zh_a_hist_tx`, qfq, amount-null semantics, source counts, checksums,
+  and runtime commit. Historical research provider/chart lineage remains
+  separately labeled; its legacy adjustment diagnostic may remain
+  `UNRESOLVED`. No provider values are silently averaged.
 - Position bands and abstentions are the outputs of the predecessor research goals. The UI does not reinterpret them as buy, sell, hold, target-weight, or order instructions.
 - Diagonal ERC equivalence is disclosed in the policy catalog. Effective distinct policies are identified by the predecessor evidence.
 
 ## Local Run
 
-Install the Python package and frontend dependencies, then run:
+Install the Python package and frontend dependencies, produce the validated
+frontend build, then run:
 
 ```powershell
 python scripts/run_premarket_workspace.py --check
+npm.cmd run build --prefix apps/premarket-workspace
 python scripts/run_premarket_workspace.py
 ```
+
+The launcher runs `.next/standalone/server.js` with its generated static/public
+assets by default. `--frontend-mode development` is an explicit
+local-development opt-in and is not used by the approved launchd job.
 
 The workspace is served at `http://127.0.0.1:3000`. The read-only API documentation is at `http://127.0.0.1:8000/docs`. Stop both local processes with `Ctrl+C`.
 

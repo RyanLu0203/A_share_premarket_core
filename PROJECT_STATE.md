@@ -1,6 +1,34 @@
 # Project State
 
-Last updated: 2026-07-16
+Last updated: 2026-07-17
+
+## FINAL-MACOS-DEPLOYMENT-API-UI-REPAIR
+
+The final macOS deployment review found three bounded integration defects in
+the merged Issue #36 state. Repair work is isolated on
+`codex/final-macos-deployment-api-ui-repair`; it is not yet a deployment claim.
+
+- Live read-only API and frontend views now identify Tencent /
+  `stock_zh_a_hist_tx` / qfq, the amount-null contract, accepted and rejected
+  counts, East Money canonical request count, batch/canonical/snapshot/refresh
+  checksums, snapshot ID, and the runtime deployment commit. Historical replay
+  responses preserve their prior architecture baseline and separately label
+  the older research provider/chart lineage.
+- The launchd workspace runner uses the validated Next.js standalone
+  production server by default, with copied static/public build assets and no
+  `next start` compatibility warning. Development mode remains explicit
+  opt-in, and startup exports the authoritative repository root and
+  40-character Git commit to the read-only backend provenance surface.
+- The macOS daily wrapper preserves committed mutable research baselines while
+  retaining ignored dated immutable live evidence and local observability. An
+  explicit `--force-network-reacquisition` option supports a second complete
+  bounded network run and never treats `already_refreshed` as idempotency proof.
+- OpenAPI remains 22 GET routes with zero writes; historical API architecture
+  hashes remain unchanged. Recommendation, trading, broker, production-model,
+  factor-mining, and DQN/RL capabilities remain locked.
+- Python 3.12 compileall passes, the warning-free full suite is `463 passed`,
+  the canonical profile is `117/117 PASS`, the workspace audit is `PASS`, and
+  frontend lint, typecheck, `35/35` tests, and production build pass.
 
 ## GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01
 

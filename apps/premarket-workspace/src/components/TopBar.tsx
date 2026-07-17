@@ -29,7 +29,7 @@ export function TopBar({pageTitle, status, mode, snapshots, onModeChange, onSnap
         <Context label="Target" value={status.target_trading_date} />
         <Context label="Latest data" value={status.latest_available_data_date} />
         <Context label="Readiness" value={status.readiness_state} tone={status.readiness_state === "BLOCKED" ? "critical" : "warning"} />
-        <Context label="Provider" value={status.provider_state ?? "UNKNOWN"} tone="warning" />
+        <Context label="Provider" value={status.operational_provider ?? status.provider_state ?? "UNKNOWN"} tone={status.operational_provider ? "neutral" : "warning"} />
       </div>
       <div className="mode-cluster">
         <div className="segmented-control" aria-label="Execution mode">

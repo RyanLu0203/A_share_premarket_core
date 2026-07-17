@@ -21,6 +21,12 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--api-port", type=int, default=8000)
     parser.add_argument("--web-port", type=int, default=3000)
+    parser.add_argument(
+        "--frontend-mode",
+        choices=("production", "development"),
+        default="production",
+        help="Use the validated production build by default; development is explicit opt-in.",
+    )
     parser.add_argument("--check", action="store_true", help="validate both services without starting them")
     args = parser.parse_args()
 
@@ -32,7 +38,7 @@ def main() -> int:
     app = create_app(ROOT)
     api_routes = [path for path, methods in app.openapi()["paths"].items() if path.startswith("/api/") and set(methods).issubset({"get"})]
     package = json.loads(package_file.read_text(encoding="utf-8")) if package_file.exists() else {}
-    required_scripts = {"dev", "build", "typecheck", "lint", "test"}
+    required_scripts = {"dev", "start", "build", "typecheck", "lint", "test"}
     missing_scripts = required_scripts - set(package.get("scripts", {}))
     if not api_routes:
         raise RuntimeError("read-only API exposes no GET routes")
@@ -42,19 +48,48 @@ def main() -> int:
         raise RuntimeError("npm executable is unavailable")
 
     if args.check:
-        print(f"workspace launcher check: PASS | api={api_url} | frontend={web_url} | routes={len(api_routes)}")
+        print(
+            "workspace launcher check: PASS | "
+            f"api={api_url} | frontend={web_url} | routes={len(api_routes)} | "
+            f"default_frontend_mode={args.frontend_mode}"
+        )
         return 0
+
+    if args.frontend_mode == "production" and not (FRONTEND / ".next" / "BUILD_ID").is_file():
+        raise RuntimeError("validated frontend production build is unavailable; run npm run build before startup")
 
     environment = os.environ.copy()
     environment["NEXT_PUBLIC_PREMARKET_API_URL"] = api_url
+    environment["ASHARE_RUNTIME_CODE_COMMIT"] = _git_head()
+    environment["ASHARE_RUNTIME_REPOSITORY_ROOT"] = str(ROOT.resolve())
+    environment["HOSTNAME"] = args.host
+    environment["PORT"] = str(args.web_port)
+    if args.frontend_mode == "production":
+        node = shutil.which("node.exe" if os.name == "nt" else "node")
+        if node is None:
+            raise RuntimeError("node executable is unavailable")
+        frontend_command = [node, str(_prepare_standalone(FRONTEND))]
+        frontend_working_directory = FRONTEND / ".next" / "standalone"
+    else:
+        frontend_command = [
+            npm,
+            "run",
+            "dev",
+            "--",
+            "--hostname",
+            args.host,
+            "--port",
+            str(args.web_port),
+        ]
+        frontend_working_directory = FRONTEND
     api = subprocess.Popen(
         [sys.executable, str(ROOT / "scripts" / "run_premarket_workspace_api.py"), "--host", args.host, "--port", str(args.api_port)],
         cwd=ROOT,
         env=environment,
     )
     frontend = subprocess.Popen(
-        [npm, "run", "dev", "--", "--hostname", args.host, "--port", str(args.web_port)],
-        cwd=FRONTEND,
+        frontend_command,
+        cwd=frontend_working_directory,
         env=environment,
     )
     print(f"A-Share Premarket Workspace: {web_url}")
@@ -83,6 +118,33 @@ def _stop(process: subprocess.Popen[bytes]) -> None:
     except subprocess.TimeoutExpired:
         process.kill()
         process.wait(timeout=3)
+
+
+def _git_head() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    commit = result.stdout.strip()
+    if len(commit) != 40:
+        raise RuntimeError("unable to resolve the deployment commit SHA")
+    return commit
+
+
+def _prepare_standalone(frontend: Path) -> Path:
+    standalone = frontend / ".next" / "standalone"
+    server = standalone / "server.js"
+    static = frontend / ".next" / "static"
+    if not server.is_file() or not static.is_dir():
+        raise RuntimeError("complete standalone frontend build is unavailable; run npm run build")
+    shutil.copytree(static, standalone / ".next" / "static", dirs_exist_ok=True)
+    public = frontend / "public"
+    if public.is_dir():
+        shutil.copytree(public, standalone / "public", dirs_exist_ok=True)
+    return server
 
 
 if __name__ == "__main__":
