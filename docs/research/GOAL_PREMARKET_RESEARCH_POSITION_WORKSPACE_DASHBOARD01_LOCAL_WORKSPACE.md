@@ -66,9 +66,9 @@ npm.cmd run build --prefix apps/premarket-workspace
 python scripts/run_premarket_workspace.py
 ```
 
-The launcher uses the production build by default. `--frontend-mode
-development` is an explicit local-development opt-in and is not used by the
-approved launchd job.
+The launcher runs `.next/standalone/server.js` with its generated static/public
+assets by default. `--frontend-mode development` is an explicit
+local-development opt-in and is not used by the approved launchd job.
 
 The workspace is served at `http://127.0.0.1:3000`. The read-only API documentation is at `http://127.0.0.1:8000/docs`. Stop both local processes with `Ctrl+C`.
 

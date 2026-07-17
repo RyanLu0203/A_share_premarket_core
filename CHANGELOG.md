@@ -7,7 +7,8 @@
   East Money canonical request count, snapshot identity, checksums, and runtime
   commit. Historical research and replay lineage remains separate.
 - Changed the approved workspace launcher to use the validated Next.js
-  production build by default; development startup is explicit opt-in.
+  standalone production server and its copied static/public assets by default;
+  development startup is explicit opt-in.
 - Preserved committed mutable baselines around daily macOS execution while
   retaining ignored immutable dated snapshots and local runtime evidence.
 - Added an explicit bounded second-network-acquisition option for idempotency

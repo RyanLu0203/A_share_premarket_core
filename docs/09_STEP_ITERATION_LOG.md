@@ -10,8 +10,10 @@ Status: `IMPLEMENTED_VALIDATION_PENDING_REVIEW_AND_DEPLOYMENT` on
   Provider Health, Provenance, Command Center, Stock Detail, and Stock Chart.
   Explicit replay-date requests retain the established API architecture
   projections.
-- Made the launchd workspace use the validated Next.js production build by
-  default and expose the exact runtime Git SHA to provenance.
+- Made the launchd workspace use the validated Next.js standalone production
+  server by default, copy its required static/public assets, and expose the
+  exact runtime Git SHA to provenance. The deployment path no longer emits
+  the incompatible `next start` warning for `output: standalone`.
 - Added bounded preservation of mutable tracked runtime mirrors around the
   macOS daily refresh. Dated immutable evidence remains local and checksum
   governed; successful daily operation no longer leaves the deployment

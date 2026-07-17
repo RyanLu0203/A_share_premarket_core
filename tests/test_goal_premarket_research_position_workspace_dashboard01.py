@@ -328,6 +328,25 @@ def test_workspace_launcher_check_validates_both_local_services() -> None:
     assert "default_frontend_mode=production" in result.stdout
 
 
+def test_workspace_launcher_prepares_complete_standalone_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    from scripts.run_premarket_workspace import _prepare_standalone
+
+    frontend = tmp_path / "frontend"
+    server = frontend / ".next/standalone/server.js"
+    static = frontend / ".next/static/chunks/app.js"
+    public = frontend / "public/health.txt"
+    for path, content in ((server, "server"), (static, "chunk"), (public, "ok")):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+
+    assert _prepare_standalone(frontend) == server
+    assert (frontend / ".next/standalone/.next/static/chunks/app.js").read_text() == "chunk"
+    assert (frontend / ".next/standalone/public/health.txt").read_text() == "ok"
+
+
 def test_goal_runner_and_audit_record_the_narrow_workspace_authorization() -> None:
     assert run_goal_premarket_research_position_workspace_dashboard01(ROOT) is True
     assert audit_goal_premarket_research_position_workspace_dashboard01(ROOT) is True

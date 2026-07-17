@@ -14,10 +14,11 @@ the merged Issue #36 state. Repair work is isolated on
   checksums, snapshot ID, and the runtime deployment commit. Historical replay
   responses preserve their prior architecture baseline and separately label
   the older research provider/chart lineage.
-- The launchd workspace runner uses the validated Next.js production build by
-  default. Development mode remains explicit opt-in, and startup exports the
-  authoritative repository root and 40-character Git commit to the read-only
-  backend provenance surface.
+- The launchd workspace runner uses the validated Next.js standalone
+  production server by default, with copied static/public build assets and no
+  `next start` compatibility warning. Development mode remains explicit
+  opt-in, and startup exports the authoritative repository root and
+  40-character Git commit to the read-only backend provenance surface.
 - The macOS daily wrapper preserves committed mutable research baselines while
   retaining ignored dated immutable live evidence and local observability. An
   explicit `--force-network-reacquisition` option supports a second complete

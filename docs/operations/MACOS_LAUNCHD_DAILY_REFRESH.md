@@ -78,9 +78,11 @@ This writes and loads:
 - `~/Library/LaunchAgents/com.ashare.premarket.workspace.plist`
 - `~/Library/LaunchAgents/com.ashare.premarket.daily-refresh.plist`
 
-The read-only workspace starts the validated Next.js production build at login
-and is kept alive. Development mode is explicit opt-in and is not the approved
-launchd deployment mode. Daily Refresh runs
+The read-only workspace starts the validated Next.js standalone production
+server at login, copies the generated static/public assets into the standalone
+bundle, and is kept alive. It does not use the incompatible `next start` path.
+Development mode is explicit opt-in and is not the approved launchd deployment
+mode. Daily Refresh runs
 Monday through Friday at 07:45 local time. To install and immediately request
 one refresh:
 

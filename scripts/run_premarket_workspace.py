@@ -62,23 +62,34 @@ def main() -> int:
     environment["NEXT_PUBLIC_PREMARKET_API_URL"] = api_url
     environment["ASHARE_RUNTIME_CODE_COMMIT"] = _git_head()
     environment["ASHARE_RUNTIME_REPOSITORY_ROOT"] = str(ROOT.resolve())
+    environment["HOSTNAME"] = args.host
+    environment["PORT"] = str(args.web_port)
+    if args.frontend_mode == "production":
+        node = shutil.which("node.exe" if os.name == "nt" else "node")
+        if node is None:
+            raise RuntimeError("node executable is unavailable")
+        frontend_command = [node, str(_prepare_standalone(FRONTEND))]
+        frontend_working_directory = FRONTEND / ".next" / "standalone"
+    else:
+        frontend_command = [
+            npm,
+            "run",
+            "dev",
+            "--",
+            "--hostname",
+            args.host,
+            "--port",
+            str(args.web_port),
+        ]
+        frontend_working_directory = FRONTEND
     api = subprocess.Popen(
         [sys.executable, str(ROOT / "scripts" / "run_premarket_workspace_api.py"), "--host", args.host, "--port", str(args.api_port)],
         cwd=ROOT,
         env=environment,
     )
     frontend = subprocess.Popen(
-        [
-            npm,
-            "run",
-            "start" if args.frontend_mode == "production" else "dev",
-            "--",
-            "--hostname",
-            args.host,
-            "--port",
-            str(args.web_port),
-        ],
-        cwd=FRONTEND,
+        frontend_command,
+        cwd=frontend_working_directory,
         env=environment,
     )
     print(f"A-Share Premarket Workspace: {web_url}")
@@ -121,6 +132,19 @@ def _git_head() -> str:
     if len(commit) != 40:
         raise RuntimeError("unable to resolve the deployment commit SHA")
     return commit
+
+
+def _prepare_standalone(frontend: Path) -> Path:
+    standalone = frontend / ".next" / "standalone"
+    server = standalone / "server.js"
+    static = frontend / ".next" / "static"
+    if not server.is_file() or not static.is_dir():
+        raise RuntimeError("complete standalone frontend build is unavailable; run npm run build")
+    shutil.copytree(static, standalone / ".next" / "static", dirs_exist_ok=True)
+    public = frontend / "public"
+    if public.is_dir():
+        shutil.copytree(public, standalone / "public", dirs_exist_ok=True)
+    return server
 
 
 if __name__ == "__main__":
