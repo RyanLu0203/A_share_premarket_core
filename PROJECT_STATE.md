@@ -2,6 +2,28 @@
 
 Last updated: 2026-07-17
 
+## GOAL-11 QUANT INTELLIGENCE FOUNDATION
+
+GOAL-11 adds a deterministic, research-only quantitative intelligence
+foundation over explicitly governed market-data snapshots.
+
+- Feature construction covers price, volatility, technical, volume, and
+  market-regime families. Missing OHLCV or index evidence remains unavailable
+  with deterministic reason codes; no values are fabricated.
+- Every feature row carries symbol, date, feature version, source snapshot ID,
+  generation timestamp, code commit, and checksum lineage.
+- The interpretable alpha is fixed as momentum plus trend plus volume strength
+  minus risk penalty. A fixed-ridge linear ranker provides one deterministic
+  baseline without tuning on the final holdout.
+- Evaluation is chronological and walk-forward only, with Rank IC, IC
+  stability, precision/recall at K, time/feature stability, and turnover.
+- Outputs are local research evidence under ignored `outputs/local`; no
+  datasets, snapshots, model binaries, logs, notebooks, or runtime artifacts
+  are committed.
+- The existing 14 canonical interfaces, 22 GET-only API routes, 23 workspace
+  pages, production locks, and `ready_factor_count = 0` remain unchanged. The
+  optional research dashboard is deferred to preserve those exact contracts.
+
 ## FINAL-MACOS-DEPLOYMENT-API-UI-REPAIR
 
 The final macOS deployment review found three bounded integration defects in

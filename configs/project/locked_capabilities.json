@@ -21,6 +21,7 @@
   "goal10b_backtest_review_only_validation_gate": "implemented_review_only",
   "goal10c_backtest_cost_slippage_sensitivity_gate": "implemented_review_only",
   "goal10d_backtest_failure_attribution_gate": false,
+  "goal11_quant_intelligence_foundation": "implemented_research_only",
   "goal_alpha_factor_candidate01_research_gate": "implemented_research_only",
   "goal_alpha_factor_candidate02_refined_variants_research_gate": "implemented_research_only",
   "goal_alpha_research_refinement01_rolling_stability_candidate_refinement_gate": "implemented_research_only",
