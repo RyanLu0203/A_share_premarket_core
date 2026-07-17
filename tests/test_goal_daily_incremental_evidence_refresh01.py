@@ -360,6 +360,15 @@ def test_opm_accepts_only_repository_local_validated_canonical_evidence() -> Non
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def test_checksummed_canonical_base_preserves_line_endings_across_checkouts() -> None:
+    attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+
+    assert (
+        "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv -text"
+        in attributes
+    )
+
+
 def test_goal_replay_is_deterministic_integrates_opm_and_keeps_locks(
     preserve_committed_operational_refresh_state: None,
 ) -> None:
