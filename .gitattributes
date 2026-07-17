@@ -1,4 +1,7 @@
 # Checksummed immutable snapshots must remain byte-identical across platforms.
 outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv -text
+outputs/research/network_ingestion/daily_panel.csv -text
+outputs/research/network_ingestion/index_panel.csv -text
+outputs/research/network_ingestion/symbol_coverage.csv -text
 outputs/research/premarket_position_management/** -text
 outputs/research/daily_incremental_evidence_refresh/** -text
