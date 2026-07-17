@@ -264,9 +264,22 @@ def run_goal06b_regression_suite(root: Path) -> bool:
 
 
 def run_program_validation_profile(root: Path) -> bool:
+    (root / "outputs/local").mkdir(parents=True, exist_ok=True)
     commands = [
         ("python -m compileall src scripts tests", [sys.executable, "-m", "compileall", "src", "scripts", "tests"]),
-        ("python -m pytest tests -q", [sys.executable, "-m", "pytest", "tests", "-q"]),
+        (
+            "python -m pytest tests -q -p no:cacheprovider --basetemp=outputs/local/pytest-program-validation",
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests",
+                "-q",
+                "-p",
+                "no:cacheprovider",
+                "--basetemp=outputs/local/pytest-program-validation",
+            ],
+        ),
         ("python scripts/run_goal06c_expanded_validation.py", [sys.executable, "scripts/run_goal06c_expanded_validation.py"]),
         ("python scripts/audit_storage_policy.py", [sys.executable, "scripts/audit_storage_policy.py"]),
         ("python scripts/build_data_bundle_manifest.py", [sys.executable, "scripts/build_data_bundle_manifest.py"]),
