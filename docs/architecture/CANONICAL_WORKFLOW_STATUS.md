@@ -92,6 +92,9 @@ Implemented review-only:
 
 Implemented research-only:
 
+- GOAL-11 Quant Intelligence Foundation (deterministic PIT features,
+  interpretable alpha, fixed-ridge baseline, chronological evaluation, and
+  risk adjustment; local generated evidence only; no downstream unlock)
 - GOAL-QUANT-RESEARCH-01 Factor Research Lab And Score Validity Gate
   (`PASS_WITH_WARNINGS`)
 - GOAL-MVP-01 Premarket Research Diagnostic Terminal Gate

@@ -3,6 +3,21 @@
 Clean private active repository for the A-share pre-market alpha diagnosis and
 risk-aware position-building decision support system.
 
+## Quant Intelligence Foundation
+
+GOAL-11 provides a deterministic research-only feature store, interpretable
+alpha, fixed-ridge linear baseline, chronological evaluation, and explicit
+risk adjustment over governed snapshots. It fails closed when required market
+evidence is absent and does not fabricate OHLCV, index, liquidity, factor, or
+recommendation data.
+
+```powershell
+python scripts/audit_goal11_quant_intelligence_foundation.py
+```
+
+Research runs write only to ignored `outputs/local`. The canonical workspace,
+22 GET routes, production locks, and `ready_factor_count = 0` are unchanged.
+
 ## Local Research Workspace
 
 Issue #24 adds the goal-specific A-Share Premarket Workspace as a local,

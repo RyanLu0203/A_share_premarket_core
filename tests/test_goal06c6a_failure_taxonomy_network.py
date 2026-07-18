@@ -51,15 +51,17 @@ def test_scoped_finance_env_removes_proxy_vars_and_restores_parent(monkeypatch) 
 
 
 def test_explicit_finance_proxy_authorization_preserves_configured_proxy(monkeypatch) -> None:
-    monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:8080")
-    monkeypatch.setenv("https_proxy", "http://127.0.0.1:8081")
+    upper_proxy = "http://127.0.0.1:8080"
+    lower_proxy = upper_proxy if os.name == "nt" else "http://127.0.0.1:8081"
+    monkeypatch.setenv("HTTPS_PROXY", upper_proxy)
+    monkeypatch.setenv("https_proxy", lower_proxy)
     monkeypatch.setenv("ASHARE_ALLOW_EXPLICIT_FINANCE_PROXY", "1")
     discovered = lambda _url, no_proxy=None: {"https": "http://127.0.0.1:8080"}
     monkeypatch.setattr(requests.sessions, "get_environ_proxies", discovered)
 
     with scoped_finance_network_env("stock_zh_a_hist", network_enabled=True) as evidence:
-        assert os.environ["HTTPS_PROXY"] == "http://127.0.0.1:8080"
-        assert os.environ["https_proxy"] == "http://127.0.0.1:8081"
+        assert os.environ["HTTPS_PROXY"] == upper_proxy
+        assert os.environ["https_proxy"] == lower_proxy
         assert requests.sessions.get_environ_proxies is discovered
         assert evidence["network_mode"] == "finance_explicit_proxy_authorized"
         assert evidence["inherit_system_proxy"] is True

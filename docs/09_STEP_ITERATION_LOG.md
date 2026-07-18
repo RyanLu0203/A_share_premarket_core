@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-07-17 - GOAL-11 QUANT INTELLIGENCE FOUNDATION
+
+Status: `IMPLEMENTED_RESEARCH_ONLY_VALIDATED_PENDING_PR` on
+`codex/goal11-quant-intelligence-foundation`.
+
+- Completed the architecture review before implementation and documented the
+  governed-snapshot boundary, point-in-time rules, label separation, and
+  dashboard deferral.
+- Added deterministic price, volatility, technical, volume, and market-regime
+  feature families with row-level lineage and explicit evidence availability.
+- Added the pre-specified interpretable alpha, a fixed-ridge linear ranker,
+  second-stage risk adjustment, abstention reasons, and chronological
+  walk-forward evaluation.
+- Added local-only immutable research-store persistence and a checksummed
+  governed-snapshot loader. No generated data or model artifact is committed.
+- Preserved the 14 canonical interfaces, 22 GET routes, 23 pages,
+  `ready_factor_count = 0`, and all production/action locks.
+
 ## 2026-07-17 - FINAL-MACOS-DEPLOYMENT-API-UI-REPAIR
 
 Status: `IMPLEMENTED_VALIDATION_PENDING_REVIEW_AND_DEPLOYMENT` on

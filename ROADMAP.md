@@ -1,5 +1,16 @@
 # Roadmap
 
+## 2026-07-17 GOAL-11 Checkpoint
+
+`GOAL-11-QUANT-INTELLIGENCE-FOUNDATION` is implemented research-only as a
+reproducible point-in-time feature, scoring, linear-baseline, evaluation, and
+risk-adjustment layer. It consumes only governed snapshots and keeps generated
+research evidence under ignored `outputs/local`.
+
+The checkpoint does not promote a factor, recommendation, position, order,
+broker, paper/live trading, or production path. `ready_factor_count` remains
+zero; the existing workspace/API surface and all production locks stay exact.
+
 ## 2026-07-10 Issue #24 Checkpoint
 
 `GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01` is implemented

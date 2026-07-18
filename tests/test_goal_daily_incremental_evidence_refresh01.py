@@ -360,6 +360,18 @@ def test_opm_accepts_only_repository_local_validated_canonical_evidence() -> Non
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def test_checksummed_evidence_preserves_line_endings_across_checkouts() -> None:
+    attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+
+    for relative in (
+        "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv",
+        "outputs/research/network_ingestion/daily_panel.csv",
+        "outputs/research/network_ingestion/index_panel.csv",
+        "outputs/research/network_ingestion/symbol_coverage.csv",
+    ):
+        assert f"{relative} -text" in attributes
+
+
 def test_goal_replay_is_deterministic_integrates_opm_and_keeps_locks(
     preserve_committed_operational_refresh_state: None,
 ) -> None:

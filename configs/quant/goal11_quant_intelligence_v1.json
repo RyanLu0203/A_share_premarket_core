@@ -1,0 +1,79 @@
+{
+  "alpha": {
+    "component_weights": {
+      "momentum": 1.0,
+      "risk_penalty": 1.0,
+      "trend": 1.0,
+      "volume_strength": 1.0
+    },
+    "required_features": [
+      "momentum_20d",
+      "trend_strength_20d",
+      "abnormal_volume_20d",
+      "volatility_20d",
+      "drawdown_60d",
+      "volatility_regime_60d"
+    ],
+    "version": "goal11_interpretable_alpha_v1"
+  },
+  "annualization_factor": 252,
+  "evaluation": {
+    "minimum_cross_section": 2,
+    "minimum_training_dates": 20,
+    "top_k": 1,
+    "version": "goal11_chronological_evaluation_v1",
+    "walk_forward_test_dates": 5
+  },
+  "feature_version": "goal11_features_v1",
+  "governance": {
+    "actionable_outputs_allowed": false,
+    "dashboard_integration": "DEFERRED_LOCK_PRESERVED",
+    "generated_artifact_policy": "OUTPUTS_LOCAL_IGNORED_ONLY",
+    "production_model_promotion_allowed": false,
+    "ready_factor_count": 0
+  },
+  "linear_ranker": {
+    "feature_columns": [
+      "momentum_20d",
+      "trend_strength_20d",
+      "rsi_14",
+      "macd_histogram_12_26_9",
+      "abnormal_volume_20d",
+      "volatility_20d",
+      "drawdown_60d"
+    ],
+    "ridge_lambda": 1.0,
+    "version": "goal11_fixed_ridge_ranker_v1"
+  },
+  "market_regime": {
+    "breadth_bull_threshold": 0.5,
+    "high_volatility_threshold": 0.25
+  },
+  "research_only": true,
+  "risk": {
+    "component_weights": {
+      "drawdown": 0.25,
+      "instability": 0.2,
+      "liquidity": 0.15,
+      "volatility": 0.4
+    },
+    "version": "goal11_risk_penalty_v1"
+  },
+  "schema_version": "1.0",
+  "windows": {
+    "atr": 14,
+    "bollinger": 20,
+    "drawdown": 60,
+    "macd_fast": 12,
+    "macd_signal": 9,
+    "macd_slow": 26,
+    "market": 20,
+    "momentum": [5, 20, 60],
+    "moving_average": [5, 20, 60],
+    "rsi": 14,
+    "trend": 20,
+    "volatility": 20,
+    "volatility_regime": 60,
+    "volume": 20
+  }
+}
