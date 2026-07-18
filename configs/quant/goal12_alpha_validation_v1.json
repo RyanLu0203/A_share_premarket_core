@@ -1,0 +1,128 @@
+{
+  "candidate_contract": {
+    "combined_candidates": [
+      "interpretable_alpha",
+      "risk_adjusted_alpha",
+      "fixed_linear_ranker"
+    ],
+    "feature_directions": {
+      "abnormal_volume_20d": 1,
+      "atr_14": -1,
+      "bollinger_position_20d": 1,
+      "downside_volatility_20d": -1,
+      "drawdown_60d": 1,
+      "macd_histogram_12_26_9": 1,
+      "macd_line_12_26": 1,
+      "macd_signal_9": 1,
+      "ma_ratio_20d": 1,
+      "ma_ratio_5d": 1,
+      "ma_ratio_60d": 1,
+      "momentum_20d": 1,
+      "momentum_5d": 1,
+      "momentum_60d": 1,
+      "price_volume_correlation_20d": 1,
+      "return_1d": 1,
+      "rsi_14": 1,
+      "trend_strength_20d": 1,
+      "volatility_20d": -1,
+      "volatility_regime_60d": -1,
+      "volume_change_1d": 1
+    },
+    "regime_context_features": [
+      "index_trend_20d",
+      "market_breadth_1d",
+      "market_volatility_20d",
+      "market_regime"
+    ]
+  },
+  "data_contract": {
+    "adjustment": "qfq",
+    "amount_semantics": "UNAVAILABLE_NULL_NOT_ZERO",
+    "availability_semantics": "TRADE_DATE_CLOSE_CONSUMABLE_NEXT_SESSION_OPEN",
+    "benchmark_index_id": "sh000300",
+    "bundle_manifest_path": "outputs/research/network_ingestion/evidence_bundle_manifest.json",
+    "daily_panel_path": "outputs/research/network_ingestion/daily_panel.csv",
+    "expected_goal": "GOAL-NETWORK-EVIDENCE-INGESTION-01",
+    "expected_provider": "akshare_sina",
+    "index_panel_path": "outputs/research/network_ingestion/index_panel.csv",
+    "qfq_contract_evidence_path": "scripts/acquire_goal_network_evidence_ingestion01.py",
+    "symbol_coverage_path": "outputs/research/network_ingestion/symbol_coverage.csv",
+    "survivorship_semantics": "CURRENT_LISTING_UNIVERSE_DISCLOSED_NOT_PIT_CONSTITUENTS"
+  },
+  "decision_policy": {
+    "confidence_interval_lower_bound": 0.0,
+    "fdr_alpha": 0.05,
+    "horizon_consistency_minimum": 0.666666666667,
+    "maximum_date_concentration": 0.01,
+    "maximum_missing_rate": 0.2,
+    "maximum_symbol_concentration": 0.1,
+    "maximum_zero_variance_rate": 0.1,
+    "minimum_median_breadth": 20,
+    "minimum_observation_rows": 5000,
+    "minimum_rank_ic_supported": 0.03,
+    "minimum_rank_ic_weak": 0.01,
+    "minimum_robustness_positive_rate": 0.6,
+    "minimum_sign_stability": 0.6,
+    "minimum_subperiod_positive_rate": 0.6,
+    "minimum_valid_dates": 252,
+    "null_comparison_alpha": 0.05,
+    "rejection_fdr_q": 0.1,
+    "rejection_null_p": 0.2,
+    "turnover_warning_threshold": 0.8,
+    "version": "goal12_research_decision_policy_v1"
+  },
+  "governance": {
+    "dashboard_integration": "DEFERRED_LOCK_PRESERVED",
+    "final_pr_state": "DRAFT",
+    "production_ready": false,
+    "ready_factor_count": 0,
+    "recommendation_outputs_allowed": false,
+    "write_routes_allowed": 0
+  },
+  "inference": {
+    "base_seed": 12041,
+    "bootstrap_confidence": 0.95,
+    "date_bootstrap_repetitions": 500,
+    "fdr_method": "BENJAMINI_HOCHBERG",
+    "random_rank_repetitions": 64,
+    "sign_flip_repetitions": 1000,
+    "within_date_shuffle_repetitions": 64
+  },
+  "labels": {
+    "calendar_contract": "GOAL12_CSI300_OBSERVED_TRADING_CALENDAR_V1",
+    "horizons": [1, 5, 20],
+    "label_version": "goal12_qfq_forward_return_v1",
+    "missing_future_policy": "EXPLICIT_MISSING_NO_SHORTEN_NO_ZERO_FILL",
+    "primary_horizon": 5
+  },
+  "metrics": {
+    "minimum_cross_section": 20,
+    "quantile_count": 5,
+    "relevance_definition": "TOP_K_REALIZED_CROSS_SECTION",
+    "top_k": 5,
+    "winsor_lower_quantile": 0.01,
+    "winsor_upper_quantile": 0.99
+  },
+  "research_only": true,
+  "robustness": {
+    "broad_market_breadth_threshold": 0.5,
+    "expanding_window_minimum_dates": 126,
+    "expanding_window_step": 63,
+    "minimum_history_dates": 504,
+    "minimum_observation_fraction": 0.8,
+    "recent_exclusion_dates": 126,
+    "rolling_window_dates": 126,
+    "rolling_window_step": 63,
+    "volatility_threshold_fit_scope": "DEVELOPMENT_DATES_ONLY"
+  },
+  "schema_version": "1.0",
+  "splits": {
+    "embargo_dates": 0,
+    "final_holdout_dates": 126,
+    "maximum_label_horizon": 20,
+    "minimum_training_dates": 252,
+    "mode": "EXPANDING_PURGED_CHRONOLOGICAL",
+    "test_dates": 63,
+    "validation_dates": 63
+  }
+}

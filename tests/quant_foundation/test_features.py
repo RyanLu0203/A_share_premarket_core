@@ -7,12 +7,25 @@ import pytest
 from ashare_premarket.quant_foundation.contracts import GovernedSnapshot, canonical_checksum
 from ashare_premarket.quant_foundation.features import (
     FEATURE_COLUMNS,
+    _ema,
+    _macd,
     build_feature_rows,
     load_feature_config,
 )
 from .conftest import make_snapshot
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_optimized_macd_matches_the_original_prefix_definition() -> None:
+    values = [100.0 + index * 0.3 + (index % 5) * 0.1 for index in range(80)]
+    lines = [
+        _ema(values[:end], 12) - _ema(values[:end], 26)
+        for end in range(26, len(values) + 1)
+    ]
+    signal = _ema(lines, 9)
+
+    assert _macd(values) == (lines[-1], signal, lines[-1] - signal)
 
 
 def _latest(rows: list[dict[str, object]], symbol: str = "600036.SH") -> dict[str, object]:
