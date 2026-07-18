@@ -11,6 +11,13 @@ AKShare/source-backed ingestion, still disabled by default and guarded by
 raw payloads, local bundles, Parquet lake files, DuckDB/SQLite databases, logs,
 and notebooks stay outside GitHub.
 
+GOAL-12 consumes only the committed checksummed qfq close/index bundle. It
+creates exact 1D/5D/20D labels and full research tables under ignored
+`outputs/local/goal12`; none are canonical operational inputs. Missing future
+prices remain missing, amount remains unavailable/null, and close-only history
+cannot be promoted to OHLCV. The compact committed findings contain no raw
+payload, model binary, recommendation, position, or production output.
+
 GOAL-STORAGE-01 hardens that storage boundary as an infrastructure-only gate.
 Future heavy data writes must resolve from `ASHARE_PREMARKET_DATA_ROOT`; the
 fallback path is documentation-only for this gate. The local research lake

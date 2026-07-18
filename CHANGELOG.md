@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-18 - GOAL-12 alpha validation and robustness
+
+- Added exact qfq 1D/5D/20D label contracts, common-horizon purged chronology,
+  single-factor IC/Rank-IC and bucket diagnostics, deterministic date-level
+  nulls, BH-FDR, fixed-model OOS metrics, and five-state research decisions.
+- Added predeclared early/late, rolling, expanding, regime, universe,
+  preprocessing, and horizon sensitivity tests with immutable local artifacts.
+- Completed the governed 34,543-row analysis: 17 candidates rejected, 11
+  insufficient, no supported candidate, `production_ready=false`, and
+  `ready_factor_count=0`.
+- Preserved 14 canonical interfaces, 22 GET routes, zero writes, GOAL-11 byte
+  protections, and every recommendation, position, trading, broker, model
+  promotion, factor-mining, and DQN/RL lock.
+
 ## 2026-07-17 - final macOS deployment API/UI and runtime-hygiene repair
 
 - Added truthful current operational evidence to the read-only workspace:

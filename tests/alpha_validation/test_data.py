@@ -126,7 +126,8 @@ def test_bundle_loader_rejects_duplicate_keys_labels_and_fabricated_amount(tmp_p
 
     config = _fixture(tmp_path)
     daily = tmp_path / "evidence/daily.csv"
-    rows = list(csv.DictReader(daily.open(encoding="utf-8", newline="")))
+    with daily.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
     rows[0]["amount"] = "0"
     _write_csv(daily, list(rows[0]), rows)
     manifest = json.loads((tmp_path / "evidence/manifest.json").read_text(encoding="utf-8"))
@@ -137,7 +138,8 @@ def test_bundle_loader_rejects_duplicate_keys_labels_and_fabricated_amount(tmp_p
 
     config = _fixture(tmp_path)
     daily = tmp_path / "evidence/daily.csv"
-    rows = list(csv.DictReader(daily.open(encoding="utf-8", newline="")))
+    with daily.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
     rows[0]["forward_return_5d"] = "0.1"
     _write_csv(daily, list(rows[0]), rows)
     manifest = json.loads((tmp_path / "evidence/manifest.json").read_text(encoding="utf-8"))

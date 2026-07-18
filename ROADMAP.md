@@ -1,5 +1,17 @@
 # Roadmap
 
+## 2026-07-18 GOAL-12 Checkpoint
+
+`GOAL-12-ALPHA-VALIDATION-ROBUSTNESS` is implemented research-only over the
+merged GOAL-11 foundation. The final governed run assigns 17 candidates
+`research_rejected` and 11 `research_insufficient_data`; no candidate is
+supported, weak, or unstable under the frozen policy.
+
+`production_ready=false` and `ready_factor_count=0`. GOAL-13 remains blocked.
+The next responsible owner-approved research work is governed historical
+OHLCV/volume, PIT-universe, and independent adjustment evidence remediation,
+followed by a GOAL-12 rerun without changing thresholds after seeing results.
+
 ## 2026-07-17 GOAL-11 Checkpoint
 
 `GOAL-11-QUANT-INTELLIGENCE-FOUNDATION` is implemented research-only as a

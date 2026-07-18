@@ -39,7 +39,7 @@ Authoritative remote repository: `RyanLu0203/A_share_premarket_core`.
 
 Authoritative remote branch: `project-current`.
 Latest confirmed remote commit before this governance gate:
-`e216aac7cac188f401e970a03defca73b11aa449`.
+`25273bb3d3cf9d6eb6c21caf1317c5c56f086489`.
 
 Remote rollback checkpoint:
 
@@ -57,7 +57,9 @@ provide investment advice.
 Current implemented goals include Provider02B, DC03, GOAL-10B.3, Risk01 /
 Risk011, Quant01, MVP01, Alpha Candidate 01, Quant02, Alpha Refinement 01,
 Alpha Candidate 02, Quant03, Regime01, Arch03, and
-GOAL-REPOSITORY-CHECKPOINT-01. Ready factor count remains `0`.
+GOAL-REPOSITORY-CHECKPOINT-01, GOAL-11, and GOAL-12 research validation. The
+GOAL-12 result is 17 rejected and 11 insufficient candidates with no supported
+factor. Ready factor count remains `0`.
 
 Current locked goals and stages include
 GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE,
@@ -83,10 +85,12 @@ Required reading order:
 
 Next allowed goals:
 
-1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
-2. `GOAL-DATA-EXPANSION-RESEARCH-01`
-3. `GOAL-QUANT-RESEARCH-04`, only after DataExpansion or explicit user
-   approval
+1. Review and owner disposition of the GOAL-12 Draft PR.
+2. An explicit owner-approved historical OHLCV/volume, PIT-universe, and
+   adjustment-evidence remediation goal.
+3. A frozen-contract GOAL-12 rerun after that evidence exists.
+4. GOAL-13 only if the rerun supports at least one candidate and the owner
+   separately authorizes it.
 
 Baseline validation commands:
 

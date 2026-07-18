@@ -28,6 +28,9 @@ def test_goal12_is_one_registered_research_only_capability() -> None:
     assert capabilities["goal12_alpha_validation_robustness"].owner_module == (
         "ashare_premarket.alpha_validation"
     )
+    findings = "docs/quant/GOAL12_ALPHA_VALIDATION_FINDINGS.md"
+    assert findings in capabilities["goal12_alpha_validation_robustness"].required_outputs
+    assert findings in workflow["goal12_alpha_validation_robustness"]["primary_docs"]
 
 
 def test_goal12_preserves_topology_locks_and_local_artifact_policy() -> None:

@@ -23,6 +23,7 @@ _REQUIRED_FILES = (
     "docs/quant/GOAL12_LABEL_AND_SPLIT_CONTRACT.md",
     "docs/quant/GOAL12_RESEARCH_DECISION_POLICY.md",
     "docs/quant/GOAL12_STATISTICAL_VALIDATION_METHOD.md",
+    "docs/quant/GOAL12_ALPHA_VALIDATION_FINDINGS.md",
     "scripts/run_goal12_alpha_validation.py",
     "scripts/audit_goal12_alpha_validation.py",
     "src/ashare_premarket/alpha_validation/config.py",
