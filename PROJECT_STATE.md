@@ -1,6 +1,29 @@
 # Project State
 
-Last updated: 2026-07-17
+Last updated: 2026-07-18
+
+## GOAL-12 ALPHA VALIDATION, ROBUSTNESS AND RESEARCH APPROVAL
+
+GOAL-12 implements a deterministic research-only falsification layer over the
+merged GOAL-11 foundation. The governed full run covers 34,543 rows, 41
+symbols, 823 common-horizon signal dates, exact qfq 1D/5D/20D labels, 51
+BH-FDR hypotheses, five purged chronological folds, a 126-date final holdout,
+date-level nulls, and 33 robustness slices per eligible factor.
+
+- Final statuses: 17 `research_rejected`, 11
+  `research_insufficient_data`, and zero supported/weak/unstable candidates.
+- Historical OHLC/volume is unavailable. Four features and all three combined
+  candidates are therefore structurally insufficient; no substitute data or
+  imputation is fabricated.
+- `production_ready=false`, `ready_factor_count=0`, 14 canonical interfaces,
+  22 GET routes, zero write routes, and every recommendation/execution lock
+  remain unchanged.
+- Full generated evidence remains checksummed and ignored under
+  `outputs/local/goal12`; the committed conclusion is
+  `docs/quant/GOAL12_ALPHA_VALIDATION_FINDINGS.md`.
+- GOAL-13 remains blocked. The next responsible research gate is governed
+  historical OHLCV/volume and PIT-universe evidence remediation followed by a
+  frozen-contract GOAL-12 rerun.
 
 ## GOAL-11 QUANT INTELLIGENCE FOUNDATION
 

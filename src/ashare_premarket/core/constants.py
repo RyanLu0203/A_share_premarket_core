@@ -197,6 +197,8 @@ PUBLIC_COMMANDS = [
     "scripts/generate_project_snapshot.py",
     "scripts/check_latest_branch_state.py",
     "scripts/audit_goal11_quant_intelligence_foundation.py",
+    "scripts/run_goal12_alpha_validation.py",
+    "scripts/audit_goal12_alpha_validation.py",
     "scripts/run_e2e_trunk_verification_through_goal06b.py",
     "scripts/run_e2e_trunk_validation_through_goal06b.py",
     "scripts/run_goal06b_regression_suite.py",

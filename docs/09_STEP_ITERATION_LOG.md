@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-07-18 - GOAL-12 ALPHA VALIDATION AND ROBUSTNESS
+
+Status: `IMPLEMENTED_RESEARCH_ONLY_VALIDATED_PENDING_DRAFT_PR` on
+`codex/goal12-alpha-validation-robustness`.
+
+- Started exactly from merged GOAL-11 commit `25273bb3d3cf9d6eb6c21caf1317c5c56f086489`.
+- Added PIT-safe exact qfq labels, 51-hypothesis BH-FDR, date-level nulls, five
+  purged expanding folds, a locked 126-date final holdout, and 33 robustness
+  slices per eligible factor.
+- Executed the full 34,543-row analysis. Final decisions are 17 rejected and
+  11 insufficient, with zero supported/weak/unstable candidates.
+- Kept full evidence in ignored immutable local artifacts. The compact
+  findings document records the result and limitations without investable or
+  actionable claims.
+- Preserved `production_ready=false`, `ready_factor_count=0`, 14 interfaces,
+  22 GET routes, zero writes, and all downstream locks. GOAL-13 remains
+  blocked pending better governed historical evidence and owner authority.
+
 ## 2026-07-17 - GOAL-11 QUANT INTELLIGENCE FOUNDATION
 
 Status: `IMPLEMENTED_RESEARCH_ONLY_VALIDATED_PENDING_PR` on

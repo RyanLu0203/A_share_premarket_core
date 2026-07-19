@@ -3,6 +3,23 @@
 Clean private active repository for the A-share pre-market alpha diagnosis and
 risk-aware position-building decision support system.
 
+## Alpha Validation and Research Approval
+
+GOAL-12 adds exact qfq 1D/5D/20D labels, independent factor diagnostics,
+date-level null controls, BH-FDR, purged chronological OOS validation,
+predeclared robustness slices, and a five-state research decision engine.
+
+```powershell
+python scripts/run_goal12_alpha_validation.py --run-id <unique-run-id>
+python scripts/audit_goal12_alpha_validation.py
+```
+
+The governed run found 17 rejected and 11 insufficient-data candidates, with
+zero supported candidates. Full outputs are immutable local-only artifacts
+under ignored `outputs/local/goal12`. See
+`docs/quant/GOAL12_ALPHA_VALIDATION_FINDINGS.md`. This does not unlock GOAL-13,
+recommendations, positions, trading, broker, or production behavior.
+
 ## Quant Intelligence Foundation
 
 GOAL-11 provides a deterministic research-only feature store, interpretable

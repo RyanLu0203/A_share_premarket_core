@@ -396,10 +396,16 @@ def _ema(values: Sequence[float], span: int) -> float:
 def _macd(values: Sequence[float]) -> tuple[float | None, float | None, float | None]:
     if len(values) < 26:
         return None, None, None
-    lines = [
-        _ema(values[:end], 12) - _ema(values[:end], 26)
-        for end in range(26, len(values) + 1)
-    ]
+    alpha12 = 2.0 / 13.0
+    alpha26 = 2.0 / 27.0
+    ema12 = values[0]
+    ema26 = values[0]
+    lines: list[float] = []
+    for index, value in enumerate(values[1:], start=2):
+        ema12 = alpha12 * value + (1.0 - alpha12) * ema12
+        ema26 = alpha26 * value + (1.0 - alpha26) * ema26
+        if index >= 26:
+            lines.append(ema12 - ema26)
     line = lines[-1]
     if len(lines) < 9:
         return line, None, None
