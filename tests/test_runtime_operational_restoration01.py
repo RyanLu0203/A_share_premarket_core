@@ -18,6 +18,8 @@ from ashare_premarket.ops.macos_launchd import (
     REFRESH_LABEL,
     WORKSPACE_LABEL,
     already_refreshed,
+    launchd_python_runtime_is_stable,
+    launchd_root_is_tcc_safe,
     refresh_plist,
     workspace_plist,
 )
@@ -203,7 +205,7 @@ def test_launchd_contract_is_local_bounded_and_checksum_guarded(tmp_path: Path) 
     assert workspace["RunAtLoad"] is True
     assert refresh["Label"] == REFRESH_LABEL
     assert refresh["ProgramArguments"][-1] == "--allow-network"
-    assert {item["Weekday"] for item in refresh["StartCalendarInterval"]} == {2, 3, 4, 5, 6}
+    assert refresh["StartCalendarInterval"] == {"Hour": 8, "Minute": 0}
     assert refresh["EnvironmentVariables"]["ASHARE_ALLOW_NETWORK_INGESTION"] == "1"
     assert workspace["EnvironmentVariables"].get("ASHARE_ALLOW_NETWORK_INGESTION") is None
     assert "ASHARE_TRADING_CALENDAR_METADATA_PATH" in refresh["EnvironmentVariables"]
@@ -228,6 +230,34 @@ def test_launchd_contract_is_local_bounded_and_checksum_guarded(tmp_path: Path) 
     assert already_refreshed(tmp_path, context) is True
     (snapshot_manifest.parent / "data.csv").write_text("value\ntampered\n", encoding="utf-8")
     assert already_refreshed(tmp_path, context) is False
+
+
+def test_launchd_rejects_tcc_protected_roots_and_codex_cache_python(tmp_path: Path) -> None:
+    home = tmp_path / "home"
+    assert launchd_root_is_tcc_safe(home / "Library/Application Support/AsharePremarket", home)
+    assert not launchd_root_is_tcc_safe(home / "Desktop/A_share_premarket_core_current", home)
+    assert not launchd_root_is_tcc_safe(home / "Documents/A_share_premarket_core_current", home)
+    assert not launchd_root_is_tcc_safe(home / "Downloads/A_share_premarket_core_current", home)
+
+    stable = tmp_path / "stable"
+    stable_python = stable / ".venv/bin/python"
+    stable_python.parent.mkdir(parents=True)
+    stable_python.write_text("#!/bin/sh\n", encoding="utf-8")
+    assert launchd_python_runtime_is_stable(stable)
+
+    codex = tmp_path / ".cache/codex-runtimes/runtime/python3"
+    codex.parent.mkdir(parents=True)
+    codex.write_text("#!/bin/sh\n", encoding="utf-8")
+    unstable = tmp_path / "unstable"
+    unstable_python = unstable / ".venv/bin/python"
+    unstable_python.parent.mkdir(parents=True)
+    unstable_python.symlink_to(codex)
+    assert not launchd_python_runtime_is_stable(unstable)
+
+
+def test_tencent_operational_adapter_dependency_is_pinned() -> None:
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"akshare==1.18.64"' in pyproject
 
 
 def test_macos_daily_refresh_explicitly_selects_live_mode(monkeypatch: pytest.MonkeyPatch) -> None:

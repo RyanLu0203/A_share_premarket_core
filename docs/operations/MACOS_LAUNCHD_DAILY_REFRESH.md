@@ -82,13 +82,28 @@ The read-only workspace starts the validated Next.js standalone production
 server at login, copies the generated static/public assets into the standalone
 bundle, and is kept alive. It does not use the incompatible `next start` path.
 Development mode is explicit opt-in and is not the approved launchd deployment
-mode. Daily Refresh runs
-Monday through Friday at 07:45 local time. To install and immediately request
+mode. Daily Refresh runs every calendar day at 08:00 Asia/Shanghai. Weekend
+and holiday executions still derive the next governed target session and T-1
+from the verified provider calendar; an already verified immutable target
+snapshot may produce the normal bounded no-op. To install and immediately request
 one refresh:
 
 ```bash
 .venv/bin/python scripts/install_macos_launchd.py --run-refresh-now
 ```
+
+The deployment root must not be under `~/Desktop`, `~/Documents`, or
+`~/Downloads`. macOS TCC grants are attached to the responsible interactive
+application and do not reliably authorize a background LaunchAgent. Use a
+stable location such as
+`~/Library/Application Support/AsharePremarket/deployment`. The deployment
+virtual environment must also resolve to a stable Python 3.12 installation;
+Codex-managed cache interpreters are rejected by the prerequisite check.
+Install the repository `data` extra without overriding its AKShare `1.18.64`
+pin. That version is the audited source-adapter boundary for the six-field
+Tencent export. A later AKShare release with a different field order or
+additional fields must fail closed and requires a separate contract review;
+the deployment must not reinterpret it automatically.
 
 ## Status and service checks
 

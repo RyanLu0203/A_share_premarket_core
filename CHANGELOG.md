@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-30
+
+- Hardened macOS launchd installation against TCC-protected Desktop,
+  Documents, and Downloads deployment roots and Codex-cache-backed Python
+  environments.
+- Pinned the governed Tencent adapter to AKShare `1.18.64` after a clean
+  install of `1.18.81` correctly failed closed on its incompatible eight-field
+  schema.
+- Changed the governed daily refresh schedule to every calendar day at 08:00
+  Asia/Shanghai while preserving fail-closed live calendar/provider behavior
+  and all recommendation, trading, broker, production, factor-mining, and
+  DQN/RL locks.
+- Completed local acceptance from the non-TCC deployment root: two genuine
+  Tencent acquisitions accepted 41/41 current T-1 rows with identical batch
+  and snapshot checksums; both LaunchAgents, 22 GET routes, browser rendering,
+  and restart persistence passed.
+
 ## 2026-07-17 - final macOS deployment API/UI and runtime-hygiene repair
 
 - Added truthful current operational evidence to the read-only workspace:

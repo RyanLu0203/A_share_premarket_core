@@ -1,6 +1,35 @@
 # Project State
 
-Last updated: 2026-07-17
+Last updated: 2026-07-31
+
+## MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
+
+The local launchd contract now prevents the deployment failure observed when a
+background Python process loses macOS TCC access to a Desktop checkout.
+
+- Local acceptance on 2026-07-31 uses authoritative `project-current`
+  `25273bb3d3cf9d6eb6c21caf1317c5c56f086489` from
+  `~/Library/Application Support/AsharePremarket/deployment`.
+- Two complete Tencent network acquisitions accepted 41/41 symbols for dynamic
+  target `2026-07-31` and T-1 `2026-07-30`; the second run recorded
+  `PASS_IDENTICAL_NORMALIZED_BATCH_AND_IMMUTABLE_SNAPSHOT`.
+- The local workspace and daily-refresh LaunchAgents are loaded from the stable
+  deployment root, with the refresh trigger set to every calendar day at
+  08:00 Asia/Shanghai.
+- Launchd installation requires a deployment root outside Desktop, Documents,
+  and Downloads.
+- The deployment virtual environment must resolve to a stable Python runtime,
+  not a Codex-managed cache interpreter.
+- The operational data extra pins AKShare `1.18.64`. Its audited six-field
+  Tencent schema preserves volume-in-hand and amount-unavailable semantics;
+  later schema drift remains fail-closed.
+- The daily operational refresh schedule is every calendar day at 08:00
+  Asia/Shanghai.
+- Calendar and Tencent provider failures remain fail-closed. No retry,
+  deterministic replay, cached-calendar substitution, provider fallback, or
+  partial snapshot promotion was added.
+- Recommendation, trading, broker, production-model, factor-mining, and DQN/RL
+  capabilities remain locked.
 
 ## GOAL-11 QUANT INTELLIGENCE FOUNDATION
 
@@ -253,10 +282,10 @@ interfaces.
   snapshot. Live resolution is date-bounded and deterministic, validates the
   latest pointer and every selected snapshot, exposes stale/invalid pointer
   recovery, and marks any older research fallback as system-blocking.
-- macOS: user-level launchd support runs the local read-only workspace and a
-  weekday 07:45 calendar/evidence refresh. The daily runner performs only the
-  approved calendar sync, bounded T-1 evidence refresh, and research-only OPM
-  snapshot handoff.
+- macOS: user-level launchd support runs the local read-only workspace and an
+  every-calendar-day 08:00 calendar/evidence refresh. The daily runner performs
+  only the approved calendar sync, bounded T-1 evidence refresh, and
+  research-only OPM snapshot handoff.
 - Dashboard: operational system readiness may be `BLOCKED` while verified
   historical replay remains `AVAILABLE` and research panels remain
   `AVAILABLE_WITH_WARNING`. Quant pages remain governance-locked.

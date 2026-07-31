@@ -14,7 +14,7 @@ dependencies = [
 
 [project.optional-dependencies]
 data = [
-  "akshare",
+  "akshare==1.18.64",
   "pandas",
   "pyarrow",
   "duckdb",
