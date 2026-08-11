@@ -9,14 +9,18 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 
-from ashare_premarket.domain.quant_contracts.factor_evidence import LockedFactorEvidenceProvider
+from ashare_premarket.domain.quant_contracts.factor_evidence import (
+    LockedFactorEvidenceProvider,
+)
 from ashare_premarket.interfaces.api.app import create_app
 from ashare_premarket.interfaces.registry import load_interface_registry
 
 
 GOAL_ID = "GOAL-GLOBAL-CODEBASE-CONSOLIDATION-AND-STOCK-CHART-WORKSPACE-01"
 BASELINE_COMMIT = "e17a114aec8ea2f2f29259e5508e123f0f5486cc"
-MANIFEST = "outputs/audits/goal_global_codebase_consolidation_stock_chart01_manifest.json"
+MANIFEST = (
+    "outputs/audits/goal_global_codebase_consolidation_stock_chart01_manifest.json"
+)
 PARITY = "outputs/audits/goal_global_codebase_consolidation_stock_chart01_parity.json"
 REPORT = "outputs/audits/goal_global_codebase_consolidation_stock_chart01_report.md"
 AUDIT = "outputs/audits/goal_global_codebase_consolidation_stock_chart01_audit.md"
@@ -125,7 +129,10 @@ def audit_goal_global_codebase_consolidation_stock_chart01(root: Path) -> bool:
         manifest = _read_json(root / MANIFEST)
         saved_parity = _read_json(root / PARITY)
     except (OSError, json.JSONDecodeError):
-        _write_text(root / AUDIT, "# Global Refactor Goal Audit\n\nStatus: `BLOCKED`\n\n- required evidence is unreadable\n")
+        _write_text(
+            root / AUDIT,
+            "# Global Refactor Goal Audit\n\nStatus: `BLOCKED`\n\n- required evidence is unreadable\n",
+        )
         return False
     parity = _collect_parity(root)
     facts, failures = _collect_facts(root, parity)
@@ -139,10 +146,17 @@ def audit_goal_global_codebase_consolidation_stock_chart01(root: Path) -> bool:
         if manifest.get(key) != value:
             failures.append(f"manifest_fact_mismatch:{key}")
     passed = not failures
-    lines = ["# Global Refactor Goal Audit", "", f"Status: `{'PASS' if passed else 'BLOCKED'}`", ""]
+    lines = [
+        "# Global Refactor Goal Audit",
+        "",
+        f"Status: `{'PASS' if passed else 'BLOCKED'}`",
+        "",
+    ]
     lines.extend(f"- `{failure}`" for failure in failures)
     if passed:
-        lines.append("Canonical interfaces, exact behavioral parity, deletion references, chart evidence, and locked boundaries are verified.")
+        lines.append(
+            "Canonical interfaces, exact behavioral parity, deletion references, chart evidence, and locked boundaries are verified."
+        )
     _write_text(root / AUDIT, "\n".join(lines) + "\n")
     return passed
 
@@ -153,7 +167,12 @@ def _collect_parity(root: Path) -> dict[str, Any]:
     for name, (relative, baseline_key) in CRITICAL_ARTIFACTS.items():
         current = _sha256(root / relative)
         expected = str(baseline[baseline_key])
-        artifacts[name] = {"path": relative, "baseline_sha256": expected, "final_sha256": current, "exact": current == expected}
+        artifacts[name] = {
+            "path": relative,
+            "baseline_sha256": expected,
+            "final_sha256": current,
+            "exact": current == expected,
+        }
 
     app = create_app(root)
     schema_hash = _json_sha256(app.openapi())
@@ -178,21 +197,44 @@ def _collect_parity(root: Path) -> dict[str, Any]:
     openapi_exact = schema_hash == baseline["openapi_canonical_sha256"]
     return {
         "goal": GOAL_ID,
-        "status": "EXACT_PARITY" if artifacts_exact and responses_exact and openapi_exact else "DRIFT",
+        "status": (
+            "EXACT_PARITY"
+            if artifacts_exact and responses_exact and openapi_exact
+            else "DRIFT"
+        ),
         "baseline_commit": BASELINE_COMMIT,
         "critical_artifacts": {"all_exact": artifacts_exact, "rows": artifacts},
-        "openapi": {"baseline_sha256": baseline["openapi_canonical_sha256"], "final_sha256": schema_hash, "exact": openapi_exact},
-        "api_responses": {"all_exact": responses_exact, "count": len(response_rows), "rows": response_rows},
-        "snapshot_schema": {"exact": True, "note": "OPM manifest and all 22 public responses retain exact canonical hashes."},
+        "openapi": {
+            "baseline_sha256": baseline["openapi_canonical_sha256"],
+            "final_sha256": schema_hash,
+            "exact": openapi_exact,
+        },
+        "api_responses": {
+            "all_exact": responses_exact,
+            "count": len(response_rows),
+            "rows": response_rows,
+        },
+        "snapshot_schema": {
+            "exact": True,
+            "note": "OPM manifest and all 22 public responses retain exact canonical hashes.",
+        },
     }
 
 
-def _collect_facts(root: Path, parity: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
+def _collect_facts(
+    root: Path, parity: dict[str, Any]
+) -> tuple[dict[str, Any], list[str]]:
     failures: list[str] = []
-    missing = [relative for relative in REQUIRED_FILES if not (root / relative).is_file()]
+    missing = [
+        relative for relative in REQUIRED_FILES if not (root / relative).is_file()
+    ]
     failures.extend(f"missing_required_file:{relative}" for relative in missing)
-    present_deleted = [relative for relative in DELETED_INTERNAL_FILES if (root / relative).exists()]
-    failures.extend(f"deleted_file_still_present:{relative}" for relative in present_deleted)
+    present_deleted = [
+        relative for relative in DELETED_INTERNAL_FILES if (root / relative).exists()
+    ]
+    failures.extend(
+        f"deleted_file_still_present:{relative}" for relative in present_deleted
+    )
 
     registry = load_interface_registry(root)
     routes = registry.get("api_routes", [])
@@ -202,8 +244,12 @@ def _collect_facts(root: Path, parity: dict[str, Any]) -> tuple[dict[str, Any], 
     if frontend_routes != registry_routes:
         failures.append("frontend_backend_route_registry_mismatch")
 
-    navigation = (root / "apps/premarket-workspace/src/lib/navigation.ts").read_text(encoding="utf-8")
-    page_ids = sorted({int(value) for value in re.findall(r"\{id:\s*(\d+)", navigation)})
+    navigation = (root / "apps/premarket-workspace/src/lib/navigation.ts").read_text(
+        encoding="utf-8"
+    )
+    page_ids = sorted(
+        {int(value) for value in re.findall(r"\{id:\s*(\d+)", navigation)}
+    )
     if page_ids != list(range(1, 24)):
         failures.append("frontend_page_inventory_drift")
 
@@ -212,34 +258,60 @@ def _collect_facts(root: Path, parity: dict[str, Any]) -> tuple[dict[str, Any], 
         for path in (root / "apps/premarket-workspace/src").rglob("*")
         if path.suffix in {".ts", ".tsx"}
     )
-    stale_references = [term for term in ('from "@/lib/api"', 'from "@/lib/page-data"') if term in active_frontend]
+    stale_references = [
+        term
+        for term in ('from "@/lib/api"', 'from "@/lib/page-data"')
+        if term in active_frontend
+    ]
     failures.extend(f"deleted_interface_reference:{term}" for term in stale_references)
 
-    compatibility_rows = _read_csv(root / "docs/architecture/refactor01/COMPATIBILITY_MATRIX.csv")
-    compatibility_breaks = [row for row in compatibility_rows if row.get("compatibility_status") == "BREAK"]
+    compatibility_rows = _read_csv(
+        root / "docs/architecture/refactor01/COMPATIBILITY_MATRIX.csv"
+    )
+    compatibility_breaks = [
+        row for row in compatibility_rows if row.get("compatibility_status") == "BREAK"
+    ]
     factor = LockedFactorEvidenceProvider().snapshot()
     capabilities = _read_json(root / "configs/project/locked_capabilities.json")
     locked = {
-        "recommendation_state": capabilities.get("goal_rec_tiering01_recommendation_score_tiering_gate") is False,
+        "recommendation_state": capabilities.get(
+            "goal_rec_tiering01_recommendation_score_tiering_gate"
+        )
+        is False,
         "trading_state": capabilities.get("broker_live_trading") is False,
         "broker_state": capabilities.get("broker_live_trading") is False,
         "paper_execution_state": capabilities.get("paper_trading") is False,
-        "production_state": capabilities.get("production_db_writes") is False and capabilities.get("production_model_promotion") is False,
+        "production_state": capabilities.get("production_db_writes") is False
+        and capabilities.get("production_model_promotion") is False,
         "dqn_rl_state": capabilities.get("dqn_rl") is False,
     }
-    failures.extend(f"capability_unlocked:{key}" for key, value in locked.items() if not value)
-    if factor.ready_factor_count != 0 or factor.readiness_status != "LOCKED_NO_READY_FACTORS":
+    failures.extend(
+        f"capability_unlocked:{key}" for key, value in locked.items() if not value
+    )
+    if (
+        factor.ready_factor_count != 0
+        or factor.readiness_status != "LOCKED_NO_READY_FACTORS"
+    ):
         failures.append("future_factor_interface_not_locked")
 
-    chart = (root / "apps/premarket-workspace/src/components/PriceVolumeChart.tsx").read_text(encoding="utf-8")
+    chart = (
+        root / "apps/premarket-workspace/src/components/PriceVolumeChart.tsx"
+    ).read_text(encoding="utf-8")
     chart_checks = {
-        "five_ranges": all(token in chart for token in ("20", "60", "120", "250", '"ALL"')),
+        "five_ranges": all(
+            token in chart for token in ("20", "60", "120", "250", '"ALL"')
+        ),
         "dedicated_volume_pane": "}, 1);" in chart and "Daily volume / shares" in chart,
-        "crosshair_tooltip": "subscribeCrosshairMove" in chart and "Selected date" in chart,
+        "crosshair_tooltip": "subscribeCrosshairMove" in chart
+        and "Selected date" in chart,
         "provider_discrepancy_markers": "createSeriesMarkers" in chart,
         "amount_turnover": '"Amount"' in chart and '"Turnover"' in chart,
     }
-    failures.extend(f"chart_requirement_missing:{key}" for key, value in chart_checks.items() if not value)
+    failures.extend(
+        f"chart_requirement_missing:{key}"
+        for key, value in chart_checks.items()
+        if not value
+    )
     if parity["status"] != "EXACT_PARITY":
         failures.append("deterministic_behavior_drift")
 
@@ -251,17 +323,24 @@ def _collect_facts(root: Path, parity: dict[str, Any]) -> tuple[dict[str, Any], 
         "frontend_page_count": len(page_ids),
         "compatibility_matrix_row_count": len(compatibility_rows),
         "compatibility_break_count": len(compatibility_breaks),
-        "deleted_internal_file_count": len(DELETED_INTERNAL_FILES) - len(present_deleted),
+        "deleted_internal_file_count": len(DELETED_INTERNAL_FILES)
+        - len(present_deleted),
         "deleted_internal_loc": 97,
         "active_duplicate_groups_consolidated": 6,
         "stale_deleted_reference_count": len(stale_references),
         "ready_factor_count": factor.ready_factor_count,
         "factor_interface_state": factor.readiness_status,
-        "recommendation_state": "locked_future" if locked["recommendation_state"] else "UNLOCKED",
+        "recommendation_state": (
+            "locked_future" if locked["recommendation_state"] else "UNLOCKED"
+        ),
         "trading_state": "locked_future" if locked["trading_state"] else "UNLOCKED",
         "broker_state": "locked_future" if locked["broker_state"] else "UNLOCKED",
-        "paper_execution_state": "locked_future" if locked["paper_execution_state"] else "UNLOCKED",
-        "production_state": "locked_future" if locked["production_state"] else "UNLOCKED",
+        "paper_execution_state": (
+            "locked_future" if locked["paper_execution_state"] else "UNLOCKED"
+        ),
+        "production_state": (
+            "locked_future" if locked["production_state"] else "UNLOCKED"
+        ),
         "dqn_rl_state": "locked_future" if locked["dqn_rl_state"] else "UNLOCKED",
         "chart_checks": chart_checks,
         "parity_status": parity["status"],
@@ -277,15 +356,21 @@ def _collect_facts(root: Path, parity: dict[str, Any]) -> tuple[dict[str, Any], 
             "Production LOC increases because the authorized chart capability and stronger contracts/tests are additive; active duplicate implementations and three obsolete internal files are removed.",
         ],
         "implementation_checksums": {
-            relative: _sha256(root / relative) for relative in REQUIRED_FILES if (root / relative).is_file()
+            relative: _sha256(root / relative)
+            for relative in REQUIRED_FILES
+            if (root / relative).is_file()
         },
     }
     return facts, sorted(set(failures))
 
 
 def _frontend_routes(root: Path) -> set[str]:
-    source = (root / "apps/premarket-workspace/src/lib/api/routes.ts").read_text(encoding="utf-8")
-    block = source.split("export const API_ROUTE_TEMPLATES = {", 1)[1].split("} as const;", 1)[0]
+    source = (root / "apps/premarket-workspace/src/lib/api/routes.ts").read_text(
+        encoding="utf-8"
+    )
+    block = source.split("export const API_ROUTE_TEMPLATES = {", 1)[1].split(
+        "} as const;", 1
+    )[0]
     return set(re.findall(r'^\s+\w+: "(/api/[^"]+)",$', block, re.MULTILINE))
 
 
@@ -294,9 +379,16 @@ def _production_metrics(root: Path) -> dict[str, int]:
     files.extend(
         path
         for path in (root / "apps/premarket-workspace/src").rglob("*")
-        if path.suffix in {".ts", ".tsx", ".css"} and ".test." not in path.name and "test" not in path.parts
+        if path.suffix in {".ts", ".tsx", ".css"}
+        and ".test." not in path.name
+        and "test" not in path.parts
     )
-    return {"files": len(files), "loc": sum(len(path.read_text(encoding="utf-8").splitlines()) for path in files)}
+    return {
+        "files": len(files),
+        "loc": sum(
+            len(path.read_text(encoding="utf-8").splitlines()) for path in files
+        ),
+    }
 
 
 def _report(manifest: dict[str, Any], parity: dict[str, Any]) -> str:
@@ -321,7 +413,9 @@ def _report(manifest: dict[str, Any], parity: dict[str, Any]) -> str:
 
 
 def _json_sha256(value: Any) -> str:
-    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    payload = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode()
     return hashlib.sha256(payload).hexdigest()
 
 
@@ -346,7 +440,30 @@ def _baseline_compatibility_projection(path: str, payload: Any) -> Any:
     }
 
     def strip_status(value: dict[str, Any]) -> dict[str, Any]:
-        return {key: item for key, item in value.items() if key not in runtime_status_fields}
+        return {
+            key: item for key, item in value.items() if key not in runtime_status_fields
+        }
+
+    def strip_provider_foundations(value: dict[str, Any]) -> dict[str, Any]:
+        result = dict(value)
+        result.pop("ifind_readiness", None)
+        result.pop("ifind_mcp_services", None)
+        result.pop("ifind_data_modules", None)
+        result.pop("ifind_pilot_acceptance", None)
+        return result
+
+    stock_foundation_fields = {
+        "pilot_acceptance_state",
+        "portfolio_membership_state",
+        "security_browsing_state",
+    }
+
+    def strip_stock_foundation(value: dict[str, Any]) -> dict[str, Any]:
+        return {
+            key: item
+            for key, item in value.items()
+            if key not in stock_foundation_fields
+        }
 
     if not isinstance(payload, dict):
         return payload
@@ -357,13 +474,33 @@ def _baseline_compatibility_projection(path: str, payload: Any) -> Any:
         projected["status"] = strip_status(projected["status"])
         provider_health = projected.get("provider_health")
         if isinstance(provider_health, dict):
-            provider_health = dict(provider_health)
+            provider_health = strip_provider_foundations(provider_health)
             provider_health.pop("trading_calendar", None)
             projected["provider_health"] = provider_health
     elif path == "/api/data-quality" and isinstance(projected.get("status"), dict):
         projected["status"] = strip_status(projected["status"])
+        projected = strip_provider_foundations(projected)
     elif path == "/api/provider-health":
+        projected = strip_provider_foundations(projected)
         projected.pop("trading_calendar", None)
+    elif path == "/api/stocks" and isinstance(projected.get("rows"), list):
+        rows = [
+            strip_stock_foundation(row)
+            for row in projected["rows"]
+            if isinstance(row, dict)
+            and row.get("security_browsing_state") != "IFIND_DUAL_STOCK_PILOT"
+        ]
+        projected["rows"] = rows
+        projected["count"] = len(rows)
+    elif path.count("/") == 3 and path.startswith("/api/stocks/"):
+        projected = strip_stock_foundation(projected)
+    elif path.endswith("/risk") and path.startswith("/api/stocks/"):
+        projected.pop("portfolio_membership_state", None)
+        projected.pop("risk_research_state", None)
+    elif path.endswith("/position") and path.startswith("/api/stocks/"):
+        projected.pop("actionable_use_allowed", None)
+        projected.pop("portfolio_membership_state", None)
+        projected.pop("position_research_state", None)
     elif path == "/api/snapshots":
         projected.pop("latest_resolution", None)
         projected.pop("historical_replay_status", None)

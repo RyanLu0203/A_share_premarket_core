@@ -10,7 +10,7 @@ import { RiskMonitorPage } from "@/views/RiskMonitorPage";
 import { SnapshotHistoryPage } from "@/views/SnapshotHistoryPage";
 import { StockDetailPage } from "@/views/StockDetailPage";
 import { StockExplorerPage } from "@/views/StockExplorerPage";
-import { DataQualityPage, ProvenancePage } from "@/views/SystemEvidencePage";
+import { DataQualityPage, ProvenancePage, ProviderHealthPage } from "@/views/SystemEvidencePage";
 import { ExperimentPage } from "@/views/ExperimentPage";
 import { WatchlistPage } from "@/views/WatchlistPage";
 
@@ -38,6 +38,94 @@ const status = {
   latest_available_data_date: "2026-06-30",
   data_cutoff: "2026-07-08",
   execution_mode: "daily_operational",
+};
+
+const ifindReadiness = {
+  provider_id: "ifind",
+  provider_name: "同花顺 iFinD",
+  product_name: "AI 金融数据服务",
+  channel_id: "ifind_mcp_api_key",
+  interface_mode: "streamablehttp_mcp_api_key",
+  protocol_version: "2025-03-26",
+  readiness_state: "OFFLINE_READY_NETWORK_DISABLED",
+  network_opt_in: false,
+  provider_opt_in: false,
+  mcp_opt_in: false,
+  data_call_opt_in: false,
+  live_access_allowed: false,
+  credential_delivery_policy: "macos_keychain_preferred_environment_fallback",
+  credential_verified: false,
+  keychain_lookup_available: true,
+  raw_payload_commit_allowed: false,
+  local_token_persistence_allowed: false,
+  supported_service_count: 7,
+  expected_tool_count: 36,
+  data_module_count: 7,
+  last_probe_status: "BLOCKED",
+  last_probe_mode: "live_handshake",
+  last_probe_server: "stock",
+  last_probe_failure_code: "IFIND_MCP_AUTH_OR_PERMISSION_DENIED",
+  last_probe_http_status: 401,
+  last_probe_observed_at: "2026-08-09T08:50:00Z",
+  last_handshake_verified: false,
+  last_input_schemas_verified: false,
+  last_data_tool_called: false,
+  api_key: "fixture-secret-must-not-render",
+};
+
+const ifindServices = ["stock", "fund", "edb", "news", "bond", "global_stock", "index"].map((server_type) => ({
+  server_type,
+  server_id: `hexin-ifind-ds-${server_type.replace("_", "-")}-mcp`,
+  endpoint_path: `/ds-mcp-servers/${server_type}`,
+  expected_tool_count: server_type === "stock" ? 10 : 4,
+  implementation_state: "contract_ready_live_handshake_pending",
+}));
+
+const ifindModules = [
+  ["security_master", "证券主数据与资本结构", "P0"],
+  ["daily_market_and_calendar", "日线行情与交易日历", "P0"],
+  ["pit_fundamentals_and_valuation", "PIT 财务与估值", "P0"],
+  ["industry_and_constituents", "行业分类与历史成分", "P1"],
+  ["corporate_events_and_announcements", "公司事件与公告元数据", "P1"],
+  ["macro_and_edb", "宏观与经济数据库", "P1"],
+  ["market_structure_crosscheck", "两融、北向、宽度与资金流交叉验证", "P1"],
+].map(([module_id, display_name, priority]) => ({
+  module_id,
+  display_name,
+  priority,
+  mcp_services: "stock",
+  mcp_tools: "get_stock_info",
+  intended_fields: "governed fields",
+  pit_requirement: "available_at_required",
+  known_gap: "live_schema_validation_pending",
+  dashboard_surface: "data_foundation",
+  implementation_state: "mcp_contract_ready_live_schema_validation_pending",
+}));
+
+const ifindPilot = {
+  cohort_id: "ifind_mcp_dual_stock_acceptance_v1",
+  canonical_approved_symbols_unchanged: true,
+  research_unlock_allowed: false,
+  symbols: [
+    {
+      symbol: "002475.SZ",
+      company_name_cn: "立讯精密",
+      exchange: "SZSE",
+      existing_governance_state: "current_approved",
+      pilot_acceptance_state: "official_identity_verified_live_ifind_acceptance_pending",
+      required_data_modules: ifindModules.map((row) => row.module_id),
+      actionable_use_allowed: false,
+    },
+    {
+      symbol: "600487.SH",
+      company_name_cn: "亨通光电",
+      exchange: "SSE",
+      existing_governance_state: "user_requested_pilot_not_in_canonical_approved_symbols",
+      pilot_acceptance_state: "official_identity_verified_symbol_onboarding_and_live_ifind_acceptance_pending",
+      required_data_modules: ifindModules.map((row) => row.module_id),
+      actionable_use_allowed: false,
+    },
+  ],
 };
 
 describe("functional workspace pages", () => {
@@ -131,11 +219,29 @@ describe("functional workspace pages", () => {
     expect(screen.getByText("not_ready_failed:sign_stability")).toBeVisible();
   });
 
-  it("surfaces freshness and provenance fields without inventing values", () => {
+  it("surfaces freshness, credential-safe iFinD readiness, and provenance fields", () => {
     const qualityStatus = {...status, readiness_state: "READY_WITH_WARNINGS"};
-    const {rerender} = render(<DataQualityPage data={{status: qualityStatus, readiness_checks: [], quality_summary: [], quarantine: []}} />);
+    const {rerender} = render(<DataQualityPage data={{status: qualityStatus, readiness_checks: [], quality_summary: [], quarantine: [], ifind_readiness: ifindReadiness, ifind_mcp_services: ifindServices, ifind_data_modules: ifindModules, ifind_pilot_acceptance: ifindPilot}} />);
     expect(screen.getByText("Expected T-1")).toBeVisible();
     expect(screen.getByText("Readiness state definitions")).toBeVisible();
+    expect(screen.getByRole("heading", {name: "iFinD AI financial data service readiness"})).toBeVisible();
+    expect(screen.getAllByText("OFFLINE_READY_NETWORK_DISABLED").length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", {name: "iFinD MCP service contract"})).toBeVisible();
+    expect(screen.getByRole("heading", {name: "iFinD data module readiness"})).toBeVisible();
+    expect(screen.getByRole("heading", {name: "iFinD dual-stock acceptance cohort"})).toBeVisible();
+    expect(screen.getByText("证券主数据与资本结构")).toBeVisible();
+    expect(screen.getByText("立讯精密")).toBeVisible();
+    expect(screen.getByText("亨通光电")).toBeVisible();
+    expect(screen.getByText("600487.SH")).toBeVisible();
+    expect(screen.getByText("IFIND_MCP_AUTH_OR_PERMISSION_DENIED")).toBeVisible();
+    expect(screen.getByText("401")).toBeVisible();
+    expect(screen.getAllByText("1-7 / 7 filtered / 7 rows").length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText("fixture-secret-must-not-render")).not.toBeInTheDocument();
+    rerender(<ProviderHealthPage data={{canonical_decision: "historical replay", comparison: [], quarantine: [], provider_usage: [], provider_health: [], source_freshness: {}, trading_calendar: {}, provider_lineage: [], ifind_readiness: ifindReadiness, ifind_mcp_services: ifindServices, ifind_data_modules: ifindModules, ifind_pilot_acceptance: ifindPilot}} />);
+    expect(screen.getByRole("heading", {name: "iFinD AI financial data service readiness"})).toBeVisible();
+    expect(screen.getByText("同花顺 iFinD")).toBeVisible();
+    expect(screen.getAllByText("1-7 / 7 filtered / 7 rows").length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText("fixture-secret-must-not-render")).not.toBeInTheDocument();
     rerender(<ProvenancePage data={{snapshot: {snapshot_date: "2026-07-01", code_commit: "abc"}, audit_status: "PASS", pit_status: "passed", config_hash: "config-sha", source_lineage: ["source-a"], provider_lineage: ["provider-a"], goal_lineage: ["goal-a"], checksums: {}, workflow_state: {status: "implemented"}}} />);
     expect(screen.getByText("Source lineage")).toBeVisible();
     expect(screen.getByText("config-sha")).toBeVisible();

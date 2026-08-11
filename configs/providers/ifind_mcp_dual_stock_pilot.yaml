@@ -1,0 +1,80 @@
+{
+  "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
+  "as_of_date": "2026-08-09",
+  "purpose": "bounded_data_and_workspace_foundation_acceptance_only",
+  "canonical_approved_symbols_unchanged": true,
+  "research_unlock_allowed": false,
+  "symbols": [
+    {
+      "symbol": "002475.SZ",
+      "company_name_cn": "立讯精密",
+      "company_name_full_cn": "立讯精密工业股份有限公司",
+      "exchange": "SZSE",
+      "existing_governance_state": "current_approved",
+      "pilot_acceptance_state": "official_identity_verified_live_ifind_acceptance_pending",
+      "official_identity_evidence": "https://disc.static.szse.cn/disc/disk03/finalpage/2026-06-30/a0dd45ad-b7f7-4e6e-a079-ed9ec37d1a2b.PDF",
+      "required_data_modules": [
+        "security_master",
+        "daily_market_and_calendar",
+        "pit_fundamentals_and_valuation",
+        "industry_and_constituents",
+        "corporate_events_and_announcements",
+        "macro_and_edb",
+        "market_structure_crosscheck"
+      ],
+      "actionable_use_allowed": false
+    },
+    {
+      "symbol": "600487.SH",
+      "company_name_cn": "亨通光电",
+      "company_name_full_cn": "江苏亨通光电股份有限公司",
+      "exchange": "SSE",
+      "existing_governance_state": "user_requested_pilot_not_in_canonical_approved_symbols",
+      "pilot_acceptance_state": "official_identity_verified_symbol_onboarding_and_live_ifind_acceptance_pending",
+      "official_identity_evidence": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/specific/margin/c/c_20260710_10825136.shtml",
+      "required_data_modules": [
+        "security_master",
+        "daily_market_and_calendar",
+        "pit_fundamentals_and_valuation",
+        "industry_and_constituents",
+        "corporate_events_and_announcements",
+        "macro_and_edb",
+        "market_structure_crosscheck"
+      ],
+      "actionable_use_allowed": false
+    }
+  ],
+  "acceptance_sequence": [
+    "rotated_credential_confirmed",
+    "seven_service_tools_list_verified",
+    "official_identity_matches_provider_security_master",
+    "bounded_daily_market_probe_passed",
+    "pit_fundamental_and_valuation_schema_passed",
+    "industry_and_event_metadata_schema_passed",
+    "macro_and_market_structure_context_schema_passed",
+    "coverage_missingness_units_timezone_and_revision_audits_passed",
+    "workspace_read_models_render_without_raw_provider_dependency",
+    "research_gate_requested_separately"
+  ],
+  "workspace_acceptance_surfaces": [
+    "stock_explorer",
+    "stock_detail",
+    "stock_chart",
+    "market_context",
+    "watchlist",
+    "data_quality",
+    "provider_health",
+    "provenance",
+    "quant_research_readiness"
+  ],
+  "locked_outputs": [
+    "recommendation_tiering",
+    "target_price",
+    "actionable_position",
+    "portfolio_weight",
+    "order",
+    "broker_integration",
+    "production_write",
+    "paper_or_live_trading"
+  ]
+}

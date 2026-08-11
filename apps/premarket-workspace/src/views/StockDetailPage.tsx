@@ -38,6 +38,10 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
   const historicalSource = String(market.historical_chart_source ?? market.candlestick_source ?? "UNAVAILABLE");
   const operationalSource = String(detail.operational_provider ?? market.current_operational_provider ?? readSource(detail.latest_price) ?? "UNAVAILABLE");
   const freshness = status?.freshness_code ?? String(detail.freshness_state ?? "UNAVAILABLE");
+  const portfolioMembership = String(detail.portfolio_membership_state ?? "UNAVAILABLE");
+  const abstentionState = detail.abstain === null || detail.abstain === undefined
+    ? "NOT_APPLICABLE"
+    : Boolean(detail.abstain) ? "ABSTAIN" : "NOT_ABSTAIN";
   return <div className="page-stack">
     <PageHeader
       eyebrow="04 / INSTRUMENT WORKSPACE"
@@ -57,8 +61,9 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
       <div><span>Freshness</span><StatusBadge state={freshness} /></div>
       <Summary label="Portfolio weight" value={detail.current_weight} format="percent" />
       <Summary label="Risk contribution" value={detail.risk_contribution} format="percent" />
+      <div><span>Portfolio membership</span><StatusBadge state={portfolioMembership} /></div>
       <div><span>Band status</span><StatusBadge state={String(detail.band_status)} /></div>
-      <div><span>Abstention</span><StatusBadge state={Boolean(detail.abstain) ? "ABSTAIN" : "NOT_ABSTAIN"} /></div>
+      <div><span>Abstention</span><StatusBadge state={abstentionState} /></div>
     </div>
     <Tabs.Root defaultValue={initialTab} className="stock-tabs">
       <Tabs.List aria-label="Stock detail views"><Tabs.Trigger value="overview">Overview</Tabs.Trigger><Tabs.Trigger value="market">Market</Tabs.Trigger><Tabs.Trigger value="fundamentals">Fundamentals</Tabs.Trigger><Tabs.Trigger value="chart">Price chart</Tabs.Trigger><Tabs.Trigger value="risk">Risk</Tabs.Trigger><Tabs.Trigger value="position">Position management</Tabs.Trigger></Tabs.List>
@@ -78,8 +83,8 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
           <PriceVolumeChart rows={candles} discrepancies={discrepancies} />
         </Panel>
       </Tabs.Content>
-      <Tabs.Content value="risk"><EvidenceSection title="Risk evidence" values={pick(risk, ["volatility_20d", "volatility_60d", "ewma_volatility", "beta", "drawdown", "cvar_95", "marginal_risk_contribution", "component_risk_contribution", "correlation_cluster", "provider_quality", "quarantine_state"])} /></Tabs.Content>
-      <Tabs.Content value="position"><div className="page-stack"><Panel title="Position management"><dl className="metric-list"><div><dt>Current weight</dt><dd>{formatPercent(position.current_weight)}</dd></div><div><dt>Reference policy weight</dt><dd>{formatPercent(position.reference_policy_weight)}</dd></div><div><dt>Band minimum</dt><dd>{formatPercent(position.acceptable_band_min)}</dd></div><div><dt>Band maximum</dt><dd>{formatPercent(position.acceptable_band_max)}</dd></div><div><dt>Band status</dt><dd>{String(position.band_status ?? "N/A")}</dd></div><div><dt>Confidence</dt><dd>{formatPercent(position.confidence)}</dd></div><div><dt>Constraint breach</dt><dd>{String(position.constraint_breach ?? "none")}</dd></div><div><dt>Abstain</dt><dd>{String(position.abstain ?? false)}</dd></div><div><dt>Abstention reasons</dt><dd>{Array.isArray(position.abstention_reason_codes) && position.abstention_reason_codes.length ? position.abstention_reason_codes.join(" / ") : "none"}</dd></div></dl></Panel><Panel title="Constraint evidence"><DenseTable rows={constraints} columns={[{key: "constraint_id", label: "Constraint"}, {key: "current_value", label: "Current"}, {key: "threshold", label: "Threshold"}, {key: "breach", label: "Breach"}, {key: "severity", label: "Severity"}, {key: "evidence_availability", label: "Evidence"}, {key: "fail_closed", label: "Fail closed"}]} compact /></Panel></div></Tabs.Content>
+      <Tabs.Content value="risk"><EvidenceSection title="Risk evidence" values={pick(risk, ["risk_research_state", "portfolio_membership_state", "volatility_20d", "volatility_60d", "ewma_volatility", "beta", "drawdown", "cvar_95", "marginal_risk_contribution", "component_risk_contribution", "correlation_cluster", "provider_quality", "quarantine_state"])} /></Tabs.Content>
+      <Tabs.Content value="position"><div className="page-stack"><Panel title="Position management" meta={`${String(position.portfolio_membership_state ?? "UNAVAILABLE")} / ${String(position.position_research_state ?? "UNAVAILABLE")}`}><dl className="metric-list"><div><dt>Current weight</dt><dd>{formatPercent(position.current_weight)}</dd></div><div><dt>Reference policy weight</dt><dd>{formatPercent(position.reference_policy_weight)}</dd></div><div><dt>Band minimum</dt><dd>{formatPercent(position.acceptable_band_min)}</dd></div><div><dt>Band maximum</dt><dd>{formatPercent(position.acceptable_band_max)}</dd></div><div><dt>Band status</dt><dd>{String(position.band_status ?? "N/A")}</dd></div><div><dt>Confidence</dt><dd>{formatPercent(position.confidence)}</dd></div><div><dt>Constraint breach</dt><dd>{String(position.constraint_breach ?? "none")}</dd></div><div><dt>Abstain</dt><dd>{position.abstain === null || position.abstain === undefined ? "NOT APPLICABLE" : String(position.abstain)}</dd></div><div><dt>Abstention reasons</dt><dd>{Array.isArray(position.abstention_reason_codes) && position.abstention_reason_codes.length ? position.abstention_reason_codes.join(" / ") : "none"}</dd></div><div><dt>Actionable use</dt><dd>{position.actionable_use_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"}</dd></div></dl></Panel><Panel title="Constraint evidence"><DenseTable rows={constraints} columns={[{key: "constraint_id", label: "Constraint"}, {key: "current_value", label: "Current"}, {key: "threshold", label: "Threshold"}, {key: "breach", label: "Breach"}, {key: "severity", label: "Severity"}, {key: "evidence_availability", label: "Evidence"}, {key: "fail_closed", label: "Fail closed"}]} compact /></Panel></div></Tabs.Content>
     </Tabs.Root>
   </div>;
 }

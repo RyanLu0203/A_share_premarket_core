@@ -55,6 +55,28 @@
       "source_concentration_warning_policy": "warn_when AKShare is sole source for regime data without crosscheck"
     },
     {
+      "current_role": "purchased_mcp_api_key_channel_contract_ready_live_handshake_and_schema_validation_pending",
+      "fallback_policy": "fallback_to_committed_evidence_or_public_provider_when_auth_permission_quota_or_schema_gate_fails",
+      "forbidden_production_write_policy": "production_db_writes_forbidden",
+      "implementation_status": "mcp_contract_ready_live_handshake_pending",
+      "local_cache_policy": "paid payloads allowed only under ignored ASHARE_PREMARKET_DATA_ROOT after explicit live opt-in",
+      "network_default": "disabled",
+      "network_opt_in_policy": "MCP_handshake_requires_ASHARE_ALLOW_NETWORK_INGESTION=1_ASHARE_ALLOW_IFIND=1_ASHARE_ALLOW_IFIND_MCP=1_and_keychain_or_env_API_key;tools_call_additionally_requires_ASHARE_ALLOW_IFIND_MCP_DATA_CALLS=1",
+      "no_broker_policy": "broker_integration_forbidden",
+      "no_live_trading_policy": "live_trading_forbidden",
+      "notes": "Purchased MCP/API Key channel is primary. The supplier Skill is reference-only because its Python client disables TLS verification and stores plaintext credentials; the governed QuantAPI HTTPS adapter remains optional if separately entitled.",
+      "offline_replay_policy": "MCP_service_tool_contract_QuantAPI_optional_adapter_and_dashboard_readiness_remain_testable_without_credentials_or_network",
+      "planned_role": "governed_primary_source_for_security_master_pit_fundamentals_market_context_and_crosschecks",
+      "provider_health_policy": "expose only credential-safe readiness failure taxonomy coverage and freshness metadata",
+      "provider_id": "ifind",
+      "provider_name": "Tonghuashun iFinD AI Financial Data Service",
+      "provider_priority": "P0_candidate_paid_primary_pending_acceptance_gates",
+      "rate_limit_backoff_policy": "default_two_requests_per_second_no_automatic_retry_until_purchased_quota_is_verified",
+      "raw_data_commit_policy": "paid_raw_payloads_and_tokens_never_committed",
+      "schema_drift_policy": "MCP_tool_entitlement_inputSchema_required_fields_and_SHA256_structured_result_schema_and_point_in_time_mapping_must_pass_per_module_acceptance",
+      "source_concentration_warning_policy": "crosscheck_price_calendar_and_high_value_fields_before treating iFinD as canonical"
+    },
+    {
       "current_role": "bounded_committed_fixture_and_evidence_replay_fallback",
       "fallback_policy": "used only when committed evidence or explicitly supplied bounded files exist",
       "forbidden_production_write_policy": "production_db_writes_forbidden",

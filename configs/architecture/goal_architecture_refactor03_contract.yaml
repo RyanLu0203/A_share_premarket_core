@@ -7,8 +7,6 @@
   ],
   "artifact_size_limit_bytes": 99614720,
   "downstream_locks": [
-    "goal_data_expansion_research01_market_regime_data_expansion_gate",
-    "goal_quant_research04_regime_conditional_factor_evaluation_gate",
     "goal_rec_tiering01_recommendation_score_tiering_gate",
     "goal10b4_recommendation_backtest_revalidation",
     "goal_position_band_validation01_position_band_validation_gate",

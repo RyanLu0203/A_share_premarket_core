@@ -1,5 +1,52 @@
 # Roadmap
 
+## 2026-08-09 iFinD Data and Workspace Foundation
+
+The purchased provider is Tonghuashun iFinD **AI Financial Data Service**.
+The purchased access mode is **MCP/API Key**. This checkpoint adds an
+offline-first, Keychain-safe Streamable HTTP client for seven services and 36
+reviewed supplier tools, preserves QuantAPI HTTPS as an optional second
+channel, defines a seven-module data contract, canonical normalization/PIT
+validation, immutable external bundle rules, and sanitized MCP readiness on
+the existing Data Quality and Provider Health pages. It does not claim live
+entitlement, schema, coverage, or data acceptance and does not start new factor
+research.
+
+Delivery order from this checkpoint:
+
+1. Treat the old exposed value as permanently forbidden. The user reports
+   rotation is complete; resolve the current portal-success versus governed
+   external-HTTP-401 authentication mismatch without enabling data calls.
+2. Run S0 with the three handshake gates: initialize all seven services and
+   verify the exact 36-tool entitlement catalog plus live input-schema hashes;
+   request budget remains zero.
+3. After a separate fourth data-call opt-in, run S1 with exactly two fixed
+   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. Staging remains
+   non-canonical until PIT timestamps can be proved.
+4. Run S2 only after S0/S1 pass: security master and bounded 120-day market
+   evidence. Luxshare already has 120 Provider02B dates; Hengtong remains
+   identity-only until accepted iFinD evidence exists.
+5. Run S3 for audited fundamentals, ownership, risk, events and ESG fields,
+   normalizing immutable checksummed bundles below the external data root.
+6. Keep S4 market context and all research promotion locked until calendar,
+   PIT/revision, missingness, units, adjustment, coverage and cross-provider
+   reconciliation pass. Never substitute fabricated values for a failed gate.
+
+Repository publishing order:
+
+1. Review and merge this branch into `project-current`.
+2. Change the GitHub default branch from stale `main` to `project-current`.
+3. Keep `main` read-only or retire it through a separately approved repository
+   governance change; do not maintain a second independent landing page.
+
+Recommendation tiering, target prices, actionable positions, portfolio
+weights, orders, broker integration, production writes, and live trading stay
+locked regardless of provider availability.
+
+The existing Issue #24 Workspace is not a GOAL-DASHBOARD-00 promotion. Generic
+Dashboard / Daily Report UI remains `locked_future`; any future
+GOAL-DASHBOARD-00 design/contract gate requires a separate explicit decision.
+
 ## 2026-07-17 GOAL-11 Checkpoint
 
 `GOAL-11-QUANT-INTELLIGENCE-FOUNDATION` is implemented research-only as a
@@ -26,8 +73,8 @@ explicit authorization and scientifically ready factor evidence.
 
 ## Current Checkpoint
 
-- GOAL-REPOSITORY-CHECKPOINT-01 Arch03 stable snapshot is the current
-  governance checkpoint.
+- GOAL-REPOSITORY-CHECKPOINT-01 Arch03 stable snapshot is the stable rollback
+  checkpoint, not the current working HEAD.
 - Stable commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
 - Authoritative entrypoint branch: `project-current`.
 - Frozen checkpoint branch: `checkpoint/arch03-stable-310559`.
@@ -35,16 +82,21 @@ explicit authorization and scientifically ready factor evidence.
 - User-private local bundle backup exists outside GitHub; it is not a Codex
   Max dependency.
 
-Future path:
+Current path:
 
-1. GOAL-CODEX-OPERATING-SYSTEM-01.
-2. GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE.
-3. GOAL-DATA-EXPANSION-RESEARCH-01.
-4. GOAL-QUANT-RESEARCH-04.
-5. Rec Tiering only if ready_factor_count > 0 and explicit user approval.
+1. DataExpansion01 → Regime02 → Quant04 is implemented research-only and
+   records `ready_factor_count = 0`.
+2. The named Issue #24 Workspace is a read-only research interface and GOAL-11
+   is implemented research-only; Daily Refresh is the separate governed
+   operational path.
+3. Resolve external iFinD MCP authentication, then complete S0-S3 entitlement,
+   schema, PIT and data acceptance plus the existing Workspace read models.
+4. Resume research only over accepted versioned snapshots.
+5. Rec Tiering remains conditional on `ready_factor_count > 0` and explicit
+   user approval.
 
-All locked downstream stages remain locked: dashboard/frontend, trading,
-broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
+Generic Dashboard promotion, trading, broker, production, portfolio backtest,
+factor-mining, and DQN/RL remain locked.
 
 ## Codex Operating System Path
 
@@ -53,10 +105,10 @@ broker, production, portfolio backtest, local-lake, factor-mining, and DQN/RL.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal:
-  `GOAL-DATA-EXPANSION-RESEARCH-01`.
-- Future research goal:
-  `GOAL-QUANT-RESEARCH-04`.
+- Next data goal: resolve governed external MCP HTTP 401, then execute the
+  four-gate S0-S3 iFinD acceptance plan for the seven contracted modules.
+- Next research goal: GOAL-11/alpha research over accepted versioned iFinD
+  snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
 - Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user
   approval.
 - Dashboard unlock condition: explicit user approval for a future dashboard
@@ -303,14 +355,13 @@ Candidate02, MVP, and risk-tiering evidence; it writes date, symbol, and
 factor-regime bridge context only and excludes future returns and post-hoc
 factor performance from construction. GOAL-ARCHITECTURE-REFACTOR-03 now
 implements only engineering research-support provider catalog and
-modularization metadata and creates no data expansion or scientific output
-changes. GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4,
-GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain
-locked.
-GOAL-DASHBOARD-00 remains a future explicit contract/layout design gate, and
-Dashboard / Daily Report UI remains `locked_future`.
-No actionable recommendation execution, actual position output, dashboard,
+modularization metadata. DataExpansion01, Regime02, and Quant04 subsequently
+implemented research-only without producing a ready factor.
+GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
+GOAL-DATA-PANEL-02, and GOAL-10D remain locked. The named Issue #24 read-only
+Workspace is implemented, while generic Dashboard / Daily Report promotion
+remains `locked_future`.
+No actionable recommendation execution, actual position output, generic dashboard promotion,
 paper/live trading, production DB writes, production model promotion, backtest
 execution, backtest rows, factor mining, broker, local lake, or DQN/RL is
 unlocked.
@@ -326,9 +377,7 @@ workflow diagrams before any future block is promoted.
 
 - Actual position recommendations, position sizing, target weights,
   order quantities, portfolio-weight output, and capital allocation.
-- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion.
 - GOAL-DATA-PANEL-02 evaluation panel build.
-- GOAL-QUANT-RESEARCH-04 regime-conditional factor evaluation.
 - GOAL-REC-TIERING-01 recommendation score tiering.
 - GOAL-10B.4 recommendation revalidation after tiering.
 - GOAL-POSITION-BAND-VALIDATION-01 position-band validation.

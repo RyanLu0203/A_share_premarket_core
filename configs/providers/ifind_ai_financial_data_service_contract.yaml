@@ -1,0 +1,267 @@
+{
+  "contract_id": "ifind_ai_financial_data_service_v1",
+  "provider_id": "ifind",
+  "provider_name": "同花顺 iFinD",
+  "product_name": "AI 金融数据服务",
+  "interface_strategy": "purchased_streamablehttp_mcp_api_key_primary_quantapi_https_optional_if_separately_entitled",
+  "official_documentation": {
+    "product_home": "https://www.51ifind.com",
+    "data_interface": "https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/",
+    "deployment_and_auth": "https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/help-center/deploy.html",
+    "http_examples": "https://quantapi.51ifind.com/gwstatic/static/ds_web/quantapi-web/example.html",
+    "supplier_skill_name": "ifind-finance-data",
+    "supplier_skill_version": "1.3.0",
+    "supplier_skill_usage": "reference_only_never_execute_or_install_unmodified"
+  },
+  "network_policy": {
+    "default": "disabled",
+    "required_opt_ins": [
+      "ASHARE_ALLOW_NETWORK_INGESTION=1",
+      "ASHARE_ALLOW_IFIND=1",
+      "ASHARE_ALLOW_IFIND_MCP=1"
+    ],
+    "approved_hosts": ["api-mcp.51ifind.com:8643", "quantapi.51ifind.com:443"],
+    "scheme": "https",
+    "system_proxy_inheritance": "disabled",
+    "redirects": "blocked",
+    "tls_certificate_verification": "required",
+    "timeout_seconds_maximum": 60,
+    "bounded_retries": 0,
+    "default_mcp_rate_limit": "2_requests_per_second_until_purchased_entitlement_is_verified",
+    "handshake_scope": "initialize_notifications_initialized_and_tools_list_only",
+    "data_call_policy": {
+      "default": "disabled",
+      "required_opt_in": "ASHARE_ALLOW_IFIND_MCP_DATA_CALLS=1",
+      "separate_from_required_opt_ins": true,
+      "handshake_may_run_without_data_call_opt_in": true,
+      "tools_call_must_fail_closed_without_data_call_opt_in": true
+    }
+  },
+  "credential_policy": {
+    "purchased_channel": "mcp_api_key",
+    "mcp_authorization_header": "raw_api_key_without_bearer_prefix_per_supplier_1_3_0_contract",
+    "mcp_api_key_env_optional": "IFIND_MCP_API_KEY",
+    "mcp_keychain_generic_service": "AsharePremarket-iFinD-API-Key",
+    "mcp_keychain_generic_account": "ifind",
+    "mcp_keychain_account": "ifind",
+    "mcp_keychain_server": "mcp.51ifind.com",
+    "mcp_keychain_lookup_order": [
+      "generic_password_service_AsharePremarket-iFinD-API-Key_account_ifind",
+      "internet_password_server_mcp.51ifind.com_account_ifind",
+      "environment_IFIND_MCP_API_KEY_optional_fallback"
+    ],
+    "mcp_keychain_preferred": true,
+    "access_token_env": "IFIND_ACCESS_TOKEN",
+    "refresh_token_env": "IFIND_REFRESH_TOKEN",
+    "quantapi_credentials_role": "optional_secondary_channel_only",
+    "refresh_token_usage": "access_token_exchange_only",
+    "access_token_usage": "data_endpoint_header_only",
+    "persist_tokens": false,
+    "print_tokens": false,
+    "commit_tokens": false,
+    "token_values_in_manifests": false,
+    "rotation_required_after_chat_or_log_exposure": true
+  },
+  "purchased_mcp_channel": {
+    "transport": "streamablehttp",
+    "base_url": "https://api-mcp.51ifind.com:8643/ds-mcp-servers",
+    "protocol_version": "2025-03-26",
+    "session_header": "Mcp-Session-Id",
+    "request_sequence": ["initialize", "notifications/initialized", "tools/list", "tools/call_after_explicit_validation_only"],
+    "canonical_data_policy": "structuredContent_or_single_JSON_text_only_free_form_text_rejected",
+    "services": [
+      {"server_type": "stock", "server_id": "hexin-ifind-ds-stock-mcp", "expected_tools": ["search_stocks", "get_stock_summary", "get_stock_info", "get_stock_performance", "get_stock_shareholders", "get_stock_financials", "get_risk_indicators", "get_stock_events", "get_esg_data", "stock_highfreq_quotes"]},
+      {"server_type": "fund", "server_id": "hexin-ifind-ds-fund-mcp", "expected_tools": ["search_funds", "get_fund_profile", "get_fund_market_performance", "get_fund_ownership", "get_fund_portfolio", "get_fund_financials", "get_fund_company_info", "fund_highfreq_quotes"]},
+      {"server_type": "edb", "server_id": "hexin-ifind-ds-edb-mcp", "expected_tools": ["search_edb", "get_edb_data"]},
+      {"server_type": "news", "server_id": "hexin-ifind-ds-news-mcp", "expected_tools": ["search_news", "search_notice", "search_trending_news"]},
+      {"server_type": "bond", "server_id": "hexin-ifind-ds-bond-mcp", "expected_tools": ["bond_basic_info", "bond_market_data", "bond_financial_data", "bond_special_data", "bond_highfreq_quotes"]},
+      {"server_type": "global_stock", "server_id": "hexin-ifind-ds-global-stock-mcp", "expected_tools": ["search_global_stocks", "global_stock_profile", "global_stock_quotes", "global_stock_financial", "global_stock_events"]},
+      {"server_type": "index", "server_id": "hexin-ifind-ds-index-mcp", "expected_tools": ["index_data", "sector_data", "index_highfreq_quotes"]}
+    ],
+    "input_schema_acceptance": {
+      "catalog_scope": "all_36_expected_tools_across_all_7_services",
+      "canonicalization": "UTF-8_JSON_sorted_keys_compact_separators_no_NaN",
+      "fingerprint_algorithm": "SHA-256",
+      "required_field_contracts": {
+        "default_query_tools": ["query"],
+        "search_global_stocks": ["query", "market"],
+        "search_trending_news": ["keyword"],
+        "high_frequency_quote_tools": ["symbols", "indicators", "data_mode"]
+      },
+      "acceptance_rule": "each_expected_field_must_exist_in_properties_and_required",
+      "fingerprint_storage": "sanitized_schema_sha256_required_fields_and_property_names_only",
+      "raw_schema_or_provider_response_commit": "forbidden",
+      "missing_tool_or_schema_mismatch": "fail_closed_before_any_tools_call",
+      "schema_fingerprint_change": "requires_explicit_review_and_new_acceptance_evidence"
+    },
+    "bounded_live_acceptance_budget": {
+      "service_count": 7,
+      "expected_tool_count": 36,
+      "handshake_protocol_requests_maximum": 21,
+      "initial_dual_stock_data_calls_maximum": 2,
+      "full_dual_stock_stock_service_data_calls_maximum": 16,
+      "retries_per_request": 0,
+      "rate_limit": "2_requests_per_second",
+      "symbols_maximum": 2,
+      "unplanned_or_free_form_calls": "forbidden"
+    }
+  },
+  "storage_policy": {
+    "raw_payload_location": "ignored_local_data_root_only",
+    "raw_payload_commit": "forbidden",
+    "paid_full_dataset_commit": "forbidden",
+    "normalized_local_bundle_location": "ASHARE_PREMARKET_DATA_ROOT/normalized/ifind",
+    "explicit_data_root_environment_required": true,
+    "directory_mode": "0700",
+    "file_mode": "0600",
+    "github_allowed": "bounded_sanitized_schema_coverage_manifest_and_audit_only",
+    "full_announcement_text_commit": "forbidden"
+  },
+  "optional_quantapi_endpoints": [
+    {"endpoint_id": "history_quotation", "path": "/api/v1/cmd_history_quotation", "role": "bounded_daily_market_history"},
+    {"endpoint_id": "basic_data", "path": "/api/v1/basic_data_service", "role": "security_master_valuation_and_financial_facts"},
+    {"endpoint_id": "date_sequence", "path": "/api/v1/date_sequence", "role": "point_in_time_indicator_sequences"},
+    {"endpoint_id": "data_pool", "path": "/api/v1/data_pool", "role": "bounded_constituent_and_report_tables"},
+    {"endpoint_id": "edb", "path": "/api/v1/edb_service", "role": "macro_and_economic_series"},
+    {"endpoint_id": "report_query", "path": "/api/v1/report_query", "role": "announcement_metadata_only"},
+    {"endpoint_id": "trade_dates", "path": "/api/v1/get_trade_dates", "role": "calendar_alignment"}
+  ],
+  "data_modules": [
+    {
+      "module_id": "security_master",
+      "priority": "P0",
+      "canonical_grain": "symbol_as_of_date",
+      "mcp_services": ["stock"],
+      "mcp_tools": ["get_stock_info", "get_stock_shareholders", "get_stock_events"],
+      "optional_quantapi_sources": ["basic_data"],
+      "known_gap": "live_field_schema_and_effective_date_validation_pending",
+      "required_time_fields": ["as_of_date", "available_at"],
+      "required_identity_fields": ["symbol", "provider_id", "source_function", "schema_version"],
+      "dashboard_surface": "stock_identity_and_capital_structure"
+    },
+    {
+      "module_id": "daily_market_and_calendar",
+      "priority": "P0",
+      "canonical_grain": "source_function_specific",
+      "source_grains": {
+        "mcp_get_stock_performance": "trade_date_symbol",
+        "mcp_stock_highfreq_quotes": "event_timestamp_symbol_indicator",
+        "mcp_index_data": "trade_date_index_metric",
+        "existing_governed_trade_calendar": "trade_date_market_code",
+        "optional_quantapi_history_quotation": "trade_date_symbol",
+        "optional_quantapi_trade_dates": "trade_date_market_code"
+      },
+      "mcp_services": ["stock", "index"],
+      "mcp_tools": ["get_stock_performance", "stock_highfreq_quotes", "index_data"],
+      "optional_quantapi_sources": ["history_quotation", "trade_dates"],
+      "source_channel_policy": "MCP_is_purchased_primary_for_market_rows_existing_governed_calendar_remains_authoritative_until_MCP_calendar_contract_exists_QuantAPI_is_optional_only_if_separately_entitled",
+      "known_gap": "MCP_has_no_reviewed_trade_calendar_tool_and_live_market_field_schema_is_pending",
+      "required_time_fields": ["trade_date", "available_at", "data_cutoff"],
+      "required_identity_fields": ["symbol", "provider_id", "source_function", "adjustment_mode"],
+      "dashboard_surface": "stock_market_and_provider_health"
+    },
+    {
+      "module_id": "pit_fundamentals_and_valuation",
+      "priority": "P0",
+      "canonical_grain": "symbol_metric_report_period_revision",
+      "mcp_services": ["stock"],
+      "mcp_tools": ["get_stock_financials", "get_stock_summary"],
+      "optional_quantapi_sources": ["basic_data", "date_sequence"],
+      "known_gap": "announcement_revision_and_available_at_mapping_pending",
+      "required_time_fields": ["report_period", "announcement_date", "available_at", "revision_at"],
+      "required_identity_fields": ["symbol", "metric_id", "unit", "currency", "provider_id"],
+      "dashboard_surface": "stock_fundamentals"
+    },
+    {
+      "module_id": "industry_and_constituents",
+      "priority": "P1",
+      "canonical_grain": "symbol_classification_effective_period",
+      "mcp_services": ["stock", "index"],
+      "mcp_tools": ["search_stocks", "sector_data"],
+      "optional_quantapi_sources": ["data_pool", "basic_data"],
+      "known_gap": "historical_membership_effective_period_mapping_pending",
+      "required_time_fields": ["effective_from", "effective_to", "available_at"],
+      "required_identity_fields": ["symbol", "industry_code", "classification_version", "provider_id"],
+      "dashboard_surface": "market_context_and_stock_identity"
+    },
+    {
+      "module_id": "corporate_events_and_announcements",
+      "priority": "P1",
+      "canonical_grain": "symbol_event_id",
+      "mcp_services": ["stock", "news"],
+      "mcp_tools": ["get_stock_events", "search_notice"],
+      "optional_quantapi_sources": ["report_query"],
+      "known_gap": "publication_timestamp_and_metadata_schema_validation_pending",
+      "required_time_fields": ["publication_time", "available_at"],
+      "required_identity_fields": ["symbol", "event_id", "event_type", "provider_id"],
+      "dashboard_surface": "stock_event_context"
+    },
+    {
+      "module_id": "macro_and_edb",
+      "priority": "P1",
+      "canonical_grain": "series_observation_revision",
+      "mcp_services": ["edb"],
+      "mcp_tools": ["search_edb", "get_edb_data"],
+      "optional_quantapi_sources": ["edb"],
+      "known_gap": "release_and_revision_timestamps_mapping_pending",
+      "required_time_fields": ["observation_period", "release_date", "revision_at", "available_at"],
+      "required_identity_fields": ["series_id", "unit", "provider_id"],
+      "dashboard_surface": "market_context"
+    },
+    {
+      "module_id": "market_structure_crosscheck",
+      "priority": "P1",
+      "canonical_grain": "trade_date_entity_metric",
+      "mcp_services": ["stock", "index"],
+      "mcp_tools": ["get_risk_indicators", "get_stock_performance", "index_data", "sector_data"],
+      "optional_quantapi_sources": ["basic_data", "date_sequence", "data_pool"],
+      "known_gap": "vendor_definition_and_cross_provider_reconciliation_pending",
+      "required_time_fields": ["trade_date", "available_at"],
+      "required_identity_fields": ["entity_id", "metric_id", "vendor_definition_version", "provider_id"],
+      "dashboard_surface": "provider_health_and_research_readiness"
+    }
+  ],
+  "normalization_envelope": [
+    "provider_id",
+    "source_function",
+    "request_digest",
+    "schema_version",
+    "asof_date",
+    "available_at",
+    "data_cutoff",
+    "unit",
+    "currency",
+    "adjustment_mode",
+    "license_storage_class",
+    "quality_flags",
+    "normalized_checksum"
+  ],
+  "timestamp_policy": {
+    "canonical_timezone": "UTC",
+    "date_only_business_timezone": "Asia/Shanghai",
+    "naive_timestamp_default": "rejected",
+    "allowed_explicit_provider_timezone": "Asia/Shanghai"
+  },
+  "acceptance_gates": [
+    "credential_rotation_confirmed",
+    "entitlement_catalog_verified",
+    "bounded_live_smoke_test_passed",
+    "provider_failure_taxonomy_passed",
+    "schema_mapping_passed",
+    "point_in_time_and_revision_audit_passed",
+    "coverage_and_missingness_audit_passed",
+    "cross_provider_reconciliation_passed_or_quarantined",
+    "dashboard_read_model_has_no_raw_provider_dependency",
+    "secret_scan_passed"
+  ],
+  "locked_boundaries": {
+    "recommendation_tiering": true,
+    "target_prices": true,
+    "actionable_positions": true,
+    "portfolio_weights": true,
+    "orders": true,
+    "broker_integration": true,
+    "production_writes": true,
+    "live_trading": true
+  }
+}

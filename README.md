@@ -1,7 +1,120 @@
 # A Share Premarket Core
 
-Clean private active repository for the A-share pre-market alpha diagnosis and
-risk-aware position-building decision support system.
+本地、只读、研究型的 A 股盘前数据、证据、风险与量化研究工作台。它把数据采集、
+PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可审计链路中；它不是
+自动交易系统，也不输出可执行的推荐、目标仓位或订单。
+
+## Current Project Truth — 2026-08-09
+
+| Area | Current state |
+| --- | --- |
+| Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |
+| Operational acquisition | AKShare `stock_zh_a_hist_tx` / Tencent, one complete QFQ T-1 batch or fail closed |
+| Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
+| Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
+| Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
+| Paid provider foundation | Purchased Tonghuashun iFinD **MCP/API Key** channel: 7 Streamable HTTP services, 36 reviewed tools, Keychain-safe client and seven governed data modules implemented offline-first; user-reported rotation complete, portal debug succeeds, but governed external authentication still returns HTTP 401 and remains unaccepted |
+| Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
+
+The named Issue #24 read-only Workspace is already implemented under its own
+governed contract. The separate generic downstream boundary is unchanged:
+Dashboard / Daily Report UI remains `locked_future`.
+
+GitHub currently points its default branch at the historical `main`, which is
+108 commits behind `project-current`. The default branch must be changed after
+the current documentation/foundation branch is reviewed; maintaining two
+independent landing pages would recreate the same drift.
+
+## Current Architecture
+
+```mermaid
+flowchart LR
+    subgraph P["Provider acquisition — default network off"]
+        T["Tencent / AKShare operational T-1"]
+        C["Committed Baostock + AKShare research evidence"]
+        I["iFinD AI Financial Data Service\nMCP/API Key: 7 services / 36 tools"]
+    end
+    subgraph G["Governance and evidence"]
+        N["Schema normalization + provider reconciliation"]
+        Q["PIT / publication-time / revision / quality gates"]
+        S["Checksummed immutable snapshots"]
+    end
+    subgraph W["Read-only workspace"]
+        A["22 GET-only FastAPI routes"]
+        U["23-page Next.js Workspace"]
+    end
+    subgraph R["Research-only branch"]
+        D["DataExpansion01 → Regime02 → Quant04"]
+        G11["GOAL-11 feature / alpha / linear baseline"]
+        L["No ready factor; recommendation and execution locked"]
+    end
+
+    T --> N
+    C --> N
+    I -. "external auth 401; tools/list + schema validation pending" .-> N
+    N --> Q --> S --> A --> U
+    S --> D --> G11 --> L
+```
+
+Detailed component and data-flow truth lives in
+[Current System Architecture](docs/architecture/CURRENT_SYSTEM_ARCHITECTURE.md);
+the machine-readable route and workflow sources are
+[`canonical_interfaces.json`](configs/project/canonical_interfaces.json) and
+[`workflow_status.csv`](configs/project/workflow_status.csv).
+The audited local checkout/deployment roles and non-destructive cleanup gate are
+documented in
+[Local Checkout and Deployment Inventory](docs/operations/LOCAL_CHECKOUT_AND_DEPLOYMENT_INVENTORY.md).
+
+## Data Scope Is Deliberately Split
+
+These counts answer different questions and must not be mixed:
+
+| Scope | Purpose | Current coverage |
+| --- | --- | --- |
+| Canonical approved symbols | Original scoring/governance boundary | 2 approved symbols |
+| Dual-stock browsing / acceptance cohort | Security foundation only, not portfolio membership | `002475.SZ` + `600487.SH`; both `NOT_IN_REFERENCE_PORTFOLIO`; Luxshare has 120 existing Provider02B dates, Hengtong identity-only |
+| Provider02B research panel | Bounded cross-sectional research evidence | 50 symbols × 120 dates = 6,000 rows |
+| Expanded network history | Research-only historical evidence | 41 symbols × 843 dates = 34,543 rows, plus 3 indices |
+| Operational refresh | Current T-1 workspace readiness | one governed 41-symbol complete batch or fail closed |
+
+Paid iFinD data will first extend security master, daily market/calendar,
+PIT fundamentals and valuation, historical industry membership, announcement
+metadata, macro/EDB context, and market-structure cross-checks. It will not be
+fed directly to the UI: every module must pass credential, entitlement,
+schema, PIT/revision, coverage and provider-reconciliation gates before the
+Workspace read model can consume it.
+
+## Start Here
+
+```bash
+python -m ashare_premarket doctor
+python scripts/run_premarket_workspace.py --check
+python scripts/run_premarket_workspace.py
+python scripts/run_ifind_mcp_probe.py
+python scripts/audit_local_workspace_boundary.py
+python scripts/run_program_validation_profile.py
+```
+
+The iFinD MCP probe is offline and credential-safe by default. Never put a paid
+provider key in a command, tracked file, `.env`, log, manifest or chat. The
+preferred live credential source is macOS Keychain. The old exposed value is
+permanently forbidden; the user reports rotation is complete. A handshake
+requires three documented opt-ins, while `tools/call` requires a separate
+fourth opt-in that remains off. The supplier Skill is protocol reference only
+and is not executed; see
+[iFinD AI Financial Data Service](docs/providers/IFIND_AI_FINANCIAL_DATA_SERVICE.md).
+
+## Next Delivery Sequence
+
+1. Resolve why portal debug succeeds while governed external MCP authentication returns HTTP 401; do not retry data calls or replace empty states with guesses.
+2. Run S0: initialize all seven services and verify the 36-tool entitlement catalog plus live input-schema fingerprints, with zero data calls.
+3. After a separate owner-authorized fourth gate, run S1: one fixed `get_stock_summary` call per acceptance symbol, stage only bounded metadata, and keep it non-canonical until PIT mapping is proven.
+4. Run S2/S3 only after prior gates pass: security master, 120-day market evidence, fundamentals, ownership, risk and event modules; normalize and audit bundles outside Git.
+5. Keep S4 market context and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass; then fill existing read models before resuming research.
+
+The remainder of this README retains detailed goal history and operational
+notes for compatibility. For current truth, use the sections above and the
+machine-readable registries.
 
 ## Quant Intelligence Foundation
 
@@ -86,9 +199,10 @@ provider access additionally requires `--allow-network` or the existing
 environment opt-in. Deterministic governance replay uses
 `python scripts/run_goal_daily_incremental_evidence_refresh01.py`.
 
-The refresh is research-only. It keeps `ready_factor_count = 0`, preserves
-provider quarantine and unresolved adjustment disclosure, and does not unlock
-recommendation or execution capabilities.
+The refresh is a governed operational evidence path whose downstream use
+remains non-actionable and research-only. It keeps `ready_factor_count = 0`,
+preserves provider quarantine and unresolved adjustment disclosure, and does
+not unlock recommendation or execution capabilities.
 
 If the governed trading calendar does not cover the next session, live mode
 returns `TRADING_CALENDAR_COVERAGE_MISSING` with unresolved target/cutoff fields
@@ -379,9 +493,10 @@ flowchart TD
     ALPHA02 -. "research-only refined validity evaluation" .-> QRESEARCH03["GOAL-QUANT-RESEARCH-03 Refined Alpha Factor Validity Evaluation<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     QRESEARCH03 -. "research-only regime labels" .-> REGIME01["GOAL-REGIME-LABEL-RESEARCH-01 Market Regime Label Construction<br/>(implemented_research_only; PASS_WITH_WARNINGS)"]
     REGIME01 -. "engineering support" .-> ARCH03["GOAL-ARCHITECTURE-REFACTOR-03 AKShare Source Catalog + Provider Modularization<br/>(implemented_engineering_research_support; PASS_WITH_WARNINGS)"]
-    ARCH03 -. "locked future" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(locked_future)"]
-    DATAEXP01 -. "locked future" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(locked_future)"]
-    QRESEARCH04 -. "locked future" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
+    ARCH03 -. "research-only expansion" .-> DATAEXP01["GOAL-DATA-EXPANSION-RESEARCH-01 Market Regime Data Expansion<br/>(implemented_research_only)"]
+    DATAEXP01 -. "research-only regime refinement" .-> REGIME02["GOAL-REGIME-LABEL-RESEARCH-02 Expanded Regime Labels<br/>(implemented_research_only)"]
+    REGIME02 -. "regime-conditional evaluation" .-> QRESEARCH04["GOAL-QUANT-RESEARCH-04 Regime-Conditional Factor Evaluation<br/>(implemented_research_only; ready_factor_count=0)"]
+    QRESEARCH04 -. "no ready factor; locked" .-> RECTIER01["GOAL-REC-TIERING-01 Recommendation Score Tiering<br/>(locked_future)"]
     RECTIER01 -. "locked future" .-> B10B4["GOAL-10B.4 Recommendation Revalidation<br/>(locked_future)"]
     B10B4 -. "locked future" .-> PBV01["GOAL-POSITION-BAND-VALIDATION-01<br/>(locked_future)"]
     B10C -. "locked future" .-> B10D["GOAL-10D Failure Attribution<br/>(locked_future)"]
@@ -422,7 +537,7 @@ GOAL-07A is now `implemented_design_only`; it defines contracts, future schema,
 rule catalog, state machine, upstream-warning mapping, and governance audits
 only. It does not calculate risk values or unlock recommendation, position,
 dashboard, paper/live trading, production, factor mining, or DQN/RL.
-GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented as an unlock-only review gate based on prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. GOAL-08B is now implemented only as a review-only non-actionable recommendation diagnostics prototype: it writes 100 deterministic `trade_date + symbol` diagnostic rows, all with `actionability_status=never_actionable`, and it does not create actionable recommendations, buy/sell/hold outputs, target prices, expected returns for action, position sizing, portfolio weights, dashboards, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.0 is implemented as an unlock-only review gate based on prior GOAL-08B and upstream PASS/PASS_WITH_WARNINGS evidence. GOAL-09 is now implemented only as a review-only non-actionable position-band diagnostics prototype: it writes deterministic `trade_date + symbol` diagnostic rows, keeps `position_actionability_status=never_actionable`, and does not create actual position rows, position sizing, portfolio weights, target weights, order quantities, buy/sell/hold outputs, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 is implemented only as a review/readiness warning-classification gate for future dashboard contract design. GOAL-V1-INTEGRITY-01 is implemented only as an infrastructure artifact-lineage and structure gate over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence. GOAL-10A is implemented only as a design-only future backtest contract gate from GOAL-08B and GOAL-09 diagnostics; it defines inputs, date alignment, T+1/no-lookahead rules, future metrics, grouping, cost/slippage sensitivity, benchmark leakage blockers, and suspended/limit/missing-price policy, but runs no backtest and creates no backtest rows. GOAL-10B is implemented only as a review-only, non-actionable recommendation diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return labels; it writes grouped diagnostic metrics and IC/RankIC availability evidence only. Dashboard / Daily Report UI remains `locked_future`.
+GOAL-07A.1 is implemented as a review-only design review gate. It classifies upstream warnings, checks forbidden schema overlap, reviews rule/state-machine convertibility, and writes a GOAL-07B unlock readiness manifest. GOAL-07B.0 is implemented as the explicit review-only unlock gate. GOAL-07B is now implemented only as a review-only risk overlay diagnostic prototype: it writes non-actionable `trade_date + symbol` diagnostics, propagates upstream warnings, and does not create recommendation, position, dashboard, paper/live trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-08A is implemented only as a design-only names-only contract gate with zero recommendation rows. GOAL-STORAGE-01 is infrastructure-only local research lake hardening; it defines storage root, directory, manifest, checksum, schema, and GitHub hygiene rules and does not unlock GOAL-08B by itself. GOAL-08B.0 is implemented as an unlock-only review gate based on prior GOAL-07B, GOAL-08A, and GOAL-STORAGE-01 PASS/PASS_WITH_WARNINGS evidence. GOAL-08B is now implemented only as a review-only non-actionable recommendation diagnostics prototype: it writes 100 deterministic `trade_date + symbol` diagnostic rows, all with `actionability_status=never_actionable`, and it does not create actionable recommendations, buy/sell/hold outputs, target prices, expected returns for action, position sizing, portfolio weights, dashboards, trading, production, backtest, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.0 is implemented as an unlock-only review gate based on prior GOAL-08B and upstream PASS/PASS_WITH_WARNINGS evidence. GOAL-09 is now implemented only as a review-only non-actionable position-band diagnostics prototype: it writes deterministic `trade_date + symbol` diagnostic rows, keeps `position_actionability_status=never_actionable`, and does not create actual position rows, position sizing, portfolio weights, target weights, order quantities, buy/sell/hold outputs, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 is implemented only as a review/readiness warning-classification gate for future dashboard contract design. GOAL-V1-INTEGRITY-01 is implemented only as an infrastructure artifact-lineage and structure gate over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence. GOAL-10A is implemented only as a design-only future backtest contract gate from GOAL-08B and GOAL-09 diagnostics; it defines inputs, date alignment, T+1/no-lookahead rules, future metrics, grouping, cost/slippage sensitivity, benchmark leakage blockers, and suspended/limit/missing-price policy, but runs no backtest and creates no backtest rows. GOAL-10B is implemented only as a review-only, non-actionable recommendation diagnostics backtest over GOAL-08B rows and existing PIT-safe forward-return labels; it writes grouped diagnostic metrics and IC/RankIC availability evidence only. The named Issue #24 read-only Workspace is implemented; generic Dashboard / Daily Report promotion remains `locked_future`.
 
 GOAL-10B.1 is implemented only as review-only coverage repair diagnostics. It
 records that current artifacts cannot repair GOAL-10B coverage/group variation,
@@ -526,9 +641,11 @@ implemented only as engineering research-support provider catalog and
 modularization metadata; it creates no scientific output changes, data
 expansion, recommendations, positions, dashboards, trading, production,
 local-lake, broker, factor-mining, or DQN/RL outputs.
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
-GOAL-REC-TIERING-01, GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, and GOAL-10D remain `locked_future`.
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-REGIME-LABEL-RESEARCH-02, and
+GOAL-QUANT-RESEARCH-04 are implemented research-only. Quant04 still records
+`ready_factor_count = 0`, so GOAL-REC-TIERING-01, GOAL-10B.4,
+position-band validation, GOAL-DATA-PANEL-02, and GOAL-10D remain
+`locked_future`.
 
 ## Required Public Commands
 
@@ -832,7 +949,9 @@ GOAL-DATA-PROVIDER-02A.1 is review-only network-opt-in provider smoke-test
 metadata only; it is not provider selection, final panel evidence, diagnostics,
 backtest evidence, dashboard evidence, or an execution unlock. GOAL-10D and
 GOAL-DASHBOARD-00 remain `locked_future`.
-Dashboard / Daily Report UI remains `locked_future`. Actionable recommendations, actual
+The generic Dashboard / Daily Report workflow remains `locked_future`; the
+named 23-page read-only research Workspace is implemented and may be maintained.
+Actionable recommendations, actual
 position rows, position sizing,
 dashboards, trading, production, portfolio backtests, factor-mining, broker integration,
 local-lake writes, and DQN/RL remain locked.

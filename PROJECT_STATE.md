@@ -1,6 +1,82 @@
 # Project State
 
-Last updated: 2026-07-31
+Last updated: 2026-08-09
+
+## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
+
+This branch establishes the safe foundation for the purchased Tonghuashun
+iFinD **AI Financial Data Service** and reconciles the repository's public
+project description with its machine-readable state.
+
+- The purchased channel is Streamable HTTP MCP/API Key: seven fixed services
+  and 36 supplier-documented tools. The governed client implements verified
+  TLS, exact host/port/path allowlisting, no redirects or proxy inheritance,
+  bounded JSON/SSE parsing, session handling, rate limiting, and structured-
+  result isolation. QuantAPI HTTPS remains an optional second adapter only.
+- Network access is disabled by default and MCP requires
+  `ASHARE_ALLOW_NETWORK_INGESTION=1`, `ASHARE_ALLOW_IFIND=1`, and
+  `ASHARE_ALLOW_IFIND_MCP=1` together for an external handshake. Any
+  `tools/call` additionally requires the separate, default-off
+  `ASHARE_ALLOW_IFIND_MCP_DATA_CALLS=1` gate.
+- The preferred credential source is macOS Keychain; credentials are never
+  printed, persisted in the repository, committed, or exposed through the
+  Dashboard. The old credential pasted in chat and embedded in the generated
+  RTF is permanently forbidden. The user reports that it has been rotated,
+  while acceptance of the replacement through the external MCP endpoint is
+  still pending. Neither old credential material nor the supplier's unsafe
+  example client is used.
+- Seven governed modules now have explicit schema, grain, PIT/revision,
+  licensing, normalization, checksum, and acceptance contracts: security
+  master; daily market/calendar; PIT fundamentals/valuation; historical
+  industry membership; corporate-event and announcement metadata; macro/EDB;
+  and market-structure cross-checks.
+- Normalized iFinD bundles are immutable and may be written only below the
+  ignored external `ASHARE_PREMARKET_DATA_ROOT/normalized/ifind` boundary.
+  Raw paid payloads, full announcement text, credentials, databases, and full
+  paid datasets remain forbidden in GitHub.
+- The existing 23-page, 22-GET-route, zero-write Workspace exposes sanitized
+  MCP readiness, seven service contracts, seven governed module states, the
+  bounded dual-stock cohort, and optional allowlisted local probe status. It
+  does not read Keychain values or claim that live iFinD data has been accepted.
+- A strict S0-S4 dual-stock acceptance plan validates the exact two-symbol
+  cohort, seven-service/36-tool schema hashes, request budgets, PIT cutoff,
+  fourth data-call gate, and downstream locks. Optional local probe status is
+  allowlisted and Git-ignored; provider bodies and credentials are excluded.
+- Security browseability is now independent of reference-portfolio membership
+  for the bounded acceptance cohort. Both `002475.SZ` (Luxshare Precision) and
+  `600487.SH` (Hengtong Optic-Electric) can be opened through the five stock
+  read surfaces with explicit membership/acceptance state. `002475.SZ` has
+  120 existing committed Provider02B trading-day rows; `600487.SH` has only a
+  governed pilot identity and no accepted iFinD market or fundamental rows.
+  Empty risk/position states remain explicit and no evidence is fabricated.
+- DataExpansion01, Regime02, Quant04 and GOAL-11 are implemented research-only.
+  The named Issue #24 Workspace is a read-only research interface; Daily
+  Refresh is a separate governed operational path. Generic Dashboard/Daily
+  Report promotion and every recommendation or execution path remain locked.
+- The named Issue #24 Workspace does not promote the generic downstream
+  capability: Dashboard / Daily Report UI remains `locked_future`.
+- GitHub still resolves its default branch to stale `main`, which is 108
+  commits behind `project-current`. The repository default should be changed
+  only after this branch is reviewed and merged into the authoritative branch.
+- The stable macOS deployment under
+  `~/Library/Application Support/AsharePremarket/deployment` remains the
+  operational root. The owner-authorized local consolidation moved every
+  same-prefix Desktop checkout, rollback item and supplier reference into the
+  active repository's ignored `/.local/` boundary without deletion. Dirty
+  checkout status counts were preserved, and a committed local-boundary audit
+  blocks future same-prefix Desktop siblings.
+
+Research over new iFinD evidence has **not** started. The iFinD portal's own
+debug surface returned `code=1` / `msg=success` for a Luxshare
+`get_stock_summary` query, but repeated external governed-client handshakes returned
+HTTP 401. This is recorded as external authentication not yet accepted, not as
+a claim that the replacement credential is invalid. No governed `tools/call`
+or iFinD data acceptance occurred and the fourth data-call gate remains off.
+The next gate is resolution of the external authentication context, seven-
+service `initialize`/`tools/list` plus live input-schema validation, followed
+by a separately authorized bounded dual-stock call plan, schema/PIT/coverage
+reconciliation, and immutable local bundle acceptance. Recommendation,
+position, trading, broker, and production capabilities remain locked.
 
 ## MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
 
@@ -538,8 +614,9 @@ lake files, broker outputs, or DQN/RL outputs.
 GOAL-09.1 is implemented as a review/readiness-only warning classification and
 dashboard-readiness gate (`PASS_WITH_WARNINGS`). It classifies the remaining
 GOAL-09 warnings for future dashboard display contracts, allows only a future
-explicit GOAL-DASHBOARD-00 design/contract gate request, and keeps Dashboard /
-Daily Report UI `locked_future`. It creates no dashboard output, HTML,
+  explicit GOAL-DASHBOARD-00 design/contract gate request. The named Issue #24
+  read-only Workspace is now implemented, while generic Dashboard / Daily
+  Report promotion remains `locked_future`. This gate creates no dashboard output, HTML,
 Streamlit, frontend code, visual reports, new recommendation rows, new position
 rows, trading paths, production behavior, backtests, factor-mining outputs,
 local lake files, broker outputs, or DQN/RL outputs.
@@ -550,9 +627,9 @@ GOAL-09 position-band diagnostics, and GOAL-09.1 dashboard-readiness evidence.
 It creates no new risk rows, recommendation rows, position rows, dashboard
 outputs, HTML, Streamlit, frontend code, visual reports, local lake files,
 trading paths, production behavior, backtests, factor-mining outputs, broker
-outputs, or DQN/RL outputs. Dashboard / Daily Report UI remains `locked_future`;
-only a future explicit GOAL-DASHBOARD-00 design/contract gate request is now
-eligible.
+outputs, or DQN/RL outputs. The named Issue #24 read-only Workspace is
+implemented; only generic Dashboard / Daily Report promotion remains
+`locked_future`.
 GOAL-10A is implemented as a design-only future backtest contract gate
 (`PASS_WITH_WARNINGS`). It consumes only prior GOAL-08B non-actionable
 recommendation diagnostics, GOAL-09 non-actionable position-band diagnostics,
@@ -808,12 +885,12 @@ local-lake data, change scientific outputs, create alpha factors, create
 recommendations, create positions, create portfolio output, create
 dashboard/frontend files, trade, write production data, integrate brokers,
 activate factor-mining, or create DQN/RL outputs.
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-REC-TIERING-01,
-GOAL-10B.4, position-band validation,
-GOAL-DATA-PANEL-02, GOAL-10D, Dashboard / Daily Report UI, signal and
-portfolio backtest promotion, paper/live trading, broker, production,
-local-lake, factor-mining, and DQN/RL remain locked or deleted from active
-mainline.
+GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-REGIME-LABEL-RESEARCH-02, and
+GOAL-QUANT-RESEARCH-04 are implemented research-only. GOAL-REC-TIERING-01,
+GOAL-10B.4, position-band validation, GOAL-DATA-PANEL-02, GOAL-10D, generic
+Dashboard / Daily Report promotion, signal and portfolio backtest promotion,
+paper/live trading, broker, production, local-lake, factor-mining, and DQN/RL
+remain locked. The named Issue #24 read-only Workspace is implemented.
 
 This repository is the clean active workflow source of truth for the A-share
 pre-market alpha diagnosis and risk-aware position-building decision support
@@ -1063,10 +1140,10 @@ Still locked:
 
 - actionable recommendation or position-band output
 - position sizing and portfolio weights
-- GOAL-DATA-EXPANSION-RESEARCH-01 market regime data expansion
 - GOAL-DATA-PANEL-02 evaluation panel build
 - GOAL-10D failure attribution
-- dashboard
+- generic Dashboard / Daily Report promotion; the named 23-page read-only
+  Workspace is implemented
 - paper trading
 - broker/live trading
 - production DB writes
