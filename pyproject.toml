@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ashare-premarket-core"
 version = "0.1.0"
-description = "Clean review-only A-share premarket workflow through GOAL-06C.6"
+description = "Governed read-only A-share premarket data, evidence, risk, workspace, and research system"
 requires-python = ">=3.9"
 dependencies = [
   "fastapi>=0.115,<1",

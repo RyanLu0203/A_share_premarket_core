@@ -12,13 +12,13 @@ Quant03 and Regime01 added large deterministic research artifacts; future provid
 Quant03 ready factor count remains 0. Regime01 remains PASS_WITH_WARNINGS with 120 date rows, 6000 symbol rows, and 180000 bridge rows.
 
 ## 4. Existing architecture inventory
-Inventory rows: `126`.
+Inventory rows: `200`.
 
 ## 5. Duplicate runner/audit/schema/lineage patterns found
 Duplicate pattern rows: `12`.
 
 ## 6. New provider registry design
-Provider registry rows: `4` with network disabled by default and raw payload commits forbidden.
+Provider registry rows: `5` with network disabled by default and raw payload commits forbidden.
 
 ## 7. AKShare source catalog coverage
 Catalog rows: `70` across `11` top-level categories.

@@ -4,7 +4,9 @@ from typing import Any, Optional
 
 from fastapi import APIRouter
 
-from ashare_premarket.application.workspace.repository import PremarketWorkspaceRepository
+from ashare_premarket.application.workspace.repository import (
+    PremarketWorkspaceRepository,
+)
 from ashare_premarket.interfaces.api.errors import safe_call
 from ashare_premarket.interfaces.registry import api_paths
 

@@ -20,7 +20,9 @@ GOAL_ID = "GOAL-PREMARKET-RESEARCH-AND-POSITION-WORKSPACE-DASHBOARD-01"
 WORKFLOW_ID = "goal_premarket_research_position_workspace_dashboard01"
 PREDECESSOR_GOAL_ID = "GOAL-PREMARKET-POSITION-MANAGEMENT-OPERATIONAL-01"
 MANIFEST = "outputs/audits/goal_premarket_research_position_workspace_dashboard01_manifest.json"
-REPORT = "outputs/audits/goal_premarket_research_position_workspace_dashboard01_report.md"
+REPORT = (
+    "outputs/audits/goal_premarket_research_position_workspace_dashboard01_report.md"
+)
 AUDIT = "outputs/audits/goal_premarket_research_position_workspace_dashboard01_audit.md"
 CAPABILITY_KEY = ISSUE24_CAPABILITY_KEY
 
@@ -156,7 +158,9 @@ def audit_goal_premarket_research_position_workspace_dashboard01(root: Path) -> 
         failures.append("manifest_goal_mismatch")
     if manifest.get("status") != "PASS":
         failures.append("manifest_status_not_pass")
-    for relative, expected in dict(manifest.get("implementation_checksums", {})).items():
+    for relative, expected in dict(
+        manifest.get("implementation_checksums", {})
+    ).items():
         path = root / relative
         actual = _sha256(path) if path.exists() else "missing"
         if actual != expected:
@@ -182,12 +186,18 @@ def audit_goal_premarket_research_position_workspace_dashboard01(root: Path) -> 
 def _collect_facts(root: Path) -> tuple[dict[str, Any], list[str]]:
     root = root.resolve()
     failures: list[str] = []
-    missing = [relative for relative in REQUIRED_FILES if not (root / relative).exists()]
+    missing = [
+        relative for relative in REQUIRED_FILES if not (root / relative).exists()
+    ]
     failures.extend(f"missing_required_file:{relative}" for relative in missing)
 
     app = create_app(root)
     schema = app.openapi()
-    api_paths = {path: methods for path, methods in schema["paths"].items() if path.startswith("/api/")}
+    api_paths = {
+        path: methods
+        for path, methods in schema["paths"].items()
+        if path.startswith("/api/")
+    }
     write_methods = sorted(
         f"{method.upper()} {path}"
         for path, methods in api_paths.items()
@@ -201,7 +211,9 @@ def _collect_facts(root: Path) -> tuple[dict[str, Any], list[str]]:
     snapshot_date = repo.store.latest_snapshot_date()
     snapshot = repo.store.snapshot_manifest(snapshot_date)
     snapshot_verified, snapshot_failures = repo.store.verify_snapshot(snapshot_date)
-    failures.extend(f"source_snapshot_checksum_failure:{name}" for name in snapshot_failures)
+    failures.extend(
+        f"source_snapshot_checksum_failure:{name}" for name in snapshot_failures
+    )
     quant = repo.quant_capabilities()
     provider = repo.provider_health(snapshot_date)
     constraints = repo.portfolio_constraints(snapshot_date)
@@ -209,19 +221,33 @@ def _collect_facts(root: Path) -> tuple[dict[str, Any], list[str]]:
     abstentions = repo.portfolio_abstentions(snapshot_date)
     portfolio = repo.portfolio_overview(snapshot_date)
 
-    navigation = (root / "apps/premarket-workspace/src/lib/navigation.ts").read_text(encoding="utf-8") if not missing else ""
-    page_ids = sorted({int(value) for value in re.findall(r"\{id:\s*(\d+)", navigation)})
+    navigation = (
+        (root / "apps/premarket-workspace/src/lib/navigation.ts").read_text(
+            encoding="utf-8"
+        )
+        if not missing
+        else ""
+    )
+    page_ids = sorted(
+        {int(value) for value in re.findall(r"\{id:\s*(\d+)", navigation)}
+    )
     if page_ids != list(range(1, 24)):
         failures.append("page_registry_not_exactly_1_through_23")
 
     capabilities = _read_json(root / "configs/project/locked_capabilities.json")
-    workflow = {row.get("workflow_id", ""): row for row in _read_csv(root / "configs/project/workflow_status.csv")}
+    workflow = {
+        row.get("workflow_id", ""): row
+        for row in _read_csv(root / "configs/project/workflow_status.csv")
+    }
     workspace_row = workflow.get(WORKFLOW_ID, {})
     if capabilities.get("dashboard") is not False:
         failures.append("generic_dashboard_capability_unlocked")
     if capabilities.get(CAPABILITY_KEY) != "implemented_research_only":
         failures.append("workspace_goal_capability_not_implemented_research_only")
-    if workspace_row.get("status") != "implemented_research_only" or workspace_row.get("implemented_in_repo") != "true":
+    if (
+        workspace_row.get("status") != "implemented_research_only"
+        or workspace_row.get("implemented_in_repo") != "true"
+    ):
         failures.append("workspace_workflow_row_invalid")
     if workflow.get("dashboard_daily_report", {}).get("status") != "locked_future":
         failures.append("generic_dashboard_workflow_not_locked")
@@ -236,12 +262,15 @@ def _collect_facts(root: Path) -> tuple[dict[str, Any], list[str]]:
     if portfolio.get("correlation_matrix", {}).get("decision_input") is not False:
         failures.append("display_correlation_marked_as_decision_input")
 
-    checksum_files = [relative for relative in REQUIRED_FILES if (root / relative).exists()]
+    checksum_files = [
+        relative for relative in REQUIRED_FILES if (root / relative).exists()
+    ]
     facts = {
         "page_count": len(page_ids),
         "page_ids": page_ids,
         "page_state_counts": {"AVAILABLE": 16, "HYBRID": 1, "LOCKED": 6},
-        "read_only_api_route_count": len(api_paths) - len({item.split(" ", 1)[1] for item in write_methods}),
+        "read_only_api_route_count": len(api_paths)
+        - len({item.split(" ", 1)[1] for item in write_methods}),
         "write_api_route_count": len(write_methods),
         "write_api_routes": write_methods,
         "source_snapshot_date": snapshot_date,
@@ -257,15 +286,25 @@ def _collect_facts(root: Path) -> tuple[dict[str, Any], list[str]]:
         "ready_factor_count": quant.get("ready_factor_count"),
         "recommendation_tiering_state": quant.get("recommendation_tiering_state"),
         "issue_10_state": quant.get("issue_10_state"),
-        "provider_adjustment_convention_status": provider.get("adjustment_convention_status"),
+        "provider_adjustment_convention_status": provider.get(
+            "adjustment_convention_status"
+        ),
         "provider_no_silent_averaging": provider.get("no_silent_averaging"),
-        "correlation_matrix_derivation": portfolio.get("correlation_matrix", {}).get("derivation"),
-        "correlation_matrix_decision_input": portfolio.get("correlation_matrix", {}).get("decision_input"),
+        "correlation_matrix_derivation": portfolio.get("correlation_matrix", {}).get(
+            "derivation"
+        ),
+        "correlation_matrix_decision_input": portfolio.get(
+            "correlation_matrix", {}
+        ).get("decision_input"),
         "generic_dashboard_capability": capabilities.get("dashboard"),
-        "generic_dashboard_workflow_state": workflow.get("dashboard_daily_report", {}).get("status"),
+        "generic_dashboard_workflow_state": workflow.get(
+            "dashboard_daily_report", {}
+        ).get("status"),
         "workspace_goal_capability": capabilities.get(CAPABILITY_KEY),
         "workspace_workflow_state": workspace_row.get("status"),
-        "implementation_checksums": {relative: _sha256(root / relative) for relative in sorted(checksum_files)},
+        "implementation_checksums": {
+            relative: _sha256(root / relative) for relative in sorted(checksum_files)
+        },
     }
     return facts, sorted(set(failures))
 
@@ -282,7 +321,7 @@ def _report(manifest: dict[str, Any]) -> str:
             f"- Pages registered: `{manifest['page_count']}`.",
             f"- Read-only API routes: `{manifest['read_only_api_route_count']}`.",
             f"- Source snapshot: `{manifest['source_snapshot_date']}` with `{manifest['source_snapshot_integrity']}` checksums.",
-            f"- Stocks / bands / abstentions: `{manifest['stock_count']}` / `{manifest['position_band_count']}` / `{manifest['position_abstention_count']}`.",
+            f"- Browseable securities / reference-portfolio bands / abstentions: `{manifest['stock_count']}` / `{manifest['position_band_count']}` / `{manifest['position_abstention_count']}`.",
             f"- Constraints / substantive constraints: `{manifest['constraint_count']}` / `{manifest['substantive_constraint_count']}`.",
             "- Local watchlists persist only in browser local storage; the server exposes no write route.",
             "- ECharts and Lightweight Charts render evidence returned by the read-only API.",
@@ -300,7 +339,14 @@ def _report(manifest: dict[str, Any]) -> str:
 
 
 def _audit_report(passed: bool, failures: list[str], facts: dict[str, Any]) -> str:
-    lines = [f"# {GOAL_ID} Audit", "", f"Status: `{'PASS' if passed else 'FAIL'}`", "", "## Checks", ""]
+    lines = [
+        f"# {GOAL_ID} Audit",
+        "",
+        f"Status: `{'PASS' if passed else 'FAIL'}`",
+        "",
+        "## Checks",
+        "",
+    ]
     lines.extend(
         [
             f"- Page registry: `{facts.get('page_count')}` pages.",
@@ -312,7 +358,9 @@ def _audit_report(passed: bool, failures: list[str], facts: dict[str, Any]) -> s
         ]
     )
     if failures:
-        lines.extend(["", "## Failures", "", *[f"- `{failure}`" for failure in failures]])
+        lines.extend(
+            ["", "## Failures", "", *[f"- `{failure}`" for failure in failures]]
+        )
     return "\n".join(lines) + "\n"
 
 

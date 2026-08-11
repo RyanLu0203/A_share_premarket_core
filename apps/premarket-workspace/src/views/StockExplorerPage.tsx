@@ -17,9 +17,9 @@ export function StockExplorerPage({data, selectedSymbol}: {data: {rows: Stock[];
       exchange: String(evidenceValue(row.exchange) ?? "UNAVAILABLE"),
       board: String(evidenceValue(row.board) ?? "UNAVAILABLE"),
       industry: String(evidenceValue(row.industry) ?? "UNAVAILABLE"),
-      portfolio: Number(row.current_weight) > 0 ? "IN_PORTFOLIO" : "NO_WEIGHT",
+      portfolio: String(row.portfolio_membership_state ?? "UNAVAILABLE"),
       band: String(row.band_status),
-      abstention: Boolean(row.abstain) ? "ABSTAIN" : "NOT_ABSTAIN",
+      abstention: row.abstain === null || row.abstain === undefined ? "NOT_APPLICABLE" : Boolean(row.abstain) ? "ABSTAIN" : "NOT_ABSTAIN",
       provider: String(row.provider_quality ?? "UNAVAILABLE"),
     };
     return Object.entries(filters).every(([key, selected]) => selected === "ALL" || values[key as keyof typeof values] === selected);
@@ -35,6 +35,7 @@ export function StockExplorerPage({data, selectedSymbol}: {data: {rows: Stock[];
     {key: "market_cap", label: "Market cap", render: (row) => evidenceValue(row.market_cap) == null ? <span className="unavailable-inline">N/A</span> : formatNumber(evidenceValue(row.market_cap))},
     {key: "pe_ttm", label: "PE TTM", render: (row) => formatNumber(evidenceValue(row.pe_ttm))},
     {key: "pb", label: "PB", render: (row) => formatNumber(evidenceValue(row.pb))},
+    {key: "portfolio_membership_state", label: "Portfolio", render: (row) => <StatusBadge state={String(row.portfolio_membership_state)} />},
     {key: "band_status", label: "Band", render: (row) => <StatusBadge state={String(row.band_status)} />},
     {key: "provider_quality", label: "Provider quality"},
     {key: "chart", label: "", render: (row) => <Link className="icon-button" href={`/stocks/${row.symbol}/chart`} aria-label={`Open chart for ${row.symbol}`} title={`Open chart for ${row.symbol}`}><ChartCandlestick aria-hidden="true" /></Link>},
@@ -45,9 +46,9 @@ export function StockExplorerPage({data, selectedSymbol}: {data: {rows: Stock[];
       <FilterSelect label="Exchange" value={filters.exchange} values={options(data.rows, (row) => evidenceValue(row.exchange))} onChange={(value) => update("exchange", value)} />
       <FilterSelect label="Board" value={filters.board} values={options(data.rows, (row) => evidenceValue(row.board))} onChange={(value) => update("board", value)} />
       <FilterSelect label="Industry" value={filters.industry} values={options(data.rows, (row) => evidenceValue(row.industry))} onChange={(value) => update("industry", value)} />
-      <FilterSelect label="Portfolio status" value={filters.portfolio} values={["IN_PORTFOLIO", "NO_WEIGHT"]} onChange={(value) => update("portfolio", value)} />
+      <FilterSelect label="Portfolio status" value={filters.portfolio} values={options(data.rows, (row) => row.portfolio_membership_state)} onChange={(value) => update("portfolio", value)} />
       <FilterSelect label="Band status" value={filters.band} values={options(data.rows, (row) => row.band_status)} onChange={(value) => update("band", value)} />
-      <FilterSelect label="Abstention" value={filters.abstention} values={["ABSTAIN", "NOT_ABSTAIN"]} onChange={(value) => update("abstention", value)} />
+      <FilterSelect label="Abstention" value={filters.abstention} values={["ABSTAIN", "NOT_ABSTAIN", "NOT_APPLICABLE"]} onChange={(value) => update("abstention", value)} />
       <FilterSelect label="Provider quality" value={filters.provider} values={options(data.rows, (row) => row.provider_quality)} onChange={(value) => update("provider", value)} />
       <button className="icon-button" aria-label="Reset stock filters" title="Reset stock filters" onClick={() => setFilters({exchange: "ALL", board: "ALL", industry: "ALL", portfolio: "ALL", band: "ALL", abstention: "ALL", provider: "ALL"})}><RotateCcw aria-hidden="true" /></button>
     </div>

@@ -33,6 +33,22 @@ the generic `dashboard` capability to true. `ready_factor_count` remains zero;
 Recommendation Tiering, Issue #10, broker connectivity, orders, paper trading,
 production writes, production promotion, and DQN/RL remain locked or absent.
 
+## iFinD Dual-Stock Data Authorization
+
+The purchased Tonghuashun iFinD channel is Streamable HTTP MCP/API Key with
+seven contracted services and 36 reviewed tools. Main Codex may maintain its
+local Keychain-backed, default-off acceptance path for `002475.SZ` and
+`600487.SH`, plus the existing 23-page / 22-GET / zero-write Workspace. This
+local credential path must not be delegated to GitHub-only Codex Max.
+
+The old exposed credential is permanently forbidden and the user reports
+rotation. Portal debug succeeds, but governed external handshakes return HTTP
+401, so external authentication and all iFinD data remain unaccepted. S0 uses
+three handshake gates and zero data calls; S1-S3 additionally require the
+separate fourth data-call gate and remain non-canonical until schema/PIT
+acceptance. Recommendation, position, target-price, order, broker, trading and
+production paths remain locked.
+
 ## Codex Operating System
 
 Authoritative remote repository: `RyanLu0203/A_share_premarket_core`.
@@ -54,16 +70,21 @@ Project purpose: maintain a deterministic, PIT-safe, review-only A-share
 premarket research workflow. It is not an automatic trading bot and does not
 provide investment advice.
 
+Local macOS rule: the active repository is the only top-level Desktop path
+whose name begins `A_share_premarket_core`. Never create another sibling
+checkout/runtime/deploy directory; use the ignored `/.local/` archive boundary
+and run `python scripts/audit_local_workspace_boundary.py`.
+
 Current implemented goals include Provider02B, DC03, GOAL-10B.3, Risk01 /
 Risk011, Quant01, MVP01, Alpha Candidate 01, Quant02, Alpha Refinement 01,
-Alpha Candidate 02, Quant03, Regime01, Arch03, and
+Alpha Candidate 02, Quant03, Regime01, Arch03, DataExpansion01, Regime02,
+Quant04, the named Issue #24 read-only Workspace, Daily Refresh, GOAL-11, and
 GOAL-REPOSITORY-CHECKPOINT-01. Ready factor count remains `0`.
 
 Current locked goals and stages include
 GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE,
-GOAL-DATA-EXPANSION-RESEARCH-01, GOAL-QUANT-RESEARCH-04,
 GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01,
-GOAL-10D, dashboard/frontend, trading, broker, production, portfolio
+GOAL-10D, generic Dashboard / Daily Report, trading, broker, production, portfolio
 backtest, local-lake, factor-mining, and DQN/RL.
 
 Required reading order:
@@ -84,9 +105,14 @@ Required reading order:
 Next allowed goals:
 
 1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
-2. `GOAL-DATA-EXPANSION-RESEARCH-01`
-3. `GOAL-QUANT-RESEARCH-04`, only after DataExpansion or explicit user
-   approval
+2. Resolve the portal-success versus governed external-HTTP-401 iFinD
+   authentication mismatch; then run S0 seven-service/36-tool entitlement and
+   live-schema validation. Use the separate fourth gate only for the fixed
+   dual-stock S1-S3 plan. The supplier Skill is reference-only and must not be
+   executed unmodified.
+3. Complete the existing read-only Workspace data surfaces, then resume
+   research only after data acceptance; Recommendation Tiering still requires
+   a ready factor and explicit user approval.
 
 Baseline validation commands:
 
@@ -98,13 +124,15 @@ python scripts/run_safety_gate.py
 python scripts/run_adapter_audit.py
 python scripts/run_workflow_diagnostics.py
 python scripts/audit_workflow_status.py
+python scripts/audit_local_workspace_boundary.py
 ```
 
 Forbidden actions: do not change scientific outputs, factor classifications,
 ready factor count, workflow locks, provider evidence, or previous goal
 conclusions; do not fetch live data unless explicitly authorized; do not create
 recommendation, position, target price, order quantity, portfolio return,
-equity curve, dashboard/frontend, trading, broker, production, local-lake,
+equity curve, new generic Dashboard or generated dashboard artifacts, trading,
+broker, production, local-lake,
 factor-mining, or DQN/RL outputs; do not delete committed evidence; do not
 force push or rewrite history.
 
@@ -629,7 +657,8 @@ config, report, manifest, and audit artifacts only. It must not fetch full live
 datasets, write local-lake data, change scientific outputs, construct alpha
 factors, create recommendations, positions, portfolio outputs,
 dashboard/frontend files, trading, production, broker, factor-mining, or
-DQN/RL outputs. GOAL-DATA-EXPANSION-RESEARCH-01 remains locked.
+DQN/RL outputs. DataExpansion01, Regime02, and Quant04 are implemented
+research-only; they do not unlock recommendation tiering.
 
 ## GOAL-06D.1 Agent Note
 
@@ -641,7 +670,7 @@ promotion, or factor-mining outputs.
 ## GOAL-07A Agent Note
 ## GOAL-07A.1 Agent Note
 
-GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 may mark GOAL-08B review-only eligible using prior evidence only, but it must not itself generate recommendation diagnostics rows. GOAL-08B may produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. GOAL-09.0 may mark GOAL-09 future_review_only eligible using prior GOAL-08B evidence only, but it must not itself implement GOAL-09 or create position-band rows. GOAL-09 may produce only non-actionable review-only position-band diagnostics at `trade_date + symbol` grain; it must not produce actual positions, sizing, weights, orders, buy/sell/hold actions, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 may classify warnings and define future dashboard contract/display blockers only; it must not implement Dashboard / Daily Report UI, create dashboard files, HTML, Streamlit, frontend, visual reports, new recommendation rows, new position rows, actual position sizing, trading, production, backtests, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-V1-INTEGRITY-01 may verify only artifact lineage and structure over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence; it must not create new risk, recommendation, position, dashboard, local-lake, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-10A may define only design-only future backtest contracts; it must not run a backtest, generate backtest rows, create equity curves, create portfolio returns, fetch new data, create dashboards, write local-lake/trading/production data, integrate a broker, activate factor mining, or create DQN/RL outputs. GOAL-10B may produce only review-only, non-actionable recommendation diagnostic forward-return metrics and IC/RankIC availability evidence; it must not generate actions, portfolios, equity curves, dashboards, trading, production, local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-10B.1 may audit coverage only. GOAL-DATA-LABEL-01 may produce only review-only label coverage evidence from committed samples. GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only review-only non-actionable diagnostic coverage rows from committed Stage 6C approved-symbol evidence. GOAL-10B.2 may produce only review-only non-actionable recommendation revalidation diagnostics. GOAL-10C may produce only review-only non-actionable row-level position-band cost/slippage sensitivity diagnostics. GOAL-DATA-PROVIDER-02A may produce only review-only provider capability metadata; it must not build an evaluation panel or run diagnostics/backtests. GOAL-DATA-PROVIDER-02A.1 may produce only review-only network-opt-in provider smoke-test metadata; it must not select a provider, build a panel, treat smoke data as final panel evidence, persist raw payloads or tokens, or unlock diagnostics/backtests. GOAL-DATA-PROVIDER-02B may produce only bounded source-backed normalized panel evidence and provider/coverage audit metadata. GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostic coverage from the 02B panel; it must not overwrite canonical GOAL-07B/08B/09 artifacts or run backtests. GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics; it must not create positions, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics; it must not overwrite canonical GOAL-07B or DC03 outputs, use future returns in score construction, create recommendation rows, position rows, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-RISK-TIERING-01.1 may produce only separate non-actionable downside-risk repair diagnostics; it must not overwrite GOAL-RISK-TIERING-01 or DC03 outputs, use future returns in score construction, create recommendation rows, position rows, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-REGIME-LABEL-RESEARCH-01 may produce only research conditioning regime labels and bridge context; it must not create market timing, recommendation, position, portfolio, dashboard, trading, production, local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-QUANT-RESEARCH-04, GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain locked. All decision/execution paths remain locked.
+GOAL-07A.1 is a review-only design review gate. It may classify warnings and write GOAL-07B unlock-readiness evidence, but it must not itself implement GOAL-07B, calculate risk values, assign symbol-level risk rows, or generate recommendation, position, dashboard, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-07B.0 may mark GOAL-07B `future_review_only` eligible or preserve an existing GOAL-07B `implemented_review_only` diagnostic state using prior PASS/PASS_WITH_WARNINGS evidence only; it also must not calculate risk values or create downstream outputs. GOAL-07B may produce only review-only, non-actionable risk diagnostics. GOAL-08A may define only names-only future recommendation contract evidence with zero rows. GOAL-STORAGE-01 may harden only local research lake governance and GitHub hygiene; it does not unlock GOAL-08B by itself. GOAL-08B.0 may mark GOAL-08B review-only eligible using prior evidence only, but it must not itself generate recommendation diagnostics rows. GOAL-08B may produce only review-only, non-actionable recommendation diagnostics at `trade_date + symbol` grain. GOAL-09.0 may mark GOAL-09 future_review_only eligible using prior GOAL-08B evidence only, but it must not itself implement GOAL-09 or create position-band rows. GOAL-09 may produce only non-actionable review-only position-band diagnostics at `trade_date + symbol` grain; it must not produce actual positions, sizing, weights, orders, buy/sell/hold actions, target prices, dashboards, trading, production, backtests, factor-mining, broker, local-lake, or DQN/RL outputs. GOAL-09.1 may classify warnings and define future dashboard contract/display blockers only; it must not implement Dashboard / Daily Report UI, create dashboard files, HTML, Streamlit, frontend, visual reports, new recommendation rows, new position rows, actual position sizing, trading, production, backtests, factor-mining, local-lake, broker, or DQN/RL outputs. GOAL-V1-INTEGRITY-01 may verify only artifact lineage and structure over GOAL-07B, GOAL-08B, GOAL-09, and GOAL-09.1 evidence; it must not create new risk, recommendation, position, dashboard, local-lake, trading, production, backtest, factor-mining, broker, or DQN/RL outputs. GOAL-10A may define only design-only future backtest contracts; it must not run a backtest, generate backtest rows, create equity curves, create portfolio returns, fetch new data, create dashboards, write local-lake/trading/production data, integrate a broker, activate factor mining, or create DQN/RL outputs. GOAL-10B may produce only review-only, non-actionable recommendation diagnostic forward-return metrics and IC/RankIC availability evidence; it must not generate actions, portfolios, equity curves, dashboards, trading, production, local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-10B.1 may audit coverage only. GOAL-DATA-LABEL-01 may produce only review-only label coverage evidence from committed samples. GOAL-V1-DIAGNOSTIC-COVERAGE-02 may produce only review-only non-actionable diagnostic coverage rows from committed Stage 6C approved-symbol evidence. GOAL-10B.2 may produce only review-only non-actionable recommendation revalidation diagnostics. GOAL-10C may produce only review-only non-actionable row-level position-band cost/slippage sensitivity diagnostics. GOAL-DATA-PROVIDER-02A may produce only review-only provider capability metadata; it must not build an evaluation panel or run diagnostics/backtests. GOAL-DATA-PROVIDER-02A.1 may produce only review-only network-opt-in provider smoke-test metadata; it must not select a provider, build a panel, treat smoke data as final panel evidence, persist raw payloads or tokens, or unlock diagnostics/backtests. GOAL-DATA-PROVIDER-02B may produce only bounded source-backed normalized panel evidence and provider/coverage audit metadata. GOAL-V1-DIAGNOSTIC-COVERAGE-03 may produce only non-actionable source-backed diagnostic coverage from the 02B panel; it must not overwrite canonical GOAL-07B/08B/09 artifacts or run backtests. GOAL-10B.3 may produce only non-actionable DC03 recommendation revalidation diagnostics; it must not create positions, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-RISK-TIERING-01 may produce only separate non-actionable risk-tier diagnostics; it must not overwrite canonical GOAL-07B or DC03 outputs, use future returns in score construction, create recommendation rows, position rows, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-RISK-TIERING-01.1 may produce only separate non-actionable downside-risk repair diagnostics; it must not overwrite GOAL-RISK-TIERING-01 or DC03 outputs, use future returns in score construction, create recommendation rows, position rows, portfolios, dashboards, trading, production, broker, local-lake, factor-mining, or DQN/RL outputs. GOAL-REGIME-LABEL-RESEARCH-01 may produce only research conditioning regime labels and bridge context; it must not create market timing, recommendation, position, portfolio, dashboard, trading, production, local-lake, broker, factor-mining, or DQN/RL outputs. GOAL-REC-TIERING-01, GOAL-10B.4, GOAL-POSITION-BAND-VALIDATION-01, GOAL-DATA-PANEL-02, and GOAL-10D remain locked. Quant04 is implemented research-only with ready factor count zero. All decision/execution paths remain locked.
 
 
 

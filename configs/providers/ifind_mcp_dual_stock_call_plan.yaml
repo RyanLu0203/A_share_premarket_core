@@ -1,0 +1,164 @@
+{
+  "plan_id": "ifind_mcp_dual_stock_call_plan_v1",
+  "contract_id": "ifind_ai_financial_data_service_v1",
+  "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
+  "purpose": "bounded_point_in_time_safe_provider_and_workspace_foundation_acceptance_only",
+  "default_state": "disabled",
+  "credential_values_allowed": false,
+  "canonical_approved_symbols_unchanged": true,
+  "symbols": [
+    {
+      "symbol": "002475.SZ",
+      "company_name_cn": "立讯精密",
+      "exchange": "SZSE",
+      "actionable_use_allowed": false
+    },
+    {
+      "symbol": "600487.SH",
+      "company_name_cn": "亨通光电",
+      "exchange": "SSE",
+      "actionable_use_allowed": false
+    }
+  ],
+  "authorization_gates": {
+    "handshake_required_opt_ins": [
+      "ASHARE_ALLOW_NETWORK_INGESTION=1",
+      "ASHARE_ALLOW_IFIND=1",
+      "ASHARE_ALLOW_IFIND_MCP=1"
+    ],
+    "data_call_required_opt_in": "ASHARE_ALLOW_IFIND_MCP_DATA_CALLS=1",
+    "data_call_opt_in_default": "disabled",
+    "data_call_gate_is_separate_from_handshake": true,
+    "unplanned_or_free_form_call_allowed": false
+  },
+  "point_in_time_policy": {
+    "decision_timestamp_resolution": "explicit_runtime_UTC_timestamp_required_not_system_clock_inference",
+    "market_data_cutoff_resolution": "latest_completed_session_from_existing_governed_trading_calendar_at_or_before_decision_timestamp",
+    "calendar_guessing_or_weekday_inference": "forbidden",
+    "provider_available_at_must_be_not_after_decision_timestamp": true,
+    "announcement_publication_time_must_be_not_after_decision_timestamp": true,
+    "financial_revision_must_be_available_by_decision_timestamp": true,
+    "future_return_or_label_fields_in_request_or_normalization": "forbidden",
+    "missing_or_ambiguous_provider_timestamp": "quarantine_not_canonical_acceptance"
+  },
+  "global_request_budget": {
+    "symbols_maximum": 2,
+    "service_handshakes_maximum": 7,
+    "handshake_protocol_requests_maximum": 21,
+    "initial_data_calls_maximum": 2,
+    "full_stock_service_data_calls_maximum": 16,
+    "retries_per_request": 0,
+    "rate_limit": "2_requests_per_second",
+    "raw_payload_commit": "forbidden"
+  },
+  "prerequisite_acceptance": [
+    "rotated_credential_delivered_without_exposure",
+    "initialize_succeeds_for_all_7_services",
+    "tools_list_contains_exact_36_tool_catalog",
+    "all_36_input_schemas_match_required_field_contracts",
+    "all_36_input_schema_SHA256_fingerprints_recorded_in_sanitized_local_evidence",
+    "no_schema_fingerprint_drift_requires_review"
+  ],
+  "stages": [
+    {
+      "stage_id": "S0_HANDSHAKE_AND_SCHEMA_ONLY",
+      "state": "allowed_with_three_handshake_opt_ins_data_call_gate_not_required",
+      "services": ["stock", "fund", "edb", "news", "bond", "global_stock", "index"],
+      "protocol_sequence": ["initialize", "notifications/initialized", "tools/list"],
+      "data_tools": [],
+      "data_call_budget": 0,
+      "success_requires": [
+        "exact_service_and_tool_catalog_match",
+        "input_schema_required_fields_match",
+        "input_schema_fingerprints_available",
+        "no_credentials_or_raw_schemas_in_persisted_output"
+      ]
+    },
+    {
+      "stage_id": "S1_TWO_STOCK_SUMMARY_IDENTITY",
+      "state": "blocked_until_S0_passes_and_fourth_data_call_gate_is_enabled",
+      "server_type": "stock",
+      "tool": "get_stock_summary",
+      "fixed_symbols": ["002475.SZ", "600487.SH"],
+      "calls_per_symbol": 1,
+      "data_call_budget": 2,
+      "response_scope": "exactly_one_requested_symbol_per_call",
+      "success_requires": [
+        "provider_code_indicates_success",
+        "security_code_and_company_identity_match_requested_symbol",
+        "bounded_response_scope_validation_passes",
+        "provider_data_timestamp_is_PIT_safe",
+        "schema_specific_summary_normalizer_passes",
+        "no_cross_symbol_rows_or_unscoped_prose_are_accepted"
+      ]
+    },
+    {
+      "stage_id": "S2_SECURITY_MASTER_AND_DAILY_MARKET",
+      "state": "blocked_until_S1_passes",
+      "server_type": "stock",
+      "fixed_tools": ["get_stock_info", "get_stock_performance"],
+      "fixed_symbols": ["002475.SZ", "600487.SH"],
+      "calls_per_tool_per_symbol": 1,
+      "data_call_budget": 4,
+      "daily_history_window": "latest_120_completed_trading_sessions_not_after_decision_cutoff",
+      "adjustment_mode": "qfq_only_if_supplier_schema_explicitly_confirms_it_otherwise_quarantine",
+      "success_requires": [
+        "stage_specific_input_schema_fingerprints_unchanged",
+        "security_master_identity_and_effective_dates_pass",
+        "OHLCV_units_adjustment_and_trade_dates_pass",
+        "response_scope_and_row_bounds_pass",
+        "existing_governed_calendar_alignment_passes"
+      ]
+    },
+    {
+      "stage_id": "S3_FUNDAMENTALS_EVENTS_AND_MARKET_STRUCTURE",
+      "state": "blocked_until_S2_passes",
+      "server_type": "stock",
+      "fixed_tools": [
+        "get_stock_shareholders",
+        "get_stock_financials",
+        "get_risk_indicators",
+        "get_stock_events",
+        "get_esg_data"
+      ],
+      "fixed_symbols": ["002475.SZ", "600487.SH"],
+      "calls_per_tool_per_symbol": 1,
+      "data_call_budget": 10,
+      "success_requires": [
+        "stage_specific_input_schema_fingerprints_unchanged",
+        "report_period_announcement_date_available_at_and_revision_mapping_pass",
+        "units_currency_and_vendor_definition_mapping_pass",
+        "event_publication_timestamp_passes_decision_cutoff",
+        "full_announcement_text_is_not_persisted",
+        "cross_provider_reconciliation_passes_or_rows_are_quarantined"
+      ]
+    },
+    {
+      "stage_id": "S4_CONTEXT_SERVICES_FUTURE_BOUNDED_EXTENSION",
+      "state": "locked_until_typed_queries_schema_specific_normalizers_and_separate_budget_are_reviewed",
+      "candidate_services": ["edb", "news", "index"],
+      "candidate_tools": ["search_edb", "get_edb_data", "search_notice", "index_data", "sector_data"],
+      "data_call_budget": 0,
+      "reason": "macro_series_notice_and_index_queries_are_not_symbol_scoped_and_require_fixed_identifiers_PIT_contracts_and_independent_response_scope_rules"
+    }
+  ],
+  "stage_transition_rule": "a_stage_may_start_only_after_every_success_requirement_of_the_prior_stage_is_recorded_as_pass_and_no_schema_or_scope_warning_is_open",
+  "canonical_acceptance_rule": "only_schema_specific_normalized_rows_with_PIT_units_identity_scope_and_reconciliation_passes_may_enter_the_ignored_local_data_root",
+  "workspace_release_rule": "read_only_workspace_models_may_consume_only_accepted_normalized_rows_and_must_never_depend_on_raw_provider_responses",
+  "research_release_rule": "requires_separate_user_approved_gate_after_data_and_workspace_acceptance",
+  "locked_outputs": [
+    "recommendation_tiering",
+    "target_price",
+    "actionable_position",
+    "position_sizing",
+    "portfolio_weight",
+    "order",
+    "broker_integration",
+    "paper_trading",
+    "live_trading",
+    "production_write",
+    "production_model_promotion",
+    "factor_mining",
+    "DQN_or_RL"
+  ]
+}

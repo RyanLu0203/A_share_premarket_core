@@ -1,5 +1,63 @@
 # 09 Step Iteration Log
 
+## 2026-08-09 - IFIND DATA FOUNDATION AND WORKSPACE BASELINE
+
+Status: `IMPLEMENTED_OFFLINE_FOUNDATION_AND_DUAL_STOCK_BROWSING_PENDING_EXTERNAL_AUTH_ACCEPTANCE` on
+`codex/ifind-data-dashboard-foundation`.
+
+- Identified the purchased product as Tonghuashun iFinD **AI Financial Data
+  Service MCP/API Key**, not a generic QuantAPI subscription.
+- Added a Keychain-safe, finance-domain-only, default-off Streamable HTTP MCP
+  client for seven exact services and 36 supplier-documented tools, with three
+  handshake opt-ins, a separate default-off data-call gate, verified TLS, no
+  redirects/proxy inheritance, bounded JSON/SSE, session validation, rate
+  limiting, and stable failure taxonomy.
+- Kept the prior QuantAPI HTTPS adapter as an optional second channel only.
+  The downloaded supplier Skill is protocol reference only because its Python
+  sample disables TLS verification and its configuration stores a plaintext
+  credential.
+- Added explicit contracts and canonical normalization for seven modules,
+  including primary-key, required-field, PIT cutoff, OHLC/numeric, duplicate,
+  checksum, licensing, and immutable external-bundle checks.
+- Registered iFinD as a paid auxiliary/research provider without changing the
+  Tencent-only canonical operational refresh.
+- Added sanitized iFinD MCP readiness, seven-service and seven-module tables to
+  the existing Data Quality and Provider Health pages. Dashboard code never
+  reads the Keychain value; the Workspace remains exactly 23 pages, 22 GET
+  routes, and zero write routes.
+- Added the S0-S4 dual-stock call plan, an offline-first seven-service schema
+  acceptance runner, and an optional allowlisted local probe-status read model;
+  no raw provider response or credential is stored or rendered.
+- Decoupled security browseability from reference-portfolio membership for the
+  two-security acceptance cohort. `002475.SZ` and `600487.SH` now open through
+  all five stock read surfaces with explicit membership and acceptance states.
+  `002475.SZ` reuses 120 existing committed Provider02B trading-day rows;
+  `600487.SH` has identity-only empty states until iFinD data is accepted.
+  Neither path fabricates risk, recommendation, position, or market evidence.
+- Reconciled current architecture documentation: DataExpansion01, Regime02,
+  Quant04 and GOAL-11 are implemented research-only; the named Workspace is a
+  read-only research interface; Daily Refresh is the separate governed
+  operational path. Generic Dashboard promotion and decision/execution remain
+  locked.
+- Audited and consolidated the local deployment estate after explicit owner
+  authorization. The active Application Support deployment and loaded services
+  remain untouched; historical Desktop checkouts, rollback material, supplier
+  Skill/MCP references, generated duplicates and inactive Git index copies now
+  live under the active repository's ignored `/.local/` boundary. Dirty states
+  were preserved, nothing was deleted, and a new audit blocks future siblings.
+- The old credential was not used for a provider request and remains
+  permanently forbidden. The user reports completing rotation; the replacement
+  is delivered only through Keychain or an approved process environment and is
+  never read by Dashboard code or displayed.
+- The iFinD portal debug surface returned `code=1` / `msg=success` for
+  `get_stock_summary` on Luxshare, while repeated external handshake attempts from
+  the governed client returned HTTP 401. External authentication is therefore
+  not yet accepted, without asserting that the replacement key is invalid.
+  The fourth data-call gate stayed off: no governed `tools/call`, paid-data
+  acceptance, or new research conclusion was produced.
+- Recommendation, actual position output, position sizing, target prices,
+  trading, broker integration, and production writes remain locked.
+
 ## 2026-07-30 - MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
 
 Status: `IMPLEMENTED_VALIDATED_AND_LOCALLY_ACCEPTED_PENDING_PR` on

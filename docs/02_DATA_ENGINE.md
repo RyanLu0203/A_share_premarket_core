@@ -1,5 +1,83 @@
 # 02 Data Engine
 
+## 2026-08-09 iFinD AI Financial Data Service Plane
+
+The paid-data extension uses Tonghuashun iFinD **AI Financial Data Service**
+through the purchased Streamable HTTP MCP/API Key channel. Seven exact services
+and 36 supplier-documented tools are locally contracted; the existing QuantAPI
+HTTPS adapter is optional if separately entitled. iFinD is an additional
+governed provider, not a replacement for the current fail-closed Tencent
+operational T-1 path and not a direct UI dependency.
+
+The adapter and contracts cover seven canonical modules:
+
+| Priority | Module | Canonical grain | Mandatory temporal control |
+| --- | --- | --- | --- |
+| P0 | Security master | `symbol + as_of_date` | `available_at` and versioned classification |
+| P0 | Daily market/calendar | history: `trade_date + symbol`; calendar: `trade_date + market_code` | `data_cutoff`, adjustment and T-1 validation |
+| P0 | PIT fundamentals/valuation | `symbol + metric + report_period + revision` | announcement, availability and revision timestamps |
+| P1 | Industry/constituents | `symbol + classification + effective period` | historical membership; no present-day backfill |
+| P1 | Corporate events/announcement metadata | `symbol + event_id` | publication timestamp; full text not committed |
+| P1 | Macro/EDB | `series + observation + revision` | release date and revision policy |
+| P1 | Market-structure cross-check | `trade_date + entity + metric` | vendor definition and source timestamp |
+
+All requests are disabled by default. Live MCP access requires
+`ASHARE_ALLOW_NETWORK_INGESTION=1`, `ASHARE_ALLOW_IFIND=1`, and
+`ASHARE_ALLOW_IFIND_MCP=1` for a handshake. Any `tools/call` additionally
+requires the separately authorized, default-off
+`ASHARE_ALLOW_IFIND_MCP_DATA_CALLS=1`. The MCP API Key comes from macOS
+Keychain by default, or `IFIND_MCP_API_KEY` only on an approved no-Keychain
+runtime. No key value may enter a response, log, manifest, committed artifact,
+or Dashboard payload. Dashboard readiness inspects only the configured
+credential-delivery policy; it never reads Keychain secret material or reports
+whether a key exists.
+
+The bounded dual-stock S0-S4 call plan is machine-validated before any live
+work. An optional Git-ignored local probe status carries only allowlisted
+failure/catalog metadata into Provider Health; it never contains Keychain
+values, authorization headers, raw schemas, or provider response bodies.
+
+The MCP client fixes the supplier's unsafe sample behavior: TLS verification is
+mandatory, redirects/system proxies are disabled, the host/port/path catalog is
+exact, JSON and SSE are bounded, session ids are validated, and free-form tool
+text is non-canonical. Tool calls remain disabled until a rotated-key handshake
+and live entitlement catalog succeed.
+
+The user reports that the previously exposed credential has been rotated; the
+old value remains permanently forbidden. The iFinD portal debug surface has
+returned `code=1` / `msg=success` for Luxshare `get_stock_summary`, while
+external governed-client handshake attempts returned HTTP 401. External authentication
+is therefore pending rather than accepted, without declaring the replacement
+credential invalid. The fourth data-call gate remains off and no iFinD rows
+have been accepted.
+
+Naive timestamps are rejected by default. A caller may explicitly declare
+`Asia/Shanghai` only after confirming the returned field semantics; canonical
+timestamps are then converted to UTC. Date-only market/report fields are
+compared to availability and cutoff in the `Asia/Shanghai` business timezone,
+including the midnight boundary. The daily-history and trading-calendar
+responses use separate source-specific grains so calendar rows never require a
+fabricated symbol or adjustment mode.
+
+Every accepted row is mapped to a canonical schema, validated at its declared
+grain, checked against the PIT cutoff, tagged with request/schema/provider and
+license lineage, and checksummed. Immutable normalized bundles may be written
+only below an explicitly configured
+`ASHARE_PREMARKET_DATA_ROOT/normalized/ifind`; its directories use `0700` and
+files use `0600`. Raw paid payloads and
+full paid datasets remain ignored local evidence. The Dashboard consumes only
+accepted read models. Until entitlement and live schema validation pass, it
+shows `adapter_ready_*_pending` readiness states rather than provider values.
+
+The first bounded acceptance cohort is `002475.SZ` and `600487.SH`. Security
+browseability is independent of reference-portfolio membership: both symbols
+can be opened in the 23-page, 22-GET-route, zero-write Workspace, while
+membership and data-acceptance states remain explicit. `002475.SZ` has 120
+existing committed Provider02B trading-day rows; `600487.SH` has only a pilot
+identity and must remain empty until accepted iFinD evidence exists. No empty
+state may be converted into a recommendation, position, target price, order or
+trading signal.
+
 The clean target workflow does not fetch provider payloads during validation. It
 uses deterministic, sanitized contracts to preserve the active Class A behavior
 needed through GOAL-06B.
@@ -224,7 +302,9 @@ live AKShare datasets, write local-lake data, change scientific outputs,
 construct alpha factors, create diagnostics, recommendations, positions,
 portfolio output, dashboard/frontend files, trading paths, production storage,
 broker output, factor-mining output, or DQN/RL output. GOAL-DATA-EXPANSION-
-RESEARCH-01 remains a locked future gate.
+RESEARCH-01, GOAL-REGIME-LABEL-RESEARCH-02, and GOAL-QUANT-RESEARCH-04 later
+implemented research-only over committed evidence; they did not unlock
+Recommendation Tiering or any execution path.
 timing signal, recommendation rows, position rows, portfolios, dashboard/
 frontend outputs, trading paths, production storage, broker output, local-lake
 output, factor-mining output, DQN/RL output, or predictive-validity claims.

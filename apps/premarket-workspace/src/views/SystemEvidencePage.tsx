@@ -9,8 +9,13 @@ export function DataQualityPage({data}: {data: Record<string, unknown>}) {
   const summary = rows(data.quality_summary);
   const quarantine = rows(data.quarantine);
   const status = record(data.status);
+  const ifindReadiness = record(data.ifind_readiness);
+  const ifindServices = rows(data.ifind_mcp_services);
+  const ifindModules = rows(data.ifind_data_modules);
+  const ifindPilot = record(data.ifind_pilot_acceptance);
   return <div className="page-stack"><PageHeader eyebrow="20 / EVIDENCE QUALITY" title="Data Quality" meta="PIT, freshness, completeness, and quarantine diagnostics" />
     <div className="kpi-grid compact"><KpiCard label="Execution mode" value={status.execution_mode} /><KpiCard label="Operational provider" value={status.operational_provider ?? "HISTORICAL REPLAY"} /><KpiCard label="Readiness checks" value={checks.length} /><KpiCard label="Quality artifacts" value={summary.length} /><KpiCard label="Quarantine rows" value={quarantine.length} state={quarantine.length ? "WARNING" : "PASS"} /><KpiCard label="Latest status" value={status.readiness_state} state={String(status.readiness_state)} /><KpiCard label="Target trading date" value={status.target_trading_date} /><KpiCard label="Expected T-1" value={status.expected_previous_trading_date} /><KpiCard label="Latest available" value={status.latest_available_data_date} /><KpiCard label="PIT / cutoff" value={status.data_cutoff} /></div>
+    <IfindFoundationEvidence readiness={ifindReadiness} services={ifindServices} modules={ifindModules} pilot={ifindPilot} />
     <Panel title="Readiness state definitions"><div className="state-definition-grid"><div><StatusBadge state="READY" /><span>Required evidence is current and available.</span></div><div><StatusBadge state="READY_WITH_WARNINGS" /><span>Usable snapshot with disclosed non-blocking warnings.</span></div><div><StatusBadge state="ABSTAIN" /><span>Evidence does not support a precise band.</span></div><div><StatusBadge state="BLOCKED" /><span>Current-state interpretation is disabled.</span></div></div></Panel>
     <Panel title="Readiness matrix"><DenseTable rows={checks} columns={[{key: "check_id", label: "Check"}, {key: "state", label: "State", render: (row) => <StatusBadge state={String(row.state)} />}, {key: "current_value", label: "Current"}, {key: "threshold", label: "Threshold"}, {key: "evidence", label: "Evidence"}, {key: "fail_closed_behavior", label: "Fail closed"}]} compact /></Panel>
     <Panel title="Committed artifact quality"><DenseTable rows={summary} columns={[{key: "artifact_name", label: "Artifact"}, {key: "row_count", label: "Rows"}, {key: "missing_value_share", label: "Missing", render: (row) => formatPercent(row.missing_value_share)}, {key: "pit_policy_status", label: "PIT"}, {key: "provider_health_status", label: "Provider"}, {key: "quality_status", label: "State", render: (row) => <StatusBadge state={String(row.quality_status)} />}]} compact /></Panel>
@@ -25,10 +30,91 @@ export function ProviderHealthPage({data}: {data: Record<string, unknown>}) {
   const health = rows(data.provider_health);
   const freshness = record(data.source_freshness);
   const calendar = record(data.trading_calendar);
+  const ifindReadiness = record(data.ifind_readiness);
+  const ifindServices = rows(data.ifind_mcp_services);
+  const ifindModules = rows(data.ifind_data_modules);
+  const ifindPilot = record(data.ifind_pilot_acceptance);
   return <div className="page-stack"><PageHeader eyebrow="21 / PROVIDER RECONCILIATION" title="Provider Health" meta={String(data.canonical_decision ?? "N/A")} /><div className="kpi-grid compact"><KpiCard label="Operational provider" value={data.operational_provider ?? "HISTORICAL REPLAY"} /><KpiCard label="AKShare function" value={data.operational_function ?? "N/A"} /><KpiCard label="Accepted / rejected" value={`${String(data.accepted_symbol_count ?? "N/A")} / ${String(data.rejected_symbol_count ?? "N/A")}`} /><KpiCard label="East Money canonical requests" value={data.east_money_canonical_request_count ?? "N/A"} state={data.east_money_canonical_request_count === 0 ? "PASS" : "BLOCKED"} /><KpiCard label="Diagnostics" value={comparison.length} /><KpiCard label="Quarantined discrepancies" value={quarantine.length} state={quarantine.length ? "WARNING" : "PASS"} /><KpiCard label="Adjustment convention" value={data.adjustment_convention_status} state={data.adjustment_convention_status === "QFQ_ONLY" ? "PASS" : "UNRESOLVED"} /><KpiCard label="Amount contract" value={data.amount_availability ?? "N/A"} /><KpiCard label="Silent averaging" value={data.no_silent_averaging ? "DISABLED" : "UNKNOWN"} state={data.no_silent_averaging ? "PASS" : "WARNING"} /><KpiCard label="Latest provider data" value={freshness.latest_available_data_date} /><KpiCard label="Source freshness" value={freshness.freshness_code} state={String(freshness.freshness_code ?? "UNAVAILABLE")} /><KpiCard label="Calendar evidence" value={calendar.status ?? "UNAVAILABLE"} state={String(calendar.status ?? "UNAVAILABLE")} /><KpiCard label="Calendar coverage" value={calendar.coverage_end ?? "UNAVAILABLE"} warning={String(calendar.freshness_status ?? "UNAVAILABLE")} /></div>
+    <IfindFoundationEvidence readiness={ifindReadiness} services={ifindServices} modules={ifindModules} pilot={ifindPilot} />
     <Panel title="Current operational provider lineage"><div className="contract-fields">{Array.isArray(data.provider_lineage) ? data.provider_lineage.map((provider) => <code key={String(provider)}>{String(provider)}</code>) : <span>UNAVAILABLE</span>}</div></Panel>
     {Array.isArray(data.historical_research_provider_lineage) ? <Panel title="Historical research provider lineage" meta="Separate from the current canonical refresh"><div className="contract-fields">{data.historical_research_provider_lineage.map((provider) => <code key={String(provider)}>{String(provider)}</code>)}</div></Panel> : null}
     <Panel title="Cross-provider diagnostics" meta="Price and return discrepancies remain separate"><DenseTable rows={comparison} columns={[{key: "diagnostic_dimension", label: "Dimension"}, {key: "comparison_id", label: "Comparison"}, {key: "overlap_rows", label: "Overlap"}, {key: "mean_abs_diff", label: "Mean abs diff"}, {key: "max_abs_diff", label: "Max abs diff"}, {key: "missing_date_difference_count", label: "Missing dates"}, {key: "adjustment_convention_status", label: "Adjustment"}, {key: "status", label: "State", render: (row) => <StatusBadge state={String(row.status)} />}]} compact /></Panel><Panel title="Deterministic quarantine reasons"><DenseTable rows={quarantine} columns={autoColumns(quarantine, 10)} compact /></Panel><div className="dashboard-grid equal"><Panel title="Provider usage"><DenseTable rows={usage} columns={autoColumns(usage, 7)} compact /></Panel><Panel title="Fetch health"><DenseTable rows={health} columns={[{key: "provider_name", label: "Provider"}, {key: "source_id", label: "Source"}, {key: "fetch_status", label: "Fetch"}, {key: "row_count", label: "Rows"}, {key: "health_status", label: "Health", render: (row) => <StatusBadge state={String(row.health_status)} />}]} compact /></Panel></div></div>;
+}
+
+function IfindFoundationEvidence({readiness, services, modules, pilot}: {readiness: Row; services: Row[]; modules: Row[]; pilot: Row}) {
+  const state = String(readiness.readiness_state ?? "UNAVAILABLE");
+  const credentialVerified = readiness.credential_verified === true;
+  const liveAccessAllowed = readiness.live_access_allowed === true;
+  const networkOptIn = readiness.network_opt_in === true;
+  const providerOptIn = readiness.provider_opt_in === true;
+  const mcpOptIn = readiness.mcp_opt_in === true;
+  const dataCallOptIn = readiness.data_call_opt_in === true;
+  const lastProbeStatus = String(readiness.last_probe_status ?? "NOT_RUN");
+  const lastProbeFailure = String(readiness.last_probe_failure_code ?? "NONE");
+  const pilotSymbols = rows(pilot.symbols);
+  return <>
+    <Panel title="iFinD AI financial data service readiness" meta={`${String(readiness.interface_mode ?? "UNAVAILABLE")} / Keychain-safe MCP contract`}>
+      <div className="kpi-grid compact">
+        <KpiCard label="Provider" value={readiness.provider_name ?? "同花顺 iFinD"} />
+        <KpiCard label="Product" value={readiness.product_name ?? "AI 金融数据服务"} />
+        <KpiCard label="Readiness" value={state} state={state} />
+        <KpiCard label="Credential delivery" value={readiness.credential_delivery_policy ?? "UNAVAILABLE"} />
+        <KpiCard label="Credential verified" value={credentialVerified ? "VERIFIED" : "PENDING HANDSHAKE"} state={credentialVerified ? "PASS" : "PENDING"} />
+        <KpiCard label="Protocol" value={readiness.protocol_version ?? "UNAVAILABLE"} />
+        <KpiCard label="Live access" value={liveAccessAllowed ? "ALLOWED" : "DISABLED"} state={liveAccessAllowed ? "READY" : "DISABLED"} />
+        <KpiCard label="Network opt-in" value={networkOptIn ? "ENABLED" : "DISABLED"} />
+        <KpiCard label="Provider opt-in" value={providerOptIn ? "ENABLED" : "DISABLED"} />
+        <KpiCard label="MCP opt-in" value={mcpOptIn ? "ENABLED" : "DISABLED"} />
+        <KpiCard label="Data-call opt-in" value={dataCallOptIn ? "ENABLED" : "DISABLED"} state={dataCallOptIn ? "WARNING" : "PASS"} />
+        <KpiCard label="Last external probe" value={lastProbeStatus} state={lastProbeStatus} />
+        <KpiCard label="Last probe result" value={lastProbeFailure} state={lastProbeFailure === "NONE" ? "PASS" : "BLOCKED"} />
+        <KpiCard label="Last probe HTTP" value={readiness.last_probe_http_status ?? "N/A"} />
+        <KpiCard label="Last probe observed" value={readiness.last_probe_observed_at ?? "NOT RUN"} />
+        <KpiCard label="Live handshake" value={readiness.last_handshake_verified === true ? "VERIFIED" : "NOT VERIFIED"} state={readiness.last_handshake_verified === true ? "PASS" : "PENDING"} />
+        <KpiCard label="Live input schemas" value={readiness.last_input_schemas_verified === true ? "VERIFIED" : "NOT VERIFIED"} state={readiness.last_input_schemas_verified === true ? "PASS" : "PENDING"} />
+        <KpiCard label="Last data tool call" value={readiness.last_data_tool_called === true ? "YES" : "NO"} state={readiness.last_data_tool_called === true ? "WARNING" : "PASS"} />
+        <KpiCard label="MCP services" value={readiness.supported_service_count ?? services.length} />
+        <KpiCard label="Expected tools" value={readiness.expected_tool_count ?? 0} />
+        <KpiCard label="Data modules" value={readiness.data_module_count ?? modules.length} />
+        <KpiCard label="Raw payload commit" value={readiness.raw_payload_commit_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"} state="PASS" />
+        <KpiCard label="Local token persistence" value={readiness.local_token_persistence_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"} state="PASS" />
+      </div>
+    </Panel>
+    <Panel title="iFinD MCP service contract" meta={`${services.length} supplier services / No tools/call from this view`}>
+      <DenseTable rows={services} columns={[
+        {key: "server_type", label: "Service"},
+        {key: "server_id", label: "Server ID"},
+        {key: "endpoint_path", label: "Approved path"},
+        {key: "expected_tool_count", label: "Expected tools"},
+        {key: "implementation_state", label: "State", render: (row) => <StatusBadge state={String(row.implementation_state)} />},
+      ]} searchPlaceholder="Search iFinD MCP services" compact />
+    </Panel>
+    <Panel title="iFinD data module readiness" meta={`${modules.length} governed modules / No recommendation or execution output`}>
+      <DenseTable rows={modules} columns={[
+        {key: "priority", label: "Priority"},
+        {key: "module_id", label: "Module ID"},
+        {key: "display_name", label: "Module"},
+        {key: "mcp_services", label: "MCP services"},
+        {key: "mcp_tools", label: "Reviewed tools"},
+        {key: "intended_fields", label: "Intended fields"},
+        {key: "pit_requirement", label: "PIT requirement"},
+        {key: "known_gap", label: "Acceptance gap"},
+        {key: "dashboard_surface", label: "Dashboard surface"},
+        {key: "implementation_state", label: "State", render: (row) => <StatusBadge state={String(row.implementation_state)} />},
+      ]} searchPlaceholder="Search iFinD data modules" compact />
+    </Panel>
+    <Panel title="iFinD dual-stock acceptance cohort" meta={`${String(pilot.cohort_id ?? "UNAVAILABLE")} / Canonical approved-symbol baseline unchanged`}>
+      <DenseTable rows={pilotSymbols} columns={[
+        {key: "symbol", label: "Symbol"},
+        {key: "company_name_cn", label: "Company"},
+        {key: "exchange", label: "Exchange"},
+        {key: "existing_governance_state", label: "Governance"},
+        {key: "pilot_acceptance_state", label: "Pilot state", render: (row) => <StatusBadge state={String(row.pilot_acceptance_state)} />},
+        {key: "required_data_modules", label: "Required modules", render: (row) => Array.isArray(row.required_data_modules) ? row.required_data_modules.length : 0},
+        {key: "actionable_use_allowed", label: "Actionable use", render: (row) => row.actionable_use_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"},
+      ]} searchPlaceholder="Search pilot symbols" compact />
+    </Panel>
+  </>;
 }
 
 export function ProvenancePage({data}: {data: Record<string, unknown>}) {
