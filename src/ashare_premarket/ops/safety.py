@@ -33,7 +33,17 @@ DANGEROUS_SUFFIXES = {
     ".zip",
 }
 
-IGNORED_GENERATED_PARTS = {".git", ".next", ".venv", "coverage", "node_modules", "playwright-report", "test-results", "venv"}
+IGNORED_GENERATED_PARTS = {
+    ".git",
+    ".local",
+    ".next",
+    ".venv",
+    "coverage",
+    "node_modules",
+    "playwright-report",
+    "test-results",
+    "venv",
+}
 
 
 def run_safety_gate(root: Path) -> bool:
@@ -48,9 +58,14 @@ def run_safety_gate(root: Path) -> bool:
         rel = path.relative_to(root).as_posix()
         if path.suffix in DANGEROUS_SUFFIXES:
             failures.append(f"Forbidden file suffix present: {rel}")
-        if (rel.startswith("src/") or rel.startswith("scripts/")) and path.suffix == ".py":
+        if (
+            rel.startswith("src/") or rel.startswith("scripts/")
+        ) and path.suffix == ".py":
             failures.extend(_locked_import_failures(root, path, rel))
-        if rel.startswith("outputs/") and any(token in rel.lower() for token in ["raw_payload", "raw_html", "full_news_text"]):
+        if rel.startswith("outputs/") and any(
+            token in rel.lower()
+            for token in ["raw_payload", "raw_html", "full_news_text"]
+        ):
             failures.append(f"Forbidden raw output path present: {rel}")
     blocked_refs = _blocked_symbols_in_outputs(root)
     if blocked_refs:
@@ -84,7 +99,9 @@ def _iter_scannable_files(root: Path):
         if relative_parts[:2] == ("outputs", "local"):
             directories.clear()
             continue
-        directories[:] = sorted(name for name in directories if name not in IGNORED_GENERATED_PARTS)
+        directories[:] = sorted(
+            name for name in directories if name not in IGNORED_GENERATED_PARTS
+        )
         for filename in sorted(filenames):
             yield current_path / filename
 
@@ -122,5 +139,7 @@ def _blocked_symbols_in_outputs(root: Path) -> list[str]:
         text = path.read_text(encoding="utf-8")
         for symbol in BLOCKED_SYMBOLS:
             if symbol in text:
-                failures.append(f"Blocked symbol {symbol} present in output {path.relative_to(root).as_posix()}")
+                failures.append(
+                    f"Blocked symbol {symbol} present in output {path.relative_to(root).as_posix()}"
+                )
     return failures

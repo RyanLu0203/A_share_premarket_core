@@ -4,10 +4,10 @@
     "count": 22,
     "rows": {
       "/api/command-center": {
-        "baseline_sha256": "47da87b1cfb650875c58e85010346056e3596c0004e3307746e210b1f0039fa7",
+        "baseline_sha256": "2d72e67389ffa43d88562e710850883bf32051334f88a8499373878c7bcdf1c9",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "47da87b1cfb650875c58e85010346056e3596c0004e3307746e210b1f0039fa7",
+        "final_sha256": "2d72e67389ffa43d88562e710850883bf32051334f88a8499373878c7bcdf1c9",
         "status_code": 200
       },
       "/api/data-quality": {
@@ -18,10 +18,10 @@
         "status_code": 200
       },
       "/api/experiment": {
-        "baseline_sha256": "544635861b01d6c04fd7b0873aaae80163bf2155cbb1e0c02cf3153abdc34f48",
+        "baseline_sha256": "366bfc9bfafac6eb185bb1a6b757f892a64233eb1480a8d6561d9aa96718e27b",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "544635861b01d6c04fd7b0873aaae80163bf2155cbb1e0c02cf3153abdc34f48",
+        "final_sha256": "366bfc9bfafac6eb185bb1a6b757f892a64233eb1480a8d6561d9aa96718e27b",
         "status_code": 200
       },
       "/api/health": {
@@ -67,17 +67,17 @@
         "status_code": 200
       },
       "/api/portfolio/risk": {
-        "baseline_sha256": "068298f6d518b7bd51c7e0c706a1fc18f05e2177925c294b12d9074fa1c50e34",
+        "baseline_sha256": "5b6a631cea14c6d66d66cddcedc0a5bb27d238eaa3b41dc765178b3cff7d10f9",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "068298f6d518b7bd51c7e0c706a1fc18f05e2177925c294b12d9074fa1c50e34",
+        "final_sha256": "5b6a631cea14c6d66d66cddcedc0a5bb27d238eaa3b41dc765178b3cff7d10f9",
         "status_code": 200
       },
       "/api/provenance": {
-        "baseline_sha256": "601e817c00e292d6d27c01e7fba7bc0a038e64fd61af5e3750c91e47831adc64",
+        "baseline_sha256": "2ad2cb50beae0d7217327c538051b84af381b36b6ead8485ebc1fa847cfa9c91",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "601e817c00e292d6d27c01e7fba7bc0a038e64fd61af5e3750c91e47831adc64",
+        "final_sha256": "2ad2cb50beae0d7217327c538051b84af381b36b6ead8485ebc1fa847cfa9c91",
         "status_code": 200
       },
       "/api/provider-health": {
@@ -95,10 +95,10 @@
         "status_code": 200
       },
       "/api/snapshots": {
-        "baseline_sha256": "121409b6539c3ca4d7496404cf9960c2de0dfb668417c88fb605c86678fdf395",
+        "baseline_sha256": "e2c1e6e4de14e752ef3a5c04a0406bcccae27dd0220395f67102ada7c18a2d06",
         "comparison_policy": "pr29_baseline_projection_allows_issue30_additive_runtime_status_fields",
         "exact": true,
-        "final_sha256": "121409b6539c3ca4d7496404cf9960c2de0dfb668417c88fb605c86678fdf395",
+        "final_sha256": "e2c1e6e4de14e752ef3a5c04a0406bcccae27dd0220395f67102ada7c18a2d06",
         "status_code": 200
       },
       "/api/status": {
@@ -170,21 +170,21 @@
         "path": "outputs/research/goal_premarket_portfolio_risk_management01_canonical_market_data.csv"
       },
       "daily_refresh_manifest": {
-        "baseline_sha256": "bc9f8424495477b289e78b35ab74137b461bf3cc91a395853a8179ba6b04b84f",
+        "baseline_sha256": "bbbe7481d1510869c68bad200338e227a5304e8fb77fe3bb96e65e17642f98cc",
         "exact": true,
-        "final_sha256": "bc9f8424495477b289e78b35ab74137b461bf3cc91a395853a8179ba6b04b84f",
+        "final_sha256": "bbbe7481d1510869c68bad200338e227a5304e8fb77fe3bb96e65e17642f98cc",
         "path": "outputs/research/goal_daily_incremental_evidence_refresh01_refresh_manifest.json"
       },
       "daily_refresh_validation": {
-        "baseline_sha256": "1e63f895b8e0ce17e61ba49dfdca883a5451b1afc9662de7bb6e4ab080bc27bb",
+        "baseline_sha256": "0973abb9a1535bddb49474b020ff502ec34537d997b38cb072ff3a8d7cb03335",
         "exact": true,
-        "final_sha256": "1e63f895b8e0ce17e61ba49dfdca883a5451b1afc9662de7bb6e4ab080bc27bb",
+        "final_sha256": "0973abb9a1535bddb49474b020ff502ec34537d997b38cb072ff3a8d7cb03335",
         "path": "outputs/research/goal_daily_incremental_evidence_refresh01_validation.csv"
       },
       "opm_latest_pointer": {
-        "baseline_sha256": "29658051c00835129089c239e3e579c32e27c219c67d59a594f8d3e46deb6c73",
+        "baseline_sha256": "a12cf310e6df259c3332260aee1f08701029ffedef0d58f8946094a2a9d56c26",
         "exact": true,
-        "final_sha256": "29658051c00835129089c239e3e579c32e27c219c67d59a594f8d3e46deb6c73",
+        "final_sha256": "a12cf310e6df259c3332260aee1f08701029ffedef0d58f8946094a2a9d56c26",
         "path": "outputs/research/premarket_position_management/latest_manifest.json"
       },
       "opm_snapshot_manifest": {

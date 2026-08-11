@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-08-09 - iFinD data and Dashboard foundation
+
+- Added an offline-first, Keychain-safe Streamable HTTP MCP client for the
+  purchased Tonghuashun iFinD AI Financial Data Service: seven exact services,
+  36 reviewed supplier tools, three handshake opt-in gates, a separate
+  default-off data-call gate, verified TLS, no redirects or proxy inheritance,
+  bounded JSON/SSE, validated sessions, rate limiting, and credential-safe
+  failures. QuantAPI HTTPS remains optional only.
+- Recorded the downloaded supplier Skill as reference-only; its Python sample
+  disables TLS verification and its configuration persists a plaintext key, so
+  it is neither installed nor executed.
+- Added seven governed data-module contracts, canonical mapping/PIT and quality
+  validation, deterministic checksums, and immutable external normalized-bundle
+  storage. Raw paid data and credentials remain forbidden in GitHub.
+- Added iFinD provider metadata and sanitized MCP readiness/service/module
+  evidence to the existing Data Quality and Provider Health pages without
+  reading Keychain secrets or adding a route, write API, recommendation, or
+  execution surface.
+- Added a strict S0-S4 dual-stock acceptance plan and offline-first runner.
+  The local Workspace can display an allowlisted, Git-ignored external-probe
+  status, while raw schemas, provider responses, and credentials remain absent.
+- Kept the read-only Workspace at 23 pages, 22 GET routes, and zero writes,
+  while separating security browseability from reference-portfolio membership
+  for the two-stock acceptance cohort. `002475.SZ` exposes its existing 120
+  committed Provider02B trading-day rows; `600487.SH` remains an identity-only
+  empty state until iFinD data is accepted.
+- Added a current architecture document and modern README landing section, and
+  reconciled implemented DataExpansion01 → Regime02 → Quant04 state with the
+  workflow registry.
+- Documented the stale GitHub default branch and local deployment inventory.
+  After explicit owner authorization, consolidated same-prefix Desktop
+  checkouts, rollback material and supplier references beneath the active
+  repository's ignored `/.local/` boundary; preserved dirty states, changed no
+  deployment/LaunchAgent target, deleted nothing, and added a sibling guard.
+- The already-exposed credential embedded in the generated RTF remains
+  permanently forbidden and was not used for a provider request. The user
+  reports completing rotation, but repeated governed external MCP handshakes
+  returned HTTP 401 while the iFinD portal's own Luxshare summary debug returned
+  `code=1` / `msg=success`. External authentication and live iFinD data are
+  therefore not accepted yet; this does not assert that the replacement key is
+  invalid. The fourth data-call gate remained off.
+- Recommendation, position, target-price, trading, broker, and production
+  capabilities remain locked pending independent future gates.
+
 ## 2026-07-30
 
 - Hardened macOS launchd installation against TCC-protected Desktop,
