@@ -1,5 +1,42 @@
 # 09 Step Iteration Log
 
+## 2026-07-30 - MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
+
+Status: `IMPLEMENTED_VALIDATED_AND_LOCALLY_ACCEPTED_PENDING_PR` on
+`codex/macos-runtime-permission-refresh-schedule-repair`.
+
+- Diagnosed a live API HTTP 500 as macOS TCC denying the background launchd
+  Python access to the Desktop deployment, while the same interpreter and
+  files remained readable interactively.
+- Added fail-closed launchd prerequisites that reject TCC-protected Desktop,
+  Documents, and Downloads roots and virtual environments backed by a Codex
+  runtime cache.
+- Reproduced a clean-deployment schema block caused by the unbounded AKShare
+  dependency installing `1.18.81` (eight exported fields), proved the same
+  symbol/date succeeds under the audited `1.18.64` six-field contract, and
+  pinned that adapter dependency without weakening schema validation.
+- Changed the governed schedule from weekdays at 07:45 to every calendar day
+  at 08:00 Asia/Shanghai.
+- Preserved genuine provider/calendar acquisition, single-source Tencent,
+  qfq-only, amount-null, immutable snapshot, and all downstream lock contracts.
+  No retry, replay, cached-calendar substitution, fallback, or partial snapshot
+  promotion was added.
+- Local deployment acceptance used authoritative `project-current`
+  `25273bb3d3cf9d6eb6c21caf1317c5c56f086489` from
+  `~/Library/Application Support/AsharePremarket/deployment` with stable Python
+  3.12.13 and AKShare 1.18.64.
+- Two complete 2026-07-31 network runs selected Tencent directly, accepted
+  41/41 rows for T-1 2026-07-30, issued zero East Money canonical requests,
+  produced normalized batch checksum
+  `f951a53fff7eb1fd93c775478e65d228fd0f5c87cc6c77e90750287076647e6c`,
+  canonical checksum
+  `d8e7a9a2bd50a56944c18b919aadc7bb99a4061999e9f99a97af34d7cb11b175`,
+  and immutable snapshot checksum
+  `85eef36d874391ccdc9ca3646ee1dcddd08e113d026d5fe1e3ed5f05c4dd984e`.
+- Installed and restart-tested both user LaunchAgents from the stable root;
+  all 22 GET routes passed, write route count remained zero, key browser pages
+  rendered, and browser console warnings/errors remained zero.
+
 ## 2026-07-17 - GOAL-11 QUANT INTELLIGENCE FOUNDATION
 
 Status: `IMPLEMENTED_RESEARCH_ONLY_VALIDATED_PENDING_PR` on

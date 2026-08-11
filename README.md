@@ -103,6 +103,16 @@ not extended with guessed weekdays. The runtime calendar is ignored local
 evidence from the approved AKShare/Sina calendar function and requires explicit
 network authorization.
 
+The launchd deployment root must be outside macOS TCC-protected Desktop,
+Documents, and Downloads folders, and its virtual environment must use a stable
+Python 3.12 installation rather than a Codex runtime cache. The governed daily
+job runs every calendar day at 08:00 Asia/Shanghai. Provider or calendar
+failures still fail closed; the schedule does not introduce retries, replay,
+or fallback evidence. The `data` dependency set pins AKShare `1.18.64`, whose
+audited six-field Tencent export matches the governed amount-unavailable
+contract; later incompatible schema exports remain blocked until deliberately
+reviewed.
+
 ```bash
 .venv/bin/python scripts/install_macos_launchd.py --check
 .venv/bin/python scripts/install_macos_launchd.py

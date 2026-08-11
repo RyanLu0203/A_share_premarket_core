@@ -60,7 +60,7 @@ def workspace_plist(root: Path) -> dict[str, object]:
     }
 
 
-def refresh_plist(root: Path, hour: int = 7, minute: int = 45) -> dict[str, object]:
+def refresh_plist(root: Path, hour: int = 8, minute: int = 0) -> dict[str, object]:
     root = root.resolve()
     log_root = root / "outputs/local/runtime/launchd"
     return {
@@ -71,9 +71,7 @@ def refresh_plist(root: Path, hour: int = 7, minute: int = 45) -> dict[str, obje
             "--allow-network",
         ],
         "WorkingDirectory": str(root),
-        "StartCalendarInterval": [
-            {"Weekday": weekday, "Hour": hour, "Minute": minute} for weekday in range(2, 7)
-        ],
+        "StartCalendarInterval": {"Hour": hour, "Minute": minute},
         "ProcessType": "Background",
         "EnvironmentVariables": _environment(root, allow_network=True),
         "StandardOutPath": str(log_root / "daily-refresh.stdout.log"),
@@ -86,7 +84,9 @@ def check_installation(root: Path, launch_agents: Path | None = None) -> dict[st
     target = (launch_agents or Path.home() / "Library/LaunchAgents").expanduser()
     checks = {
         "platform_is_macos": platform.system() == "Darwin",
+        "launchd_root_outside_tcc_protected_folders": launchd_root_is_tcc_safe(root),
         "project_venv_python": (root / ".venv/bin/python").is_file(),
+        "launchd_python_runtime_is_stable": launchd_python_runtime_is_stable(root),
         "frontend_dependencies": (root / "apps/premarket-workspace/node_modules").is_dir(),
         "workspace_runner": (root / "scripts/run_premarket_workspace.py").is_file(),
         "daily_refresh_runner": (root / "scripts/run_macos_daily_refresh.py").is_file(),
@@ -96,13 +96,34 @@ def check_installation(root: Path, launch_agents: Path | None = None) -> dict[st
     }
     required = [
         "platform_is_macos",
+        "launchd_root_outside_tcc_protected_folders",
         "project_venv_python",
+        "launchd_python_runtime_is_stable",
         "frontend_dependencies",
         "workspace_runner",
         "daily_refresh_runner",
         "akshare_dependency",
     ]
     return {"status": "PASS" if all(checks[key] for key in required) else "BLOCKED", "checks": checks}
+
+
+def launchd_root_is_tcc_safe(root: Path, home: Path | None = None) -> bool:
+    """Reject launchd roots protected through per-application macOS TCC grants."""
+
+    resolved = root.expanduser().resolve()
+    resolved_home = (home or Path.home()).expanduser().resolve()
+    protected = tuple(resolved_home / name for name in ("Desktop", "Documents", "Downloads"))
+    return not any(resolved == directory or directory in resolved.parents for directory in protected)
+
+
+def launchd_python_runtime_is_stable(root: Path) -> bool:
+    """Reject virtual environments backed by an ephemeral Codex runtime cache."""
+
+    python = root.expanduser().resolve() / ".venv/bin/python"
+    if not python.is_file():
+        return False
+    resolved = python.resolve()
+    return not (".cache" in resolved.parts and "codex-runtimes" in resolved.parts)
 
 
 def install(root: Path, launch_agents: Path | None = None, kickstart_refresh: bool = False) -> list[Path]:
