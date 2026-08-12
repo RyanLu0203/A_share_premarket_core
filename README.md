@@ -13,7 +13,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services, 35/35 personal/trial entitled tools and live input schemas; the 36th reviewed tool `search_edb` is enterprise-only. Two bounded S1 runs each stopped after the first Luxshare call—first on scope, then on response schema; Hengtong was not called and no iFinD row is canonical |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services, 35/35 personal/trial entitled tools and live input schemas; the 36th reviewed tool `search_edb` is enterprise-only. The latest bounded S1 called both cohort symbols once; identity, scope and schema passed for both, but absent provider `available_at` keeps the two staged rows non-canonical |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -48,7 +48,7 @@ flowchart LR
 
     T --> N
     C --> N
-    I -. "S0 accepted; S1 blocked at response schema" .-> N
+    I -. "S0 accepted; dual S1 identity staged; PIT blocked" .-> N
     N --> Q --> S --> A --> U
     S --> D --> G11 --> L
 ```
@@ -69,7 +69,7 @@ These counts answer different questions and must not be mixed:
 | Scope | Purpose | Current coverage |
 | --- | --- | --- |
 | Canonical approved symbols | Original scoring/governance boundary | 2 approved symbols |
-| Dual-stock browsing / acceptance cohort | Security foundation only, not portfolio membership | `002475.SZ` + `600487.SH`; both `NOT_IN_REFERENCE_PORTFOLIO`; Luxshare has 120 existing Provider02B dates, Hengtong identity-only |
+| Dual-stock browsing / acceptance cohort | Security foundation only, not portfolio membership | `002475.SZ` + `600487.SH`; both `NOT_IN_REFERENCE_PORTFOLIO`; Luxshare has 120 existing Provider02B dates; both have non-canonical iFinD identity staging, while Hengtong has no accepted market/fundamental rows |
 | Provider02B research panel | Bounded cross-sectional research evidence | 50 symbols × 120 dates = 6,000 rows |
 | Expanded network history | Research-only historical evidence | 41 symbols × 843 dates = 34,543 rows, plus 3 indices |
 | Operational refresh | Current T-1 workspace readiness | one governed 41-symbol complete batch or fail closed |
@@ -104,9 +104,9 @@ and is not executed; see
 ## Next Delivery Sequence
 
 1. Preserve the accepted S0 baseline: 7/7 services, 35/35 active entitled tools and schemas; keep enterprise-only `search_edb` explicitly unavailable by plan.
-2. Merge and deploy the exact-company-name S1 query contract; the prior request incorrectly added valuation and data-time concepts to an identity-only gate.
-3. Separately authorize one bounded S1 run after deployment. Keep all S1 output non-canonical until symbol identity, response schema and PIT mapping pass for both `002475.SZ` and `600487.SH`.
-4. Run S2/S3 only after S1 passes; keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
+2. Preserve the verified S1 identity/scope/schema sub-gate: exactly one summary row for each of `002475.SZ` and `600487.SH`, two calls total and no retry.
+3. Review the temporal contract offline. The local acquisition time may be recorded as `observed_at` acceptance metadata but must not be relabelled as provider `available_at`.
+4. Decide explicitly whether identity-only S1 may close as non-canonical acceptance metadata; run S2/S3 only after that decision. Keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
 
 The remainder of this README retains detailed goal history and operational
 notes for compatibility. For current truth, use the sections above and the

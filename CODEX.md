@@ -44,17 +44,14 @@ local credential path must not be delegated to GitHub-only Codex Max.
 
 The old exposed credential is permanently forbidden. On 2026-08-12 S0 passed
 for 7/7 services and 35/35 active entitled tools/schemas; enterprise-only
-`edb:search_edb` is `UNAVAILABLE_BY_PLAN`. The first S1 Luxshare response was
-scope-blocked. After the exact provider-code mapping merged, a second
-authorized run stopped on `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` at its first
-Luxshare data call. Hengtong was not called, neither run retried and no
-canonical acceptance occurred. The complete portal response subsequently
-confirmed an exact supplier code/name column inversion; a strict one-row,
-allowlisted symbol-and-company repair was merged. A later authorized run still
-failed because the client requested valuation/data-time content during the
-identity-only S1 gate. The query is now fixed to the exact configured company
-name, matching the supplier's documented and portal-verified behavior. Any
-further S1 call still needs merge, deployment and separate approval;
+`edb:search_edb` is `UNAVAILABLE_BY_PLAN`. Earlier scope, supplier-column and
+query-contract failures were repaired offline and failed closed. After PR #49
+merged and the stable deployment reached `6e5fbfa`, one owner-authorized S1
+called Luxshare and Hengtong exactly once each with no retry. Both one-row
+responses passed symbol scope, company identity and response-schema checks.
+They remain `BLOCKED / NOT_CANONICAL` because the summary carries no auditable
+provider `available_at`; local retrieval time is not provider availability.
+The next step is an offline temporal-contract decision, not another data call.
 S2-S4, research, recommendation, position, target-price, order, broker,
 trading and production paths remain locked.
 
