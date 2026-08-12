@@ -2,6 +2,21 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Fast-forwarded the stable deployment to merged PR #52 commit `87f2de2`, ran
+  114 focused iFinD/Workspace tests, and migrated the exact two-call S1 local
+  status offline. Provider Health and both stock pages now show accepted S1
+  identity metadata; the migration used no network or Keychain and created no
+  canonical row.
+- Added a typed S2 offline foundation derived from the supplier
+  `ifind-finance-data-1.3.0` stock reference: fixed two-symbol/two-tool scope,
+  four calls maximum, zero retry, one security-master row per symbol and 120
+  governed QFQ daily rows per symbol.
+- Added strict S2 identity, row-count, calendar, provider-availability,
+  adjustment, numeric and response-schema normalization. Caller query text,
+  cross-symbol data, missing/ambiguous timestamps and schema drift fail closed.
+- Added an offline S2 CLI preflight and sanitized Provider Health evidence.
+  `s2_live_calls_authorized` and `s2_provider_schema_accepted` remain false;
+  no new iFinD request or paid payload was created.
 - Fixed a deployment-state test that assumed every prior S1 data call stopped
   after Luxshare. The credential-safe read model now tests both bounded states:
   one call with a failed first symbol or two calls with no failed symbol.

@@ -13,6 +13,13 @@ from ashare_premarket.providers.ifind_mcp import (
     ifind_mcp_readiness,
     read_ifind_mcp_probe_status,
 )
+from ashare_premarket.providers.ifind_s2 import (
+    IFIND_S2_ADJUSTMENT_MODE,
+    IFIND_S2_DATA_CALL_BUDGET,
+    IFIND_S2_DAILY_SESSION_COUNT,
+    IFIND_S2_FIXED_TOOLS,
+    IFIND_S2_PREFLIGHT_STATE,
+)
 
 
 class SystemEvidenceRepository(WorkspaceRepositoryBase):
@@ -303,19 +310,26 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "last_failed_symbol": probe.get("failed_symbol"),
         "s1_acceptance_state": probe.get("acceptance_state"),
         "s1_temporal_class": probe.get("temporal_class"),
-        "s1_provider_available_at_status": probe.get(
-            "provider_available_at_status"
-        ),
+        "s1_provider_available_at_status": probe.get("provider_available_at_status"),
         "s1_provider_available_at_verified": probe.get(
             "provider_available_at_verified"
         ),
         "s1_identity_observed_at": probe.get("identity_observed_at"),
         "s1_staged_symbol_count": probe.get("staged_symbol_count"),
-        "s1_identity_acceptance_verified": probe.get(
-            "s1_identity_acceptance_verified"
-        ),
+        "s1_identity_acceptance_verified": probe.get("s1_identity_acceptance_verified"),
         "s2_requires_separate_authorization": probe.get(
             "s2_requires_separate_authorization"
         ),
+        "s2_offline_foundation_state": (
+            IFIND_S2_PREFLIGHT_STATE
+            if probe.get("s1_identity_acceptance_verified") is True
+            else "BLOCKED_UNTIL_S1_ACCEPTED"
+        ),
+        "s2_fixed_tools": list(IFIND_S2_FIXED_TOOLS),
+        "s2_data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
+        "s2_daily_session_count": IFIND_S2_DAILY_SESSION_COUNT,
+        "s2_adjustment_mode": IFIND_S2_ADJUSTMENT_MODE,
+        "s2_live_calls_authorized": False,
+        "s2_provider_schema_accepted": False,
         "ifind_canonical_accepted": probe.get("canonical_accepted") is True,
     }

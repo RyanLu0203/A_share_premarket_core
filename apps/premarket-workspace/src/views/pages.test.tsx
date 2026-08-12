@@ -84,6 +84,13 @@ const ifindReadiness = {
   s1_staged_symbol_count: 2,
   s1_identity_acceptance_verified: true,
   s2_requires_separate_authorization: true,
+  s2_offline_foundation_state: "S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED",
+  s2_fixed_tools: ["get_stock_info", "get_stock_performance"],
+  s2_data_call_budget: 4,
+  s2_daily_session_count: 120,
+  s2_adjustment_mode: "qfq",
+  s2_live_calls_authorized: false,
+  s2_provider_schema_accepted: false,
   ifind_canonical_accepted: false,
   api_key: "fixture-secret-must-not-render",
 };
@@ -254,6 +261,10 @@ describe("functional workspace pages", () => {
     expect(screen.getAllByText("VERIFIED").length).toBeGreaterThanOrEqual(3);
     expect(screen.getByText("UNKNOWN")).toBeVisible();
     expect(screen.getByText("REQUIRED")).toBeVisible();
+    expect(screen.getByText("S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED")).toBeVisible();
+    expect(screen.getByText("get_stock_info + get_stock_performance")).toBeVisible();
+    expect(screen.getByText("NOT AUTHORIZED")).toBeVisible();
+    expect(screen.getByText("NOT ACCEPTED")).toBeVisible();
     expect(screen.getAllByText("1-7 / 7 filtered / 7 rows").length).toBeGreaterThanOrEqual(2);
     expect(screen.queryByText("fixture-secret-must-not-render")).not.toBeInTheDocument();
     rerender(<ProviderHealthPage data={{canonical_decision: "historical replay", comparison: [], quarantine: [], provider_usage: [], provider_health: [], source_freshness: {}, trading_calendar: {}, provider_lineage: [], ifind_readiness: ifindReadiness, ifind_mcp_services: ifindServices, ifind_data_modules: ifindModules, ifind_pilot_acceptance: ifindPilot}} />);

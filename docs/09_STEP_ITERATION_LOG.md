@@ -1,5 +1,28 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S1 DEPLOYMENT AND S2 TYPED OFFLINE FOUNDATION
+
+Status: `IMPLEMENTED_OFFLINE`.
+
+- PR #52 is merged at `87f2de2` and the stable Application Support deployment
+  was fast-forwarded cleanly. A 114-test focused iFinD/Workspace regression,
+  launcher restart, API health and both dual-stock frontend routes passed.
+- Migrated only the exact two-call S1 status offline. Provider Health now
+  records both identity rows as accepted metadata, unknown provider
+  `available_at`, two calls, no failed symbol and zero canonical rows. The
+  migration accessed neither network nor Keychain.
+- Added a typed S2 offline plan based on the downloaded supplier stock Skill:
+  exactly two tools × two symbols, four calls maximum, zero retry and no free-
+  form caller query.
+- Added strict candidate normalization for one security-master row and exactly
+  120 QFQ daily rows per symbol. The daily dates must equal the governed
+  calendar and every batch must carry one explicit timezone-aware supplier
+  availability timestamp. Identity, row-count, calendar, adjustment, numeric
+  and schema drift fail closed.
+- Added an offline-only CLI preflight and sanitized Workspace cards. Live S2
+  authorization, provider schema acceptance, normalized bundle writes, S3-S4
+  and Research remain false/locked. No S2 provider call occurred.
+
 ## 2026-08-12 - IFIND S1 DEPLOYMENT-STATE TEST FIX
 
 Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE` on

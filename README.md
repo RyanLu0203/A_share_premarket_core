@@ -13,7 +13,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`; provider `available_at` remains unknown and canonical iFinD rows remain 0 |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. S2 has a typed, default-off four-call offline foundation; live S2 calls remain separately unauthorized and canonical iFinD rows remain 0 |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -106,7 +106,9 @@ and is not executed; see
 1. Preserve the accepted S0 baseline: 7/7 services, 35/35 active entitled tools and schemas; keep enterprise-only `search_edb` explicitly unavailable by plan.
 2. Preserve the verified S1 identity/scope/schema sub-gate: exactly one summary row for each of `002475.SZ` and `600487.SH`, two calls total and no retry.
 3. Preserve call-plan v2 temporal semantics: local `observed_at` is acceptance provenance, provider `available_at` is unknown, and canonical acceptance remains false.
-4. Merge/deploy the contract and migrate only the exact safe local S1 status without a provider call. Request separate authorization before S2/S3; keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
+4. Keep the completed offline S1 status migration: two symbols verified, no Keychain read or provider request during migration, and zero canonical rows.
+5. Preserve the S2 typed preflight: fixed `get_stock_info` + `get_stock_performance`, four calls maximum, zero retry, exactly 120 governed QFQ sessions, explicit supplier availability and no caller-supplied query text.
+6. Request separate authorization before executing those four S2 calls. Keep S3, S4 and all research promotion locked until provider schema, calendar, PIT, units, coverage and reconciliation pass.
 
 The remainder of this README retains detailed goal history and operational
 notes for compatibility. For current truth, use the sections above and the

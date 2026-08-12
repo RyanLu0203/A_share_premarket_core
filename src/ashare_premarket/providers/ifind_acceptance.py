@@ -534,6 +534,63 @@ def _validate_stages(call_plan: Mapping[str, Any]) -> None:
         tuple(s2.get("fixed_tools", ())) == ("get_stock_info", "get_stock_performance")
     )
     _require(s2.get("calls_per_tool_per_symbol") == 1)
+    _require(s2.get("request_contract_version") == "ifind_s2_typed_v1")
+    _require(s2.get("supplier_reference") == "ifind-finance-data-1.3.0_cn_stock")
+    _require(
+        s2.get("query_parameter_contract") == "fixed_reviewed_query_only_no_caller_text"
+    )
+    _require(
+        s2.get("governed_calendar_contract")
+        == "exact_120_unique_completed_sessions_from_existing_calendar"
+    )
+    _require(
+        s2.get("provider_availability_contract")
+        == "explicit_timezone_aware_provider_timestamp_required_no_local_clock_substitution"
+    )
+    _require(
+        s2.get("normalization_state")
+        == "offline_ready_live_calls_separately_authorized"
+    )
+    s2_tool_contracts = s2.get("tool_contracts")
+    _require(isinstance(s2_tool_contracts, list) and len(s2_tool_contracts) == 2)
+    _require(
+        tuple(row.get("tool") for row in s2_tool_contracts)
+        == ("get_stock_info", "get_stock_performance")
+    )
+    _require(
+        tuple(row.get("expected_rows_per_symbol") for row in s2_tool_contracts)
+        == (1, 120)
+    )
+    _require(
+        tuple(s2_tool_contracts[0].get("required_columns", ()))
+        == (
+            "证券代码",
+            "证券简称",
+            "数据日期",
+            "数据可用时间",
+            "上市日期",
+            "交易状态",
+            "总股本",
+            "流通股本",
+        )
+    )
+    _require(
+        tuple(s2_tool_contracts[1].get("required_columns", ()))
+        == (
+            "证券代码",
+            "证券简称",
+            "交易日期",
+            "开盘",
+            "最高",
+            "最低",
+            "收盘",
+            "成交量",
+            "成交额",
+            "换手率",
+            "复权方式",
+            "数据可用时间",
+        )
+    )
     _require(
         tuple(s3.get("fixed_tools", ()))
         == (

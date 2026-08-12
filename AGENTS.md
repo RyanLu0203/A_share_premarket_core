@@ -332,9 +332,10 @@ Handoff policy:
   and response-schema validation. The approved call-plan v2 accepts this only
   as `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`: local `observed_at` is
   acceptance provenance, provider `available_at` remains unknown, and
-  `canonical_accepted` remains false. Only the exact two-call/no-failure prior
-  local status may be migrated offline. S2 requires separate authorization.
-  Three handshake gates and a
+  `canonical_accepted` remains false. The exact two-call/no-failure prior local
+  status has been migrated offline. S2 has a typed, default-off four-call
+  foundation for one security row and 120 governed QFQ rows per symbol, but
+  live S2 calls remain separately unauthorized. Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately
   entitled. This does not unlock generic Dashboard, research, recommendation,
