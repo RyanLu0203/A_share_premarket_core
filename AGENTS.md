@@ -331,8 +331,11 @@ Handoff policy:
   `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` on its first Luxshare call. Hengtong was
   not called, neither run retried and no data was accepted. The complete portal
   response then confirmed an exact supplier `证券代码` / `证券简称` value inversion;
-  a strict allowlisted symbol-and-company repair is implemented offline and
-  must be merged/deployed before another separately authorized call.
+  a strict allowlisted symbol-and-company repair was merged. A later authorized
+  run still failed because the client requested valuation/data-time content in
+  an identity-only S1 gate. The query is now fixed to the exact configured
+  company name and must be merged/deployed before another separately authorized
+  call.
   Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately

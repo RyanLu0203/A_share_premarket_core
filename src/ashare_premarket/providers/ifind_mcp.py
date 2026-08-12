@@ -234,10 +234,11 @@ _RESPONSE_SYMBOL_KEYS = {
 }
 
 _PILOT_STOCK_QUERY_TEMPLATES = {
-    "get_stock_summary": (
-        "返回{company_name}（{symbol}）的最新证券摘要、估值和数据时点；"
-        "仅返回该证券的结构化字段。"
-    ),
+    # The supplier's documented/portal-verified summary behavior is keyed by
+    # the company name alone. S1 is an identity gate, not a valuation/PIT data
+    # request; adding those concepts caused a different unreviewed response
+    # shape. The returned symbol and company name remain independently checked.
+    "get_stock_summary": "{company_name}",
     "get_stock_info": (
         "返回{company_name}（{symbol}）的证券代码、证券简称、交易所、上市日期、"
         "交易状态、ST状态、总股本、流通股本和行业；仅返回结构化字段。"

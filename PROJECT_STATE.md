@@ -38,7 +38,16 @@ Last updated: 2026-08-12
   company name independently match. Normal order and six-digit codes remain
   supported; wrong, missing, duplicated or ambiguous identities fail closed.
   No raw supplier row was committed. The repair has 51 focused passing tests
-  and remains pending one separately authorized live S1 rerun.
+  and was merged through PR #48.
+- After the stable deployment was updated to merge `91c3c91`, one separately
+  authorized S1 rerun again passed the same-run 7/7-service and 35/35-schema S0
+  but stopped after its first Luxshare call with the same generic response-
+  schema failure. Hengtong was not called, no retry occurred and no data was
+  accepted. Offline comparison then identified request-contract drift: S1 is
+  an identity gate, but the client had added valuation and data-time concepts,
+  whereas the supplier's documented and portal-verified summary request is the
+  company name alone. The fixed S1 query is now the exact configured company
+  name; returned symbol and company identity remain independently enforced.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -109,9 +118,10 @@ schemas are accepted at S0. The first S1 attempt was quarantined at the
 response-scope boundary; after the exact code mapping was merged, the second
 attempt stopped on the first Luxshare call at the response-schema boundary.
 Hengtong has never been called, neither run retried, and no iFinD data was
-accepted. Offline diagnosis confirmed and repaired the supplier's exact
-code/name column inversion with strict symbol-and-company validation. The next
-gate is one separately authorized S1 rerun after merge and deployment.
+accepted. Offline diagnosis confirmed and repaired both the supplier's exact
+code/name inversion and the client's over-broad S1 query contract. The next
+gate is merge/deployment of the exact-company-name query, followed by one
+separately authorized S1 rerun.
 Recommendation, position, trading, broker, production, S2-S4 and research
 capabilities remain locked.
 

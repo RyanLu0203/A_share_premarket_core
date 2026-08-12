@@ -10,8 +10,11 @@ mapping merged, a second authorized run stopped at the first Luxshare call with
 `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
 retried and no data was accepted. The complete portal response then confirmed
 that the supplier inverted the `证券代码` and `证券简称` row values. A strict exact-
-identity repair is implemented offline; the next data step is merge/deployment,
-followed only after separate authorization by another bounded S1.
+identity repair was merged. A later bounded run still failed because the S1
+client requested valuation and data-time content during an identity-only gate.
+The query is now narrowed to the exact configured company name, matching the
+supplier's documented and portal-verified behavior. The next data step is
+merge/deployment followed by a separately authorized bounded S1.
 S2-S4 and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
@@ -32,12 +35,12 @@ Delivery order from this checkpoint:
    tools/schemas and zero S0 data calls; keep the old exposed value forbidden.
 2. Treat enterprise-only `edb:search_edb` as unavailable by plan while
    retaining it in the 36-tool reviewed supplier catalog.
-3. Merge and deploy the strict one-row supplier-summary identity repair. It may
-   correct the confirmed code/name inversion only when the exact allowlisted
-   symbol and company name independently match; every ambiguity fails closed.
+3. Merge and deploy the exact-company-name S1 query contract. It removes the
+   prior valuation/data-time request drift while retaining strict response
+   symbol and company-name checks.
 4. After separate approval, rerun S1 with exactly two fixed
-   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first two runs
-   both stopped after Luxshare; neither called Hengtong or retried.
+   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first three runs
+   all stopped after Luxshare; none called Hengtong or retried.
 5. Run S2 only after S0/S1 pass: security master and bounded 120-day market
    evidence. Luxshare already has 120 Provider02B dates; Hengtong remains
    identity-only until accepted iFinD evidence exists.
@@ -120,7 +123,7 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: merge/deploy the strict summary-identity repair, then
+- Next data goal: merge/deploy the exact-company-name S1 query contract, then
   separately authorize a bounded rerun; S2-S3 remain blocked until S1 passes.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.

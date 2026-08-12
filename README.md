@@ -104,7 +104,7 @@ and is not executed; see
 ## Next Delivery Sequence
 
 1. Preserve the accepted S0 baseline: 7/7 services, 35/35 active entitled tools and schemas; keep enterprise-only `search_edb` explicitly unavailable by plan.
-2. Merge and deploy the strict supplier-summary identity repair: it corrects only the confirmed `证券代码` / `证券简称` value inversion when the exact allowlisted symbol and company name both match.
+2. Merge and deploy the exact-company-name S1 query contract; the prior request incorrectly added valuation and data-time concepts to an identity-only gate.
 3. Separately authorize one bounded S1 run after deployment. Keep all S1 output non-canonical until symbol identity, response schema and PIT mapping pass for both `002475.SZ` and `600487.SH`.
 4. Run S2/S3 only after S1 passes; keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
 
