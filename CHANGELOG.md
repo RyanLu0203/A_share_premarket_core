@@ -2,6 +2,13 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Deployed merged PR #48 and ran one separately authorized S1; S0 again passed
+  7/7 services and 35/35 schemas, but the first Luxshare response was schema-
+  blocked. Hengtong was not called, no retry occurred and no data was accepted.
+- Identified an over-broad request contract: the identity-only S1 query added
+  valuation and data-time concepts. Narrowed `get_stock_summary` to the exact
+  configured company name, matching supplier documentation and portal behavior
+  while retaining strict response identity validation.
 - Diagnosed the complete owner-supplied portal response offline: the supplier
   inverted the `证券代码` and `证券简称` row values despite a normal header.
 - Added a strict summary-only semantic correction that requires one identity

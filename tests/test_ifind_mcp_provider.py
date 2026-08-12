@@ -583,6 +583,7 @@ def test_ifind_mcp_summary_only_scope_validates_the_actual_tool() -> None:
 
     assert result["canonical_accepted"] is False
     assert transport.calls[-1][2]["params"]["name"] == "get_stock_summary"
+    assert transport.calls[-1][2]["params"]["arguments"] == {"query": "立讯精密"}
 
     before = len(transport.calls)
     with pytest.raises(IfindProviderError) as exc:

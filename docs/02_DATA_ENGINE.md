@@ -12,7 +12,10 @@ authorized run again passed S0 but stopped on its first Luxshare call with
 retried and no iFinD data is canonical. The complete portal response confirmed
 that the supplier inverted the `证券代码` and `证券简称` row values. The parser now
 corrects only this exact one-row shape when both allowlisted identity fields
-match; every ambiguity fails closed. S2-S4 and research remain locked.
+match; every ambiguity fails closed. A post-merge live run still failed because
+the client added valuation/data-time concepts to the identity-only S1 query.
+The query is now fixed to the exact configured company name, matching supplier
+documentation and portal behavior. S2-S4 and research remain locked.
 
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 

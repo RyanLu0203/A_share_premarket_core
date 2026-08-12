@@ -1,5 +1,24 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S1 EXACT SUMMARY QUERY CONTRACT
+
+Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE_AND_LIVE_REACCEPTANCE` on
+`codex/ifind-s1-summary-query-contract`.
+
+- Merged/deployed PR #48 at `91c3c91`; production build, launcher, both
+  LaunchAgents, API health and frontend HTTP checks passed.
+- One separately authorized S1 rerun again passed 7/7 services and 35/35 live
+  tool schemas, then stopped on the first Luxshare call with
+  `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, no retry
+  occurred, no raw payload was persisted and no data was accepted.
+- Offline comparison found request-contract drift: S1 is identity-only, but the
+  fixed query asked for valuation and data-time content. The supplier docs and
+  successful portal request use the company name alone.
+- Narrowed `get_stock_summary` S1 requests to the exact configured company
+  name while preserving fixed tool/symbol scope and independent response symbol
+  and company-name validation. Another live S1 requires merge, deployment and
+  separate approval; S2-S4 and Research remain locked.
+
 ## 2026-08-12 - IFIND SUPPLIER SUMMARY IDENTITY REPAIR
 
 Status: `IMPLEMENTED_OFFLINE_PENDING_LIVE_S1_REACCEPTANCE` on
