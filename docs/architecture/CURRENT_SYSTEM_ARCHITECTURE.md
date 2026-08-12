@@ -38,8 +38,8 @@ flowchart LR
 
     ACQ --> NORM --> PIT --> SNAP --> READ --> API --> UI
 
-    IFIND["iFinD AI 金融数据服务<br/>MCP/API Key: 7 services + 36 tools<br/>live validation pending"]
-    IFIND -. "not an accepted live source yet" .-> ACQ
+    IFIND["iFinD AI 金融数据服务<br/>MCP/API Key: 7 services + 35 entitled tools<br/>S0 accepted; S1 PIT blocked"]
+    IFIND -. "identity staged; no canonical paid row" .-> ACQ
 
     SNAP --> DE["DataExpansion01<br/>implemented_research_only"]
     DE --> R02["Regime02<br/>implemented_research_only"]
@@ -61,7 +61,7 @@ flowchart LR
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |
-| iFinD AI 金融数据服务 | S0 accepted; S1 exact-query repair pending | The MCP/API Key channel passes seven services and 35/35 personal/trial tools/schemas. Three bounded runs stopped after their first Luxshare call; Hengtong was not called. The supplier code/name inversion repair is merged, and the remaining request drift is fixed offline by using the exact company name for the identity-only summary gate. No live iFinD row is accepted; S2-S4 and research remain locked. |
+| iFinD AI 金融数据服务 | S0 accepted; dual S1 identity staged; PIT blocked | The MCP/API Key channel passes seven services and 35/35 personal/trial tools/schemas. The latest bounded S1 called Luxshare and Hengtong once each; both one-row responses passed symbol scope, company identity and response-schema checks. Missing provider `available_at` keeps both rows `BLOCKED / NOT_CANONICAL`; S2-S4 and research remain locked. |
 
 Canonical interface details are maintained in
 [`configs/project/canonical_interfaces.json`](../../configs/project/canonical_interfaces.json)
@@ -73,11 +73,11 @@ and
 | Scope | Symbols | Dates | Rows | Meaning |
 |---|---:|---:|---:|---|
 | Canonical approved-symbol governance scope | 2 | varies by gate | varies | `002475.SZ` and `600036.SH`; a narrow governance/contract scope, not the whole research or operational universe. |
-| iFinD dual-stock browsing / acceptance cohort | 2 | 120 existing dates for `002475.SZ`; none accepted for `600487.SH` | acceptance-dependent | `002475.SZ` and `600487.SH`; distinct from the canonical approved pair and both outside the 41-symbol reference portfolio. Luxshare reuses existing Provider02B evidence; Hengtong is identity-only until governed iFinD acceptance succeeds. |
+| iFinD dual-stock browsing / acceptance cohort | 2 | 120 existing dates for `002475.SZ`; none accepted for `600487.SH` | 2 non-canonical identity staging rows | `002475.SZ` and `600487.SH`; distinct from the canonical approved pair and both outside the 41-symbol reference portfolio. Both identities passed bounded iFinD scope/schema staging; Hengtong still has no accepted market or fundamental evidence. |
 | Provider02B source-backed engineering panel | 50 | 120 | 6,000 | Committed `engineering_pilot` research panel spanning 2025-11-19 through 2026-05-21. |
 | Expanded network evidence / portfolio-risk canonical history | 41 with independent evidence | 843 | 34,543 | Historical evidence used by later readiness and portfolio-risk diagnostics. The broader catalog still contains 50 symbols, but only 41 have this independent evidence. |
 | Last documented complete operational acquisitions | 41/41 accepted per run | 1 target date per run | 41 per run | Two complete Tencent acquisitions for dynamic target 2026-07-31 and T-1 2026-07-30. This is the last documented acceptance, not a claim of freshness for 2026-08-09. |
-| iFinD live data | S0 metadata only | no accepted dates | 0 validated | Seven services and 35 entitled tool schemas are accepted; two bounded S1 runs stopped after their first Luxshare call and no paid row crossed the canonical boundary. |
+| iFinD live data | S0 accepted plus non-canonical S1 identity staging | no accepted dates | 0 canonical; 2 staged identity rows | Seven services and 35 entitled tool schemas are accepted. Both fixed cohort summaries passed identity/scope/schema staging, but missing provider availability timestamps prevented canonical promotion. |
 
 The authoritative evidence for these counts lives in goal manifests, including
 [`goal_data_provider02b_source_backed_panel_manifest.json`](../../outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json),

@@ -1,5 +1,27 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND DUAL-STOCK IDENTITY STAGING / PIT BLOCK
+
+Status: `S1_DUAL_IDENTITY_SCHEMA_SCOPE_VERIFIED_PIT_BLOCKED_NOT_CANONICAL` on
+`codex/ifind-s1-dual-identity-checkpoint`.
+
+- Confirmed PR #49 merged at `6e5fbfa` and fast-forwarded the stable
+  Application Support deployment. Production build, launcher, LaunchAgents,
+  API health and frontend HTTP checks passed.
+- Ran one owner-authorized bounded S1. Its same-run S0 passed 7/7 services and
+  35/35 active entitled tool/schema contracts.
+- Called fixed `get_stock_summary` once for `002475.SZ` and once for
+  `600487.SH`, with two total calls and no retry. Each response produced one
+  bounded Markdown table and one identity row; symbol scope, configured company
+  identity and response schema verified for both.
+- Kept both rows `BLOCKED / NOT_CANONICAL` with
+  `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN` because the supplier summary contains no
+  auditable provider `available_at`. No raw payload was persisted and zero
+  iFinD rows entered canonical storage.
+- Updated only the Git-ignored, `0600` Provider Health status with allowlisted
+  counts and booleans. The next gate is an offline temporal-contract decision;
+  S2-S4 and Research remain locked.
+
 ## 2026-08-12 - IFIND S1 EXACT SUMMARY QUERY CONTRACT
 
 Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE_AND_LIVE_REACCEPTANCE` on

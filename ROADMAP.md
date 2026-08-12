@@ -1,21 +1,17 @@
 # Roadmap
 
-## 2026-08-12 iFinD accepted S0 checkpoint
+## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial
 entitlement passed live schema validation. The full reviewed 36-tool catalog is
-retained; enterprise-only `edb:search_edb` is unavailable by plan. The first
-Luxshare S1 response was quarantined as scope-unverified. After the exact code
-mapping merged, a second authorized run stopped at the first Luxshare call with
-`IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
-retried and no data was accepted. The complete portal response then confirmed
-that the supplier inverted the `证券代码` and `证券简称` row values. A strict exact-
-identity repair was merged. A later bounded run still failed because the S1
-client requested valuation and data-time content during an identity-only gate.
-The query is now narrowed to the exact configured company name, matching the
-supplier's documented and portal-verified behavior. The next data step is
-merge/deployment followed by a separately authorized bounded S1.
-S2-S4 and all research promotion remain locked.
+retained; enterprise-only `edb:search_edb` is unavailable by plan. Earlier S1
+scope, supplier-column and query-contract failures were repaired fail-closed.
+After PR #49 merged, one bounded run called Luxshare and Hengtong exactly once
+each with no retry. Both identity rows passed symbol scope, configured company
+identity and response-schema checks. S1 overall remains
+`BLOCKED / NOT_CANONICAL` because the summary has no auditable provider
+`available_at`. The next step is an offline temporal-contract decision, not an
+additional paid-data call. S2-S4 and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
 
@@ -35,14 +31,14 @@ Delivery order from this checkpoint:
    tools/schemas and zero S0 data calls; keep the old exposed value forbidden.
 2. Treat enterprise-only `edb:search_edb` as unavailable by plan while
    retaining it in the 36-tool reviewed supplier catalog.
-3. Merge and deploy the exact-company-name S1 query contract. It removes the
-   prior valuation/data-time request drift while retaining strict response
-   symbol and company-name checks.
-4. After separate approval, rerun S1 with exactly two fixed
-   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first three runs
-   all stopped after Luxshare; none called Hengtong or retried.
-5. Run S2 only after S0/S1 pass: security master and bounded 120-day market
-   evidence. Luxshare already has 120 Provider02B dates; Hengtong remains
+3. Preserve the verified S1 identity/scope/schema result for exactly
+   `002475.SZ` and `600487.SH`: two calls, no retry and no canonical rows.
+4. Review whether identity-only acceptance metadata may use local
+   `observed_at` while explicitly leaving provider `available_at` unknown. Do
+   not weaken PIT requirements for market, fundamental or event data.
+5. Run S2 only after the S1 temporal-contract decision: security master and
+   bounded 120-day market evidence. Luxshare already has 120 Provider02B
+   dates; Hengtong remains
    identity-only until accepted iFinD evidence exists.
 6. Run S3 for audited fundamentals, ownership, risk, events and ESG fields,
    normalizing immutable checksummed bundles below the external data root.
@@ -123,8 +119,8 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: merge/deploy the exact-company-name S1 query contract, then
-  separately authorize a bounded rerun; S2-S3 remain blocked until S1 passes.
+- Next data goal: review the S1 identity-only `observed_at`/`available_at`
+  contract offline; S2-S3 remain blocked until that decision is explicit.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
 - Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user

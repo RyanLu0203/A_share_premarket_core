@@ -2,6 +2,15 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Confirmed PR #49 merged/deployed at `6e5fbfa` and passed production build,
+  launcher, LaunchAgent, API-health and frontend checks.
+- Ran one owner-authorized dual-stock S1: same-run S0 passed 7/7 services and
+  35/35 entitled tool schemas, then exactly two summary calls verified symbol
+  scope, company identity and response schema for both Luxshare and Hengtong.
+- Kept both one-row responses non-canonical with
+  `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN`; the summary lacks provider
+  `available_at`, two calls were counted, no retry occurred and no raw payload
+  was persisted. The next gate is an offline temporal-contract decision.
 - Deployed merged PR #48 and ran one separately authorized S1; S0 again passed
   7/7 services and 35/35 schemas, but the first Luxshare response was schema-
   blocked. Hengtong was not called, no retry occurred and no data was accepted.

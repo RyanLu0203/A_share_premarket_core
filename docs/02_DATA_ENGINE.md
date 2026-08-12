@@ -5,17 +5,15 @@
 One governed S0 run accepted all seven MCP services and all 35 tools exposed by
 the personal/trial entitlement, including their live input schemas. The full
 reviewed catalog remains 36; `edb:search_edb` is enterprise-only and therefore
-`UNAVAILABLE_BY_PLAN`. The first Luxshare S1 summary was quarantined at the
-response-scope boundary. After the exact provider-code mapping merged, a second
-authorized run again passed S0 but stopped on its first Luxshare call with
-`IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
-retried and no iFinD data is canonical. The complete portal response confirmed
-that the supplier inverted the `证券代码` and `证券简称` row values. The parser now
-corrects only this exact one-row shape when both allowlisted identity fields
-match; every ambiguity fails closed. A post-merge live run still failed because
-the client added valuation/data-time concepts to the identity-only S1 query.
-The query is now fixed to the exact configured company name, matching supplier
-documentation and portal behavior. S2-S4 and research remain locked.
+`UNAVAILABLE_BY_PLAN`. Earlier response-scope, supplier code/name inversion and
+over-broad query failures were repaired fail-closed. After PR #49 merged, one
+owner-authorized S1 again passed same-run S0 and called the fixed cohort exactly
+twice with no retry. Luxshare and Hengtong each returned one bounded identity
+row; symbol scope, company identity and schema verified for both. The rows stay
+`BLOCKED / NOT_CANONICAL` with `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN` because the
+summary exposes no auditable provider `available_at`. Local acquisition time
+may not be silently substituted. S2-S4 and research remain locked while the
+identity-only temporal contract is reviewed offline.
 
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 
@@ -60,12 +58,13 @@ exact, JSON and SSE are bounded, session ids are validated, and free-form tool
 text is non-canonical. Tool calls remain default-off after the accepted S0.
 
 The old exposed value remains permanently forbidden. External authentication
-and S0 are now accepted for 7/7 services and 35/35 personal/trial entitled
-tools/schemas. The first S1 Luxshare response was quarantined at the scope
-boundary; after the exact code mapping merged, the second stopped at response-
-schema validation. Hengtong was not called, neither run retried and no iFinD
-rows were accepted. A strict offline repair now normalizes only the confirmed
-summary identity inversion; it does not accept the row as canonical evidence.
+and S0 are accepted for 7/7 services and 35/35 personal/trial entitled
+tools/schemas. The latest bounded S1 called Luxshare and Hengtong exactly once
+each; both one-row identity responses passed scope, company and schema checks.
+They remain non-canonical because the supplier summary has no auditable
+provider availability timestamp. A local `observed_at` may describe the
+acceptance event but cannot become provider `available_at` without an explicit
+temporal-contract decision.
 
 Naive timestamps are rejected by default. A caller may explicitly declare
 `Asia/Shanghai` only after confirming the returned field semantics; canonical
@@ -82,8 +81,9 @@ only below an explicitly configured
 `ASHARE_PREMARKET_DATA_ROOT/normalized/ifind`; its directories use `0700` and
 files use `0600`. Raw paid payloads and
 full paid datasets remain ignored local evidence. The Dashboard consumes only
-accepted read models. Until entitlement and live schema validation pass, it
-shows `adapter_ready_*_pending` readiness states rather than provider values.
+accepted read models. Entitlement and live schema validation have passed at
+S0; Provider Health reports only sanitized acceptance metadata and the current
+PIT-blocked S1 state, never provider values or credentials.
 
 The first bounded acceptance cohort is `002475.SZ` and `600487.SH`. Security
 browseability is independent of reference-portfolio membership: both symbols

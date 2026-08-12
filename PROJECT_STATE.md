@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-12
 
-## IFIND ENTITLEMENT-AWARE S0 ACCEPTANCE AND S1 SCHEMA BLOCK
+## IFIND S0 ACCEPTED AND DUAL-STOCK S1 PIT BLOCK
 
 - The Keychain-delivered test credential completed one governed seven-service
   MCP S0 run on 2026-08-12. All seven services negotiated protocol
@@ -13,41 +13,25 @@ Last updated: 2026-08-12
   supplier pricing/data-scope evidence identifies `edb:search_edb` as an
   enterprise capability, so its absence from this personal/trial profile is
   now `UNAVAILABLE_BY_PLAN`, not provider failure or schema drift.
-- The first owner-authorized S1 attempt called `get_stock_summary` for
-  `002475.SZ`. Its response used a provider-native security-code shape that
-  could not cross the then-current canonical response-scope check, so the row
-  was quarantined with `IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED`; the second
-  symbol was not called and no retry occurred. No iFinD row is canonical.
-- The scope normalizer now permits a six-digit provider code only when it maps
-  uniquely to the exact allowlisted symbol for that call. After PR #46 merged,
-  the stable deployment was fast-forwarded to merge commit `cf82f53`; its
-  production build, LaunchAgents, API health and frontend HTTP checks passed.
-- One separately authorized S1 rerun completed the same-run 7/7-service,
-  35/35-tool/schema S0, then stopped after its first Luxshare data call with
-  `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, no retry was
-  made, no raw response was persisted and no iFinD row is canonical. The
-  Git-ignored local status records only the failure code, one attempted call,
-  failed symbol and S0 verification booleans. S1 requires an offline parser-
-  contract review before any later separately authorized call; S2-S4 and
-  research remain locked.
-- The owner then supplied the complete successful portal response envelope.
-  It proves a supplier semantic inversion: the Markdown header labels the
-  first two columns `证券代码` and `证券简称`, while the row places the exact
-  company name first and canonical symbol second. The parser now corrects only
-  this exact one-row summary-table shape when both the allowlisted symbol and
-  company name independently match. Normal order and six-digit codes remain
-  supported; wrong, missing, duplicated or ambiguous identities fail closed.
-  No raw supplier row was committed. The repair has 51 focused passing tests
-  and was merged through PR #48.
-- After the stable deployment was updated to merge `91c3c91`, one separately
-  authorized S1 rerun again passed the same-run 7/7-service and 35/35-schema S0
-  but stopped after its first Luxshare call with the same generic response-
-  schema failure. Hengtong was not called, no retry occurred and no data was
-  accepted. Offline comparison then identified request-contract drift: S1 is
-  an identity gate, but the client had added valuation and data-time concepts,
-  whereas the supplier's documented and portal-verified summary request is the
-  company name alone. The fixed S1 query is now the exact configured company
-  name; returned symbol and company identity remain independently enforced.
+- Earlier bounded attempts established and repaired exact provider-code,
+  supplier code/name inversion, and exact-company-name query contracts. Each
+  failed closed before Hengtong and persisted no raw response or canonical row.
+- PR #49 merged and the stable deployment was fast-forwarded to merge commit
+  `6e5fbfa`. Production build, launcher, LaunchAgents, API health and frontend
+  HTTP checks passed.
+- One owner-authorized S1 run then completed the same-run 7/7-service,
+  35/35-entitled-tool/schema S0 and exactly two fixed `get_stock_summary`
+  calls with no retry. `002475.SZ` and `600487.SH` each produced one bounded
+  provider Markdown table and one identity row; symbol scope, company identity
+  and response schema all verified.
+- S1 overall remains deliberately `BLOCKED / NOT_CANONICAL` with
+  `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN`: the supplier summary exposes no auditable
+  provider `available_at`. Local retrieval time must not be silently promoted
+  to provider availability. Two calls were counted, no raw payload was
+  persisted, and zero iFinD rows crossed the canonical boundary.
+- The next gate is an offline temporal-contract decision for identity-only
+  acceptance metadata (`observed_at` versus provider `available_at`). S2-S4
+  and all research remain locked until that contract is explicitly reviewed.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -69,10 +53,10 @@ project description with its machine-readable state.
 - The preferred credential source is macOS Keychain; credentials are never
   printed, persisted in the repository, committed, or exposed through the
   Dashboard. The old credential pasted in chat and embedded in the generated
-  RTF is permanently forbidden. The user reports that it has been rotated,
-  while acceptance of the replacement through the external MCP endpoint is
-  still pending. Neither old credential material nor the supplier's unsafe
-  example client is used. External authentication is now accepted for S0.
+  RTF is permanently forbidden. The user reports that it has been rotated; the
+  Keychain-delivered replacement is accepted for governed S0 and the bounded
+  S1 staging run. Neither old credential material nor the supplier's unsafe
+  example client is used.
 - Seven governed modules now have explicit schema, grain, PIT/revision,
   licensing, normalization, checksum, and acceptance contracts: security
   master; daily market/calendar; PIT fundamentals/valuation; historical
@@ -114,14 +98,11 @@ project description with its machine-readable state.
 
 Research over new iFinD evidence has **not** started. External authentication,
 seven-service initialization, the active 35-tool entitlement and live input
-schemas are accepted at S0. The first S1 attempt was quarantined at the
-response-scope boundary; after the exact code mapping was merged, the second
-attempt stopped on the first Luxshare call at the response-schema boundary.
-Hengtong has never been called, neither run retried, and no iFinD data was
-accepted. Offline diagnosis confirmed and repaired both the supplier's exact
-code/name inversion and the client's over-broad S1 query contract. The next
-gate is merge/deployment of the exact-company-name query, followed by one
-separately authorized S1 rerun.
+schemas are accepted at S0. The latest bounded S1 called both fixed cohort
+symbols exactly once: identity, scope and response schema passed for Luxshare
+and Hengtong, while the absent provider availability timestamp kept both rows
+non-canonical. The next gate is an offline temporal-contract decision; it is
+not another paid-data request.
 Recommendation, position, trading, broker, production, S2-S4 and research
 capabilities remain locked.
 
