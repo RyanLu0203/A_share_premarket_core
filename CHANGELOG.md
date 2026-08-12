@@ -2,6 +2,16 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Fast-forwarded the stable Application Support deployment to merged PR #46
+  and passed production build, launcher, LaunchAgent, API and frontend health
+  checks.
+- Ran one separately authorized bounded S1 rerun. Same-run S0 again passed all
+  seven services and 35/35 active tool schemas; the first Luxshare data call
+  stopped at `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, no
+  retry occurred, no raw response was persisted and no data became canonical.
+- Updated the Git-ignored local Provider Health status with allowlisted failure
+  metadata only. Offline parser-contract diagnosis is required before another
+  separately authorized call.
 - Accepted one governed seven-service S0 run: 7/7 services, 35/35 active
   personal/trial tools and live input schemas; zero data calls in S0.
 - Preserved the 36-tool reviewed catalog while classifying enterprise-only
