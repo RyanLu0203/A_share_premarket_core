@@ -2,6 +2,12 @@
 
 Last updated: 2026-08-12
 
+Deployment note: stable deployment is at merged call-plan v2 commit `429a78f`.
+One environment-dependent test assumed the historical one-call failure state;
+the valid current local status records two calls and no failed symbol. A narrow
+offline test correction is pending merge before status migration. No provider
+request or canonical promotion occurred.
+
 ## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
 
 - The Keychain-delivered test credential completed one governed seven-service

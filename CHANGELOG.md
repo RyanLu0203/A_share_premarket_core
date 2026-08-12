@@ -2,6 +2,11 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Fixed a deployment-state test that assumed every prior S1 data call stopped
+  after Luxshare. The credential-safe read model now tests both bounded states:
+  one call with a failed first symbol or two calls with no failed symbol.
+- Recorded stable deployment at merged call-plan v2 commit `429a78f`; no live
+  request, Keychain read or local-status migration was performed by this fix.
 - Added call-plan v2 for identity-only S1 temporal semantics: local
   `observed_at` is acceptance provenance, provider `available_at` is explicitly
   unknown and canonical acceptance remains false.

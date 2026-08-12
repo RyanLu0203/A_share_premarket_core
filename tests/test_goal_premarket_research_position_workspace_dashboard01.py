@@ -384,8 +384,11 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["s1_provider_available_at_verified"] is False
         assert readiness["ifind_canonical_accepted"] is False
         if readiness["last_data_tool_called"]:
-            assert readiness["last_data_call_count"] == 1
-            assert readiness["last_failed_symbol"] == "002475.SZ"
+            assert readiness["last_data_call_count"] in {1, 2}
+            if readiness["last_data_call_count"] == 1:
+                assert readiness["last_failed_symbol"] == "002475.SZ"
+            else:
+                assert readiness["last_failed_symbol"] is None
         else:
             assert readiness["last_data_call_count"] is None
             assert readiness["last_failed_symbol"] is None
