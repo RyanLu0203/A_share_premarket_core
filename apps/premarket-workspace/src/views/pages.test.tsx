@@ -65,17 +65,26 @@ const ifindReadiness = {
   unavailable_by_plan_count: 1,
   unavailable_by_plan: ["edb:search_edb"],
   data_module_count: 7,
-  last_probe_status: "BLOCKED",
-  last_probe_mode: "live_handshake",
-  last_probe_server: "stock",
-  last_probe_failure_code: "IFIND_MCP_AUTH_OR_PERMISSION_DENIED",
-  last_probe_http_status: 401,
-  last_probe_observed_at: "2026-08-09T08:50:00Z",
-  last_handshake_verified: false,
-  last_input_schemas_verified: false,
-  last_data_tool_called: false,
-  last_data_call_count: 0,
+  last_probe_status: "PASS",
+  last_probe_mode: "live_stage_s1",
+  last_probe_server: null,
+  last_probe_failure_code: null,
+  last_probe_http_status: null,
+  last_probe_observed_at: "2026-08-12T10:00:00Z",
+  last_handshake_verified: true,
+  last_input_schemas_verified: true,
+  last_data_tool_called: true,
+  last_data_call_count: 2,
   last_failed_symbol: null,
+  s1_acceptance_state: "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED",
+  s1_temporal_class: "acceptance_metadata_only",
+  s1_provider_available_at_status: "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA",
+  s1_provider_available_at_verified: false,
+  s1_identity_observed_at: "2026-08-12T09:56:59Z",
+  s1_staged_symbol_count: 2,
+  s1_identity_acceptance_verified: true,
+  s2_requires_separate_authorization: true,
+  ifind_canonical_accepted: false,
   api_key: "fixture-secret-must-not-render",
 };
 
@@ -120,7 +129,7 @@ const ifindPilot = {
       company_name_cn: "立讯精密",
       exchange: "SZSE",
       existing_governance_state: "current_approved",
-      pilot_acceptance_state: "official_identity_verified_live_ifind_acceptance_pending",
+      pilot_acceptance_state: "official_identity_and_live_ifind_summary_verified_acceptance_metadata_only",
       required_data_modules: ifindModules.map((row) => row.module_id),
       actionable_use_allowed: false,
     },
@@ -129,7 +138,7 @@ const ifindPilot = {
       company_name_cn: "亨通光电",
       exchange: "SSE",
       existing_governance_state: "user_requested_pilot_not_in_canonical_approved_symbols",
-      pilot_acceptance_state: "official_identity_verified_symbol_onboarding_and_live_ifind_acceptance_pending",
+      pilot_acceptance_state: "official_identity_and_live_ifind_summary_verified_acceptance_metadata_only_symbol_onboarding_pending",
       required_data_modules: ifindModules.map((row) => row.module_id),
       actionable_use_allowed: false,
     },
@@ -241,8 +250,10 @@ describe("functional workspace pages", () => {
     expect(screen.getByText("立讯精密")).toBeVisible();
     expect(screen.getByText("亨通光电")).toBeVisible();
     expect(screen.getByText("600487.SH")).toBeVisible();
-    expect(screen.getByText("IFIND_MCP_AUTH_OR_PERMISSION_DENIED")).toBeVisible();
-    expect(screen.getByText("401")).toBeVisible();
+    expect(screen.getByText("acceptance_metadata_only")).toBeVisible();
+    expect(screen.getAllByText("VERIFIED").length).toBeGreaterThanOrEqual(3);
+    expect(screen.getByText("UNKNOWN")).toBeVisible();
+    expect(screen.getByText("REQUIRED")).toBeVisible();
     expect(screen.getAllByText("1-7 / 7 filtered / 7 rows").length).toBeGreaterThanOrEqual(2);
     expect(screen.queryByText("fixture-secret-must-not-render")).not.toBeInTheDocument();
     rerender(<ProviderHealthPage data={{canonical_decision: "historical replay", comparison: [], quarantine: [], provider_usage: [], provider_health: [], source_freshness: {}, trading_calendar: {}, provider_lineage: [], ifind_readiness: ifindReadiness, ifind_mcp_services: ifindServices, ifind_data_modules: ifindModules, ifind_pilot_acceptance: ifindPilot}} />);

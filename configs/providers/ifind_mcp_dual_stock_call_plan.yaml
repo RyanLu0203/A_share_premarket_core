@@ -1,5 +1,5 @@
 {
-  "plan_id": "ifind_mcp_dual_stock_call_plan_v1",
+  "plan_id": "ifind_mcp_dual_stock_call_plan_v2",
   "contract_id": "ifind_ai_financial_data_service_v1",
   "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
   "purpose": "bounded_point_in_time_safe_provider_and_workspace_foundation_acceptance_only",
@@ -40,7 +40,10 @@
     "announcement_publication_time_must_be_not_after_decision_timestamp": true,
     "financial_revision_must_be_available_by_decision_timestamp": true,
     "future_return_or_label_fields_in_request_or_normalization": "forbidden",
-    "missing_or_ambiguous_provider_timestamp": "quarantine_not_canonical_acceptance"
+    "missing_or_ambiguous_provider_timestamp": "quarantine_not_canonical_acceptance",
+    "identity_summary_temporal_class": "acceptance_metadata_only",
+    "identity_observed_at_source": "local_runtime_UTC_not_provider_available_at",
+    "identity_provider_available_at": "unknown_not_required_for_noncanonical_identity_acceptance"
   },
   "global_request_budget": {
     "symbols_maximum": 2,
@@ -88,14 +91,16 @@
         "provider_code_indicates_success",
         "security_code_and_company_identity_match_requested_symbol",
         "bounded_response_scope_validation_passes",
-        "provider_data_timestamp_is_PIT_safe",
         "schema_specific_summary_normalizer_passes",
-        "no_cross_symbol_rows_or_unscoped_prose_are_accepted"
+        "no_cross_symbol_rows_or_unscoped_prose_are_accepted",
+        "local_observed_at_is_recorded_as_acceptance_metadata_only",
+        "provider_available_at_is_explicitly_unknown",
+        "canonical_accepted_is_false"
       ]
     },
     {
       "stage_id": "S2_SECURITY_MASTER_AND_DAILY_MARKET",
-      "state": "blocked_until_S1_passes",
+      "state": "blocked_until_S1_identity_metadata_passes_and_separate_S2_authorization",
       "server_type": "stock",
       "fixed_tools": ["get_stock_info", "get_stock_performance"],
       "fixed_symbols": ["002475.SZ", "600487.SH"],

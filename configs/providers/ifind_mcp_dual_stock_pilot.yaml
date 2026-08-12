@@ -1,6 +1,6 @@
 {
   "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
-  "as_of_date": "2026-08-09",
+  "as_of_date": "2026-08-12",
   "purpose": "bounded_data_and_workspace_foundation_acceptance_only",
   "entitlement_profile": "personal_trial_non_enterprise",
   "canonical_approved_symbols_unchanged": true,
@@ -12,7 +12,7 @@
       "company_name_full_cn": "立讯精密工业股份有限公司",
       "exchange": "SZSE",
       "existing_governance_state": "current_approved",
-      "pilot_acceptance_state": "official_identity_verified_live_ifind_acceptance_pending",
+      "pilot_acceptance_state": "official_identity_and_live_ifind_summary_verified_acceptance_metadata_only",
       "official_identity_evidence": "https://disc.static.szse.cn/disc/disk03/finalpage/2026-06-30/a0dd45ad-b7f7-4e6e-a079-ed9ec37d1a2b.PDF",
       "required_data_modules": [
         "security_master",
@@ -31,7 +31,7 @@
       "company_name_full_cn": "江苏亨通光电股份有限公司",
       "exchange": "SSE",
       "existing_governance_state": "user_requested_pilot_not_in_canonical_approved_symbols",
-      "pilot_acceptance_state": "official_identity_verified_symbol_onboarding_and_live_ifind_acceptance_pending",
+      "pilot_acceptance_state": "official_identity_and_live_ifind_summary_verified_acceptance_metadata_only_symbol_onboarding_pending",
       "official_identity_evidence": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/specific/margin/c/c_20260710_10825136.shtml",
       "required_data_modules": [
         "security_master",

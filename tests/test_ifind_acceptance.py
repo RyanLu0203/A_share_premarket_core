@@ -137,7 +137,9 @@ def test_offline_acceptance_strictly_validates_all_three_documents_without_clien
     assert client_created is False
 
 
-@pytest.mark.parametrize("drift", ["symbol", "data_gate", "s1_budget", "lock"])
+@pytest.mark.parametrize(
+    "drift", ["symbol", "data_gate", "s1_budget", "s1_temporal_contract", "lock"]
+)
 def test_acceptance_config_drift_fails_closed_before_live_work(drift: str) -> None:
     contract, pilot, call_plan = _documents()
     contract = copy.deepcopy(contract)
@@ -149,6 +151,10 @@ def test_acceptance_config_drift_fails_closed_before_live_work(drift: str) -> No
         call_plan["authorization_gates"]["data_call_required_opt_in"] = "UNSAFE=1"
     elif drift == "s1_budget":
         call_plan["stages"][1]["data_call_budget"] = 3
+    elif drift == "s1_temporal_contract":
+        call_plan["point_in_time_policy"]["identity_provider_available_at"] = (
+            "unsafe_local_clock_substitution"
+        )
     else:
         call_plan["locked_outputs"].remove("live_trading")
 
@@ -199,7 +205,7 @@ def test_live_handshake_emits_only_safe_catalog_and_schema_hash_metadata() -> No
             }
 
 
-def test_live_s1_is_exactly_two_fixed_calls_and_remains_not_canonical_without_pit() -> (
+def test_live_s1_accepts_exact_dual_identity_as_metadata_without_canonical_pit() -> (
     None
 ):
     fake = FakeAcceptanceClient()
@@ -222,12 +228,22 @@ def test_live_s1_is_exactly_two_fixed_calls_and_remains_not_canonical_without_pi
     )
     rendered = json.dumps(payload, ensure_ascii=False)
 
-    assert payload["status"] == "BLOCKED"
-    assert payload["failure_code"] == "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN"
-    assert payload["acceptance_state"] == "NOT_CANONICAL"
+    assert payload["status"] == "PASS"
+    assert "failure_code" not in payload
+    assert payload["acceptance_state"] == (
+        "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
+    )
     assert payload["decision_timestamp"] == "2026-08-07T07:00:00Z"
+    assert payload["observed_at"].endswith("Z")
+    assert payload["temporal_class"] == "acceptance_metadata_only"
+    assert payload["provider_available_at"] is None
+    assert payload["provider_available_at_status"] == (
+        "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
+    )
     assert payload["data_call_count"] == payload["data_call_budget"] == 2
     assert payload["pit_timestamp_verified"] is False
+    assert payload["s1_identity_acceptance_verified"] is True
+    assert payload["s2_requires_separate_authorization"] is True
     assert payload["canonical_accepted"] is False
     assert fake.data_calls == [
         ("002475.SZ", "get_stock_summary"),
@@ -243,6 +259,8 @@ def test_live_s1_is_exactly_two_fixed_calls_and_remains_not_canonical_without_pi
             "table_count": 1,
             "row_count": 1,
             "scope_verified": True,
+            "temporal_class": "acceptance_metadata_only",
+            "provider_available_at_present": False,
             "canonical_accepted": False,
         },
         {
@@ -251,6 +269,8 @@ def test_live_s1_is_exactly_two_fixed_calls_and_remains_not_canonical_without_pi
             "table_count": 1,
             "row_count": 1,
             "scope_verified": True,
+            "temporal_class": "acceptance_metadata_only",
+            "provider_available_at_present": False,
             "canonical_accepted": False,
         },
     ]

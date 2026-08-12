@@ -329,10 +329,11 @@ Handoff policy:
   supplier-column and query-contract failures were repaired fail-closed. After
   PR #49 merged, one bounded S1 called `002475.SZ` and `600487.SH` exactly once
   each with no retry; both identity rows passed symbol scope, company identity
-  and response-schema validation. They remain `BLOCKED / NOT_CANONICAL`
-  because the summary exposes no auditable provider `available_at`. Local
-  `observed_at` must not be relabelled as provider availability; an offline
-  temporal-contract decision is the next gate.
+  and response-schema validation. The approved call-plan v2 accepts this only
+  as `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`: local `observed_at` is
+  acceptance provenance, provider `available_at` remains unknown, and
+  `canonical_accepted` remains false. Only the exact two-call/no-failure prior
+  local status may be migrated offline. S2 requires separate authorization.
   Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately

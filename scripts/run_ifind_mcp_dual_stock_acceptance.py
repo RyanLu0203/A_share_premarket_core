@@ -13,7 +13,10 @@ from ashare_premarket.providers.ifind_acceptance import (
     run_ifind_dual_stock_acceptance,
 )
 from ashare_premarket.providers.ifind_http import IfindProviderError
-from ashare_premarket.providers.ifind_mcp import write_ifind_mcp_probe_status
+from ashare_premarket.providers.ifind_mcp import (
+    reclassify_ifind_mcp_s1_probe_status,
+    write_ifind_mcp_probe_status,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -33,11 +36,20 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     live.add_argument(
+        "--reclassify-existing-s1-status",
+        action="store_true",
+        help=(
+            "Offline-only migration of the exact two-call PIT-blocked local S1 "
+            "status to non-canonical identity acceptance metadata."
+        ),
+    )
+    live.add_argument(
         "--live-stage-s1",
         action="store_true",
         help=(
             "After a same-run seven-service S0 pass, call fixed get_stock_summary "
-            "once for each accepted pilot symbol."
+            "once for each accepted pilot symbol and return only non-canonical "
+            "identity acceptance metadata."
         ),
     )
     parser.add_argument(
@@ -51,8 +63,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--write-local-status",
         action="store_true",
         help=(
-            "For a successful S0 handshake only, write bounded credential-free "
-            "status metadata under outputs/local for the read-only Workspace."
+            "For a successful S0 or S1 run, write bounded credential-free status "
+            "metadata under outputs/local for the read-only Workspace."
         ),
     )
     return parser
@@ -70,7 +82,36 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "offline_contract" if not args.live_handshake else "live_handshake",
             "IFIND_MCP_DECISION_TIMESTAMP_UNEXPECTED",
         )
-    if args.write_local_status and not args.live_handshake:
+    if args.reclassify_existing_s1_status:
+        if args.write_local_status:
+            return _print_failure(
+                "offline_contract",
+                "IFIND_MCP_LOCAL_STATUS_MODE_INVALID",
+            )
+        try:
+            target = reclassify_ifind_mcp_s1_probe_status(Path(ROOT))
+        except IfindProviderError as exc:
+            return _print_failure("offline_contract", exc.failure_code)
+        print(
+            json.dumps(
+                {
+                    "status": "PASS",
+                    "mode": "offline_contract",
+                    "acceptance_state": (
+                        "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
+                    ),
+                    "local_status_updated": True,
+                    "path": str(target.relative_to(ROOT)),
+                    "network_accessed": False,
+                    "keychain_accessed": False,
+                    "canonical_accepted": False,
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        )
+        return 0
+    if args.write_local_status and not (args.live_handshake or args.live_stage_s1):
         return _print_failure(
             "live_stage_s1" if args.live_stage_s1 else "offline_contract",
             "IFIND_MCP_LOCAL_STATUS_MODE_INVALID",
@@ -95,19 +136,37 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     if args.write_local_status:
         handshake = result.get("handshake", [])
+        status_payload = {
+            "status": result.get("status"),
+            "mode": result.get("mode"),
+            "acceptance_state": result.get("acceptance_state"),
+            "temporal_class": result.get("temporal_class"),
+            "provider_available_at_status": result.get(
+                "provider_available_at_status"
+            ),
+            "identity_observed_at": result.get("observed_at"),
+            "actual_tool_count": sum(
+                int(row.get("tool_count", 0)) for row in handshake
+            ),
+            "expected_tool_count": int(result.get("expected_tool_count", 0)),
+            "data_call_count": result.get("data_call_count"),
+            "staged_symbol_count": len(result.get("staging_summaries", [])),
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "data_tool_called": result.get("data_tool_called") is True,
+            "s1_identity_acceptance_verified": result.get(
+                "s1_identity_acceptance_verified"
+            )
+            is True,
+            "s2_requires_separate_authorization": result.get(
+                "s2_requires_separate_authorization"
+            )
+            is True,
+            "canonical_accepted": False,
+        }
         write_ifind_mcp_probe_status(
             Path(ROOT),
-            {
-                "status": "PASS",
-                "mode": "live_handshake",
-                "actual_tool_count": sum(
-                    int(row.get("tool_count", 0)) for row in handshake
-                ),
-                "expected_tool_count": int(result.get("expected_tool_count", 0)),
-                "live_handshake_verified": True,
-                "input_schemas_verified": True,
-                "data_tool_called": False,
-            },
+            status_payload,
         )
     return 0 if result.get("status") == "PASS" else 1
 

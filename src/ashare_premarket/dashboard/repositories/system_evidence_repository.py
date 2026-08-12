@@ -301,4 +301,21 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "last_data_tool_called": probe["data_tool_called"],
         "last_data_call_count": probe.get("data_call_count"),
         "last_failed_symbol": probe.get("failed_symbol"),
+        "s1_acceptance_state": probe.get("acceptance_state"),
+        "s1_temporal_class": probe.get("temporal_class"),
+        "s1_provider_available_at_status": probe.get(
+            "provider_available_at_status"
+        ),
+        "s1_provider_available_at_verified": probe.get(
+            "provider_available_at_verified"
+        ),
+        "s1_identity_observed_at": probe.get("identity_observed_at"),
+        "s1_staged_symbol_count": probe.get("staged_symbol_count"),
+        "s1_identity_acceptance_verified": probe.get(
+            "s1_identity_acceptance_verified"
+        ),
+        "s2_requires_separate_authorization": probe.get(
+            "s2_requires_separate_authorization"
+        ),
+        "ifind_canonical_accepted": probe.get("canonical_accepted") is True,
     }

@@ -9,11 +9,12 @@ reviewed catalog remains 36; `edb:search_edb` is enterprise-only and therefore
 over-broad query failures were repaired fail-closed. After PR #49 merged, one
 owner-authorized S1 again passed same-run S0 and called the fixed cohort exactly
 twice with no retry. Luxshare and Hengtong each returned one bounded identity
-row; symbol scope, company identity and schema verified for both. The rows stay
-`BLOCKED / NOT_CANONICAL` with `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN` because the
-summary exposes no auditable provider `available_at`. Local acquisition time
-may not be silently substituted. S2-S4 and research remain locked while the
-identity-only temporal contract is reviewed offline.
+row; symbol scope, company identity and schema verified for both. Call-plan v2
+accepts those rows only as `acceptance_metadata_only`: local runtime
+`observed_at` is provenance, provider `available_at` remains unknown,
+`pit_timestamp_verified=false`, and `canonical_accepted=false`. Only the exact
+prior safe local status may be migrated offline. S2 requires separate
+authorization; S3-S4 and research remain locked.
 
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 
@@ -62,9 +63,9 @@ and S0 are accepted for 7/7 services and 35/35 personal/trial entitled
 tools/schemas. The latest bounded S1 called Luxshare and Hengtong exactly once
 each; both one-row identity responses passed scope, company and schema checks.
 They remain non-canonical because the supplier summary has no auditable
-provider availability timestamp. A local `observed_at` may describe the
-acceptance event but cannot become provider `available_at` without an explicit
-temporal-contract decision.
+provider availability timestamp. The approved v2 contract records local
+`observed_at` only for acceptance provenance and explicitly leaves provider
+`available_at` unknown. This does not relax any canonical PIT rule.
 
 Naive timestamps are rejected by default. A caller may explicitly declare
 `Asia/Shanghai` only after confirming the returned field semantics; canonical

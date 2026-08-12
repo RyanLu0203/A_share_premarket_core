@@ -38,8 +38,8 @@ flowchart LR
 
     ACQ --> NORM --> PIT --> SNAP --> READ --> API --> UI
 
-    IFIND["iFinD AI 金融数据服务<br/>MCP/API Key: 7 services + 35 entitled tools<br/>S0 accepted; S1 PIT blocked"]
-    IFIND -. "identity staged; no canonical paid row" .-> ACQ
+    IFIND["iFinD AI 金融数据服务<br/>MCP/API Key: 7 services + 35 entitled tools<br/>S0 + S1 identity accepted"]
+    IFIND -. "acceptance metadata only; 0 canonical rows" .-> ACQ
 
     SNAP --> DE["DataExpansion01<br/>implemented_research_only"]
     DE --> R02["Regime02<br/>implemented_research_only"]
@@ -61,7 +61,7 @@ flowchart LR
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |
-| iFinD AI 金融数据服务 | S0 accepted; dual S1 identity staged; PIT blocked | The MCP/API Key channel passes seven services and 35/35 personal/trial tools/schemas. The latest bounded S1 called Luxshare and Hengtong once each; both one-row responses passed symbol scope, company identity and response-schema checks. Missing provider `available_at` keeps both rows `BLOCKED / NOT_CANONICAL`; S2-S4 and research remain locked. |
+| iFinD AI 金融数据服务 | S0 and S1 identity accepted; S2 separately locked | The MCP/API Key channel passes seven services and 35/35 tools/schemas. Both fixed summaries passed scope, identity and schema. Call-plan v2 accepts them only as non-canonical identity metadata with local `observed_at` and unknown provider `available_at`; S2 requires separate authorization and S3-S4/research remain locked. |
 
 Canonical interface details are maintained in
 [`configs/project/canonical_interfaces.json`](../../configs/project/canonical_interfaces.json)
@@ -77,7 +77,7 @@ and
 | Provider02B source-backed engineering panel | 50 | 120 | 6,000 | Committed `engineering_pilot` research panel spanning 2025-11-19 through 2026-05-21. |
 | Expanded network evidence / portfolio-risk canonical history | 41 with independent evidence | 843 | 34,543 | Historical evidence used by later readiness and portfolio-risk diagnostics. The broader catalog still contains 50 symbols, but only 41 have this independent evidence. |
 | Last documented complete operational acquisitions | 41/41 accepted per run | 1 target date per run | 41 per run | Two complete Tencent acquisitions for dynamic target 2026-07-31 and T-1 2026-07-30. This is the last documented acceptance, not a claim of freshness for 2026-08-09. |
-| iFinD live data | S0 accepted plus non-canonical S1 identity staging | no accepted dates | 0 canonical; 2 staged identity rows | Seven services and 35 entitled tool schemas are accepted. Both fixed cohort summaries passed identity/scope/schema staging, but missing provider availability timestamps prevented canonical promotion. |
+| iFinD live data | S0 accepted plus S1 identity acceptance metadata | no accepted dates | 0 canonical; 2 identity metadata rows | Seven services and 35 entitled schemas are accepted. Both fixed summaries passed identity/scope/schema; provider availability remains unknown and the local observation timestamp is not canonical evidence. |
 
 The authoritative evidence for these counts lives in goal manifests, including
 [`goal_data_provider02b_source_backed_panel_manifest.json`](../../outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json),

@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-12
 
-## IFIND S0 ACCEPTED AND DUAL-STOCK S1 PIT BLOCK
+## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
 
 - The Keychain-delivered test credential completed one governed seven-service
   MCP S0 run on 2026-08-12. All seven services negotiated protocol
@@ -24,14 +24,17 @@ Last updated: 2026-08-12
   calls with no retry. `002475.SZ` and `600487.SH` each produced one bounded
   provider Markdown table and one identity row; symbol scope, company identity
   and response schema all verified.
-- S1 overall remains deliberately `BLOCKED / NOT_CANONICAL` with
-  `IFIND_MCP_PIT_TIMESTAMP_UNPROVEN`: the supplier summary exposes no auditable
-  provider `available_at`. Local retrieval time must not be silently promoted
-  to provider availability. Two calls were counted, no raw payload was
-  persisted, and zero iFinD rows crossed the canonical boundary.
-- The next gate is an offline temporal-contract decision for identity-only
-  acceptance metadata (`observed_at` versus provider `available_at`). S2-S4
-  and all research remain locked until that contract is explicitly reviewed.
+- The owner approved the identity-only temporal contract. S1 now passes as
+  `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`: local runtime `observed_at` is
+  acceptance provenance only, provider `available_at` remains explicitly
+  unknown, `pit_timestamp_verified=false`, and `canonical_accepted=false`.
+- Call-plan v2 and the local status migration fail closed. Only the exact prior
+  two-call/no-failed-symbol/S0-and-schema-verified PIT-block state can be
+  reclassified without a provider call; incomplete or failed-symbol states are
+  rejected. Provider Health exposes only these allowlisted semantics.
+- S2 requires separate authorization after merge, deployment and local status
+  migration. S3-S4 and all research remain locked. No new API call, raw payload
+  or canonical row was created by the temporal-contract change.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -100,9 +103,9 @@ Research over new iFinD evidence has **not** started. External authentication,
 seven-service initialization, the active 35-tool entitlement and live input
 schemas are accepted at S0. The latest bounded S1 called both fixed cohort
 symbols exactly once: identity, scope and response schema passed for Luxshare
-and Hengtong, while the absent provider availability timestamp kept both rows
-non-canonical. The next gate is an offline temporal-contract decision; it is
-not another paid-data request.
+and Hengtong. The approved v2 contract accepts that result only as non-canonical
+identity metadata; provider availability remains unknown. The next data gate is
+a separately authorized S2, not an automatic continuation.
 Recommendation, position, trading, broker, production, S2-S4 and research
 capabilities remain locked.
 

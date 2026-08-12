@@ -75,6 +75,13 @@ function IfindFoundationEvidence({readiness, services, modules, pilot}: {readine
         <KpiCard label="Last data tool call" value={readiness.last_data_tool_called === true ? "YES" : "NO"} state={readiness.last_data_tool_called === true ? "WARNING" : "PASS"} />
         <KpiCard label="Last data call count" value={readiness.last_data_call_count ?? 0} />
         <KpiCard label="Last failed symbol" value={readiness.last_failed_symbol ?? "NONE"} />
+        <KpiCard label="S1 identity acceptance" value={readiness.s1_identity_acceptance_verified === true ? "VERIFIED" : "NOT VERIFIED"} state={readiness.s1_identity_acceptance_verified === true ? "PASS" : "PENDING"} />
+        <KpiCard label="S1 temporal class" value={readiness.s1_temporal_class ?? "UNAVAILABLE"} />
+        <KpiCard label="Provider available_at" value={readiness.s1_provider_available_at_verified === true ? "VERIFIED" : "UNKNOWN"} state={readiness.s1_provider_available_at_verified === true ? "PASS" : "WARNING"} />
+        <KpiCard label="Identity observed_at" value={readiness.s1_identity_observed_at ?? "NOT RECORDED"} />
+        <KpiCard label="S1 staged symbols" value={readiness.s1_staged_symbol_count ?? 0} />
+        <KpiCard label="iFinD canonical rows" value={readiness.ifind_canonical_accepted === true ? "UNEXPECTED" : 0} state={readiness.ifind_canonical_accepted === true ? "BLOCKED" : "PASS"} />
+        <KpiCard label="S2 authorization" value={readiness.s2_requires_separate_authorization === true ? "REQUIRED" : "LOCKED"} state="PENDING" />
         <KpiCard label="MCP services" value={readiness.supported_service_count ?? services.length} />
         <KpiCard label="Entitlement profile" value={readiness.entitlement_profile ?? "UNAVAILABLE"} />
         <KpiCard label="Reviewed / entitled tools" value={`${String(readiness.reviewed_tool_count ?? 0)} / ${String(readiness.expected_tool_count ?? 0)}`} />
