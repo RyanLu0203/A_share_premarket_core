@@ -1,21 +1,34 @@
 from __future__ import annotations
 
 import hashlib
+import json
+import os
+import shutil
+import tempfile
 from dataclasses import dataclass
+from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping, Sequence, Tuple
+from typing import Any, Callable, Mapping, Optional, Sequence, Tuple
 
 from ashare_premarket.providers.ifind_acceptance import (
     IFIND_DUAL_STOCK_IDENTITIES,
     IFIND_DUAL_STOCK_SYMBOLS,
     load_ifind_dual_stock_acceptance_config,
+    _run_seven_service_handshake,
 )
+from ashare_premarket.data.trading_calendar import trading_calendar
 from ashare_premarket.providers.ifind_http import IfindProviderError
-from ashare_premarket.providers.ifind_mcp import IfindMcpCallScope
+from ashare_premarket.providers.ifind_mcp import (
+    IFIND_MCP_S2_QUERY_TEMPLATES,
+    IfindMcpCallScope,
+    IfindMcpClient,
+    IfindMcpNetworkPolicy,
+)
 from ashare_premarket.providers.ifind_normalization import (
     IfindNormalizedBatch,
     normalize_ifind_payload,
 )
+from ashare_premarket.storage.policy import resolve_data_root
 
 
 IFIND_S2_STAGE_ID = "S2_SECURITY_MASTER_AND_DAILY_MARKET"
@@ -24,20 +37,10 @@ IFIND_S2_DATA_CALL_BUDGET = 4
 IFIND_S2_DAILY_SESSION_COUNT = 120
 IFIND_S2_ADJUSTMENT_MODE = "qfq"
 IFIND_S2_PREFLIGHT_STATE = "S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED"
+IFIND_S2_LOCAL_STATUS = "outputs/local/ifind/mcp_s2_status.json"
+IFIND_S2_ACCEPTANCE_STATE = "S2_SECURITY_MASTER_AND_DAILY_MARKET_ACCEPTED"
 
-_S2_QUERY_TEMPLATES = {
-    "get_stock_info": (
-        "返回{company_name}（{symbol}）的证券代码、证券简称、交易所、上市日期、"
-        "交易状态、ST状态、总股本、流通股本、所属行业、数据日期和数据可用时间；"
-        "数据可用时间必须包含时区；仅返回结构化字段。"
-    ),
-    "get_stock_performance": (
-        "返回{company_name}（{symbol}）截至{cutoff_date}最近120个已完成交易日的"
-        "前复权日线行情，包含证券代码、证券简称、交易日期、开盘、最高、最低、"
-        "收盘、成交量、成交额、换手率、复权方式和数据可用时间；数据可用时间必须"
-        "包含时区；不得返回未来日期；仅返回结构化字段。"
-    ),
-}
+_S2_QUERY_TEMPLATES = IFIND_MCP_S2_QUERY_TEMPLATES
 
 _SECURITY_REQUIRED_COLUMNS = (
     "证券代码",
@@ -109,6 +112,116 @@ class IfindS2Plan:
             "raw_payload_persisted": False,
             "canonical_accepted": False,
         }
+
+
+@dataclass(frozen=True)
+class IfindS2LiveResult:
+    safe_result: Mapping[str, Any]
+    batches: Tuple[IfindNormalizedBatch, ...] = ()
+
+
+S2ClientFactory = Callable[[IfindMcpNetworkPolicy, IfindMcpCallScope], IfindMcpClient]
+
+
+def run_ifind_s2_live_acceptance(
+    repository_root: Path,
+    *,
+    decision_timestamp: str,
+    cutoff_date: str,
+    s1_status: Mapping[str, Any],
+    environ: Optional[Mapping[str, str]] = None,
+    client_factory: Optional[S2ClientFactory] = None,
+) -> IfindS2LiveResult:
+    """Run same-client S0 plus at most four fixed S2 calls with zero retry."""
+
+    plan = build_ifind_s2_offline_plan(
+        repository_root, cutoff_date=cutoff_date, s1_status=s1_status
+    )
+    decision_cutoff = _validate_decision_timestamp(decision_timestamp)
+    expected_dates = _expected_trade_dates(repository_root, plan.cutoff_date)
+    source = environ if environ is not None else os.environ
+    policy = IfindMcpNetworkPolicy.from_environment(source)
+    policy.require_data_call_access()
+    factory = client_factory or _keychain_s2_client_factory
+    client = factory(policy, plan.scope)
+    handshake = _run_seven_service_handshake(client)
+    batches: list[IfindNormalizedBatch] = []
+    summaries: list[dict[str, Any]] = []
+    for call_index, call in enumerate(plan.calls, start=1):
+        try:
+            staged = client.call_s2_stock_tool(
+                call.symbol, call.tool_name, plan.cutoff_date
+            )
+            if call.tool_name == "get_stock_info":
+                batch = normalize_ifind_s2_security_master(
+                    staged=staged,
+                    symbol=call.symbol,
+                    company_name=call.company_name,
+                    decision_cutoff=decision_cutoff,
+                )
+            else:
+                batch = normalize_ifind_s2_daily_market(
+                    staged=staged,
+                    symbol=call.symbol,
+                    company_name=call.company_name,
+                    decision_cutoff=decision_cutoff,
+                    expected_trade_dates=expected_dates,
+                )
+        except IfindProviderError as exc:
+            return IfindS2LiveResult(
+                safe_result={
+                    "status": "BLOCKED",
+                    "mode": "live_stage_s2",
+                    "stage_id": IFIND_S2_STAGE_ID,
+                    "acceptance_state": "NOT_ACCEPTED",
+                    "failure_code": exc.failure_code,
+                    "http_status": exc.http_status,
+                    "failed_symbol": call.symbol,
+                    "failed_tool": call.tool_name,
+                    "data_call_count": call_index,
+                    "data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
+                    "retries_per_request": 0,
+                    "live_handshake_verified": True,
+                    "input_schemas_verified": True,
+                    "normalized_batch_count": len(batches),
+                    "normalized_row_count": sum(len(item.rows) for item in batches),
+                    "raw_payload_persisted": False,
+                    "canonical_accepted": False,
+                }
+            )
+        batches.append(batch)
+        summaries.append(
+            {
+                "symbol": call.symbol,
+                "tool_name": call.tool_name,
+                "module_id": batch.module_id,
+                "row_count": len(batch.rows),
+                "normalized_checksum": batch.normalized_checksum,
+            }
+        )
+    return IfindS2LiveResult(
+        safe_result={
+            "status": "PASS",
+            "mode": "live_stage_s2",
+            "stage_id": IFIND_S2_STAGE_ID,
+            "acceptance_state": IFIND_S2_ACCEPTANCE_STATE,
+            "decision_timestamp": decision_cutoff,
+            "cutoff_date": plan.cutoff_date,
+            "data_call_count": len(plan.calls),
+            "data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
+            "retries_per_request": 0,
+            "service_count": len(handshake),
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "normalized_batch_count": len(batches),
+            "normalized_row_count": sum(len(item.rows) for item in batches),
+            "batch_summaries": summaries,
+            "raw_payload_persisted": False,
+            "provider_schema_accepted": True,
+            "canonical_accepted": False,
+        },
+        batches=tuple(batches),
+    )
 
 
 def build_ifind_s2_offline_plan(
@@ -279,6 +392,215 @@ def normalize_ifind_s2_daily_market(
     )
 
 
+def write_ifind_s2_acceptance_bundle(
+    repository_root: Path,
+    result: IfindS2LiveResult,
+    *,
+    bundle_id: str,
+) -> Path:
+    """Atomically persist all four normalized batches outside the repository."""
+
+    if (
+        result.safe_result.get("status") != "PASS"
+        or result.safe_result.get("acceptance_state") != IFIND_S2_ACCEPTANCE_STATE
+        or len(result.batches) != IFIND_S2_DATA_CALL_BUDGET
+        or not bundle_id
+        or len(bundle_id) > 96
+        or any(
+            character not in "abcdefghijklmnopqrstuvwxyz0123456789-._"
+            for character in bundle_id
+        )
+    ):
+        raise IfindProviderError(
+            "IFIND_MCP_S2_BUNDLE_INVALID",
+            "S2 bundle requires one complete accepted four-batch result",
+        )
+    if not os.environ.get("ASHARE_PREMARKET_DATA_ROOT", "").strip():
+        raise IfindProviderError(
+            "IFIND_STORAGE_ROOT_ENV_REQUIRED",
+            "S2 paid normalized data requires an explicit external data root",
+        )
+    root = Path(repository_root).resolve()
+    data_root = resolve_data_root(root)
+    if data_root == root or root in data_root.parents:
+        raise IfindProviderError(
+            "IFIND_STORAGE_POLICY_VIOLATION",
+            "S2 paid normalized data root must remain outside the repository",
+        )
+    parent = data_root / "normalized" / "ifind" / "s2_acceptance"
+    target = parent / bundle_id
+    if target.exists():
+        raise IfindProviderError(
+            "IFIND_BUNDLE_IMMUTABLE", "S2 acceptance bundle already exists"
+        )
+    parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    os.chmod(parent, 0o700)
+    temporary = Path(tempfile.mkdtemp(prefix=f".{bundle_id}.tmp-", dir=parent))
+    try:
+        artifacts = []
+        for batch in result.batches:
+            symbols = sorted({str(row.get("symbol")) for row in batch.rows})
+            if len(symbols) != 1 or symbols[0] not in IFIND_DUAL_STOCK_SYMBOLS:
+                raise IfindProviderError(
+                    "IFIND_MCP_S2_BUNDLE_INVALID",
+                    "S2 batch does not map to one fixed cohort symbol",
+                )
+            file_name = f"{batch.module_id}__{symbols[0].replace('.', '_')}.jsonl"
+            path = temporary / file_name
+            with path.open("w", encoding="utf-8", newline="\n") as handle:
+                for row in batch.rows:
+                    handle.write(
+                        json.dumps(
+                            row,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        )
+                    )
+                    handle.write("\n")
+            os.chmod(path, 0o600)
+            artifacts.append(
+                {
+                    "file": file_name,
+                    "module_id": batch.module_id,
+                    "symbol": symbols[0],
+                    "row_count": len(batch.rows),
+                    "normalized_checksum": batch.normalized_checksum,
+                    "file_sha256": _sha256_file(path),
+                }
+            )
+        manifest = {
+            "bundle_id": bundle_id,
+            "provider_id": "ifind",
+            "stage_id": IFIND_S2_STAGE_ID,
+            "acceptance_state": IFIND_S2_ACCEPTANCE_STATE,
+            "license_storage_class": "paid_provider_local_only",
+            "symbols": list(IFIND_DUAL_STOCK_SYMBOLS),
+            "data_call_count": IFIND_S2_DATA_CALL_BUDGET,
+            "retries_per_request": 0,
+            "decision_timestamp": result.safe_result.get("decision_timestamp"),
+            "cutoff_date": result.safe_result.get("cutoff_date"),
+            "raw_payload_persisted": False,
+            "credentials_persisted": False,
+            "artifacts": artifacts,
+        }
+        manifest_path = temporary / "manifest.json"
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        os.chmod(manifest_path, 0o600)
+        temporary.rename(target)
+        return target / "manifest.json"
+    except Exception:
+        shutil.rmtree(temporary, ignore_errors=True)
+        raise
+
+
+def write_ifind_s2_status(repository_root: Path, payload: Mapping[str, Any]) -> Path:
+    target = Path(repository_root).resolve() / IFIND_S2_LOCAL_STATUS
+    target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    os.chmod(target.parent, 0o700)
+    safe = _sanitize_s2_status(
+        {
+            **payload,
+            "observed_at": datetime.now(timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z"),
+        }
+    )
+    temporary = target.with_suffix(".json.tmp")
+    temporary.write_text(
+        json.dumps(safe, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, target)
+    os.chmod(target, 0o600)
+    return target
+
+
+def read_ifind_s2_status(repository_root: Path) -> Mapping[str, Any]:
+    target = Path(repository_root).resolve() / IFIND_S2_LOCAL_STATUS
+    try:
+        raw = target.read_bytes()
+        if len(raw) > 64 * 1024:
+            raise ValueError("oversized")
+        parsed = json.loads(raw.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError):
+        return _sanitize_s2_status({"status": "NOT_RUN"})
+    if not isinstance(parsed, Mapping):
+        return _sanitize_s2_status({"status": "INVALID_LOCAL_STATUS"})
+    return _sanitize_s2_status(parsed)
+
+
+def _sanitize_s2_status(value: Mapping[str, Any]) -> Mapping[str, Any]:
+    status = str(value.get("status", "INVALID_LOCAL_STATUS"))
+    if status not in {"PASS", "BLOCKED", "NOT_RUN", "INVALID_LOCAL_STATUS"}:
+        status = "INVALID_LOCAL_STATUS"
+    acceptance_state = (
+        IFIND_S2_ACCEPTANCE_STATE
+        if status == "PASS"
+        and value.get("acceptance_state") == IFIND_S2_ACCEPTANCE_STATE
+        else "NOT_ACCEPTED"
+    )
+    count = value.get("data_call_count")
+    if isinstance(count, bool) or not isinstance(count, int) or not 0 <= count <= 4:
+        count = 0
+    row_count = value.get("normalized_row_count")
+    if (
+        isinstance(row_count, bool)
+        or not isinstance(row_count, int)
+        or not 0 <= row_count <= 242
+    ):
+        row_count = 0
+    failure_code = value.get("failure_code")
+    if not isinstance(failure_code, str) or not failure_code.startswith("IFIND_"):
+        failure_code = None
+    failed_symbol = value.get("failed_symbol")
+    if failed_symbol not in IFIND_DUAL_STOCK_SYMBOLS:
+        failed_symbol = None
+    failed_tool = value.get("failed_tool")
+    if failed_tool not in IFIND_S2_FIXED_TOOLS:
+        failed_tool = None
+    bundle_id = value.get("bundle_id")
+    if not isinstance(bundle_id, str) or len(bundle_id) > 96:
+        bundle_id = None
+    accepted = (
+        status == "PASS"
+        and acceptance_state == IFIND_S2_ACCEPTANCE_STATE
+        and count == 4
+        and row_count == 242
+        and value.get("bundle_persisted") is True
+        and bundle_id is not None
+    )
+    return {
+        "status": status,
+        "mode": "live_stage_s2" if status in {"PASS", "BLOCKED"} else "none",
+        "acceptance_state": acceptance_state,
+        "failure_code": None if status == "PASS" else failure_code,
+        "failed_symbol": None if status == "PASS" else failed_symbol,
+        "failed_tool": None if status == "PASS" else failed_tool,
+        "data_call_count": count,
+        "data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
+        "retries_per_request": 0,
+        "normalized_row_count": row_count,
+        "bundle_id": bundle_id if accepted else None,
+        "bundle_persisted": accepted,
+        "live_handshake_verified": value.get("live_handshake_verified") is True,
+        "input_schemas_verified": value.get("input_schemas_verified") is True,
+        "provider_schema_accepted": accepted,
+        "canonical_accepted": accepted,
+        "observed_at": (
+            value.get("observed_at")
+            if isinstance(value.get("observed_at"), str)
+            else None
+        ),
+        "credential_exposed": False,
+        "raw_payload_persisted": False,
+    }
+
+
 def _validate_s1_status(status: Mapping[str, Any]) -> None:
     required = {
         "status": "PASS",
@@ -391,13 +713,77 @@ def _validate_cutoff_date(value: str) -> str:
         )
     try:
         year, month, day = (int(part) for part in parts)
-        from datetime import date
-
         return date(year, month, day).isoformat()
     except ValueError as exc:
         raise IfindProviderError(
             "IFIND_MCP_S2_CUTOFF_INVALID", "S2 cutoff is not a calendar date"
         ) from exc
+
+
+def _validate_decision_timestamp(value: str) -> str:
+    text = str(value).strip()
+    if not text or ("+" not in text[10:] and not text.endswith("Z")):
+        raise IfindProviderError(
+            "IFIND_MCP_DECISION_TIMESTAMP_INVALID",
+            "S2 decision timestamp must include an explicit timezone",
+        )
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise IfindProviderError(
+            "IFIND_MCP_DECISION_TIMESTAMP_INVALID",
+            "S2 decision timestamp is not valid ISO-8601",
+        ) from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise IfindProviderError(
+            "IFIND_MCP_DECISION_TIMESTAMP_INVALID",
+            "S2 decision timestamp must include an explicit timezone",
+        )
+    return parsed.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _expected_trade_dates(repository_root: Path, cutoff_date: str) -> Tuple[str, ...]:
+    cutoff = _validate_cutoff_date(cutoff_date)
+    try:
+        rows = trading_calendar(Path(repository_root).resolve())
+    except (OSError, ValueError) as exc:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_CALENDAR_INVALID",
+            "S2 governed trading calendar is unavailable or invalid",
+        ) from exc
+    dates = tuple(
+        row["date"]
+        for row in rows
+        if row.get("is_trading_day") == "true" and row.get("date", "") <= cutoff
+    )[-IFIND_S2_DAILY_SESSION_COUNT:]
+    if len(dates) != IFIND_S2_DAILY_SESSION_COUNT or dates[-1] != cutoff:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_CALENDAR_INVALID",
+            "S2 cutoff must be the latest governed session in an exact 120-day window",
+        )
+    return dates
+
+
+def _keychain_s2_client_factory(
+    policy: IfindMcpNetworkPolicy, scope: IfindMcpCallScope
+) -> IfindMcpClient:
+    return IfindMcpClient.from_keychain(policy=policy, call_scope=scope)
+
+
+def s2_bundle_id(result: IfindS2LiveResult) -> str:
+    if result.safe_result.get("status") != "PASS" or not result.batches:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_BUNDLE_INVALID", "S2 bundle id requires an accepted result"
+        )
+    cutoff = str(result.safe_result.get("cutoff_date", "")).replace("-", "")
+    digest = hashlib.sha256(
+        "|".join(batch.normalized_checksum for batch in result.batches).encode("utf-8")
+    ).hexdigest()[:16]
+    return f"s2-{cutoff}-{digest}"
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _s2_contract_error() -> IfindProviderError:

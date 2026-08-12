@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-12 - iFinD S2 fail-closed live acceptance runner
+
+- Added same-session seven-service S0 revalidation followed by the exact
+  two-symbol/two-tool S2 plan, capped at four calls with zero retry.
+- Added strict in-memory normalization and atomic external persistence only
+  when all four responses produce two security-master rows and 240 governed
+  QFQ daily rows with accepted supplier timestamps.
+- Added a separate sanitized S2 local status and Provider Health evidence for
+  failure scope, call usage, row count and immutable bundle acceptance.
+- Recorded owner authorization for one bounded S2 execution after merge and
+  deployment; this code change itself performs no provider call.
+
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
 - Fast-forwarded the stable deployment to merged PR #52 commit `87f2de2`, ran

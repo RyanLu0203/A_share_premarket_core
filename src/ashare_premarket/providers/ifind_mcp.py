@@ -269,6 +269,20 @@ _PILOT_STOCK_QUERY_TEMPLATES = {
     ),
 }
 
+IFIND_MCP_S2_QUERY_TEMPLATES = {
+    "get_stock_info": (
+        "返回{company_name}（{symbol}）的证券代码、证券简称、交易所、上市日期、"
+        "交易状态、ST状态、总股本、流通股本、所属行业、数据日期和数据可用时间；"
+        "数据可用时间必须包含时区；仅返回结构化字段。"
+    ),
+    "get_stock_performance": (
+        "返回{company_name}（{symbol}）截至{cutoff_date}最近120个已完成交易日的"
+        "前复权日线行情，包含证券代码、证券简称、交易日期、开盘、最高、最低、"
+        "收盘、成交量、成交额、换手率、复权方式和数据可用时间；数据可用时间必须"
+        "包含时区；不得返回未来日期；仅返回结构化字段。"
+    ),
+}
+
 
 @dataclass(frozen=True, repr=False)
 class IfindMcpApiKey:
@@ -851,6 +865,42 @@ class IfindMcpClient:
             scope_symbols=scope_symbols,
         )
         return stage_ifind_mcp_pilot_stock_result(result, scope_symbols)
+
+    def call_s2_stock_tool(
+        self,
+        symbol: str,
+        tool_name: str,
+        cutoff_date: str,
+    ) -> Mapping[str, Any]:
+        """Call one exact S2 tool without accepting caller-provided query text."""
+
+        self.policy.require_data_call_access()
+        if tool_name not in IFIND_MCP_S2_QUERY_TEMPLATES:
+            raise IfindProviderError(
+                "IFIND_MCP_TOOL_NOT_ALLOWED",
+                "requested stock tool is outside the fixed S2 contract",
+            )
+        try:
+            normalized_cutoff = date.fromisoformat(cutoff_date).isoformat()
+        except ValueError as exc:
+            raise IfindProviderError(
+                "IFIND_MCP_ARGUMENTS_INVALID",
+                "S2 cutoff must be a valid ISO calendar date",
+            ) from exc
+        scope = self._require_call_scope()
+        company_name = scope.company_name(symbol)
+        query = IFIND_MCP_S2_QUERY_TEMPLATES[tool_name].format(
+            company_name=company_name,
+            symbol=symbol,
+            cutoff_date=normalized_cutoff,
+        )
+        result = self._call_tool(
+            "stock",
+            tool_name,
+            {"query": query},
+            scope_symbols=(symbol,),
+        )
+        return stage_ifind_mcp_pilot_stock_result(result, (symbol,))
 
     def _call_tool(
         self,
@@ -1579,9 +1629,7 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
     if temporal_class != "acceptance_metadata_only":
         temporal_class = None
     provider_available_at_status = value.get("provider_available_at_status")
-    if provider_available_at_status != (
-        "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
-    ):
+    if provider_available_at_status != ("UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"):
         provider_available_at_status = None
     identity_observed_at = value.get("identity_observed_at")
     if not _is_safe_utc_timestamp(identity_observed_at):
@@ -1598,8 +1646,7 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
         and mode == "live_stage_s1"
         and acceptance_state == "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
         and temporal_class == "acceptance_metadata_only"
-        and provider_available_at_status
-        == "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
+        and provider_available_at_status == "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
         and data_call_count == 2
         and staged_symbol_count == 2
         and failed_symbol is None
@@ -1646,9 +1693,8 @@ def _is_safe_utc_timestamp(value: Any) -> bool:
         parsed = datetime.fromisoformat(value[:-1] + "+00:00")
     except ValueError:
         return False
-    return (
-        parsed.tzinfo is not None
-        and parsed.utcoffset() == timezone.utc.utcoffset(None)
+    return parsed.tzinfo is not None and parsed.utcoffset() == timezone.utc.utcoffset(
+        None
     )
 
 

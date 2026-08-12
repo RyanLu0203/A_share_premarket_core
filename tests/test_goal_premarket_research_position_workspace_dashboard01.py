@@ -365,7 +365,18 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "s2_daily_session_count",
         "s2_adjustment_mode",
         "s2_live_calls_authorized",
+        "s2_last_status",
+        "s2_acceptance_state",
+        "s2_failure_code",
+        "s2_failed_symbol",
+        "s2_failed_tool",
+        "s2_data_call_count",
+        "s2_normalized_row_count",
+        "s2_bundle_id",
+        "s2_bundle_persisted",
         "s2_provider_schema_accepted",
+        "s2_canonical_accepted",
+        "s2_observed_at",
         "ifind_canonical_accepted",
     }
 
@@ -397,7 +408,12 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["s2_daily_session_count"] == 120
         assert readiness["s2_adjustment_mode"] == "qfq"
         assert readiness["s2_live_calls_authorized"] is False
+        assert readiness["s2_last_status"] == "NOT_RUN"
+        assert readiness["s2_data_call_count"] == 0
+        assert readiness["s2_normalized_row_count"] == 0
+        assert readiness["s2_bundle_persisted"] is False
         assert readiness["s2_provider_schema_accepted"] is False
+        assert readiness["s2_canonical_accepted"] is False
         assert readiness["ifind_canonical_accepted"] is False
         if readiness["last_data_tool_called"]:
             assert readiness["last_data_call_count"] in {1, 2}

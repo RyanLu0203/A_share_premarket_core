@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+import hashlib
+import json
+import os
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -8,6 +11,7 @@ import pytest
 
 from ashare_premarket.providers.ifind_http import IfindProviderError
 from ashare_premarket.providers.ifind_s2 import (
+    IFIND_S2_ACCEPTANCE_STATE,
     IFIND_S2_ADJUSTMENT_MODE,
     IFIND_S2_DATA_CALL_BUDGET,
     IFIND_S2_DAILY_SESSION_COUNT,
@@ -16,6 +20,15 @@ from ashare_premarket.providers.ifind_s2 import (
     build_ifind_s2_offline_plan,
     normalize_ifind_s2_daily_market,
     normalize_ifind_s2_security_master,
+    read_ifind_s2_status,
+    run_ifind_s2_live_acceptance,
+    s2_bundle_id,
+    write_ifind_s2_acceptance_bundle,
+    write_ifind_s2_status,
+)
+from ashare_premarket.providers.ifind_mcp import (
+    IFIND_MCP_ENTITLED_TOOL_CATALOG,
+    IFIND_MCP_PROTOCOL_VERSION,
 )
 
 
@@ -53,10 +66,12 @@ def _staged(rows: list[Mapping[str, Any]]) -> Mapping[str, Any]:
     }
 
 
-def _security_row() -> dict[str, Any]:
+def _security_row(
+    symbol: str = "002475.SZ", company_name: str = "立讯精密"
+) -> dict[str, Any]:
     return {
-        "证券代码": "002475.SZ",
-        "证券简称": "立讯精密",
+        "证券代码": symbol,
+        "证券简称": company_name,
         "数据日期": "2026-08-12",
         "数据可用时间": "2026-08-12T15:00:00+08:00",
         "上市日期": "2010-09-15",
@@ -67,15 +82,17 @@ def _security_row() -> dict[str, Any]:
     }
 
 
-def _market_fixture() -> tuple[list[dict[str, Any]], list[str]]:
+def _market_fixture(
+    symbol: str = "002475.SZ", company_name: str = "立讯精密"
+) -> tuple[list[dict[str, Any]], list[str]]:
     dates = [
         (date(2026, 4, 15) + timedelta(days=index)).isoformat()
         for index in range(IFIND_S2_DAILY_SESSION_COUNT)
     ]
     rows = [
         {
-            "证券代码": "002475.SZ",
-            "证券简称": "立讯精密",
+            "证券代码": symbol,
+            "证券简称": company_name,
             "交易日期": trade_date,
             "开盘": "10.0",
             "最高": "11.0",
@@ -90,6 +107,42 @@ def _market_fixture() -> tuple[list[dict[str, Any]], list[str]]:
         for trade_date in dates
     ]
     return rows, dates
+
+
+class _FakeS2Client:
+    def __init__(self, fail_first: bool = False) -> None:
+        self.fail_first = fail_first
+        self.calls: list[tuple[str, str, str]] = []
+
+    def initialize(self, _server_type: str) -> Mapping[str, Any]:
+        return {"protocolVersion": IFIND_MCP_PROTOCOL_VERSION}
+
+    def list_tools(self, server_type: str) -> tuple[str, ...]:
+        return tuple(sorted(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type]))
+
+    def list_tool_contracts(self, server_type: str) -> tuple[Mapping[str, Any], ...]:
+        return tuple(
+            {
+                "tool_name": tool_name,
+                "schema_sha256": hashlib.sha256(
+                    f"{server_type}:{tool_name}".encode("utf-8")
+                ).hexdigest(),
+                "supplier_contract_match": True,
+            }
+            for tool_name in sorted(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type])
+        )
+
+    def call_s2_stock_tool(
+        self, symbol: str, tool_name: str, cutoff_date: str
+    ) -> Mapping[str, Any]:
+        self.calls.append((symbol, tool_name, cutoff_date))
+        if self.fail_first:
+            return {"staging_format": "invalid", "canonical_accepted": False}
+        company = "立讯精密" if symbol == "002475.SZ" else "亨通光电"
+        if tool_name == "get_stock_info":
+            return _staged([_security_row(symbol, company)])
+        rows, _dates = _market_fixture(symbol, company)
+        return _staged(rows)
 
 
 def test_s2_offline_plan_is_exact_bounded_and_never_authorizes_calls() -> None:
@@ -242,3 +295,133 @@ def test_s2_daily_market_rejects_cross_symbol_response() -> None:
         )
 
     assert exc.value.failure_code == "IFIND_MCP_S2_IDENTITY_MISMATCH"
+
+
+def test_s2_live_acceptance_runs_same_client_s0_and_exactly_four_fixed_calls(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake = _FakeS2Client()
+    _rows, dates = _market_fixture()
+    monkeypatch.setattr(
+        "ashare_premarket.providers.ifind_s2._expected_trade_dates",
+        lambda _root, _cutoff: tuple(dates),
+    )
+
+    result = run_ifind_s2_live_acceptance(
+        ROOT,
+        decision_timestamp="2026-08-12T16:00:00+08:00",
+        cutoff_date="2026-08-12",
+        s1_status=_accepted_s1_status(),
+        environ={
+            "ASHARE_ALLOW_NETWORK_INGESTION": "1",
+            "ASHARE_ALLOW_IFIND": "1",
+            "ASHARE_ALLOW_IFIND_MCP": "1",
+            "ASHARE_ALLOW_IFIND_MCP_DATA_CALLS": "1",
+        },
+        client_factory=lambda _policy, _scope: fake,  # type: ignore[arg-type]
+    )
+
+    assert result.safe_result["status"] == "PASS"
+    assert result.safe_result["acceptance_state"] == IFIND_S2_ACCEPTANCE_STATE
+    assert result.safe_result["data_call_count"] == 4
+    assert result.safe_result["normalized_row_count"] == 242
+    assert result.safe_result["provider_schema_accepted"] is True
+    assert result.safe_result["canonical_accepted"] is False
+    assert len(result.batches) == 4
+    assert fake.calls == [
+        ("002475.SZ", "get_stock_info", "2026-08-12"),
+        ("002475.SZ", "get_stock_performance", "2026-08-12"),
+        ("600487.SH", "get_stock_info", "2026-08-12"),
+        ("600487.SH", "get_stock_performance", "2026-08-12"),
+    ]
+    rendered = json.dumps(result.safe_result, ensure_ascii=False)
+    assert "provider-secret" not in rendered
+    assert "tables" not in rendered
+
+
+def test_s2_live_acceptance_stops_after_first_schema_failure_without_retry(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake = _FakeS2Client(fail_first=True)
+    _rows, dates = _market_fixture()
+    monkeypatch.setattr(
+        "ashare_premarket.providers.ifind_s2._expected_trade_dates",
+        lambda _root, _cutoff: tuple(dates),
+    )
+
+    result = run_ifind_s2_live_acceptance(
+        ROOT,
+        decision_timestamp="2026-08-12T16:00:00+08:00",
+        cutoff_date="2026-08-12",
+        s1_status=_accepted_s1_status(),
+        environ={
+            "ASHARE_ALLOW_NETWORK_INGESTION": "1",
+            "ASHARE_ALLOW_IFIND": "1",
+            "ASHARE_ALLOW_IFIND_MCP": "1",
+            "ASHARE_ALLOW_IFIND_MCP_DATA_CALLS": "1",
+        },
+        client_factory=lambda _policy, _scope: fake,  # type: ignore[arg-type]
+    )
+
+    assert result.safe_result["status"] == "BLOCKED"
+    assert result.safe_result["data_call_count"] == 1
+    assert result.safe_result["retries_per_request"] == 0
+    assert result.safe_result["canonical_accepted"] is False
+    assert result.batches == ()
+    assert fake.calls == [("002475.SZ", "get_stock_info", "2026-08-12")]
+
+
+def test_s2_bundle_is_external_atomic_normalized_only_and_status_is_sanitized(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake = _FakeS2Client()
+    _rows, dates = _market_fixture()
+    monkeypatch.setattr(
+        "ashare_premarket.providers.ifind_s2._expected_trade_dates",
+        lambda _root, _cutoff: tuple(dates),
+    )
+    result = run_ifind_s2_live_acceptance(
+        ROOT,
+        decision_timestamp="2026-08-12T16:00:00+08:00",
+        cutoff_date="2026-08-12",
+        s1_status=_accepted_s1_status(),
+        environ={
+            "ASHARE_ALLOW_NETWORK_INGESTION": "1",
+            "ASHARE_ALLOW_IFIND": "1",
+            "ASHARE_ALLOW_IFIND_MCP": "1",
+            "ASHARE_ALLOW_IFIND_MCP_DATA_CALLS": "1",
+        },
+        client_factory=lambda _policy, _scope: fake,  # type: ignore[arg-type]
+    )
+    external = tmp_path / "paid-data"
+    monkeypatch.setenv("ASHARE_PREMARKET_DATA_ROOT", str(external))
+    bundle = s2_bundle_id(result)
+    manifest_path = write_ifind_s2_acceptance_bundle(ROOT, result, bundle_id=bundle)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    assert manifest["bundle_id"] == bundle
+    assert len(manifest["artifacts"]) == 4
+    assert sum(row["row_count"] for row in manifest["artifacts"]) == 242
+    assert all(row["file"].endswith(".jsonl") for row in manifest["artifacts"])
+    assert not list(external.rglob("*raw*"))
+    assert os.stat(manifest_path).st_mode & 0o777 == 0o600
+
+    local_root = tmp_path / "local-status-root"
+    payload = dict(result.safe_result)
+    payload.update(
+        {
+            "bundle_id": bundle,
+            "bundle_persisted": True,
+            "canonical_accepted": True,
+            "api_key": "must-never-persist",
+        }
+    )
+    write_ifind_s2_status(local_root, payload)
+    status = read_ifind_s2_status(local_root)
+    assert status["provider_schema_accepted"] is True
+    assert status["canonical_accepted"] is True
+    rendered = (local_root / "outputs/local/ifind/mcp_s2_status.json").read_text(
+        encoding="utf-8"
+    )
+    assert "must-never-persist" not in rendered
+    assert "api_key" not in rendered
