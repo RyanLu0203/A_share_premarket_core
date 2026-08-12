@@ -15,6 +15,9 @@ from ashare_premarket.providers.ifind_http import (
 )
 from ashare_premarket.providers.ifind_mcp import (
     IFIND_MCP_DATA_CALL_ENV,
+    IFIND_MCP_ENTITLEMENT_PROFILE,
+    IFIND_MCP_ENTITLED_TOOL_CATALOG,
+    IFIND_MCP_PLAN_UNAVAILABLE_TOOLS,
     IFIND_MCP_PROTOCOL_VERSION,
     IFIND_MCP_PROVIDER_ENV,
     IFIND_MCP_SERVERS,
@@ -220,7 +223,26 @@ def run_ifind_dual_stock_acceptance(
 
     summaries = []
     for symbol in config.symbols:
-        staged = client.call_pilot_stock_tool(symbol, "get_stock_summary")
+        try:
+            staged = client.call_pilot_stock_tool(symbol, "get_stock_summary")
+        except IfindProviderError as exc:
+            return {
+                **result,
+                "status": "BLOCKED",
+                "mode": "live_stage_s1",
+                "failure_code": exc.failure_code,
+                "http_status": exc.http_status,
+                "acceptance_state": "NOT_CANONICAL",
+                "decision_timestamp": resolved_decision_timestamp,
+                "stage_id": "S1_TWO_STOCK_SUMMARY_IDENTITY",
+                "failed_symbol": symbol,
+                "data_tool_called": True,
+                "data_call_count": len(summaries) + 1,
+                "data_call_budget": 2,
+                "pit_timestamp_verified": False,
+                "canonical_accepted": False,
+                "staging_summaries": summaries,
+            }
         summaries.append(_summarize_staged_result(symbol, staged))
 
     # The current staging contract deliberately has no schema-specific mapping
@@ -255,7 +277,7 @@ def _run_seven_service_handshake(client: IfindMcpClient) -> list[dict[str, Any]]
             )
         actual_tools = client.list_tools(server_type)
         tool_contracts = client.list_tool_contracts(server_type)
-        expected_tools = tuple(sorted(IFIND_MCP_TOOL_CATALOG[server_type]))
+        expected_tools = tuple(sorted(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type]))
         if tuple(actual_tools) != expected_tools:
             raise IfindProviderError(
                 "IFIND_MCP_TOOL_CATALOG_MISMATCH",
@@ -292,13 +314,22 @@ def _run_seven_service_handshake(client: IfindMcpClient) -> list[dict[str, Any]]
                 "protocol_version": initialization.get("protocolVersion"),
                 "tool_count": len(actual_tools),
                 "catalog_match": True,
+                "unavailable_by_plan": list(
+                    IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.get(server_type, ())
+                ),
                 "schema_contracts": safe_contracts,
             }
         )
-    if len(summaries) != 7 or sum(row["tool_count"] for row in summaries) != 36:
+    expected_entitled_count = sum(
+        len(names) for names in IFIND_MCP_ENTITLED_TOOL_CATALOG.values()
+    )
+    if (
+        len(summaries) != 7
+        or sum(row["tool_count"] for row in summaries) != expected_entitled_count
+    ):
         raise IfindProviderError(
             "IFIND_MCP_TOOL_CATALOG_MISMATCH",
-            "live iFinD catalog does not contain exactly seven services and 36 tools",
+            "live iFinD catalog does not match the active entitlement profile",
         )
     return summaries
 
@@ -368,7 +399,18 @@ def _offline_summary(config: IfindDualStockAcceptanceConfig) -> Mapping[str, Any
         "plan_id": config.call_plan["plan_id"],
         "symbols": list(config.symbols),
         "service_count": 7,
-        "expected_tool_count": 36,
+        "entitlement_profile": IFIND_MCP_ENTITLEMENT_PROFILE,
+        "reviewed_tool_count": sum(
+            len(names) for names in IFIND_MCP_TOOL_CATALOG.values()
+        ),
+        "expected_tool_count": sum(
+            len(names) for names in IFIND_MCP_ENTITLED_TOOL_CATALOG.values()
+        ),
+        "unavailable_by_plan": [
+            f"{server_type}:{tool_name}"
+            for server_type, tool_names in IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.items()
+            for tool_name in tool_names
+        ],
         "stages": [
             {
                 "stage_id": stage["stage_id"],
@@ -404,6 +446,8 @@ def _validate_document_identities(
     _require(call_plan.get("canonical_approved_symbols_unchanged") is True)
     _require(pilot.get("canonical_approved_symbols_unchanged") is True)
     _require(pilot.get("research_unlock_allowed") is False)
+    _require(pilot.get("entitlement_profile") == IFIND_MCP_ENTITLEMENT_PROFILE)
+    _require(call_plan.get("entitlement_profile") == IFIND_MCP_ENTITLEMENT_PROFILE)
 
 
 def _validate_symbols(
@@ -522,7 +566,8 @@ def _validate_budgets(
         == plan_budget.get("service_handshakes_maximum")
         == 7
     )
-    _require(contract_budget.get("expected_tool_count") == 36)
+    _require(contract_budget.get("reviewed_tool_count") == 36)
+    _require(contract_budget.get("entitled_expected_tool_count") == 35)
     _require(
         contract_budget.get("handshake_protocol_requests_maximum")
         == plan_budget.get("handshake_protocol_requests_maximum")

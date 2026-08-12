@@ -318,18 +318,20 @@ Handoff policy:
   recommendation, position, portfolio output, dashboard/frontend file, trading,
   production, broker, factor-mining, DQN/RL output, or predictive-validity
   claim.
-- The purchased iFinD product channel is MCP/API Key. Its offline foundation
-  has seven exact Streamable HTTP services, 36 reviewed supplier tools, a
+- The purchased iFinD product channel is MCP/API Key. Its foundation has seven
+  exact Streamable HTTP services, 36 reviewed supplier tools, 35 tools in the
+  active personal/trial entitlement, a
   Keychain-safe client, canonical normalization contracts, a strict S0-S4
   two-symbol call plan, and sanitized Issue #24 Workspace readiness. The old
   exposed credential is permanently forbidden and the user reports rotation.
-  Portal debug succeeds, but governed external handshakes return HTTP 401, so
-  external authentication, `initialize`/`tools/list`, live schemas and all
-  data remain unaccepted. Three handshake gates and a separate default-off
-  fourth data-call gate are mandatory. The supplier Skill is reference-only
-  and QuantAPI HTTPS is optional only if separately entitled. This does not
-  unlock generic Dashboard, research, recommendation, position, trading,
-  broker, or production paths.
+  On 2026-08-12 S0 passed 7/7 services and 35/35 active entitled tools/schemas;
+  enterprise-only `edb:search_edb` is unavailable by plan. One S1 Luxshare
+  response was quarantined as scope-unverified; Hengtong was not called, no
+  retry occurred and no data was accepted. Three handshake gates and a
+  separate default-off fourth data-call gate remain mandatory. The supplier
+  Skill is reference-only and QuantAPI HTTPS is optional only if separately
+  entitled. This does not unlock generic Dashboard, research, recommendation,
+  position, trading, broker, or production paths.
 - GOAL-DATA-EXPANSION-RESEARCH-01 is `implemented_research_only` (reconciled from the Regime02 research lineage; offline committed-evidence market-regime data expansion).
 - GOAL-REGIME-LABEL-RESEARCH-02 is `implemented_research_only` (expanded market regime label refinement over DataExpansion01 evidence; no factor evaluation).
 - GOAL-QUANT-RESEARCH-04 is `implemented_research_only` (regime-conditional factor evaluation over committed Regime02 evidence; ready_factor_count remains 0; does not unlock recommendation tiering).

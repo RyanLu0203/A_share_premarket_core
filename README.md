@@ -4,7 +4,7 @@
 PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可审计链路中；它不是
 自动交易系统，也不输出可执行的推荐、目标仓位或订单。
 
-## Current Project Truth — 2026-08-09
+## Current Project Truth — 2026-08-12
 
 | Area | Current state |
 | --- | --- |
@@ -13,17 +13,14 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | Purchased Tonghuashun iFinD **MCP/API Key** channel: 7 Streamable HTTP services, 36 reviewed tools, Keychain-safe client and seven governed data modules implemented offline-first; user-reported rotation complete, portal debug succeeds, but governed external authentication still returns HTTP 401 and remains unaccepted |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services, 35/35 personal/trial entitled tools and live input schemas; the 36th reviewed tool `search_edb` is enterprise-only. One Luxshare S1 response was quarantined; no iFinD row is canonical |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
 governed contract. The separate generic downstream boundary is unchanged:
 Dashboard / Daily Report UI remains `locked_future`.
 
-GitHub currently points its default branch at the historical `main`, which is
-108 commits behind `project-current`. The default branch must be changed after
-the current documentation/foundation branch is reviewed; maintaining two
-independent landing pages would recreate the same drift.
+GitHub now points its default branch at authoritative `project-current`.
 
 ## Current Architecture
 
@@ -32,7 +29,7 @@ flowchart LR
     subgraph P["Provider acquisition — default network off"]
         T["Tencent / AKShare operational T-1"]
         C["Committed Baostock + AKShare research evidence"]
-        I["iFinD AI Financial Data Service\nMCP/API Key: 7 services / 36 tools"]
+        I["iFinD AI Financial Data Service\nS0: 7 services / 35 entitled tools"]
     end
     subgraph G["Governance and evidence"]
         N["Schema normalization + provider reconciliation"]
@@ -51,7 +48,7 @@ flowchart LR
 
     T --> N
     C --> N
-    I -. "external auth 401; tools/list + schema validation pending" .-> N
+    I -. "S0 accepted; S1 response quarantined" .-> N
     N --> Q --> S --> A --> U
     S --> D --> G11 --> L
 ```
@@ -106,11 +103,10 @@ and is not executed; see
 
 ## Next Delivery Sequence
 
-1. Resolve why portal debug succeeds while governed external MCP authentication returns HTTP 401; do not retry data calls or replace empty states with guesses.
-2. Run S0: initialize all seven services and verify the 36-tool entitlement catalog plus live input-schema fingerprints, with zero data calls.
-3. After a separate owner-authorized fourth gate, run S1: one fixed `get_stock_summary` call per acceptance symbol, stage only bounded metadata, and keep it non-canonical until PIT mapping is proven.
-4. Run S2/S3 only after prior gates pass: security master, 120-day market evidence, fundamentals, ownership, risk and event modules; normalize and audit bundles outside Git.
-5. Keep S4 market context and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass; then fill existing read models before resuming research.
+1. Preserve the accepted S0 baseline: 7/7 services, 35/35 active entitled tools and schemas; keep enterprise-only `search_edb` explicitly unavailable by plan.
+2. Review the exact provider-native six-digit security-code mapping and separately authorize one bounded S1 rerun; do not retry automatically.
+3. Keep all S1 output non-canonical until symbol identity and PIT mapping pass for both `002475.SZ` and `600487.SH`.
+4. Run S2/S3 only after S1 passes; keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
 
 The remainder of this README retains detailed goal history and operational
 notes for compatibility. For current truth, use the sections above and the

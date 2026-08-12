@@ -3,6 +3,7 @@
   "contract_id": "ifind_ai_financial_data_service_v1",
   "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
   "purpose": "bounded_point_in_time_safe_provider_and_workspace_foundation_acceptance_only",
+  "entitlement_profile": "personal_trial_non_enterprise",
   "default_state": "disabled",
   "credential_values_allowed": false,
   "canonical_approved_symbols_unchanged": true,
@@ -54,9 +55,9 @@
   "prerequisite_acceptance": [
     "rotated_credential_delivered_without_exposure",
     "initialize_succeeds_for_all_7_services",
-    "tools_list_contains_exact_36_tool_catalog",
-    "all_36_input_schemas_match_required_field_contracts",
-    "all_36_input_schema_SHA256_fingerprints_recorded_in_sanitized_local_evidence",
+    "tools_list_matches_active_35_tool_entitlement_profile",
+    "all_35_entitled_input_schemas_match_required_field_contracts",
+    "all_35_entitled_input_schema_SHA256_fingerprints_recorded_in_sanitized_local_evidence",
     "no_schema_fingerprint_drift_requires_review"
   ],
   "stages": [
@@ -68,7 +69,7 @@
       "data_tools": [],
       "data_call_budget": 0,
       "success_requires": [
-        "exact_service_and_tool_catalog_match",
+        "exact_active_entitlement_service_and_tool_catalog_match",
         "input_schema_required_fields_match",
         "input_schema_fingerprints_available",
         "no_credentials_or_raw_schemas_in_persisted_output"

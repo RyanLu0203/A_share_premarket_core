@@ -1,5 +1,10 @@
 # 同花顺 iFinD AI 金融数据服务接入说明
 
+> 2026-08-12 live checkpoint：S0 已通过 7/7 服务与个人/试用版 35/35 个
+> entitlement 工具及 input schema。完整审阅目录仍为 36，企业版专属
+> `edb:search_edb` 标记为 `UNAVAILABLE_BY_PLAN`。S1 只尝试了立讯精密一次，
+> 响应因证券代码范围尚未被规范化而隔离；亨通光电未调用、未重试、无数据接纳。
+
 本文定义项目对已购买的同花顺 iFinD「AI 金融数据服务」的安全接入、数据分层、落盘和验收边界。iFinD 在本项目中的定位是付费专业金融数据源，用于补全证券主数据、行情、PIT 财务与估值、行业、公告元数据、宏观和市场结构证据；它不是自然语言选股器、推荐系统或交易执行入口。
 
 用户实际购买的是 iFinD **MCP/API Key** 产品。项目因此以官方
@@ -166,17 +171,16 @@ Keychain 值、供应商响应体和原始 schema 均不写入。
 python scripts/run_ifind_mcp_dual_stock_acceptance.py
 ```
 
-当单服务认证问题解决后，`--live-handshake` 会在同一次受控运行内核对全部七个
-服务和 36 个工具，只输出工具名与 input schema 的 SHA-256。S1 数据探针还需
+`--live-handshake` 会在同一次受控运行内核对全部七个服务、完整审阅目录与当前
+套餐 entitlement，只输出工具名与 input schema 的 SHA-256。S1 数据探针还需
 独立第四开关和显式带时区的 `--decision-timestamp`；它固定只调用立讯精密和
 亨通光电各一次 `get_stock_summary`，且在字段级 PIT 映射完成前始终返回
 `BLOCKED / NOT_CANONICAL`，不会打印或保存供应商原文。
 
-截至 2026-08-09，iFinD 门户内置调试对 `get_stock_summary` 查询立讯精密返回
-`code=1`、`msg=success`，证明门户会话内的产品工具可工作；受治理客户端的多次
-外部握手则返回 HTTP 401，尚未通过外部认证。两者可能使用不同认证上下文，
-因此不能据此宣称轮换后的凭据无效，也不能宣称外部 MCP 已验收。第四数据调用
-开关保持关闭，未执行任何受治理的 `tools/call`，也未接纳任何 iFinD 数据。
+截至 2026-08-12，受治理客户端已完成外部认证和 S0：7/7 服务、35/35 当前
+entitlement 工具与 live schema 通过。`search_edb` 的缺失由官方套餐范围解释为
+企业版专属。一次 S1 立讯摘要响应因范围未验证被隔离，亨通未调用且未重试；
+仍未接纳任何 iFinD 数据。
 
 ## 分阶段验收
 

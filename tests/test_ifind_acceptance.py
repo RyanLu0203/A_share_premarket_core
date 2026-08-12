@@ -24,6 +24,7 @@ from ashare_premarket.providers.ifind_acceptance import (
 from ashare_premarket.providers.ifind_http import IfindProviderError
 from ashare_premarket.providers.ifind_mcp import (
     IFIND_MCP_PROTOCOL_VERSION,
+    IFIND_MCP_ENTITLED_TOOL_CATALOG,
     IFIND_MCP_SERVERS,
     IFIND_MCP_TOOL_CATALOG,
     IfindMcpCallScope,
@@ -53,7 +54,7 @@ class FakeAcceptanceClient:
 
     def list_tools(self, server_type: str) -> tuple[str, ...]:
         self.catalog_calls.append(server_type)
-        return tuple(sorted(IFIND_MCP_TOOL_CATALOG[server_type]))
+        return tuple(sorted(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type]))
 
     def list_tool_contracts(self, server_type: str) -> tuple[Mapping[str, Any], ...]:
         return tuple(
@@ -65,7 +66,7 @@ class FakeAcceptanceClient:
                 "supplier_contract_match": True,
                 "raw_schema_forbidden_marker": self.raw_marker,
             }
-            for tool_name in sorted(IFIND_MCP_TOOL_CATALOG[server_type])
+            for tool_name in sorted(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type])
         )
 
     def call_pilot_stock_tool(
@@ -179,7 +180,10 @@ def test_live_handshake_emits_only_safe_catalog_and_schema_hash_metadata() -> No
     assert payload["status"] == "PASS"
     assert payload["acceptance_state"] == "S0_HANDSHAKE_AND_SCHEMA_VERIFIED"
     assert len(payload["handshake"]) == 7
-    assert sum(row["tool_count"] for row in payload["handshake"]) == 36
+    assert payload["reviewed_tool_count"] == 36
+    assert payload["expected_tool_count"] == 35
+    assert payload["unavailable_by_plan"] == ["edb:search_edb"]
+    assert sum(row["tool_count"] for row in payload["handshake"]) == 35
     assert fake.initialized == list(IFIND_MCP_SERVERS)
     assert fake.catalog_calls == list(IFIND_MCP_SERVERS)
     assert factory_calls[0][1] is None
@@ -286,6 +290,36 @@ def test_live_s1_requires_fourth_gate_and_timezone_before_client_creation() -> N
     assert exc.value.failure_code == "IFIND_MCP_DECISION_TIMESTAMP_INVALID"
     assert client_created is False
 
+
+def test_live_s1_truthfully_counts_a_provider_response_rejected_during_staging() -> None:
+    class RejectedFirstResponseClient(FakeAcceptanceClient):
+        def call_pilot_stock_tool(
+            self, symbol: str, tool_name: str
+        ) -> Mapping[str, Any]:
+            self.data_calls.append((symbol, tool_name))
+            raise IfindProviderError(
+                "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED",
+                "fixture response cannot cross the accepted scope boundary",
+            )
+
+    fake = RejectedFirstResponseClient()
+
+    payload = run_ifind_dual_stock_acceptance(
+        ROOT,
+        mode="live_stage_s1",
+        decision_timestamp="2026-08-12T16:38:14+08:00",
+        environ=FOUR_GATES,
+        client_factory=lambda _policy, _scope: fake,  # type: ignore[arg-type]
+    )
+
+    assert payload["status"] == "BLOCKED"
+    assert payload["failure_code"] == "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED"
+    assert payload["failed_symbol"] == "002475.SZ"
+    assert payload["data_tool_called"] is True
+    assert payload["data_call_count"] == 1
+    assert payload["data_call_budget"] == 2
+    assert payload["staging_summaries"] == []
+    assert fake.data_calls == [("002475.SZ", "get_stock_summary")]
 
 def test_acceptance_cli_defaults_offline_and_does_not_render_environment_secret() -> (
     None

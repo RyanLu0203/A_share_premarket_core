@@ -36,18 +36,19 @@ production writes, production promotion, and DQN/RL remain locked or absent.
 ## iFinD Dual-Stock Data Authorization
 
 The purchased Tonghuashun iFinD channel is Streamable HTTP MCP/API Key with
-seven contracted services and 36 reviewed tools. Main Codex may maintain its
+seven contracted services, 36 reviewed tools and 35 tools in the active
+personal/trial entitlement. Main Codex may maintain its
 local Keychain-backed, default-off acceptance path for `002475.SZ` and
 `600487.SH`, plus the existing 23-page / 22-GET / zero-write Workspace. This
 local credential path must not be delegated to GitHub-only Codex Max.
 
-The old exposed credential is permanently forbidden and the user reports
-rotation. Portal debug succeeds, but governed external handshakes return HTTP
-401, so external authentication and all iFinD data remain unaccepted. S0 uses
-three handshake gates and zero data calls; S1-S3 additionally require the
-separate fourth data-call gate and remain non-canonical until schema/PIT
-acceptance. Recommendation, position, target-price, order, broker, trading and
-production paths remain locked.
+The old exposed credential is permanently forbidden. On 2026-08-12 S0 passed
+for 7/7 services and 35/35 active entitled tools/schemas; enterprise-only
+`edb:search_edb` is `UNAVAILABLE_BY_PLAN`. One S1 Luxshare summary response was
+quarantined as scope-unverified, Hengtong was not called, and no retry or
+canonical acceptance occurred. Any further S1 call needs separate approval;
+S2-S4, research, recommendation, position, target-price, order, broker,
+trading and production paths remain locked.
 
 ## Codex Operating System
 
@@ -105,11 +106,9 @@ Required reading order:
 Next allowed goals:
 
 1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
-2. Resolve the portal-success versus governed external-HTTP-401 iFinD
-   authentication mismatch; then run S0 seven-service/36-tool entitlement and
-   live-schema validation. Use the separate fourth gate only for the fixed
-   dual-stock S1-S3 plan. The supplier Skill is reference-only and must not be
-   executed unmodified.
+2. Preserve the accepted iFinD S0 baseline and, only after explicit approval,
+   rerun the fixed two-symbol S1 with the reviewed provider-native code mapping.
+   The supplier Skill remains reference-only and must not execute unmodified.
 3. Complete the existing read-only Workspace data surfaces, then resume
    research only after data acceptance; Recommendation Tiering still requires
    a ready factor and explicit user approval.

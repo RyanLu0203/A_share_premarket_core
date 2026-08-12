@@ -2,6 +2,7 @@
   "cohort_id": "ifind_mcp_dual_stock_acceptance_v1",
   "as_of_date": "2026-08-09",
   "purpose": "bounded_data_and_workspace_foundation_acceptance_only",
+  "entitlement_profile": "personal_trial_non_enterprise",
   "canonical_approved_symbols_unchanged": true,
   "research_unlock_allowed": false,
   "symbols": [

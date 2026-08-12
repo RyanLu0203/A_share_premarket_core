@@ -73,8 +73,12 @@ function IfindFoundationEvidence({readiness, services, modules, pilot}: {readine
         <KpiCard label="Live handshake" value={readiness.last_handshake_verified === true ? "VERIFIED" : "NOT VERIFIED"} state={readiness.last_handshake_verified === true ? "PASS" : "PENDING"} />
         <KpiCard label="Live input schemas" value={readiness.last_input_schemas_verified === true ? "VERIFIED" : "NOT VERIFIED"} state={readiness.last_input_schemas_verified === true ? "PASS" : "PENDING"} />
         <KpiCard label="Last data tool call" value={readiness.last_data_tool_called === true ? "YES" : "NO"} state={readiness.last_data_tool_called === true ? "WARNING" : "PASS"} />
+        <KpiCard label="Last data call count" value={readiness.last_data_call_count ?? 0} />
+        <KpiCard label="Last failed symbol" value={readiness.last_failed_symbol ?? "NONE"} />
         <KpiCard label="MCP services" value={readiness.supported_service_count ?? services.length} />
-        <KpiCard label="Expected tools" value={readiness.expected_tool_count ?? 0} />
+        <KpiCard label="Entitlement profile" value={readiness.entitlement_profile ?? "UNAVAILABLE"} />
+        <KpiCard label="Reviewed / entitled tools" value={`${String(readiness.reviewed_tool_count ?? 0)} / ${String(readiness.expected_tool_count ?? 0)}`} />
+        <KpiCard label="Unavailable by plan" value={readiness.unavailable_by_plan_count ?? 0} warning={Array.isArray(readiness.unavailable_by_plan) ? readiness.unavailable_by_plan.join(", ") : "NONE"} />
         <KpiCard label="Data modules" value={readiness.data_module_count ?? modules.length} />
         <KpiCard label="Raw payload commit" value={readiness.raw_payload_commit_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"} state="PASS" />
         <KpiCard label="Local token persistence" value={readiness.local_token_persistence_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"} state="PASS" />
@@ -85,7 +89,9 @@ function IfindFoundationEvidence({readiness, services, modules, pilot}: {readine
         {key: "server_type", label: "Service"},
         {key: "server_id", label: "Server ID"},
         {key: "endpoint_path", label: "Approved path"},
-        {key: "expected_tool_count", label: "Expected tools"},
+        {key: "reviewed_tool_count", label: "Reviewed tools"},
+        {key: "expected_tool_count", label: "Entitled tools"},
+        {key: "unavailable_by_plan", label: "Unavailable by plan"},
         {key: "implementation_state", label: "State", render: (row) => <StatusBadge state={String(row.implementation_state)} />},
       ]} searchPlaceholder="Search iFinD MCP services" compact />
     </Panel>

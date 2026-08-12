@@ -15,6 +15,9 @@ from ashare_premarket.providers.ifind_mcp import (
     IFIND_MCP_BASE_URL,
     IFIND_MCP_DATA_CALL_ENV,
     IFIND_MCP_EXPECTED_INPUT_FIELDS,
+    IFIND_MCP_ENTITLEMENT_PROFILE,
+    IFIND_MCP_ENTITLED_TOOL_CATALOG,
+    IFIND_MCP_PLAN_UNAVAILABLE_TOOLS,
     IFIND_MCP_SERVICE_CATALOG,
     IFIND_MCP_SERVERS,
     IFIND_MCP_TOOL_CATALOG,
@@ -154,6 +157,8 @@ def _client(transport, *, data_calls: bool = False) -> IfindMcpClient:
 def test_ifind_mcp_contract_has_seven_services_and_supplier_tool_catalog() -> None:
     assert len(IFIND_MCP_SERVERS) == len(IFIND_MCP_SERVICE_CATALOG) == 7
     assert sum(len(tools) for tools in IFIND_MCP_TOOL_CATALOG.values()) == 36
+    assert sum(len(tools) for tools in IFIND_MCP_ENTITLED_TOOL_CATALOG.values()) == 35
+    assert IFIND_MCP_PLAN_UNAVAILABLE_TOOLS == {"edb": ("search_edb",)}
     assert IFIND_MCP_BASE_URL == "https://api-mcp.51ifind.com:8643/ds-mcp-servers"
     assert {row["server_type"] for row in IFIND_MCP_SERVICE_CATALOG} == set(
         IFIND_MCP_SERVERS
@@ -194,7 +199,10 @@ def test_ifind_mcp_readiness_is_offline_and_never_reads_or_exposes_credentials()
 
     assert readiness["readiness_state"] == "OFFLINE_READY_NETWORK_DISABLED"
     assert readiness["live_access_allowed"] is False
-    assert readiness["expected_tool_count"] == 36
+    assert readiness["entitlement_profile"] == IFIND_MCP_ENTITLEMENT_PROFILE
+    assert readiness["reviewed_tool_count"] == 36
+    assert readiness["expected_tool_count"] == 35
+    assert readiness["unavailable_by_plan"] == ["edb:search_edb"]
     assert secret not in rendered
     assert "api_key_present" not in rendered
     assert secret not in repr(IfindMcpApiKey(secret))
@@ -686,9 +694,14 @@ def test_ifind_mcp_response_scope_accepts_bounded_columnar_symbols_only() -> Non
         )
     assert exc.value.failure_code == "IFIND_MCP_RESPONSE_SCOPE_VIOLATION"
 
+    validate_ifind_mcp_pilot_response_scope(
+        {"tables": [{"证券代码": ["002475", "600487"]}]},
+        ("002475.SZ", "600487.SH"),
+    )
+
     with pytest.raises(IfindProviderError) as exc:
         validate_ifind_mcp_pilot_response_scope(
-            {"tables": [{"thscode": ["002475", "600487"]}]},
+            {"tables": [{"证券代码": ["002475", "600036"]}]},
             ("002475.SZ", "600487.SH"),
         )
     assert exc.value.failure_code == "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED"
@@ -764,13 +777,14 @@ def test_ifind_mcp_local_probe_status_persists_only_allowlisted_metadata(
         tmp_path,
         {
             "status": "BLOCKED",
-            "mode": "live_handshake",
+            "mode": "live_stage_s1",
             "server": "stock",
-            "failure_code": "IFIND_MCP_AUTH_OR_PERMISSION_DENIED",
-            "http_status": 401,
-            "live_handshake_verified": False,
-            "input_schemas_verified": False,
-            "data_tool_called": False,
+            "failure_code": "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED",
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "data_tool_called": True,
+            "data_call_count": 1,
+            "failed_symbol": "002475.SZ",
             "authorization": secret,
             "provider_body": secret,
         },
@@ -782,9 +796,11 @@ def test_ifind_mcp_local_probe_status_persists_only_allowlisted_metadata(
     assert target.parent.stat().st_mode & 0o777 == 0o700
     assert secret not in stored
     assert status["status"] == "BLOCKED"
-    assert status["failure_code"] == "IFIND_MCP_AUTH_OR_PERMISSION_DENIED"
-    assert status["http_status"] == 401
-    assert status["data_tool_called"] is False
+    assert status["mode"] == "live_stage_s1"
+    assert status["failure_code"] == "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED"
+    assert status["data_tool_called"] is True
+    assert status["data_call_count"] == 1
+    assert status["failed_symbol"] == "002475.SZ"
     assert status["credential_exposed"] is False
 
 

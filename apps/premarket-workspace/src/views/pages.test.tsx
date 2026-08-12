@@ -59,7 +59,11 @@ const ifindReadiness = {
   raw_payload_commit_allowed: false,
   local_token_persistence_allowed: false,
   supported_service_count: 7,
-  expected_tool_count: 36,
+  entitlement_profile: "personal_trial_non_enterprise",
+  reviewed_tool_count: 36,
+  expected_tool_count: 35,
+  unavailable_by_plan_count: 1,
+  unavailable_by_plan: ["edb:search_edb"],
   data_module_count: 7,
   last_probe_status: "BLOCKED",
   last_probe_mode: "live_handshake",
@@ -70,6 +74,8 @@ const ifindReadiness = {
   last_handshake_verified: false,
   last_input_schemas_verified: false,
   last_data_tool_called: false,
+  last_data_call_count: 0,
+  last_failed_symbol: null,
   api_key: "fixture-secret-must-not-render",
 };
 
@@ -77,7 +83,9 @@ const ifindServices = ["stock", "fund", "edb", "news", "bond", "global_stock", "
   server_type,
   server_id: `hexin-ifind-ds-${server_type.replace("_", "-")}-mcp`,
   endpoint_path: `/ds-mcp-servers/${server_type}`,
+  reviewed_tool_count: server_type === "stock" ? 10 : 4,
   expected_tool_count: server_type === "stock" ? 10 : 4,
+  unavailable_by_plan: "",
   implementation_state: "contract_ready_live_handshake_pending",
 }));
 

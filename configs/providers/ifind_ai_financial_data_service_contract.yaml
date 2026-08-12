@@ -78,6 +78,16 @@
       {"server_type": "global_stock", "server_id": "hexin-ifind-ds-global-stock-mcp", "expected_tools": ["search_global_stocks", "global_stock_profile", "global_stock_quotes", "global_stock_financial", "global_stock_events"]},
       {"server_type": "index", "server_id": "hexin-ifind-ds-index-mcp", "expected_tools": ["index_data", "sector_data", "index_highfreq_quotes"]}
     ],
+    "entitlement_profiles": {
+      "active": "personal_trial_non_enterprise",
+      "personal_trial_non_enterprise": {
+        "reviewed_tool_count": 36,
+        "entitled_expected_tool_count": 35,
+        "unavailable_by_plan": ["edb:search_edb"],
+        "source": "supplier_pricing_and_data_scope_reviewed_2026-08-12",
+        "failure_semantics": "documented_plan_unavailability_is_not_provider_failure"
+      }
+    },
     "input_schema_acceptance": {
       "catalog_scope": "all_36_expected_tools_across_all_7_services",
       "canonicalization": "UTF-8_JSON_sorted_keys_compact_separators_no_NaN",
@@ -85,7 +95,7 @@
       "required_field_contracts": {
         "default_query_tools": ["query"],
         "search_global_stocks": ["query", "market"],
-        "search_trending_news": ["keyword"],
+        "search_trending_news": ["size"],
         "high_frequency_quote_tools": ["symbols", "indicators", "data_mode"]
       },
       "acceptance_rule": "each_expected_field_must_exist_in_properties_and_required",
@@ -96,7 +106,8 @@
     },
     "bounded_live_acceptance_budget": {
       "service_count": 7,
-      "expected_tool_count": 36,
+      "reviewed_tool_count": 36,
+      "entitled_expected_tool_count": 35,
       "handshake_protocol_requests_maximum": 21,
       "initial_dual_stock_data_calls_maximum": 2,
       "full_dual_stock_stock_service_data_calls_maximum": 16,

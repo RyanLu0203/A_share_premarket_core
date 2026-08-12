@@ -334,7 +334,11 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "raw_payload_commit_allowed",
         "local_token_persistence_allowed",
         "supported_service_count",
+        "entitlement_profile",
+        "reviewed_tool_count",
         "expected_tool_count",
+        "unavailable_by_plan_count",
+        "unavailable_by_plan",
         "data_module_count",
         "last_probe_status",
         "last_probe_mode",
@@ -345,6 +349,8 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "last_handshake_verified",
         "last_input_schemas_verified",
         "last_data_tool_called",
+        "last_data_call_count",
+        "last_failed_symbol",
     }
 
     for payload in (quality, provider):
@@ -359,9 +365,19 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["raw_payload_commit_allowed"] is False
         assert readiness["local_token_persistence_allowed"] is False
         assert readiness["supported_service_count"] == 7
-        assert readiness["expected_tool_count"] == 36
+        assert readiness["entitlement_profile"] == "personal_trial_non_enterprise"
+        assert readiness["reviewed_tool_count"] == 36
+        assert readiness["expected_tool_count"] == 35
+        assert readiness["unavailable_by_plan_count"] == 1
+        assert readiness["unavailable_by_plan"] == ["edb:search_edb"]
         assert readiness["data_module_count"] == 7
-        assert readiness["last_data_tool_called"] is False
+        assert isinstance(readiness["last_data_tool_called"], bool)
+        if readiness["last_data_tool_called"]:
+            assert readiness["last_data_call_count"] == 1
+            assert readiness["last_failed_symbol"] == "002475.SZ"
+        else:
+            assert readiness["last_data_call_count"] is None
+            assert readiness["last_failed_symbol"] is None
         assert len(payload["ifind_mcp_services"]) == 7
         assert len(payload["ifind_data_modules"]) == 7
         pilot = payload["ifind_pilot_acceptance"]

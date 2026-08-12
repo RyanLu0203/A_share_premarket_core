@@ -61,7 +61,7 @@ flowchart LR
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |
-| iFinD AI 金融数据服务 | MCP/normalization contracts ready; external authentication unaccepted | The purchased MCP/API Key channel has seven exact Streamable HTTP services, 36 reviewed tools, a Keychain-safe client, and a structured-result boundary. The user reports that the exposed credential was rotated and the provider portal debug call succeeds, while governed external handshakes return HTTP 401. S0 must validate all seven `initialize`/`tools/list` catalogs and live schema hashes under the three handshake gates; the separate fourth data-call gate stays off until S1 is explicitly authorized. S2-S3 remain bounded data-acceptance stages and S4 remains locked. QuantAPI is optional only. No live iFinD evidence is accepted. |
+| iFinD AI 金融数据服务 | S0 accepted; S1 scope-blocked | The MCP/API Key channel passed one governed S0 for seven services and 35/35 personal/trial entitled tools plus live schemas. The full reviewed catalog remains 36; enterprise-only `edb:search_edb` is unavailable by plan. One Luxshare S1 response was quarantined as scope-unverified, Hengtong was not called and no retry occurred. S2-S4 and research remain locked. QuantAPI is optional only; no live iFinD row is accepted. |
 
 Canonical interface details are maintained in
 [`configs/project/canonical_interfaces.json`](../../configs/project/canonical_interfaces.json)
@@ -77,7 +77,7 @@ and
 | Provider02B source-backed engineering panel | 50 | 120 | 6,000 | Committed `engineering_pilot` research panel spanning 2025-11-19 through 2026-05-21. |
 | Expanded network evidence / portfolio-risk canonical history | 41 with independent evidence | 843 | 34,543 | Historical evidence used by later readiness and portfolio-risk diagnostics. The broader catalog still contains 50 symbols, but only 41 have this independent evidence. |
 | Last documented complete operational acquisitions | 41/41 accepted per run | 1 target date per run | 41 per run | Two complete Tencent acquisitions for dynamic target 2026-07-31 and T-1 2026-07-30. This is the last documented acceptance, not a claim of freshness for 2026-08-09. |
-| iFinD live data | not established | not established | 0 validated | Contract and adapter readiness only; no coverage, entitlement, schema, or production-source claim exists yet. |
+| iFinD live data | S0 metadata only | no accepted dates | 0 validated | Seven services and 35 entitled tool schemas are accepted; the single S1 response was quarantined and no paid row crossed the canonical boundary. |
 
 The authoritative evidence for these counts lives in goal manifests, including
 [`goal_data_provider02b_source_backed_panel_manifest.json`](../../outputs/audits/goal_data_provider02b_source_backed_panel_manifest.json),

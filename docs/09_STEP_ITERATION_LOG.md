@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND ENTITLEMENT-AWARE S0 AND BOUNDED S1 ATTEMPT
+
+Status: `S0_PASS_S1_SCOPE_BLOCKED_NOT_CANONICAL` on
+`codex/ifind-entitlement-aware-s0-s1`.
+
+- Reconciled the full 36-tool reviewed catalog with the active personal/trial
+  entitlement: 35 entitled tools; enterprise-only `edb:search_edb` is
+  `UNAVAILABLE_BY_PLAN`.
+- Corrected the live `search_trending_news` required-field contract to `size`.
+- Ran one seven-service S0: 7/7 protocol negotiations, 35/35 active catalog
+  matches and 35/35 live input-schema checks passed; zero data calls.
+- Ran one bounded S1 attempt. Luxshare consumed one `get_stock_summary` call
+  but was quarantined with `IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED`; Hengtong was
+  not called and no retry occurred. No raw response was persisted.
+- Added truthful failed-staging call accounting and an exact allowlist-only
+  mapping for provider-native six-digit codes. S1 requires later explicit
+  reauthorization; S2-S4 and research remain locked.
+
 ## 2026-08-09 - IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
 Status: `IMPLEMENTED_OFFLINE_FOUNDATION_AND_DUAL_STOCK_BROWSING_PENDING_EXTERNAL_AUTH_ACCEPTANCE` on

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-12 - iFinD entitlement-aware S0 acceptance
+
+- Accepted one governed seven-service S0 run: 7/7 services, 35/35 active
+  personal/trial tools and live input schemas; zero data calls in S0.
+- Preserved the 36-tool reviewed catalog while classifying enterprise-only
+  `edb:search_edb` as `UNAVAILABLE_BY_PLAN`; corrected the live trending-news
+  required field to `size`.
+- Attempted S1 once: one Luxshare summary response was quarantined as
+  scope-unverified, Hengtong was not called, no retry occurred, and no iFinD
+  data became canonical.
+- Added exact allowlist-only normalization for provider-native six-digit codes
+  and truthful attempted-call accounting when staging rejects a response.
+
 ## 2026-08-09 - iFinD data and Dashboard foundation
 
 - Added an offline-first, Keychain-safe Streamable HTTP MCP client for the
