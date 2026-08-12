@@ -9,7 +9,10 @@ reviewed catalog remains 36; `edb:search_edb` is enterprise-only and therefore
 response-scope boundary. After the exact provider-code mapping merged, a second
 authorized run again passed S0 but stopped on its first Luxshare call with
 `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
-retried and no iFinD data is canonical. S2-S4 and research remain locked.
+retried and no iFinD data is canonical. The complete portal response confirmed
+that the supplier inverted the `证券代码` and `证券简称` row values. The parser now
+corrects only this exact one-row shape when both allowlisted identity fields
+match; every ambiguity fails closed. S2-S4 and research remain locked.
 
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 
@@ -58,7 +61,8 @@ and S0 are now accepted for 7/7 services and 35/35 personal/trial entitled
 tools/schemas. The first S1 Luxshare response was quarantined at the scope
 boundary; after the exact code mapping merged, the second stopped at response-
 schema validation. Hengtong was not called, neither run retried and no iFinD
-rows were accepted.
+rows were accepted. A strict offline repair now normalizes only the confirmed
+summary identity inversion; it does not accept the row as canonical evidence.
 
 Naive timestamps are rejected by default. A caller may explicitly declare
 `Asia/Shanghai` only after confirming the returned field semantics; canonical

@@ -329,8 +329,10 @@ Handoff policy:
   Luxshare response was quarantined as scope-unverified. After the exact code
   mapping merged, a second authorized run stopped at
   `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` on its first Luxshare call. Hengtong was
-  not called, neither run retried and no data was accepted. Offline parser-
-  contract diagnosis is required before another separately authorized call.
+  not called, neither run retried and no data was accepted. The complete portal
+  response then confirmed an exact supplier `证券代码` / `证券简称` value inversion;
+  a strict allowlisted symbol-and-company repair is implemented offline and
+  must be merged/deployed before another separately authorized call.
   Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately

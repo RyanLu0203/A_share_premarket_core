@@ -30,6 +30,15 @@ Last updated: 2026-08-12
   failed symbol and S0 verification booleans. S1 requires an offline parser-
   contract review before any later separately authorized call; S2-S4 and
   research remain locked.
+- The owner then supplied the complete successful portal response envelope.
+  It proves a supplier semantic inversion: the Markdown header labels the
+  first two columns `证券代码` and `证券简称`, while the row places the exact
+  company name first and canonical symbol second. The parser now corrects only
+  this exact one-row summary-table shape when both the allowlisted symbol and
+  company name independently match. Normal order and six-digit codes remain
+  supported; wrong, missing, duplicated or ambiguous identities fail closed.
+  No raw supplier row was committed. The repair has 51 focused passing tests
+  and remains pending one separately authorized live S1 rerun.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -100,8 +109,9 @@ schemas are accepted at S0. The first S1 attempt was quarantined at the
 response-scope boundary; after the exact code mapping was merged, the second
 attempt stopped on the first Luxshare call at the response-schema boundary.
 Hengtong has never been called, neither run retried, and no iFinD data was
-accepted. The next gate is offline parser-contract diagnosis using bounded,
-non-secret fixtures; only a later separately authorized S1 call may follow.
+accepted. Offline diagnosis confirmed and repaired the supplier's exact
+code/name column inversion with strict symbol-and-company validation. The next
+gate is one separately authorized S1 rerun after merge and deployment.
 Recommendation, position, trading, broker, production, S2-S4 and research
 capabilities remain locked.
 

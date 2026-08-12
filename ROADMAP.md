@@ -8,8 +8,10 @@ retained; enterprise-only `edb:search_edb` is unavailable by plan. The first
 Luxshare S1 response was quarantined as scope-unverified. After the exact code
 mapping merged, a second authorized run stopped at the first Luxshare call with
 `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
-retried and no data was accepted. The next data step is offline parser-contract
-diagnosis, followed only after separate authorization by another bounded S1.
+retried and no data was accepted. The complete portal response then confirmed
+that the supplier inverted the `证券代码` and `证券简称` row values. A strict exact-
+identity repair is implemented offline; the next data step is merge/deployment,
+followed only after separate authorization by another bounded S1.
 S2-S4 and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
@@ -30,9 +32,9 @@ Delivery order from this checkpoint:
    tools/schemas and zero S0 data calls; keep the old exposed value forbidden.
 2. Treat enterprise-only `edb:search_edb` as unavailable by plan while
    retaining it in the 36-tool reviewed supplier catalog.
-3. Diagnose `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` offline with bounded supplier-
-   format fixtures. Do not weaken the parser speculatively or spend another
-   request during diagnosis.
+3. Merge and deploy the strict one-row supplier-summary identity repair. It may
+   correct the confirmed code/name inversion only when the exact allowlisted
+   symbol and company name independently match; every ambiguity fails closed.
 4. After separate approval, rerun S1 with exactly two fixed
    `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first two runs
    both stopped after Luxshare; neither called Hengtong or retried.
@@ -118,7 +120,7 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: diagnose the S1 response-schema mismatch offline, then
+- Next data goal: merge/deploy the strict summary-identity repair, then
   separately authorize a bounded rerun; S2-S3 remain blocked until S1 passes.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
