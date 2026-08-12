@@ -563,6 +563,32 @@ def test_ifind_mcp_tool_call_accepts_structured_json_only() -> None:
     assert exc.value.failure_code == "IFIND_MCP_UNSTRUCTURED_RESULT"
 
 
+def test_ifind_mcp_s2_wrapper_builds_only_the_fixed_reviewed_query() -> None:
+    transport = HandshakeTransport()
+    client = _client(transport, data_calls=True)
+
+    result = client.call_s2_stock_tool(
+        "002475.SZ", "get_stock_performance", "2026-08-12"
+    )
+
+    assert result["canonical_accepted"] is False
+    sent = transport.calls[-1][2]["params"]
+    assert sent["name"] == "get_stock_performance"
+    query = sent["arguments"]["query"]
+    assert "立讯精密（002475.SZ）" in query
+    assert "截至2026-08-12最近120个已完成交易日" in query
+    assert "前复权日线行情" in query
+
+    before = len(transport.calls)
+    with pytest.raises(IfindProviderError) as exc:
+        client.call_s2_stock_tool("002475.SZ", "get_stock_summary", "2026-08-12")
+    assert exc.value.failure_code == "IFIND_MCP_TOOL_NOT_ALLOWED"
+    with pytest.raises(IfindProviderError) as exc:
+        client.call_s2_stock_tool("600036.SH", "get_stock_performance", "2026-08-12")
+    assert exc.value.failure_code == "IFIND_MCP_DATA_SCOPE_VIOLATION"
+    assert len(transport.calls) == before
+
+
 def test_ifind_mcp_summary_only_scope_validates_the_actual_tool() -> None:
     transport = HandshakeTransport()
     scope = IfindMcpCallScope(
@@ -920,9 +946,7 @@ def test_ifind_mcp_reclassifies_only_exact_dual_identity_pit_block_without_netwo
     assert before["failure_code"] == "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN"
     assert after["status"] == "PASS"
     assert after["failure_code"] is None
-    assert after["acceptance_state"] == (
-        "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
-    )
+    assert after["acceptance_state"] == ("S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED")
     assert after["temporal_class"] == "acceptance_metadata_only"
     assert after["provider_available_at_verified"] is False
     assert after["identity_observed_at"] == before["observed_at"]

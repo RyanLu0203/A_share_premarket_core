@@ -1,5 +1,16 @@
 # 02 Data Engine
 
+## 2026-08-12 iFinD S2 execution boundary
+
+The owner authorized one S2 batch with at most four fixed calls and zero retry.
+The runner must first repeat the accepted seven-service S0 in the same client
+session. It then calls only `get_stock_info` and `get_stock_performance` once
+per acceptance symbol. The first scope, schema, row-count, QFQ, governed-
+calendar, numeric, availability or PIT failure stops the batch. No partial
+batch is written. A complete pass writes only 242 normalized rows atomically
+below the explicit external paid-data root; raw provider responses and
+credentials are never persisted. S3, S4 and Research remain locked.
+
 ## 2026-08-12 iFinD live entitlement checkpoint
 
 One governed S0 run accepted all seven MCP services and all 35 tools exposed by

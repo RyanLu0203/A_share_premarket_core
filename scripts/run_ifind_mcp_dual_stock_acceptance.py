@@ -19,6 +19,12 @@ from ashare_premarket.providers.ifind_mcp import (
     write_ifind_mcp_probe_status,
 )
 from ashare_premarket.providers.ifind_s2 import build_ifind_s2_offline_plan
+from ashare_premarket.providers.ifind_s2 import (
+    run_ifind_s2_live_acceptance,
+    s2_bundle_id,
+    write_ifind_s2_acceptance_bundle,
+    write_ifind_s2_status,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -62,18 +68,34 @@ def build_parser() -> argparse.ArgumentParser:
             "identity acceptance metadata."
         ),
     )
+    live.add_argument(
+        "--live-stage-s2",
+        action="store_true",
+        help=(
+            "After a same-run seven-service S0 pass, make the exact four fixed "
+            "S2 calls with zero retry and fail closed on schema or PIT drift."
+        ),
+    )
     parser.add_argument(
         "--s2-cutoff-date",
         help=(
             "Governed latest completed trading date in YYYY-MM-DD form, required "
-            "only by --offline-stage-s2-preflight."
+            "by --offline-stage-s2-preflight or --live-stage-s2."
         ),
     )
     parser.add_argument(
         "--decision-timestamp",
         help=(
-            "Timezone-aware ISO-8601 decision timestamp required by --live-stage-s1; "
+            "Timezone-aware ISO-8601 decision timestamp required by live S1/S2; "
             "the system clock is never inferred."
+        ),
+    )
+    parser.add_argument(
+        "--write-normalized-bundle",
+        action="store_true",
+        help=(
+            "Only for a complete PASS live S2 run, atomically persist the four "
+            "normalized batches under the explicit external paid-data root."
         ),
     )
     parser.add_argument(
@@ -111,7 +133,55 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             )
         print(json.dumps(plan.safe_summary(), ensure_ascii=False, sort_keys=True))
         return 0
-    if args.s2_cutoff_date:
+    if args.live_stage_s2:
+        if (
+            not args.s2_cutoff_date
+            or not args.decision_timestamp
+            or not args.write_normalized_bundle
+        ):
+            return _print_failure(
+                "live_stage_s2", "IFIND_MCP_S2_LIVE_ARGUMENTS_INVALID"
+            )
+        try:
+            live_result = run_ifind_s2_live_acceptance(
+                Path(ROOT),
+                decision_timestamp=args.decision_timestamp,
+                cutoff_date=args.s2_cutoff_date,
+                s1_status=read_ifind_mcp_probe_status(Path(ROOT)),
+            )
+            payload = dict(live_result.safe_result)
+            if payload.get("status") == "PASS":
+                bundle = s2_bundle_id(live_result)
+                manifest_path = write_ifind_s2_acceptance_bundle(
+                    Path(ROOT), live_result, bundle_id=bundle
+                )
+                payload.update(
+                    {
+                        "bundle_id": bundle,
+                        "bundle_persisted": True,
+                        "manifest_file": manifest_path.name,
+                        "canonical_accepted": True,
+                    }
+                )
+            if args.write_local_status:
+                write_ifind_s2_status(Path(ROOT), payload)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+            return 0 if payload.get("status") == "PASS" else 1
+        except IfindProviderError as exc:
+            payload = _failure_payload(
+                "live_stage_s2", exc.failure_code, exc.http_status
+            )
+            if args.write_local_status:
+                write_ifind_s2_status(Path(ROOT), payload)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+            return 1
+        except Exception:
+            payload = _failure_payload("live_stage_s2", "IFIND_MCP_S2_INTERNAL_ERROR")
+            if args.write_local_status:
+                write_ifind_s2_status(Path(ROOT), payload)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+            return 1
+    if args.s2_cutoff_date or args.write_normalized_bundle:
         return _print_failure(
             "offline_contract",
             "IFIND_MCP_S2_PREFLIGHT_ARGUMENTS_INVALID",
@@ -216,7 +286,22 @@ def _print_failure(
     failure_code: str,
     http_status: Optional[int] = None,
 ) -> int:
-    payload = {
+    print(
+        json.dumps(
+            _failure_payload(mode, failure_code, http_status),
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
+    return 1
+
+
+def _failure_payload(
+    mode: str,
+    failure_code: str,
+    http_status: Optional[int] = None,
+) -> dict[str, object]:
+    return {
         "status": "BLOCKED",
         "mode": mode,
         "acceptance_state": "NOT_CANONICAL",
@@ -228,8 +313,6 @@ def _print_failure(
         "credential_exposed": False,
         "canonical_accepted": False,
     }
-    print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
-    return 1
 
 
 if __name__ == "__main__":

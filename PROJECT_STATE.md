@@ -2,12 +2,13 @@
 
 Last updated: 2026-08-12
 
-Deployment note: stable deployment is at merged PR #52 commit `87f2de2`.
+Deployment note: stable deployment is at merged PR #53 commit `7d3c01e`.
 The exact prior two-call S1 status was migrated offline and now reports
 `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED` for both symbols; the migration read
 no Keychain value, used no network and accepted no canonical row. S2 now has a
-typed offline foundation; its live four-call budget remains separately
-unauthorized and unexecuted.
+typed offline foundation. The owner has now authorized one S2 batch capped at
+four fixed calls with zero retries; execution remains pending deployment of the
+fail-closed live runner.
 
 ## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
 
@@ -52,6 +53,12 @@ unauthorized and unexecuted.
   `S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED`, a four-call budget and
   `s2_live_calls_authorized=false`; it does not claim live provider schemas or
   accepted S2 data.
+- The S2 live runner now performs a same-client 7-service S0 immediately before
+  the fixed calls, stops at the first scope/schema/calendar/PIT failure, keeps
+  all provider staging in memory, and atomically writes only a complete
+  242-row normalized bundle under an explicit external paid-data root. Its
+  separate local status is allowlisted and credential-free. This code is
+  awaiting merge/deployment before the authorized batch is executed.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 

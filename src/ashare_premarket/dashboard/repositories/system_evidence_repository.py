@@ -19,6 +19,7 @@ from ashare_premarket.providers.ifind_s2 import (
     IFIND_S2_DAILY_SESSION_COUNT,
     IFIND_S2_FIXED_TOOLS,
     IFIND_S2_PREFLIGHT_STATE,
+    read_ifind_s2_status,
 )
 
 
@@ -271,6 +272,7 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
 
     readiness = ifind_mcp_readiness()
     probe = read_ifind_mcp_probe_status(root)
+    s2 = read_ifind_s2_status(root)
     return {
         "provider_id": readiness["provider_id"],
         "provider_name": readiness["provider_name"],
@@ -329,7 +331,18 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "s2_data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
         "s2_daily_session_count": IFIND_S2_DAILY_SESSION_COUNT,
         "s2_adjustment_mode": IFIND_S2_ADJUSTMENT_MODE,
-        "s2_live_calls_authorized": False,
-        "s2_provider_schema_accepted": False,
-        "ifind_canonical_accepted": probe.get("canonical_accepted") is True,
+        "s2_live_calls_authorized": readiness["data_call_opt_in"],
+        "s2_last_status": s2["status"],
+        "s2_acceptance_state": s2["acceptance_state"],
+        "s2_failure_code": s2["failure_code"],
+        "s2_failed_symbol": s2["failed_symbol"],
+        "s2_failed_tool": s2["failed_tool"],
+        "s2_data_call_count": s2["data_call_count"],
+        "s2_normalized_row_count": s2["normalized_row_count"],
+        "s2_bundle_id": s2["bundle_id"],
+        "s2_bundle_persisted": s2["bundle_persisted"],
+        "s2_provider_schema_accepted": s2["provider_schema_accepted"],
+        "s2_canonical_accepted": s2["canonical_accepted"],
+        "s2_observed_at": s2["observed_at"],
+        "ifind_canonical_accepted": s2["canonical_accepted"],
     }

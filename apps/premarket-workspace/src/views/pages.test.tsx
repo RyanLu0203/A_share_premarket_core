@@ -90,7 +90,18 @@ const ifindReadiness = {
   s2_daily_session_count: 120,
   s2_adjustment_mode: "qfq",
   s2_live_calls_authorized: false,
+  s2_last_status: "NOT_RUN",
+  s2_acceptance_state: "NOT_ACCEPTED",
+  s2_failure_code: null,
+  s2_failed_symbol: null,
+  s2_failed_tool: null,
+  s2_data_call_count: 0,
+  s2_normalized_row_count: 0,
+  s2_bundle_id: null,
+  s2_bundle_persisted: false,
   s2_provider_schema_accepted: false,
+  s2_canonical_accepted: false,
+  s2_observed_at: null,
   ifind_canonical_accepted: false,
   api_key: "fixture-secret-must-not-render",
 };
@@ -264,7 +275,7 @@ describe("functional workspace pages", () => {
     expect(screen.getByText("S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED")).toBeVisible();
     expect(screen.getByText("get_stock_info + get_stock_performance")).toBeVisible();
     expect(screen.getByText("NOT AUTHORIZED")).toBeVisible();
-    expect(screen.getByText("NOT ACCEPTED")).toBeVisible();
+    expect(screen.getAllByText("NOT ACCEPTED").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("1-7 / 7 filtered / 7 rows").length).toBeGreaterThanOrEqual(2);
     expect(screen.queryByText("fixture-secret-must-not-render")).not.toBeInTheDocument();
     rerender(<ProviderHealthPage data={{canonical_decision: "historical replay", comparison: [], quarantine: [], provider_usage: [], provider_health: [], source_freshness: {}, trading_calendar: {}, provider_lineage: [], ifind_readiness: ifindReadiness, ifind_mcp_services: ifindServices, ifind_data_modules: ifindModules, ifind_pilot_acceptance: ifindPilot}} />);
