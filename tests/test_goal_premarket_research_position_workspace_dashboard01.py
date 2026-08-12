@@ -351,6 +351,15 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "last_data_tool_called",
         "last_data_call_count",
         "last_failed_symbol",
+        "s1_acceptance_state",
+        "s1_temporal_class",
+        "s1_provider_available_at_status",
+        "s1_provider_available_at_verified",
+        "s1_identity_observed_at",
+        "s1_staged_symbol_count",
+        "s1_identity_acceptance_verified",
+        "s2_requires_separate_authorization",
+        "ifind_canonical_accepted",
     }
 
     for payload in (quality, provider):
@@ -372,6 +381,8 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["unavailable_by_plan"] == ["edb:search_edb"]
         assert readiness["data_module_count"] == 7
         assert isinstance(readiness["last_data_tool_called"], bool)
+        assert readiness["s1_provider_available_at_verified"] is False
+        assert readiness["ifind_canonical_accepted"] is False
         if readiness["last_data_tool_called"]:
             assert readiness["last_data_call_count"] == 1
             assert readiness["last_failed_symbol"] == "002475.SZ"

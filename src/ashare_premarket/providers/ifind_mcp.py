@@ -1479,6 +1479,56 @@ def read_ifind_mcp_probe_status(root: Path) -> Mapping[str, Any]:
     return _sanitize_ifind_mcp_probe_status(parsed)
 
 
+def reclassify_ifind_mcp_s1_probe_status(root: Path) -> Path:
+    """Migrate the exact pre-contract S1 PIT block without a provider call.
+
+    The old runner emitted this state only after both fixed symbol summaries
+    passed identity, scope and schema staging. Reclassification preserves the
+    original local observation time, keeps provider availability unknown, and
+    never promotes a canonical row.
+    """
+
+    current = read_ifind_mcp_probe_status(root)
+    if not (
+        current.get("status") == "BLOCKED"
+        and current.get("mode") == "live_stage_s1"
+        and current.get("failure_code") == "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN"
+        and current.get("data_call_count") == 2
+        and current.get("failed_symbol") is None
+        and current.get("live_handshake_verified") is True
+        and current.get("input_schemas_verified") is True
+        and current.get("data_tool_called") is True
+        and isinstance(current.get("observed_at"), str)
+    ):
+        raise IfindProviderError(
+            "IFIND_MCP_S1_STATUS_RECLASSIFICATION_REJECTED",
+            "local S1 status does not prove the exact dual-identity staging state",
+        )
+    return write_ifind_mcp_probe_status(
+        root,
+        {
+            "status": "PASS",
+            "mode": "live_stage_s1",
+            "acceptance_state": "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED",
+            "temporal_class": "acceptance_metadata_only",
+            "provider_available_at_status": (
+                "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
+            ),
+            "identity_observed_at": current["observed_at"],
+            "actual_tool_count": current.get("actual_tool_count"),
+            "expected_tool_count": current.get("expected_tool_count"),
+            "data_call_count": 2,
+            "staged_symbol_count": 2,
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "data_tool_called": True,
+            "s1_identity_acceptance_verified": True,
+            "s2_requires_separate_authorization": True,
+            "canonical_accepted": False,
+        },
+    )
+
+
 def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, Any]:
     status = str(value.get("status", "INVALID_LOCAL_STATUS"))
     if status not in {"PASS", "BLOCKED", "NOT_RUN", "INVALID_LOCAL_STATUS"}:
@@ -1502,7 +1552,7 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
     ):
         http_status = None
     observed_at = value.get("observed_at")
-    if not isinstance(observed_at, str) or len(observed_at) > 64:
+    if not _is_safe_utc_timestamp(observed_at):
         observed_at = None
     actual_tool_count = value.get("actual_tool_count")
     if isinstance(actual_tool_count, bool) or not isinstance(actual_tool_count, int):
@@ -1522,6 +1572,43 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
         failed_symbol
     ):
         failed_symbol = None
+    acceptance_state = value.get("acceptance_state")
+    if acceptance_state != "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED":
+        acceptance_state = None
+    temporal_class = value.get("temporal_class")
+    if temporal_class != "acceptance_metadata_only":
+        temporal_class = None
+    provider_available_at_status = value.get("provider_available_at_status")
+    if provider_available_at_status != (
+        "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
+    ):
+        provider_available_at_status = None
+    identity_observed_at = value.get("identity_observed_at")
+    if not _is_safe_utc_timestamp(identity_observed_at):
+        identity_observed_at = None
+    staged_symbol_count = value.get("staged_symbol_count")
+    if (
+        isinstance(staged_symbol_count, bool)
+        or not isinstance(staged_symbol_count, int)
+        or not 0 <= staged_symbol_count <= 2
+    ):
+        staged_symbol_count = None
+    s1_identity_acceptance_verified = (
+        status == "PASS"
+        and mode == "live_stage_s1"
+        and acceptance_state == "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
+        and temporal_class == "acceptance_metadata_only"
+        and provider_available_at_status
+        == "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA"
+        and data_call_count == 2
+        and staged_symbol_count == 2
+        and failed_symbol is None
+        and value.get("s1_identity_acceptance_verified") is True
+    )
+    if status == "PASS":
+        failure_code = None
+        http_status = None
+        failed_symbol = None
     return {
         "status": status,
         "mode": mode,
@@ -1533,11 +1620,36 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
         "expected_tool_count": expected_tool_count,
         "data_call_count": data_call_count,
         "failed_symbol": failed_symbol,
+        "acceptance_state": acceptance_state,
+        "temporal_class": temporal_class,
+        "provider_available_at_status": provider_available_at_status,
+        "provider_available_at_verified": False,
+        "identity_observed_at": identity_observed_at,
+        "staged_symbol_count": staged_symbol_count,
+        "s1_identity_acceptance_verified": s1_identity_acceptance_verified,
+        "s2_requires_separate_authorization": (
+            s1_identity_acceptance_verified
+            and value.get("s2_requires_separate_authorization") is True
+        ),
+        "canonical_accepted": False,
         "live_handshake_verified": value.get("live_handshake_verified") is True,
         "input_schemas_verified": value.get("input_schemas_verified") is True,
         "data_tool_called": value.get("data_tool_called") is True,
         "credential_exposed": False,
     }
+
+
+def _is_safe_utc_timestamp(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) > 64 or not value.endswith("Z"):
+        return False
+    try:
+        parsed = datetime.fromisoformat(value[:-1] + "+00:00")
+    except ValueError:
+        return False
+    return (
+        parsed.tzinfo is not None
+        and parsed.utcoffset() == timezone.utc.utcoffset(None)
+    )
 
 
 def _trusted_security_command() -> Optional[str]:

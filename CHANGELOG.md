@@ -2,6 +2,15 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Added call-plan v2 for identity-only S1 temporal semantics: local
+  `observed_at` is acceptance provenance, provider `available_at` is explicitly
+  unknown and canonical acceptance remains false.
+- Added an offline, fail-closed migration for only the exact prior two-call,
+  no-failed-symbol, S0/schema-verified local status; no provider request or
+  Keychain read is performed.
+- Added sanitized Provider Health fields for identity acceptance, temporal
+  class, staged-symbol count, provider timestamp status, canonical-row zero and
+  the separate S2 authorization requirement.
 - Confirmed PR #49 merged/deployed at `6e5fbfa` and passed production build,
   launcher, LaunchAgent, API-health and frontend checks.
 - Ran one owner-authorized dual-stock S1: same-run S0 passed 7/7 services and

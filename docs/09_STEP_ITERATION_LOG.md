@@ -1,5 +1,25 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S1 IDENTITY METADATA TEMPORAL CONTRACT
+
+Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE_DEPLOY_AND_SAFE_STATUS_MIGRATION` on
+`codex/ifind-s1-temporal-contract`.
+
+- Approved call-plan v2 semantics for the already verified dual-stock summary:
+  S1 is API/company-identity acceptance metadata, not historical market or
+  fundamental data.
+- Records local runtime `observed_at` only as acceptance provenance, keeps
+  provider `available_at` explicitly unknown, sets `pit_timestamp_verified`
+  false and preserves `canonical_accepted=false`.
+- Added a fail-closed local status migration. It accepts only the exact prior
+  two-call, no-failed-symbol, handshake-and-schema-verified PIT-block state;
+  incomplete or failed-symbol states remain blocked. Migration uses no network
+  or Keychain and persists only allowlisted metadata at `0600`.
+- Added Provider Health fields for S1 identity state, temporal class, unknown
+  provider availability, staged-symbol count, canonical-row zero and the
+  separate S2 authorization lock.
+- No API call, raw payload, canonical data, S2/S3 work or Research was added.
+
 ## 2026-08-12 - IFIND DUAL-STOCK IDENTITY STAGING / PIT BLOCK
 
 Status: `S1_DUAL_IDENTITY_SCHEMA_SCOPE_VERIFIED_PIT_BLOCKED_NOT_CANONICAL` on

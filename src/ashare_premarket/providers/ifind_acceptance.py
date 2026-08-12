@@ -59,7 +59,7 @@ IFIND_ACCEPTANCE_STAGE_BUDGETS = (0, 2, 4, 10, 0)
 IFIND_ACCEPTANCE_STAGE_STATES = (
     "allowed_with_three_handshake_opt_ins_data_call_gate_not_required",
     "blocked_until_S0_passes_and_fourth_data_call_gate_is_enabled",
-    "blocked_until_S1_passes",
+    "blocked_until_S1_identity_metadata_passes_and_separate_S2_authorization",
     "blocked_until_S2_passes",
     "locked_until_typed_queries_schema_specific_normalizers_and_separate_budget_are_reviewed",
 )
@@ -245,22 +245,28 @@ def run_ifind_dual_stock_acceptance(
             }
         summaries.append(_summarize_staged_result(symbol, staged))
 
-    # The current staging contract deliberately has no schema-specific mapping
-    # from provider fields to an auditable available_at timestamp. A successful
-    # supplier response therefore remains useful diagnostic evidence but cannot
-    # cross the point-in-time/canonical boundary.
+    # S1 is an identity/API acceptance gate, not a historical point-in-time data
+    # feed. The provider summary has no auditable available_at, so the local
+    # acquisition time is recorded only as observed_at acceptance metadata.
+    # It must never be relabelled as provider availability or cross the
+    # canonical data boundary.
     return {
         **result,
-        "status": "BLOCKED",
+        "status": "PASS",
         "mode": "live_stage_s1",
-        "failure_code": "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN",
-        "acceptance_state": "NOT_CANONICAL",
+        "acceptance_state": "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED",
         "decision_timestamp": resolved_decision_timestamp,
+        "observed_at": _utc_now_string(),
+        "temporal_class": "acceptance_metadata_only",
+        "provider_available_at": None,
+        "provider_available_at_status": "UNKNOWN_NOT_REQUIRED_FOR_IDENTITY_METADATA",
         "stage_id": "S1_TWO_STOCK_SUMMARY_IDENTITY",
         "data_tool_called": True,
         "data_call_count": len(summaries),
         "data_call_budget": 2,
         "pit_timestamp_verified": False,
+        "s1_identity_acceptance_verified": True,
+        "s2_requires_separate_authorization": True,
         "canonical_accepted": False,
         "staging_summaries": summaries,
     }
@@ -383,6 +389,8 @@ def _summarize_staged_result(
         "table_count": table_count,
         "row_count": row_count,
         "scope_verified": True,
+        "temporal_class": "acceptance_metadata_only",
+        "provider_available_at_present": False,
         "canonical_accepted": False,
     }
 
@@ -442,6 +450,7 @@ def _validate_document_identities(
     _require(pilot.get("cohort_id") == "ifind_mcp_dual_stock_acceptance_v1")
     _require(call_plan.get("cohort_id") == pilot.get("cohort_id"))
     _require(call_plan.get("default_state") == "disabled")
+    _require(call_plan.get("plan_id") == "ifind_mcp_dual_stock_call_plan_v2")
     _require(call_plan.get("credential_values_allowed") is False)
     _require(call_plan.get("canonical_approved_symbols_unchanged") is True)
     _require(pilot.get("canonical_approved_symbols_unchanged") is True)
@@ -552,6 +561,31 @@ def _validate_stages(call_plan: Mapping[str, Any]) -> None:
         point_in_time.get("missing_or_ambiguous_provider_timestamp")
         == "quarantine_not_canonical_acceptance"
     )
+    _require(
+        point_in_time.get("identity_summary_temporal_class")
+        == "acceptance_metadata_only"
+    )
+    _require(
+        point_in_time.get("identity_observed_at_source")
+        == "local_runtime_UTC_not_provider_available_at"
+    )
+    _require(
+        point_in_time.get("identity_provider_available_at")
+        == "unknown_not_required_for_noncanonical_identity_acceptance"
+    )
+    _require(
+        tuple(s1.get("success_requires", ()))
+        == (
+            "provider_code_indicates_success",
+            "security_code_and_company_identity_match_requested_symbol",
+            "bounded_response_scope_validation_passes",
+            "schema_specific_summary_normalizer_passes",
+            "no_cross_symbol_rows_or_unscoped_prose_are_accepted",
+            "local_observed_at_is_recorded_as_acceptance_metadata_only",
+            "provider_available_at_is_explicitly_unknown",
+            "canonical_accepted_is_false",
+        )
+    )
 
 
 def _validate_budgets(
@@ -635,6 +669,10 @@ def _parse_decision_timestamp(value: Optional[str]) -> str:
             "decision timestamp must include an explicit timezone offset",
         )
     return parsed.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _utc_now_string() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _keychain_client_factory(

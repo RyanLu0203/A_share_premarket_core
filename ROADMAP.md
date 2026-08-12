@@ -8,10 +8,11 @@ retained; enterprise-only `edb:search_edb` is unavailable by plan. Earlier S1
 scope, supplier-column and query-contract failures were repaired fail-closed.
 After PR #49 merged, one bounded run called Luxshare and Hengtong exactly once
 each with no retry. Both identity rows passed symbol scope, configured company
-identity and response-schema checks. S1 overall remains
-`BLOCKED / NOT_CANONICAL` because the summary has no auditable provider
-`available_at`. The next step is an offline temporal-contract decision, not an
-additional paid-data call. S2-S4 and all research promotion remain locked.
+identity and response-schema checks. Call-plan v2 now accepts this result only
+as identity acceptance metadata: local `observed_at` is provenance, provider
+`available_at` is unknown and canonical rows remain 0. The exact prior local
+status can be migrated offline after deployment. S2 requires separate
+authorization; S3-S4 and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
 
@@ -33,10 +34,10 @@ Delivery order from this checkpoint:
    retaining it in the 36-tool reviewed supplier catalog.
 3. Preserve the verified S1 identity/scope/schema result for exactly
    `002475.SZ` and `600487.SH`: two calls, no retry and no canonical rows.
-4. Review whether identity-only acceptance metadata may use local
-   `observed_at` while explicitly leaving provider `available_at` unknown. Do
-   not weaken PIT requirements for market, fundamental or event data.
-5. Run S2 only after the S1 temporal-contract decision: security master and
+4. Preserve the approved identity-only metadata contract and migrate only the
+   exact safe local status after deployment. Do not weaken PIT requirements for
+   market, fundamental or event data.
+5. Run S2 only after separate authorization: security master and
    bounded 120-day market evidence. Luxshare already has 120 Provider02B
    dates; Hengtong remains
    identity-only until accepted iFinD evidence exists.
@@ -119,8 +120,8 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: review the S1 identity-only `observed_at`/`available_at`
-  contract offline; S2-S3 remain blocked until that decision is explicit.
+- Next data goal: merge/deploy call-plan v2, migrate the exact safe S1 status
+  offline, then request separate authorization for S2. S3 remains blocked.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
 - Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user

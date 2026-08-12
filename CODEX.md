@@ -49,11 +49,13 @@ query-contract failures were repaired offline and failed closed. After PR #49
 merged and the stable deployment reached `6e5fbfa`, one owner-authorized S1
 called Luxshare and Hengtong exactly once each with no retry. Both one-row
 responses passed symbol scope, company identity and response-schema checks.
-They remain `BLOCKED / NOT_CANONICAL` because the summary carries no auditable
-provider `available_at`; local retrieval time is not provider availability.
-The next step is an offline temporal-contract decision, not another data call.
-S2-S4, research, recommendation, position, target-price, order, broker,
-trading and production paths remain locked.
+The approved call-plan v2 classifies both summaries as
+`S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`: local `observed_at` is provenance
+only, provider `available_at` is unknown, and canonical acceptance remains
+false. The exact old two-call PIT-blocked local status may be migrated offline;
+all weaker states fail closed. S2 requires separate authorization after merge
+and deployment. S3-S4, research, recommendation, position, target-price,
+order, broker, trading and production paths remain locked.
 
 ## Codex Operating System
 

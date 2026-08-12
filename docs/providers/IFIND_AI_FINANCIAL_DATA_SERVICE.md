@@ -5,9 +5,9 @@
 > `edb:search_edb` 标记为 `UNAVAILABLE_BY_PLAN`。早期 S1 暴露的代码范围、供应商
 > 代码/简称反放及查询合同问题均已离线、fail-closed 修复。PR #49 合并部署后，
 > 一次有界 S1 对立讯精密和亨通光电各调用一次且未重试；两条单行摘要均通过证券
-> 范围、公司身份和响应结构校验。因供应商摘要没有可审计的 `available_at`，两条
-> 仍为 `BLOCKED / NOT_CANONICAL`。下一步是离线时间语义合同评审，不是继续消耗
-> API 请求。
+> 范围、公司身份和响应结构校验。call-plan v2 将其接纳为身份验收元数据：本地
+> `observed_at` 仅表示验收观察时间，provider `available_at` 明确未知，canonical
+> 行仍为 0。S2 仍需单独授权，未继续消耗 API 请求。
 
 本文定义项目对已购买的同花顺 iFinD「AI 金融数据服务」的安全接入、数据分层、落盘和验收边界。iFinD 在本项目中的定位是付费专业金融数据源，用于补全证券主数据、行情、PIT 财务与估值、行业、公告元数据、宏观和市场结构证据；它不是自然语言选股器、推荐系统或交易执行入口。
 
@@ -178,17 +178,21 @@ python scripts/run_ifind_mcp_dual_stock_acceptance.py
 `--live-handshake` 会在同一次受控运行内核对全部七个服务、完整审阅目录与当前
 套餐 entitlement，只输出工具名与 input schema 的 SHA-256。S1 数据探针还需
 独立第四开关和显式带时区的 `--decision-timestamp`；它固定只调用立讯精密和
-亨通光电各一次 `get_stock_summary`，且在字段级 PIT 映射完成前始终返回
-`BLOCKED / NOT_CANONICAL`，不会打印或保存供应商原文。
+亨通光电各一次 `get_stock_summary`。只有两股的范围、身份与结构全部通过时，
+才返回 `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`；它仍明确
+`canonical_accepted=false`，不会打印或保存供应商原文。旧的精确 PIT-blocked
+本地状态可在部署 v2 后使用 `--reclassify-existing-s1-status` 离线迁移。
 
 截至 2026-08-12，受治理客户端已完成外部认证和 S0：7/7 服务、35/35 当前
 entitlement 工具与 live schema 通过。`search_edb` 的缺失由官方套餐范围解释为
 企业版专属。早期 S1 的范围、代码/简称反放和查询合同问题均已 fail-closed 修复。
 PR #49 合并并部署到 `6e5fbfa` 后，一次授权运行完成同次 S0，并固定调用立讯与
 亨通各一次；两条摘要各形成一张表、一行身份数据，证券范围、配置公司名和结构
-均通过。供应商摘要不提供可审计的 provider `available_at`，因此最终仍以
-`IFIND_MCP_PIT_TIMESTAMP_UNPROVEN` 阻断，零 canonical 行、无 raw 落盘、无重试。
-本地采集时间只能标记为 `observed_at` 验收元数据，不能静默替代供应商可用时间。
+均通过。供应商摘要不提供可审计的 provider `available_at`。call-plan v2 因此只
+将两条摘要验收为 `acceptance_metadata_only`：本地采集时间标记为 `observed_at`
+验收元数据，provider `available_at` 保持未知，零 canonical 行、无 raw 落盘、无
+重试。只有原本精确满足两次调用、无失败证券、S0/schema 通过的本地状态可离线
+迁移；S2 仍需单独授权。
 
 ## 分阶段验收
 

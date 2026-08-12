@@ -33,6 +33,7 @@ from ashare_premarket.providers.ifind_mcp import (
     ifind_mcp_readiness,
     parse_ifind_mcp_provider_markdown_tables,
     read_ifind_mcp_probe_status,
+    reclassify_ifind_mcp_s1_probe_status,
     stage_ifind_mcp_pilot_stock_result,
     validate_ifind_mcp_contract_document,
     validate_ifind_mcp_pilot_response_scope,
@@ -890,6 +891,68 @@ def test_ifind_mcp_local_probe_status_persists_only_allowlisted_metadata(
     assert status["data_call_count"] == 1
     assert status["failed_symbol"] == "002475.SZ"
     assert status["credential_exposed"] is False
+    assert status["s1_identity_acceptance_verified"] is False
+    assert status["canonical_accepted"] is False
+
+
+def test_ifind_mcp_reclassifies_only_exact_dual_identity_pit_block_without_network(
+    tmp_path: Path,
+) -> None:
+    write_ifind_mcp_probe_status(
+        tmp_path,
+        {
+            "status": "BLOCKED",
+            "mode": "live_stage_s1",
+            "failure_code": "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN",
+            "actual_tool_count": 35,
+            "expected_tool_count": 35,
+            "data_call_count": 2,
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "data_tool_called": True,
+        },
+    )
+    before = read_ifind_mcp_probe_status(tmp_path)
+    target = reclassify_ifind_mcp_s1_probe_status(tmp_path)
+    after = read_ifind_mcp_probe_status(tmp_path)
+
+    assert target.stat().st_mode & 0o777 == 0o600
+    assert before["failure_code"] == "IFIND_MCP_PIT_TIMESTAMP_UNPROVEN"
+    assert after["status"] == "PASS"
+    assert after["failure_code"] is None
+    assert after["acceptance_state"] == (
+        "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
+    )
+    assert after["temporal_class"] == "acceptance_metadata_only"
+    assert after["provider_available_at_verified"] is False
+    assert after["identity_observed_at"] == before["observed_at"]
+    assert after["staged_symbol_count"] == 2
+    assert after["s1_identity_acceptance_verified"] is True
+    assert after["s2_requires_separate_authorization"] is True
+    assert after["canonical_accepted"] is False
+
+
+def test_ifind_mcp_reclassification_rejects_incomplete_or_failed_symbol_state(
+    tmp_path: Path,
+) -> None:
+    write_ifind_mcp_probe_status(
+        tmp_path,
+        {
+            "status": "BLOCKED",
+            "mode": "live_stage_s1",
+            "failure_code": "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
+            "data_call_count": 1,
+            "failed_symbol": "002475.SZ",
+            "live_handshake_verified": True,
+            "input_schemas_verified": True,
+            "data_tool_called": True,
+        },
+    )
+
+    with pytest.raises(IfindProviderError) as exc:
+        reclassify_ifind_mcp_s1_probe_status(tmp_path)
+
+    assert exc.value.failure_code == "IFIND_MCP_S1_STATUS_RECLASSIFICATION_REJECTED"
 
 
 def test_ifind_mcp_local_probe_status_missing_is_explicit_and_safe(
