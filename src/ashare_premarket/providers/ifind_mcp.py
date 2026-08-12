@@ -813,7 +813,11 @@ class IfindMcpClient:
             {"query": query},
             scope_symbols=(symbol,),
         )
-        return stage_ifind_mcp_pilot_stock_result(result, (symbol,))
+        return stage_ifind_mcp_pilot_stock_result(
+            result,
+            (symbol,),
+            expected_company_names={symbol: company_name},
+        )
 
     def call_pilot_stock_highfreq(
         self,
@@ -1022,6 +1026,8 @@ def extract_ifind_mcp_structured_payload(
 def stage_ifind_mcp_pilot_stock_result(
     result: Mapping[str, Any],
     expected_symbols: Sequence[str],
+    *,
+    expected_company_names: Optional[Mapping[str, str]] = None,
 ) -> Mapping[str, Any]:
     """Convert one untrusted MCP stock result into bounded, non-canonical staging rows."""
 
@@ -1035,11 +1041,19 @@ def stage_ifind_mcp_pilot_stock_result(
                 "MCP stock provider envelope did not report a bounded success payload",
             )
         tables = parse_ifind_mcp_provider_markdown_tables(str(payload["data"]))
+        corrections: list[str] = []
+        if expected_company_names is not None:
+            tables, corrections = _normalize_ifind_mcp_summary_identity_tables(
+                tables,
+                expected_symbols,
+                expected_company_names,
+            )
         staged: dict[str, Any] = {
             "staging_format": "provider_markdown_tables_v1",
             "provider_success": True,
             "canonical_accepted": False,
             "tables": tables,
+            "semantic_corrections": corrections,
         }
     else:
         staged = {
@@ -1050,6 +1064,89 @@ def stage_ifind_mcp_pilot_stock_result(
         }
     validate_ifind_mcp_pilot_response_scope(staged, expected_symbols)
     return staged
+
+
+def _normalize_ifind_mcp_summary_identity_tables(
+    tables: Sequence[Mapping[str, Any]],
+    expected_symbols: Sequence[str],
+    expected_company_names: Mapping[str, str],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Correct only the verified iFinD summary code/name column inversion."""
+
+    expected = tuple(expected_symbols)
+    if (
+        len(expected) != 1
+        or set(expected_company_names) != set(expected)
+        or not isinstance(expected_company_names.get(expected[0]), str)
+    ):
+        raise IfindProviderError(
+            "IFIND_MCP_RESPONSE_IDENTITY_CONTRACT_INVALID",
+            "MCP summary identity validation requires one exact symbol/name pair",
+        )
+    expected_symbol = expected[0]
+    expected_name = str(expected_company_names[expected_symbol])
+    normalized_tables: list[dict[str, Any]] = []
+    corrections: list[str] = []
+    identity_table_seen = False
+    for table in tables:
+        copied = dict(table)
+        columns = table.get("columns")
+        rows = table.get("rows")
+        if (
+            table.get("title") == "A股股票公司基本信息"
+            and isinstance(columns, list)
+            and "证券代码" in columns
+            and "证券简称" in columns
+        ):
+            if identity_table_seen or not isinstance(rows, list) or len(rows) != 1:
+                raise IfindProviderError(
+                    "IFIND_MCP_RESPONSE_IDENTITY_AMBIGUOUS",
+                    "MCP summary response must contain one bounded identity row",
+                )
+            identity_table_seen = True
+            row = rows[0]
+            if not isinstance(row, Mapping):
+                raise IfindProviderError(
+                    "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
+                    "MCP summary identity row is malformed",
+                )
+            code_value = row.get("证券代码")
+            name_value = row.get("证券简称")
+            normal = (
+                _matches_expected_provider_symbol(code_value, expected_symbol)
+                and name_value == expected_name
+            )
+            inverted = (
+                _matches_expected_provider_symbol(name_value, expected_symbol)
+                and code_value == expected_name
+            )
+            if normal:
+                copied["rows"] = [dict(row)]
+            elif inverted:
+                corrected = dict(row)
+                corrected["证券代码"] = str(name_value)
+                corrected["证券简称"] = str(code_value)
+                copied["rows"] = [corrected]
+                corrections.append("supplier_summary_security_code_name_inversion")
+            else:
+                raise IfindProviderError(
+                    "IFIND_MCP_RESPONSE_IDENTITY_MISMATCH",
+                    "MCP summary identity fields do not match the accepted symbol and company",
+                )
+        normalized_tables.append(copied)
+    if not identity_table_seen:
+        raise IfindProviderError(
+            "IFIND_MCP_RESPONSE_IDENTITY_TABLE_MISSING",
+            "MCP summary response does not contain the required identity table",
+        )
+    return normalized_tables, corrections
+
+
+def _matches_expected_provider_symbol(value: Any, expected_symbol: str) -> bool:
+    return isinstance(value, str) and value in {
+        expected_symbol,
+        expected_symbol[:6],
+    }
 
 
 def parse_ifind_mcp_provider_markdown_tables(markdown: str) -> list[dict[str, Any]]:

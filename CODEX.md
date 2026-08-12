@@ -48,8 +48,10 @@ for 7/7 services and 35/35 active entitled tools/schemas; enterprise-only
 scope-blocked. After the exact provider-code mapping merged, a second
 authorized run stopped on `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` at its first
 Luxshare data call. Hengtong was not called, neither run retried and no
-canonical acceptance occurred. Any further S1 call needs offline parser-
-contract review and separate approval;
+canonical acceptance occurred. The complete portal response subsequently
+confirmed an exact supplier code/name column inversion; a strict one-row,
+allowlisted symbol-and-company repair is implemented offline. Any further S1
+call still needs merge, deployment and separate approval;
 S2-S4, research, recommendation, position, target-price, order, broker,
 trading and production paths remain locked.
 
@@ -109,9 +111,9 @@ Required reading order:
 Next allowed goals:
 
 1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
-2. Preserve the accepted iFinD S0 baseline, diagnose the bounded S1 response-
-   schema mismatch offline and, only after explicit approval, rerun the fixed
-   two-symbol S1.
+2. Preserve the accepted iFinD S0 baseline, merge and deploy the strict summary
+   identity repair and, only after explicit approval, rerun the fixed two-
+   symbol S1.
    The supplier Skill remains reference-only and must not execute unmodified.
 3. Complete the existing read-only Workspace data surfaces, then resume
    research only after data acceptance; Recommendation Tiering still requires

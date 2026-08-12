@@ -2,6 +2,13 @@
 
 ## 2026-08-12 - iFinD entitlement-aware S0 acceptance
 
+- Diagnosed the complete owner-supplied portal response offline: the supplier
+  inverted the `证券代码` and `证券简称` row values despite a normal header.
+- Added a strict summary-only semantic correction that requires one identity
+  row plus exact allowlisted symbol and configured company-name agreement;
+  normal order and six-digit codes pass while wrong/ambiguous identities fail.
+- Added sanitized regression fixtures and passed 51 focused iFinD tests. No
+  extra API request, raw paid response, credential or canonical row was added.
 - Fast-forwarded the stable Application Support deployment to merged PR #46
   and passed production build, launcher, LaunchAgent, API and frontend health
   checks.

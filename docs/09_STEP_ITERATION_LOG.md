@@ -1,5 +1,24 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND SUPPLIER SUMMARY IDENTITY REPAIR
+
+Status: `IMPLEMENTED_OFFLINE_PENDING_LIVE_S1_REACCEPTANCE` on
+`codex/ifind-summary-semantic-columns`.
+
+- Reproduced the complete owner-supplied successful portal response without a
+  new API call. The supplier header labels the first two columns `证券代码` and
+  `证券简称`, but the row places the exact company name first and symbol second.
+- Added a strict summary-only correction requiring the exact table title, one
+  identity row, exact allowlisted symbol and exact configured company name.
+  Correct order and six-digit codes remain accepted; wrong or ambiguous
+  identity data fails closed.
+- Added bounded sanitized fixtures for inverted, normal and wrong-identity
+  shapes. Focused iFinD validation passes 51 tests. No raw paid response or
+  credential is committed, and no additional live request was made.
+- S1 remains unaccepted pending merge, deployment and a separately authorized
+  live rerun. S2-S4, Research and every downstream actionability path remain
+  locked.
+
 ## 2026-08-12 - IFIND S1 RESPONSE-SCHEMA BLOCK
 
 Status: `S0_PASS_S1_RESPONSE_SCHEMA_BLOCKED_NOT_CANONICAL` on stable

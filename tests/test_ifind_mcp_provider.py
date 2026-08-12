@@ -626,6 +626,93 @@ def test_ifind_mcp_stages_supplier_markdown_table_without_rendering_raw_prose() 
     assert "# A股股票公司基本信息" not in json.dumps(staged, ensure_ascii=False)
 
 
+def test_ifind_mcp_summary_corrects_only_verified_code_name_inversion() -> None:
+    markdown = (
+        "# A股股票公司基本信息\n\n"
+        "|证券代码|证券简称|公司中文名称|\n"
+        "|---|---|---|\n"
+        "|立讯精密|002475.SZ|立讯精密工业股份有限公司|\n"
+    )
+    result = {
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps(
+                    {"code": 1, "msg": "success", "data": markdown},
+                    ensure_ascii=False,
+                ),
+            }
+        ]
+    }
+
+    staged = stage_ifind_mcp_pilot_stock_result(
+        result,
+        ("002475.SZ",),
+        expected_company_names={"002475.SZ": "立讯精密"},
+    )
+
+    assert staged["semantic_corrections"] == [
+        "supplier_summary_security_code_name_inversion"
+    ]
+    assert staged["tables"][0]["rows"][0]["证券代码"] == "002475.SZ"
+    assert staged["tables"][0]["rows"][0]["证券简称"] == "立讯精密"
+    assert staged["canonical_accepted"] is False
+
+
+def test_ifind_mcp_summary_keeps_semantically_correct_identity_unchanged() -> None:
+    markdown = (
+        "# A股股票公司基本信息\n\n"
+        "|证券代码|证券简称|\n"
+        "|---|---|\n"
+        "|002475|立讯精密|\n"
+    )
+    result = {
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps({"code": 1, "data": markdown}, ensure_ascii=False),
+            }
+        ]
+    }
+
+    staged = stage_ifind_mcp_pilot_stock_result(
+        result,
+        ("002475.SZ",),
+        expected_company_names={"002475.SZ": "立讯精密"},
+    )
+
+    assert staged["semantic_corrections"] == []
+    assert staged["tables"][0]["rows"][0] == {
+        "证券代码": "002475",
+        "证券简称": "立讯精密",
+    }
+
+
+def test_ifind_mcp_summary_rejects_ambiguous_or_wrong_identity() -> None:
+    markdown = (
+        "# A股股票公司基本信息\n\n"
+        "|证券代码|证券简称|\n"
+        "|---|---|\n"
+        "|其他公司|002475.SZ|\n"
+    )
+    result = {
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps({"code": 1, "data": markdown}, ensure_ascii=False),
+            }
+        ]
+    }
+
+    with pytest.raises(IfindProviderError) as exc:
+        stage_ifind_mcp_pilot_stock_result(
+            result,
+            ("002475.SZ",),
+            expected_company_names={"002475.SZ": "立讯精密"},
+        )
+    assert exc.value.failure_code == "IFIND_MCP_RESPONSE_IDENTITY_MISMATCH"
+
+
 def test_ifind_mcp_markdown_parser_fails_closed_on_prose_or_bad_width() -> None:
     with pytest.raises(IfindProviderError) as exc:
         parse_ifind_mcp_provider_markdown_tables(
