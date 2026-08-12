@@ -1,5 +1,15 @@
 # 02 Data Engine
 
+## 2026-08-12 iFinD S2 live result
+
+After PR #54 deployment, the one authorized S2 run passed the same-client
+seven-service/35-schema S0 but the first `002475.SZ:get_stock_info` response
+failed the reviewed response schema contract. The runner stopped at 1/4 calls
+with zero retry. It did not call Hengtong or either performance tool and wrote
+zero raw, normalized or canonical rows. Provider Health records only the safe
+failure code and scope. Offline response-contract diagnosis is required before
+any separately reauthorized call; S3-S4 and Research remain locked.
+
 ## 2026-08-12 iFinD S2 execution boundary
 
 The owner authorized one S2 batch with at most four fixed calls and zero retry.

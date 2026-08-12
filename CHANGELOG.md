@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-12 - iFinD S2 live result
+
+- Merged/deployed PR #54 at `f7ebbe2` and verified production/API/dual-stock
+  route health.
+- Ran the one authorized S2 batch. Same-client S0 passed all seven services and
+  35 entitled schemas; the first Luxshare `get_stock_info` response failed the
+  reviewed response schema contract.
+- Stopped at one of four allowed calls with zero retry. Hengtong and both daily
+  performance calls were not reached; no raw response, normalized row, paid
+  bundle or canonical iFinD row was created.
+- Persisted only the credential-safe failure status for Provider Health. A
+  further provider call is not authorized by this batch.
+
 ## 2026-08-12 - iFinD S2 fail-closed live acceptance runner
 
 - Added same-session seven-service S0 revalidation followed by the exact

@@ -222,6 +222,12 @@ S0，再固定执行两只股票各一次 `get_stock_info` 和 `get_stock_perfor
 任何首个失败都会停止且不保留 partial/raw。所有 S2 本地状态均为凭据安全白名单。
 所有者已授权部署后的这一批次；本段代码变更本身未发起 provider call。
 
+PR #54 部署到 `f7ebbe2` 后，这一批次已执行。同会话 S0 再次通过 7/7 服务和
+35/35 entitlement schema；第一个且唯一的 `002475.SZ:get_stock_info` 返回未
+匹配审核后的响应结构，状态为 `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`。执行器在
+1/4 次时零重试停止，未调用亨通光电或任一行情工具，未写 raw、normalized、
+bundle 或 canonical 数据。再次调用不在本批授权内，必须先离线诊断并重新授权。
+
 ## 分阶段验收
 
 ### 阶段 0：凭据与合同

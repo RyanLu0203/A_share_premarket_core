@@ -56,7 +56,9 @@ false. The exact old two-call PIT-blocked local status has been migrated
 offline; all weaker states fail closed. S2 has a typed default-off foundation:
 two fixed tools × two symbols, four calls, zero retry, one security row and 120
 governed QFQ rows per symbol, with explicit provider availability. Live S2
-calls still require separate authorization after merge and deployment. S3-S4,
+one authorized run stopped after the first Luxshare info call on response
+schema mismatch (1/4, zero retry, zero accepted rows). Any further calls require
+new authorization after offline diagnosis. S3-S4,
 research, recommendation, position, target-price,
 order, broker, trading and production paths remain locked.
 
