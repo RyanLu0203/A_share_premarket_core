@@ -325,9 +325,13 @@ Handoff policy:
   two-symbol call plan, and sanitized Issue #24 Workspace readiness. The old
   exposed credential is permanently forbidden and the user reports rotation.
   On 2026-08-12 S0 passed 7/7 services and 35/35 active entitled tools/schemas;
-  enterprise-only `edb:search_edb` is unavailable by plan. One S1 Luxshare
-  response was quarantined as scope-unverified; Hengtong was not called, no
-  retry occurred and no data was accepted. Three handshake gates and a
+  enterprise-only `edb:search_edb` is unavailable by plan. The first S1
+  Luxshare response was quarantined as scope-unverified. After the exact code
+  mapping merged, a second authorized run stopped at
+  `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` on its first Luxshare call. Hengtong was
+  not called, neither run retried and no data was accepted. Offline parser-
+  contract diagnosis is required before another separately authorized call.
+  Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately
   entitled. This does not unlock generic Dashboard, research, recommendation,

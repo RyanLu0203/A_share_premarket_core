@@ -13,7 +13,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services, 35/35 personal/trial entitled tools and live input schemas; the 36th reviewed tool `search_edb` is enterprise-only. One Luxshare S1 response was quarantined; no iFinD row is canonical |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services, 35/35 personal/trial entitled tools and live input schemas; the 36th reviewed tool `search_edb` is enterprise-only. Two bounded S1 runs each stopped after the first Luxshare call—first on scope, then on response schema; Hengtong was not called and no iFinD row is canonical |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -48,7 +48,7 @@ flowchart LR
 
     T --> N
     C --> N
-    I -. "S0 accepted; S1 response quarantined" .-> N
+    I -. "S0 accepted; S1 blocked at response schema" .-> N
     N --> Q --> S --> A --> U
     S --> D --> G11 --> L
 ```
@@ -104,8 +104,8 @@ and is not executed; see
 ## Next Delivery Sequence
 
 1. Preserve the accepted S0 baseline: 7/7 services, 35/35 active entitled tools and schemas; keep enterprise-only `search_edb` explicitly unavailable by plan.
-2. Review the exact provider-native six-digit security-code mapping and separately authorize one bounded S1 rerun; do not retry automatically.
-3. Keep all S1 output non-canonical until symbol identity and PIT mapping pass for both `002475.SZ` and `600487.SH`.
+2. Diagnose the current `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` offline with bounded supplier-format fixtures; do not spend another request or loosen validation speculatively.
+3. Only after that review, separately authorize one bounded S1 run. Keep all S1 output non-canonical until symbol identity, response schema and PIT mapping pass for both `002475.SZ` and `600487.SH`.
 4. Run S2/S3 only after S1 passes; keep S4 and all research promotion locked until calendar, PIT, units, coverage and provider reconciliation pass.
 
 The remainder of this README retains detailed goal history and operational

@@ -1,5 +1,22 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S1 RESPONSE-SCHEMA BLOCK
+
+Status: `S0_PASS_S1_RESPONSE_SCHEMA_BLOCKED_NOT_CANONICAL` on stable
+`project-current` merge `cf82f53`.
+
+- Fast-forwarded the stable Application Support deployment to merged PR #46;
+  production build, launcher check, both LaunchAgents, API health and frontend
+  HTTP checks passed.
+- Ran one separately authorized bounded S1. Its same-run S0 again passed 7/7
+  services, 35/35 active entitled tools and 35/35 input-schema contracts.
+- The first Luxshare `get_stock_summary` call was rejected during non-canonical
+  staging with `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called,
+  no retry occurred, no raw response was persisted and no data was accepted.
+- Recorded only allowlisted local status metadata at mode `0600`: failure code,
+  one attempted call, failed symbol and S0 verification booleans. The next gate
+  is offline parser-contract diagnosis; S2-S4 and research remain locked.
+
 ## 2026-08-12 - IFIND ENTITLEMENT-AWARE S0 AND BOUNDED S1 ATTEMPT
 
 Status: `S0_PASS_S1_SCOPE_BLOCKED_NOT_CANONICAL` on

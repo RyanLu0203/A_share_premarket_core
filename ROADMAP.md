@@ -4,11 +4,13 @@
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial
 entitlement passed live schema validation. The full reviewed 36-tool catalog is
-retained; enterprise-only `edb:search_edb` is unavailable by plan. One
-Luxshare S1 response was quarantined as scope-unverified and no retry was made.
-The next data step is a separately authorized bounded S1 rerun after review of
-the exact six-digit provider-code mapping. S2-S4 and all research promotion
-remain locked.
+retained; enterprise-only `edb:search_edb` is unavailable by plan. The first
+Luxshare S1 response was quarantined as scope-unverified. After the exact code
+mapping merged, a second authorized run stopped at the first Luxshare call with
+`IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
+retried and no data was accepted. The next data step is offline parser-contract
+diagnosis, followed only after separate authorization by another bounded S1.
+S2-S4 and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
 
@@ -28,15 +30,18 @@ Delivery order from this checkpoint:
    tools/schemas and zero S0 data calls; keep the old exposed value forbidden.
 2. Treat enterprise-only `edb:search_edb` as unavailable by plan while
    retaining it in the 36-tool reviewed supplier catalog.
-3. After separate approval, rerun S1 with exactly two fixed
-   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first attempt
-   stopped after Luxshare scope quarantine; it did not call Hengtong or retry.
-4. Run S2 only after S0/S1 pass: security master and bounded 120-day market
+3. Diagnose `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` offline with bounded supplier-
+   format fixtures. Do not weaken the parser speculatively or spend another
+   request during diagnosis.
+4. After separate approval, rerun S1 with exactly two fixed
+   `get_stock_summary` calls: `002475.SZ` and `600487.SH`. The first two runs
+   both stopped after Luxshare; neither called Hengtong or retried.
+5. Run S2 only after S0/S1 pass: security master and bounded 120-day market
    evidence. Luxshare already has 120 Provider02B dates; Hengtong remains
    identity-only until accepted iFinD evidence exists.
-5. Run S3 for audited fundamentals, ownership, risk, events and ESG fields,
+6. Run S3 for audited fundamentals, ownership, risk, events and ESG fields,
    normalizing immutable checksummed bundles below the external data root.
-6. Keep S4 market context and all research promotion locked until calendar,
+7. Keep S4 market context and all research promotion locked until calendar,
    PIT/revision, missingness, units, adjustment, coverage and cross-provider
    reconciliation pass. Never substitute fabricated values for a failed gate.
 
@@ -113,8 +118,8 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: separately authorize an S1 rerun after provider-native code
-  mapping review; S2-S3 remain blocked until S1 passes.
+- Next data goal: diagnose the S1 response-schema mismatch offline, then
+  separately authorize a bounded rerun; S2-S3 remain blocked until S1 passes.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
 - Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user

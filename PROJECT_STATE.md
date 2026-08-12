@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-12
 
-## IFIND ENTITLEMENT-AWARE S0 ACCEPTANCE
+## IFIND ENTITLEMENT-AWARE S0 ACCEPTANCE AND S1 SCHEMA BLOCK
 
 - The Keychain-delivered test credential completed one governed seven-service
   MCP S0 run on 2026-08-12. All seven services negotiated protocol
@@ -13,15 +13,23 @@ Last updated: 2026-08-12
   supplier pricing/data-scope evidence identifies `edb:search_edb` as an
   enterprise capability, so its absence from this personal/trial profile is
   now `UNAVAILABLE_BY_PLAN`, not provider failure or schema drift.
-- One owner-authorized S1 attempt called `get_stock_summary` for
+- The first owner-authorized S1 attempt called `get_stock_summary` for
   `002475.SZ`. Its response used a provider-native security-code shape that
   could not cross the then-current canonical response-scope check, so the row
   was quarantined with `IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED`; the second
   symbol was not called and no retry occurred. No iFinD row is canonical.
 - The scope normalizer now permits a six-digit provider code only when it maps
-  uniquely to the exact allowlisted symbol for that call. Audit output now
-  truthfully counts a response rejected during staging as an attempted data
-  call. S1 must be re-authorized later; S2-S4 and research remain locked.
+  uniquely to the exact allowlisted symbol for that call. After PR #46 merged,
+  the stable deployment was fast-forwarded to merge commit `cf82f53`; its
+  production build, LaunchAgents, API health and frontend HTTP checks passed.
+- One separately authorized S1 rerun completed the same-run 7/7-service,
+  35/35-tool/schema S0, then stopped after its first Luxshare data call with
+  `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, no retry was
+  made, no raw response was persisted and no iFinD row is canonical. The
+  Git-ignored local status records only the failure code, one attempted call,
+  failed symbol and S0 verification booleans. S1 requires an offline parser-
+  contract review before any later separately authorized call; S2-S4 and
+  research remain locked.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -88,12 +96,14 @@ project description with its machine-readable state.
 
 Research over new iFinD evidence has **not** started. External authentication,
 seven-service initialization, the active 35-tool entitlement and live input
-schemas are accepted at S0. One S1 Luxshare summary response was quarantined at
-the response-scope boundary; Hengtong was not called, no retry occurred, and
-no iFinD data was accepted. The next gate is a separately authorized S1 rerun
-after review of the provider-native code mapping, followed only on success by
-schema/PIT/coverage reconciliation. Recommendation, position, trading, broker,
-production, S2-S4 and research capabilities remain locked.
+schemas are accepted at S0. The first S1 attempt was quarantined at the
+response-scope boundary; after the exact code mapping was merged, the second
+attempt stopped on the first Luxshare call at the response-schema boundary.
+Hengtong has never been called, neither run retried, and no iFinD data was
+accepted. The next gate is offline parser-contract diagnosis using bounded,
+non-secret fixtures; only a later separately authorized S1 call may follow.
+Recommendation, position, trading, broker, production, S2-S4 and research
+capabilities remain locked.
 
 ## MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
 

@@ -5,9 +5,11 @@
 One governed S0 run accepted all seven MCP services and all 35 tools exposed by
 the personal/trial entitlement, including their live input schemas. The full
 reviewed catalog remains 36; `edb:search_edb` is enterprise-only and therefore
-`UNAVAILABLE_BY_PLAN`. A single Luxshare S1 summary response was quarantined at
-the response-scope boundary; Hengtong was not called, no retry occurred and no
-iFinD data is canonical. S2-S4 and research remain locked.
+`UNAVAILABLE_BY_PLAN`. The first Luxshare S1 summary was quarantined at the
+response-scope boundary. After the exact provider-code mapping merged, a second
+authorized run again passed S0 but stopped on its first Luxshare call with
+`IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`. Hengtong was not called, neither run
+retried and no iFinD data is canonical. S2-S4 and research remain locked.
 
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 
@@ -53,8 +55,10 @@ text is non-canonical. Tool calls remain default-off after the accepted S0.
 
 The old exposed value remains permanently forbidden. External authentication
 and S0 are now accepted for 7/7 services and 35/35 personal/trial entitled
-tools/schemas. One S1 Luxshare response was quarantined at the scope boundary;
-Hengtong was not called, no retry occurred and no iFinD rows were accepted.
+tools/schemas. The first S1 Luxshare response was quarantined at the scope
+boundary; after the exact code mapping merged, the second stopped at response-
+schema validation. Hengtong was not called, neither run retried and no iFinD
+rows were accepted.
 
 Naive timestamps are rejected by default. A caller may explicitly declare
 `Asia/Shanghai` only after confirming the returned field semantics; canonical
