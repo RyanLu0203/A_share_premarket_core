@@ -359,6 +359,13 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "s1_staged_symbol_count",
         "s1_identity_acceptance_verified",
         "s2_requires_separate_authorization",
+        "s2_offline_foundation_state",
+        "s2_fixed_tools",
+        "s2_data_call_budget",
+        "s2_daily_session_count",
+        "s2_adjustment_mode",
+        "s2_live_calls_authorized",
+        "s2_provider_schema_accepted",
         "ifind_canonical_accepted",
     }
 
@@ -382,6 +389,15 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["data_module_count"] == 7
         assert isinstance(readiness["last_data_tool_called"], bool)
         assert readiness["s1_provider_available_at_verified"] is False
+        assert readiness["s2_fixed_tools"] == [
+            "get_stock_info",
+            "get_stock_performance",
+        ]
+        assert readiness["s2_data_call_budget"] == 4
+        assert readiness["s2_daily_session_count"] == 120
+        assert readiness["s2_adjustment_mode"] == "qfq"
+        assert readiness["s2_live_calls_authorized"] is False
+        assert readiness["s2_provider_schema_accepted"] is False
         assert readiness["ifind_canonical_accepted"] is False
         if readiness["last_data_tool_called"]:
             assert readiness["last_data_call_count"] in {1, 2}

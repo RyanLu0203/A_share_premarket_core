@@ -61,7 +61,7 @@ flowchart LR
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |
-| iFinD AI 金融数据服务 | S0 and S1 identity accepted; S2 separately locked | The MCP/API Key channel passes seven services and 35/35 tools/schemas. Both fixed summaries passed scope, identity and schema. Call-plan v2 accepts them only as non-canonical identity metadata with local `observed_at` and unknown provider `available_at`; S2 requires separate authorization and S3-S4/research remain locked. |
+| iFinD AI 金融数据服务 | S0 and S1 identity accepted; S2 typed offline foundation ready but live calls unauthorized | The MCP/API Key channel passes seven services and 35/35 tools/schemas. Both fixed summaries passed scope, identity and schema. S2 fixes four zero-retry calls, one security row and 120 governed QFQ sessions per symbol, explicit provider availability and strict normalization. Live S2 calls and provider schemas remain unaccepted; S3-S4/research remain locked. |
 
 Canonical interface details are maintained in
 [`configs/project/canonical_interfaces.json`](../../configs/project/canonical_interfaces.json)

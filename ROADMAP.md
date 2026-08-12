@@ -11,8 +11,9 @@ each with no retry. Both identity rows passed symbol scope, configured company
 identity and response-schema checks. Call-plan v2 now accepts this result only
 as identity acceptance metadata: local `observed_at` is provenance, provider
 `available_at` is unknown and canonical rows remain 0. The exact prior local
-status can be migrated offline after deployment. S2 requires separate
-authorization; S3-S4 and all research promotion remain locked.
+status has been migrated offline after deployment. S2 now has a typed, fixed
+four-call offline foundation but requires separate live authorization; S3-S4
+and all research promotion remain locked.
 
 ## 2026-08-09 iFinD Data and Workspace Foundation
 
@@ -37,10 +38,12 @@ Delivery order from this checkpoint:
 4. Preserve the approved identity-only metadata contract and migrate only the
    exact safe local status after deployment. Do not weaken PIT requirements for
    market, fundamental or event data.
-5. Run S2 only after separate authorization: security master and
-   bounded 120-day market evidence. Luxshare already has 120 Provider02B
-   dates; Hengtong remains
-   identity-only until accepted iFinD evidence exists.
+5. Run S2 only after separate authorization: security master and bounded
+   120-day market evidence. Its offline contract is fixed at
+   `get_stock_info` + `get_stock_performance`, two symbols, four calls, zero
+   retry, QFQ and explicit supplier availability. Luxshare already has 120
+   Provider02B dates; Hengtong remains identity-only until accepted iFinD
+   evidence exists.
 6. Run S3 for audited fundamentals, ownership, risk, events and ESG fields,
    normalizing immutable checksummed bundles below the external data root.
 7. Keep S4 market context and all research promotion locked until calendar,
@@ -120,8 +123,9 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: merge/deploy call-plan v2, migrate the exact safe S1 status
-  offline, then request separate authorization for S2. S3 remains blocked.
+- Next data goal: merge/deploy the S2 typed offline foundation, run its
+  network-free preflight against the migrated S1 status, then request separate
+  authorization for the exact four-call S2 run. S3 remains blocked.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
 - Rec Tiering unlock condition: `ready_factor_count > 0` and explicit user

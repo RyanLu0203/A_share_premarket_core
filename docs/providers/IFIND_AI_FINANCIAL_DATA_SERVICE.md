@@ -9,6 +9,11 @@
 > `observed_at` 仅表示验收观察时间，provider `available_at` 明确未知，canonical
 > 行仍为 0。S2 仍需单独授权，未继续消耗 API 请求。
 
+> S2 离线基础现已按供应商 `ifind-finance-data-1.3.0` 股票参考固定为
+> `get_stock_info` 与 `get_stock_performance` 各调用两只股票一次，共四次、零
+> 重试。它只表示请求、字段、日历和规范化合同就绪；live S2 调用、供应商输出
+> schema 与 canonical 数据仍未授权、未执行、未接纳。
+
 本文定义项目对已购买的同花顺 iFinD「AI 金融数据服务」的安全接入、数据分层、落盘和验收边界。iFinD 在本项目中的定位是付费专业金融数据源，用于补全证券主数据、行情、PIT 财务与估值、行业、公告元数据、宏观和市场结构证据；它不是自然语言选股器、推荐系统或交易执行入口。
 
 用户实际购买的是 iFinD **MCP/API Key** 产品。项目因此以官方
@@ -105,6 +110,22 @@ Workspace 将“证券可浏览”与“参考组合成员资格”分开：两�
   研究数据。相关页面必须显示空状态，不得用推断、零值或另一证券的数据填充。
 - iFinD 数据只有通过外部认证、工具 schema、固定调用预算、PIT、覆盖和
   normalization 验收后，才能进入这两只证券的规范化只读模型。
+
+### S2 固定数据合同
+
+- 请求范围固定为 `002475.SZ`、`600487.SH`，工具固定为
+  `get_stock_info`、`get_stock_performance`；调用者不能提供 query、工具或
+  symbol，调用预算固定为四次且不重试。
+- `get_stock_info` 每股必须返回一行证券代码、简称、数据日期、带时区的供应商
+  可用时间、上市日期、交易状态、总股本和流通股本。
+- `get_stock_performance` 每股必须恰好返回最近 120 个已完成交易日；日期集合
+  必须与现有受治理交易日历完全一致，复权必须明确为 QFQ，并带统一、带时区的
+  供应商可用时间。不能用本地抓取时间替代。
+- 任意跨股票行、列缺失、行数漂移、日历漂移、非 QFQ、无时区或可用时间晚于
+  decision cutoff 都进入拒绝/隔离，不写外部 normalized bundle。
+- Workspace 只展示 `S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED`、
+  固定工具和预算；`s2_live_calls_authorized=false`、
+  `s2_provider_schema_accepted=false`、canonical iFinD 行数仍为 0。
 
 ## 规范化与本地存储
 

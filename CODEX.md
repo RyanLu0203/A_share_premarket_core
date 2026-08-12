@@ -52,9 +52,12 @@ responses passed symbol scope, company identity and response-schema checks.
 The approved call-plan v2 classifies both summaries as
 `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED`: local `observed_at` is provenance
 only, provider `available_at` is unknown, and canonical acceptance remains
-false. The exact old two-call PIT-blocked local status may be migrated offline;
-all weaker states fail closed. S2 requires separate authorization after merge
-and deployment. S3-S4, research, recommendation, position, target-price,
+false. The exact old two-call PIT-blocked local status has been migrated
+offline; all weaker states fail closed. S2 has a typed default-off foundation:
+two fixed tools × two symbols, four calls, zero retry, one security row and 120
+governed QFQ rows per symbol, with explicit provider availability. Live S2
+calls still require separate authorization after merge and deployment. S3-S4,
+research, recommendation, position, target-price,
 order, broker, trading and production paths remain locked.
 
 ## Codex Operating System

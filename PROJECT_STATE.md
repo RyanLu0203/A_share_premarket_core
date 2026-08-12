@@ -2,11 +2,12 @@
 
 Last updated: 2026-08-12
 
-Deployment note: stable deployment is at merged call-plan v2 commit `429a78f`.
-One environment-dependent test assumed the historical one-call failure state;
-the valid current local status records two calls and no failed symbol. A narrow
-offline test correction is pending merge before status migration. No provider
-request or canonical promotion occurred.
+Deployment note: stable deployment is at merged PR #52 commit `87f2de2`.
+The exact prior two-call S1 status was migrated offline and now reports
+`S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED` for both symbols; the migration read
+no Keychain value, used no network and accepted no canonical row. S2 now has a
+typed offline foundation; its live four-call budget remains separately
+unauthorized and unexecuted.
 
 ## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
 
@@ -41,6 +42,16 @@ request or canonical promotion occurred.
 - S2 requires separate authorization after merge, deployment and local status
   migration. S3-S4 and all research remain locked. No new API call, raw payload
   or canonical row was created by the temporal-contract change.
+- The S2 offline foundation fixes exactly four calls with zero retry:
+  `get_stock_info` and `get_stock_performance` once for each cohort symbol. It
+  requires one typed security-master row and exactly 120 QFQ daily rows aligned
+  to the existing governed calendar, plus explicit timezone-aware supplier
+  availability. Caller-provided query text, cross-symbol rows, calendar drift,
+  ambiguous availability and non-QFQ evidence fail closed.
+- Provider Health exposes this as
+  `S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED`, a four-call budget and
+  `s2_live_calls_authorized=false`; it does not claim live provider schemas or
+  accepted S2 data.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 

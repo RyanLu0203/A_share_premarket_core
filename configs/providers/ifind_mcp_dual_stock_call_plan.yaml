@@ -108,6 +108,24 @@
       "data_call_budget": 4,
       "daily_history_window": "latest_120_completed_trading_sessions_not_after_decision_cutoff",
       "adjustment_mode": "qfq_only_if_supplier_schema_explicitly_confirms_it_otherwise_quarantine",
+      "request_contract_version": "ifind_s2_typed_v1",
+      "supplier_reference": "ifind-finance-data-1.3.0_cn_stock",
+      "query_parameter_contract": "fixed_reviewed_query_only_no_caller_text",
+      "governed_calendar_contract": "exact_120_unique_completed_sessions_from_existing_calendar",
+      "provider_availability_contract": "explicit_timezone_aware_provider_timestamp_required_no_local_clock_substitution",
+      "normalization_state": "offline_ready_live_calls_separately_authorized",
+      "tool_contracts": [
+        {
+          "tool": "get_stock_info",
+          "expected_rows_per_symbol": 1,
+          "required_columns": ["证券代码", "证券简称", "数据日期", "数据可用时间", "上市日期", "交易状态", "总股本", "流通股本"]
+        },
+        {
+          "tool": "get_stock_performance",
+          "expected_rows_per_symbol": 120,
+          "required_columns": ["证券代码", "证券简称", "交易日期", "开盘", "最高", "最低", "收盘", "成交量", "成交额", "换手率", "复权方式", "数据可用时间"]
+        }
+      ],
       "success_requires": [
         "stage_specific_input_schema_fingerprints_unchanged",
         "security_master_identity_and_effective_dates_pass",

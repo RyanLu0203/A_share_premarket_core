@@ -82,6 +82,13 @@ function IfindFoundationEvidence({readiness, services, modules, pilot}: {readine
         <KpiCard label="S1 staged symbols" value={readiness.s1_staged_symbol_count ?? 0} />
         <KpiCard label="iFinD canonical rows" value={readiness.ifind_canonical_accepted === true ? "UNEXPECTED" : 0} state={readiness.ifind_canonical_accepted === true ? "BLOCKED" : "PASS"} />
         <KpiCard label="S2 authorization" value={readiness.s2_requires_separate_authorization === true ? "REQUIRED" : "LOCKED"} state="PENDING" />
+        <KpiCard label="S2 offline foundation" value={readiness.s2_offline_foundation_state ?? "UNAVAILABLE"} state={readiness.s2_offline_foundation_state === "S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED" ? "READY" : "PENDING"} />
+        <KpiCard label="S2 fixed tools" value={Array.isArray(readiness.s2_fixed_tools) ? readiness.s2_fixed_tools.join(" + ") : "UNAVAILABLE"} />
+        <KpiCard label="S2 call budget" value={readiness.s2_data_call_budget ?? 0} />
+        <KpiCard label="S2 daily sessions" value={readiness.s2_daily_session_count ?? 0} />
+        <KpiCard label="S2 adjustment" value={readiness.s2_adjustment_mode ?? "UNAVAILABLE"} state={readiness.s2_adjustment_mode === "qfq" ? "PASS" : "PENDING"} />
+        <KpiCard label="S2 live calls" value={readiness.s2_live_calls_authorized === true ? "AUTHORIZED" : "NOT AUTHORIZED"} state={readiness.s2_live_calls_authorized === true ? "WARNING" : "PASS"} />
+        <KpiCard label="S2 provider schema" value={readiness.s2_provider_schema_accepted === true ? "ACCEPTED" : "NOT ACCEPTED"} state={readiness.s2_provider_schema_accepted === true ? "PASS" : "PENDING"} />
         <KpiCard label="MCP services" value={readiness.supported_service_count ?? services.length} />
         <KpiCard label="Entitlement profile" value={readiness.entitlement_profile ?? "UNAVAILABLE"} />
         <KpiCard label="Reviewed / entitled tools" value={`${String(readiness.reviewed_tool_count ?? 0)} / ${String(readiness.expected_tool_count ?? 0)}`} />

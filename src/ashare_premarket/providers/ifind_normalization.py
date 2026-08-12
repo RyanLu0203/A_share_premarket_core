@@ -173,12 +173,13 @@ MODULE_SCHEMAS: dict[str, dict[str, tuple[str, ...]]] = {
 }
 
 MODULE_SOURCE_FUNCTIONS = {
-    "security_master": {"basic_data", "basic_data_service"},
+    "security_master": {"basic_data", "basic_data_service", "get_stock_info"},
     "daily_market_and_calendar": {
         "history_quotation",
         "cmd_history_quotation",
         "trade_dates",
         "get_trade_dates",
+        "get_stock_performance",
     },
     "pit_fundamentals_and_valuation": {
         "basic_data",

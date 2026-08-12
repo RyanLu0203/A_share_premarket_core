@@ -14,9 +14,11 @@ from ashare_premarket.providers.ifind_acceptance import (
 )
 from ashare_premarket.providers.ifind_http import IfindProviderError
 from ashare_premarket.providers.ifind_mcp import (
+    read_ifind_mcp_probe_status,
     reclassify_ifind_mcp_s1_probe_status,
     write_ifind_mcp_probe_status,
 )
+from ashare_premarket.providers.ifind_s2 import build_ifind_s2_offline_plan
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -27,6 +29,14 @@ def build_parser() -> argparse.ArgumentParser:
         )
     )
     live = parser.add_mutually_exclusive_group()
+    live.add_argument(
+        "--offline-stage-s2-preflight",
+        action="store_true",
+        help=(
+            "Validate the exact four-call S2 plan against the accepted local S1 "
+            "status without reading Keychain, using the network, or authorizing calls."
+        ),
+    )
     live.add_argument(
         "--live-handshake",
         action="store_true",
@@ -53,6 +63,13 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--s2-cutoff-date",
+        help=(
+            "Governed latest completed trading date in YYYY-MM-DD form, required "
+            "only by --offline-stage-s2-preflight."
+        ),
+    )
+    parser.add_argument(
         "--decision-timestamp",
         help=(
             "Timezone-aware ISO-8601 decision timestamp required by --live-stage-s1; "
@@ -72,6 +89,33 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.offline_stage_s2_preflight:
+        if (
+            not args.s2_cutoff_date
+            or args.decision_timestamp
+            or args.write_local_status
+        ):
+            return _print_failure(
+                "offline_stage_s2_preflight",
+                "IFIND_MCP_S2_PREFLIGHT_ARGUMENTS_INVALID",
+            )
+        try:
+            plan = build_ifind_s2_offline_plan(
+                Path(ROOT),
+                cutoff_date=args.s2_cutoff_date,
+                s1_status=read_ifind_mcp_probe_status(Path(ROOT)),
+            )
+        except IfindProviderError as exc:
+            return _print_failure(
+                "offline_stage_s2_preflight", exc.failure_code, exc.http_status
+            )
+        print(json.dumps(plan.safe_summary(), ensure_ascii=False, sort_keys=True))
+        return 0
+    if args.s2_cutoff_date:
+        return _print_failure(
+            "offline_contract",
+            "IFIND_MCP_S2_PREFLIGHT_ARGUMENTS_INVALID",
+        )
     if args.live_stage_s1 and not args.decision_timestamp:
         return _print_failure(
             "live_stage_s1",
@@ -97,9 +141,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 {
                     "status": "PASS",
                     "mode": "offline_contract",
-                    "acceptance_state": (
-                        "S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"
-                    ),
+                    "acceptance_state": ("S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED"),
                     "local_status_updated": True,
                     "path": str(target.relative_to(ROOT)),
                     "network_accessed": False,
@@ -141,9 +183,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "mode": result.get("mode"),
             "acceptance_state": result.get("acceptance_state"),
             "temporal_class": result.get("temporal_class"),
-            "provider_available_at_status": result.get(
-                "provider_available_at_status"
-            ),
+            "provider_available_at_status": result.get("provider_available_at_status"),
             "identity_observed_at": result.get("observed_at"),
             "actual_tool_count": sum(
                 int(row.get("tool_count", 0)) for row in handshake
