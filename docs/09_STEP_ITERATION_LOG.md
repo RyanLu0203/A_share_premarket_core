@@ -1,5 +1,22 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S1 DEPLOYMENT-STATE TEST FIX
+
+Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE` on
+`codex/ifind-s1-deployment-test-fix`.
+
+- Stable deployment reached merged call-plan v2 commit `429a78f` without local
+  worktree drift.
+- Deployment validation exposed one environment-dependent credential-safety
+  assertion that hard-coded the old single-call failure state. The actual
+  allowlisted local record truthfully contains two completed S1 calls and no
+  failed symbol.
+- Updated the test to accept only the bounded S1 states: one call requires the
+  first failed symbol; two calls require no failed symbol. Canonical acceptance
+  remains false and provider availability remains unverified.
+- No provider call, Keychain read, local-status migration, data promotion or
+  Research occurred.
+
 ## 2026-08-12 - IFIND S1 IDENTITY METADATA TEMPORAL CONTRACT
 
 Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE_DEPLOY_AND_SAFE_STATUS_MIGRATION` on
