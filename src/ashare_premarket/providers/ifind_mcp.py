@@ -92,6 +92,21 @@ IFIND_MCP_TOOL_CATALOG = {
     "index": ("index_data", "sector_data", "index_highfreq_quotes"),
 }
 
+# The supplier's reviewed full catalog includes enterprise-only capabilities.
+# The purchased personal/trial channel is intentionally represented as a
+# separate active entitlement profile so a documented plan limitation is not
+# confused with schema drift or a provider outage.
+IFIND_MCP_ENTITLEMENT_PROFILE = "personal_trial_non_enterprise"
+IFIND_MCP_PLAN_UNAVAILABLE_TOOLS = {"edb": ("search_edb",)}
+IFIND_MCP_ENTITLED_TOOL_CATALOG = {
+    server_type: tuple(
+        tool_name
+        for tool_name in tool_names
+        if tool_name not in IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.get(server_type, ())
+    )
+    for server_type, tool_names in IFIND_MCP_TOOL_CATALOG.items()
+}
+
 IFIND_MCP_EXPECTED_INPUT_FIELDS = {
     tool_name: (
         ("symbols", "indicators", "data_mode")
@@ -105,7 +120,7 @@ IFIND_MCP_EXPECTED_INPUT_FIELDS = {
         else (
             ("query", "market")
             if tool_name == "search_global_stocks"
-            else ("keyword",) if tool_name == "search_trending_news" else ("query",)
+            else ("size",) if tool_name == "search_trending_news" else ("query",)
         )
     )
     for tools in IFIND_MCP_TOOL_CATALOG.values()
@@ -117,7 +132,11 @@ IFIND_MCP_SERVICE_CATALOG = tuple(
         "server_type": server_type,
         "server_id": server_id,
         "endpoint_path": f"/ds-mcp-servers/{server_id}",
-        "expected_tool_count": len(IFIND_MCP_TOOL_CATALOG[server_type]),
+        "reviewed_tool_count": len(IFIND_MCP_TOOL_CATALOG[server_type]),
+        "expected_tool_count": len(IFIND_MCP_ENTITLED_TOOL_CATALOG[server_type]),
+        "unavailable_by_plan": ";".join(
+            IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.get(server_type, ())
+        ),
         "implementation_state": "contract_ready_live_handshake_pending",
     }
     for server_type, server_id in IFIND_MCP_SERVERS.items()
@@ -1209,12 +1228,27 @@ def validate_ifind_mcp_pilot_response_scope(
             "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED",
             "MCP stock response does not expose a canonical symbol field",
         )
-    if any(not _CANONICAL_SYMBOL_RE.fullmatch(value) for value in discovered):
+    expected_by_code = {value[:6]: value for value in expected}
+    if len(expected_by_code) != len(expected):
         raise IfindProviderError(
-            "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED",
-            "MCP stock response contains a non-canonical symbol alias",
+            "IFIND_MCP_RESPONSE_SCOPE_INVALID",
+            "expected pilot response scope cannot resolve provider-native codes uniquely",
         )
-    if set(discovered) != set(expected):
+    normalized = []
+    for value in discovered:
+        if _CANONICAL_SYMBOL_RE.fullmatch(value):
+            normalized.append(value)
+        elif re.fullmatch(r"[0-9]{6}", value) and value in expected_by_code:
+            # iFinD summary tables use a six-digit 证券代码. It is accepted only
+            # when it maps uniquely to the exact one-call allowlisted scope;
+            # arbitrary aliases and codes outside that scope remain blocked.
+            normalized.append(expected_by_code[value])
+        else:
+            raise IfindProviderError(
+                "IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED",
+                "MCP stock response contains an unresolvable symbol alias",
+            )
+    if set(normalized) != set(expected):
         raise IfindProviderError(
             "IFIND_MCP_RESPONSE_SCOPE_VIOLATION",
             "MCP stock response contains a symbol outside the accepted pilot scope",
@@ -1249,9 +1283,21 @@ def ifind_mcp_readiness(environ: Optional[Mapping[str, str]] = None) -> dict[str
         "raw_payload_commit_allowed": False,
         "local_token_persistence_allowed": False,
         "supported_service_count": len(IFIND_MCP_SERVERS),
-        "expected_tool_count": sum(
+        "entitlement_profile": IFIND_MCP_ENTITLEMENT_PROFILE,
+        "reviewed_tool_count": sum(
             len(names) for names in IFIND_MCP_TOOL_CATALOG.values()
         ),
+        "expected_tool_count": sum(
+            len(names) for names in IFIND_MCP_ENTITLED_TOOL_CATALOG.values()
+        ),
+        "unavailable_by_plan_count": sum(
+            len(names) for names in IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.values()
+        ),
+        "unavailable_by_plan": [
+            f"{server_type}:{tool_name}"
+            for server_type, tool_names in IFIND_MCP_PLAN_UNAVAILABLE_TOOLS.items()
+            for tool_name in tool_names
+        ],
     }
 
 
@@ -1340,7 +1386,7 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
     if status not in {"PASS", "BLOCKED", "NOT_RUN", "INVALID_LOCAL_STATUS"}:
         status = "INVALID_LOCAL_STATUS"
     mode = str(value.get("mode", "none"))
-    if mode not in {"none", "offline_contract", "live_handshake"}:
+    if mode not in {"none", "offline_contract", "live_handshake", "live_stage_s1"}:
         mode = "none"
     server = value.get("server")
     if server not in IFIND_MCP_SERVERS:
@@ -1368,6 +1414,16 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
         expected_tool_count, int
     ):
         expected_tool_count = None
+    data_call_count = value.get("data_call_count")
+    if isinstance(data_call_count, bool) or not isinstance(data_call_count, int):
+        data_call_count = None
+    elif not 0 <= data_call_count <= 16:
+        data_call_count = None
+    failed_symbol = value.get("failed_symbol")
+    if not isinstance(failed_symbol, str) or not _CANONICAL_SYMBOL_RE.fullmatch(
+        failed_symbol
+    ):
+        failed_symbol = None
     return {
         "status": status,
         "mode": mode,
@@ -1377,6 +1433,8 @@ def _sanitize_ifind_mcp_probe_status(value: Mapping[str, Any]) -> Mapping[str, A
         "observed_at": observed_at,
         "actual_tool_count": actual_tool_count,
         "expected_tool_count": expected_tool_count,
+        "data_call_count": data_call_count,
+        "failed_symbol": failed_symbol,
         "live_handshake_verified": value.get("live_handshake_verified") is True,
         "input_schemas_verified": value.get("input_schemas_verified") is True,
         "data_tool_called": value.get("data_tool_called") is True,
@@ -1449,6 +1507,14 @@ def validate_ifind_mcp_contract_document(contract: Mapping[str, Any]) -> None:
     ]
     channel = contract.get("purchased_mcp_channel")
     network = contract.get("network_policy")
+    entitlement_profiles = (
+        channel.get("entitlement_profiles") if isinstance(channel, Mapping) else None
+    )
+    active_entitlement = (
+        entitlement_profiles.get(IFIND_MCP_ENTITLEMENT_PROFILE)
+        if isinstance(entitlement_profiles, Mapping)
+        else None
+    )
     if (
         contract.get("contract_id") != "ifind_ai_financial_data_service_v1"
         or contract.get("provider_id") != "ifind"
@@ -1456,6 +1522,12 @@ def validate_ifind_mcp_contract_document(contract: Mapping[str, Any]) -> None:
         or channel.get("base_url") != IFIND_MCP_BASE_URL
         or channel.get("protocol_version") != IFIND_MCP_PROTOCOL_VERSION
         or channel.get("services") != expected_services
+        or not isinstance(entitlement_profiles, Mapping)
+        or entitlement_profiles.get("active") != IFIND_MCP_ENTITLEMENT_PROFILE
+        or not isinstance(active_entitlement, Mapping)
+        or active_entitlement.get("reviewed_tool_count") != 36
+        or active_entitlement.get("entitled_expected_tool_count") != 35
+        or active_entitlement.get("unavailable_by_plan") != ["edb:search_edb"]
         or not isinstance(network, Mapping)
         or network.get("default") != "disabled"
         or network.get("required_opt_ins")

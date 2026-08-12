@@ -284,7 +284,11 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "raw_payload_commit_allowed": readiness["raw_payload_commit_allowed"],
         "local_token_persistence_allowed": readiness["local_token_persistence_allowed"],
         "supported_service_count": readiness["supported_service_count"],
+        "entitlement_profile": readiness["entitlement_profile"],
+        "reviewed_tool_count": readiness["reviewed_tool_count"],
         "expected_tool_count": readiness["expected_tool_count"],
+        "unavailable_by_plan_count": readiness["unavailable_by_plan_count"],
+        "unavailable_by_plan": readiness["unavailable_by_plan"],
         "data_module_count": len(IFIND_MCP_DATA_MODULES),
         "last_probe_status": probe["status"],
         "last_probe_mode": probe["mode"],
@@ -295,4 +299,6 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "last_handshake_verified": probe["live_handshake_verified"],
         "last_input_schemas_verified": probe["input_schemas_verified"],
         "last_data_tool_called": probe["data_tool_called"],
+        "last_data_call_count": probe.get("data_call_count"),
+        "last_failed_symbol": probe.get("failed_symbol"),
     }

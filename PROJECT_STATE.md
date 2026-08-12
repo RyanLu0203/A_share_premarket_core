@@ -1,6 +1,27 @@
 # Project State
 
-Last updated: 2026-08-09
+Last updated: 2026-08-12
+
+## IFIND ENTITLEMENT-AWARE S0 ACCEPTANCE
+
+- The Keychain-delivered test credential completed one governed seven-service
+  MCP S0 run on 2026-08-12. All seven services negotiated protocol
+  `2025-03-26`; the active personal/trial entitlement exposed 35/35 expected
+  tools and every entitled input schema passed the reviewed required-field
+  contract. No data tool was called by S0.
+- The retained full supplier catalog remains 36 reviewed tools. Official
+  supplier pricing/data-scope evidence identifies `edb:search_edb` as an
+  enterprise capability, so its absence from this personal/trial profile is
+  now `UNAVAILABLE_BY_PLAN`, not provider failure or schema drift.
+- One owner-authorized S1 attempt called `get_stock_summary` for
+  `002475.SZ`. Its response used a provider-native security-code shape that
+  could not cross the then-current canonical response-scope check, so the row
+  was quarantined with `IFIND_MCP_RESPONSE_SCOPE_UNVERIFIED`; the second
+  symbol was not called and no retry occurred. No iFinD row is canonical.
+- The scope normalizer now permits a six-digit provider code only when it maps
+  uniquely to the exact allowlisted symbol for that call. Audit output now
+  truthfully counts a response rejected during staging as an attempted data
+  call. S1 must be re-authorized later; S2-S4 and research remain locked.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -8,8 +29,9 @@ This branch establishes the safe foundation for the purchased Tonghuashun
 iFinD **AI Financial Data Service** and reconciles the repository's public
 project description with its machine-readable state.
 
-- The purchased channel is Streamable HTTP MCP/API Key: seven fixed services
-  and 36 supplier-documented tools. The governed client implements verified
+- The purchased channel is Streamable HTTP MCP/API Key: seven fixed services,
+  36 reviewed tools and 35 tools in the active personal/trial entitlement.
+  The governed client implements verified
   TLS, exact host/port/path allowlisting, no redirects or proxy inheritance,
   bounded JSON/SSE parsing, session handling, rate limiting, and structured-
   result isolation. QuantAPI HTTPS remains an optional second adapter only.
@@ -24,7 +46,7 @@ project description with its machine-readable state.
   RTF is permanently forbidden. The user reports that it has been rotated,
   while acceptance of the replacement through the external MCP endpoint is
   still pending. Neither old credential material nor the supplier's unsafe
-  example client is used.
+  example client is used. External authentication is now accepted for S0.
 - Seven governed modules now have explicit schema, grain, PIT/revision,
   licensing, normalization, checksum, and acceptance contracts: security
   master; daily market/calendar; PIT fundamentals/valuation; historical
@@ -39,7 +61,7 @@ project description with its machine-readable state.
   bounded dual-stock cohort, and optional allowlisted local probe status. It
   does not read Keychain values or claim that live iFinD data has been accepted.
 - A strict S0-S4 dual-stock acceptance plan validates the exact two-symbol
-  cohort, seven-service/36-tool schema hashes, request budgets, PIT cutoff,
+  cohort, seven-service entitlement-aware schema hashes, request budgets, PIT cutoff,
   fourth data-call gate, and downstream locks. Optional local probe status is
   allowlisted and Git-ignored; provider bodies and credentials are excluded.
 - Security browseability is now independent of reference-portfolio membership
@@ -55,9 +77,7 @@ project description with its machine-readable state.
   Report promotion and every recommendation or execution path remain locked.
 - The named Issue #24 Workspace does not promote the generic downstream
   capability: Dashboard / Daily Report UI remains `locked_future`.
-- GitHub still resolves its default branch to stale `main`, which is 108
-  commits behind `project-current`. The repository default should be changed
-  only after this branch is reviewed and merged into the authoritative branch.
+- GitHub now resolves its default branch to authoritative `project-current`.
 - The stable macOS deployment under
   `~/Library/Application Support/AsharePremarket/deployment` remains the
   operational root. The owner-authorized local consolidation moved every
@@ -66,17 +86,14 @@ project description with its machine-readable state.
   checkout status counts were preserved, and a committed local-boundary audit
   blocks future same-prefix Desktop siblings.
 
-Research over new iFinD evidence has **not** started. The iFinD portal's own
-debug surface returned `code=1` / `msg=success` for a Luxshare
-`get_stock_summary` query, but repeated external governed-client handshakes returned
-HTTP 401. This is recorded as external authentication not yet accepted, not as
-a claim that the replacement credential is invalid. No governed `tools/call`
-or iFinD data acceptance occurred and the fourth data-call gate remains off.
-The next gate is resolution of the external authentication context, seven-
-service `initialize`/`tools/list` plus live input-schema validation, followed
-by a separately authorized bounded dual-stock call plan, schema/PIT/coverage
-reconciliation, and immutable local bundle acceptance. Recommendation,
-position, trading, broker, and production capabilities remain locked.
+Research over new iFinD evidence has **not** started. External authentication,
+seven-service initialization, the active 35-tool entitlement and live input
+schemas are accepted at S0. One S1 Luxshare summary response was quarantined at
+the response-scope boundary; Hengtong was not called, no retry occurred, and
+no iFinD data was accepted. The next gate is a separately authorized S1 rerun
+after review of the provider-native code mapping, followed only on success by
+schema/PIT/coverage reconciliation. Recommendation, position, trading, broker,
+production, S2-S4 and research capabilities remain locked.
 
 ## MACOS RUNTIME PERMISSION AND DAILY SCHEDULE REPAIR
 

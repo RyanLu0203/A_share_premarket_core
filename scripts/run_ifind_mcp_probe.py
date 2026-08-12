@@ -9,6 +9,7 @@ from _bootstrap import ROOT
 
 from ashare_premarket.providers.ifind_http import IfindProviderError
 from ashare_premarket.providers.ifind_mcp import (
+    IFIND_MCP_ENTITLED_TOOL_CATALOG,
     IFIND_MCP_SERVICE_CATALOG,
     IFIND_MCP_SERVERS,
     IFIND_MCP_TOOL_CATALOG,
@@ -98,7 +99,7 @@ def main() -> int:
         initialization = client.initialize(args.server)
         actual_tools = client.list_tools(args.server)
         tool_contracts = client.list_tool_contracts(args.server)
-        expected_tools = tuple(IFIND_MCP_TOOL_CATALOG[args.server])
+        expected_tools = tuple(IFIND_MCP_ENTITLED_TOOL_CATALOG[args.server])
         missing = sorted(set(expected_tools) - set(actual_tools))
         unexpected = sorted(set(actual_tools) - set(expected_tools))
     except IfindProviderError as exc:

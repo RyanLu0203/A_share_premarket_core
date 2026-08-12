@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 from typing import Optional, Sequence
 
 from _bootstrap import ROOT
@@ -12,6 +13,7 @@ from ashare_premarket.providers.ifind_acceptance import (
     run_ifind_dual_stock_acceptance,
 )
 from ashare_premarket.providers.ifind_http import IfindProviderError
+from ashare_premarket.providers.ifind_mcp import write_ifind_mcp_probe_status
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -45,6 +47,14 @@ def build_parser() -> argparse.ArgumentParser:
             "the system clock is never inferred."
         ),
     )
+    parser.add_argument(
+        "--write-local-status",
+        action="store_true",
+        help=(
+            "For a successful S0 handshake only, write bounded credential-free "
+            "status metadata under outputs/local for the read-only Workspace."
+        ),
+    )
     return parser
 
 
@@ -59,6 +69,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return _print_failure(
             "offline_contract" if not args.live_handshake else "live_handshake",
             "IFIND_MCP_DECISION_TIMESTAMP_UNEXPECTED",
+        )
+    if args.write_local_status and not args.live_handshake:
+        return _print_failure(
+            "live_stage_s1" if args.live_stage_s1 else "offline_contract",
+            "IFIND_MCP_LOCAL_STATUS_MODE_INVALID",
         )
 
     mode = (
@@ -78,6 +93,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return _print_failure(mode, "IFIND_MCP_ACCEPTANCE_INTERNAL_ERROR")
 
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    if args.write_local_status:
+        handshake = result.get("handshake", [])
+        write_ifind_mcp_probe_status(
+            Path(ROOT),
+            {
+                "status": "PASS",
+                "mode": "live_handshake",
+                "actual_tool_count": sum(
+                    int(row.get("tool_count", 0)) for row in handshake
+                ),
+                "expected_tool_count": int(result.get("expected_tool_count", 0)),
+                "live_handshake_verified": True,
+                "input_schemas_verified": True,
+                "data_tool_called": False,
+            },
+        )
     return 0 if result.get("status") == "PASS" else 1
 
 

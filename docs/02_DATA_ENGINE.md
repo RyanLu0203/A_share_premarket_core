@@ -1,5 +1,14 @@
 # 02 Data Engine
 
+## 2026-08-12 iFinD live entitlement checkpoint
+
+One governed S0 run accepted all seven MCP services and all 35 tools exposed by
+the personal/trial entitlement, including their live input schemas. The full
+reviewed catalog remains 36; `edb:search_edb` is enterprise-only and therefore
+`UNAVAILABLE_BY_PLAN`. A single Luxshare S1 summary response was quarantined at
+the response-scope boundary; Hengtong was not called, no retry occurred and no
+iFinD data is canonical. S2-S4 and research remain locked.
+
 ## 2026-08-09 iFinD AI Financial Data Service Plane
 
 The paid-data extension uses Tonghuashun iFinD **AI Financial Data Service**
@@ -40,16 +49,12 @@ values, authorization headers, raw schemas, or provider response bodies.
 The MCP client fixes the supplier's unsafe sample behavior: TLS verification is
 mandatory, redirects/system proxies are disabled, the host/port/path catalog is
 exact, JSON and SSE are bounded, session ids are validated, and free-form tool
-text is non-canonical. Tool calls remain disabled until a rotated-key handshake
-and live entitlement catalog succeed.
+text is non-canonical. Tool calls remain default-off after the accepted S0.
 
-The user reports that the previously exposed credential has been rotated; the
-old value remains permanently forbidden. The iFinD portal debug surface has
-returned `code=1` / `msg=success` for Luxshare `get_stock_summary`, while
-external governed-client handshake attempts returned HTTP 401. External authentication
-is therefore pending rather than accepted, without declaring the replacement
-credential invalid. The fourth data-call gate remains off and no iFinD rows
-have been accepted.
+The old exposed value remains permanently forbidden. External authentication
+and S0 are now accepted for 7/7 services and 35/35 personal/trial entitled
+tools/schemas. One S1 Luxshare response was quarantined at the scope boundary;
+Hengtong was not called, no retry occurred and no iFinD rows were accepted.
 
 Naive timestamps are rejected by default. A caller may explicitly declare
 `Asia/Shanghai` only after confirming the returned field semantics; canonical
