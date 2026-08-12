@@ -2,13 +2,13 @@
 
 Last updated: 2026-08-12
 
-Deployment note: stable deployment is at merged PR #53 commit `7d3c01e`.
+Deployment note: stable deployment is at merged PR #54 commit `f7ebbe2`.
 The exact prior two-call S1 status was migrated offline and now reports
 `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED` for both symbols; the migration read
 no Keychain value, used no network and accepted no canonical row. S2 now has a
-typed offline foundation. The owner has now authorized one S2 batch capped at
-four fixed calls with zero retries; execution remains pending deployment of the
-fail-closed live runner.
+typed offline foundation. The owner authorized one S2 batch capped at four
+fixed calls with zero retries. It ran after deployment and stopped after the
+first call with `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`.
 
 ## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
 
@@ -58,7 +58,14 @@ fail-closed live runner.
   all provider staging in memory, and atomically writes only a complete
   242-row normalized bundle under an explicit external paid-data root. Its
   separate local status is allowlisted and credential-free. This code is
-  awaiting merge/deployment before the authorized batch is executed.
+  was merged/deployed in PR #54.
+- The authorized run repeated a successful 7/7-service, 35/35 entitled schema
+  S0 and then called only `002475.SZ:get_stock_info`. The supplier result did
+  not match the reviewed response schema, so the run stopped at 1/4 calls with
+  zero retry. `600487.SH` and both performance tools were not called. It wrote
+  no raw payload, normalized row or paid-data bundle; canonical iFinD rows
+  remain zero. A further provider call requires a new explicit authorization
+  after an offline response-contract diagnosis.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 

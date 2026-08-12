@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-08-12 - IFIND S2 AUTHORIZED RUN STOPPED FAIL-CLOSED
+
+Status: `S2_BLOCKED_RESPONSE_SCHEMA_MISMATCH_ZERO_CANONICAL`.
+
+- PR #54 merged and the stable deployment advanced to `f7ebbe2`; production
+  build, launchd installation, API health and both dual-stock routes passed.
+- The single owner-authorized S2 batch repeated same-client S0 successfully for
+  7/7 services and 35/35 entitled input schemas.
+- The first and only paid call, `002475.SZ:get_stock_info`, returned a shape
+  outside the reviewed response contract and was classified
+  `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`.
+- The runner stopped immediately: 1/4 calls, zero retry, zero normalized rows,
+  no Hengtong call, no performance call, no raw payload, no bundle and zero
+  canonical iFinD rows. Provider Health exposes the sanitized failure.
+- The next permitted step is offline response-contract diagnosis. Any further
+  data call requires a new explicit owner authorization; S3-S4 and Research
+  remain locked.
+
 ## 2026-08-12 - IFIND S2 FAIL-CLOSED LIVE RUNNER
 
 Status: `IMPLEMENTED_OFFLINE_PENDING_MERGE_DEPLOY_AND_AUTHORIZED_EXECUTION`.

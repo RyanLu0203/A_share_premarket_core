@@ -13,7 +13,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. S2 has a typed, default-off four-call offline foundation; live S2 calls remain separately unauthorized and canonical iFinD rows remain 0 |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. One authorized S2 batch stopped fail-closed after the first Luxshare `get_stock_info` response schema mismatch: 1/4 calls, zero retry, zero normalized/canonical rows |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -108,7 +108,7 @@ and is not executed; see
 3. Preserve call-plan v2 temporal semantics: local `observed_at` is acceptance provenance, provider `available_at` is unknown, and canonical acceptance remains false.
 4. Keep the completed offline S1 status migration: two symbols verified, no Keychain read or provider request during migration, and zero canonical rows.
 5. Preserve the S2 typed preflight: fixed `get_stock_info` + `get_stock_performance`, four calls maximum, zero retry, exactly 120 governed QFQ sessions, explicit supplier availability and no caller-supplied query text.
-6. Request separate authorization before executing those four S2 calls. Keep S3, S4 and all research promotion locked until provider schema, calendar, PIT, units, coverage and reconciliation pass.
+6. Diagnose the first S2 response schema mismatch offline. A new authorization is required before any further provider call; keep S3, S4 and all research promotion locked until provider schema, calendar, PIT, units, coverage and reconciliation pass.
 
 The remainder of this README retains detailed goal history and operational
 notes for compatibility. For current truth, use the sections above and the

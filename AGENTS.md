@@ -334,8 +334,10 @@ Handoff policy:
   acceptance provenance, provider `available_at` remains unknown, and
   `canonical_accepted` remains false. The exact two-call/no-failure prior local
   status has been migrated offline. S2 has a typed, default-off four-call
-  foundation for one security row and 120 governed QFQ rows per symbol, but
-  live S2 calls remain separately unauthorized. Three handshake gates and a
+  foundation for one security row and 120 governed QFQ rows per symbol. One
+  authorized run stopped at 1/4 calls on the first Luxshare info response
+  schema mismatch, with zero retry and zero accepted rows. Further calls require
+  new explicit authorization. Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately
   entitled. This does not unlock generic Dashboard, research, recommendation,
