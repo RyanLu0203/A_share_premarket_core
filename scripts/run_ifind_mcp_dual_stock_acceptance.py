@@ -22,6 +22,7 @@ from ashare_premarket.providers.ifind_s2 import build_ifind_s2_offline_plan
 from ashare_premarket.providers.ifind_s2 import (
     run_ifind_s2_live_acceptance,
     s2_bundle_id,
+    s2_manifest_sha256,
     write_ifind_s2_acceptance_bundle,
     write_ifind_s2_status,
 )
@@ -160,6 +161,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                         "bundle_id": bundle,
                         "bundle_persisted": True,
                         "manifest_file": manifest_path.name,
+                        "bundle_manifest_sha256": s2_manifest_sha256(manifest_path),
                         "canonical_accepted": True,
                     }
                 )

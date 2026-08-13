@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 from zoneinfo import ZoneInfo
 
 from ashare_premarket.dashboard.repositories.base import WorkspaceRepositoryBase
@@ -20,6 +20,9 @@ from ashare_premarket.providers.ifind_s2 import (
     IFIND_S2_FIXED_TOOLS,
     IFIND_S2_PREFLIGHT_STATE,
     read_ifind_s2_status,
+)
+from ashare_premarket.providers.ifind_s2_bundle import (
+    load_ifind_s2_accepted_bundle,
 )
 
 
@@ -273,6 +276,12 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
     readiness = ifind_mcp_readiness()
     probe = read_ifind_mcp_probe_status(root)
     s2 = read_ifind_s2_status(root)
+    s2_bundle_status = load_ifind_s2_accepted_bundle(root, s2).safe_status
+    s2_diagnostic = (
+        s2.get("response_diagnostic")
+        if isinstance(s2.get("response_diagnostic"), Mapping)
+        else {}
+    )
     return {
         "provider_id": readiness["provider_id"],
         "provider_name": readiness["provider_name"],
@@ -340,9 +349,34 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "s2_data_call_count": s2["data_call_count"],
         "s2_normalized_row_count": s2["normalized_row_count"],
         "s2_bundle_id": s2["bundle_id"],
+        "s2_bundle_manifest_sha256": s2["bundle_manifest_sha256"],
         "s2_bundle_persisted": s2["bundle_persisted"],
+        "s2_workspace_bundle_integrity_state": (
+            s2_bundle_status.get("status")
+            if s2.get("status") == "PASS"
+            else "NOT_ACCEPTED"
+        ),
+        "s2_workspace_bundle_failure_code": (
+            s2_bundle_status.get("failure_code") if s2.get("status") == "PASS" else None
+        ),
+        "s2_workspace_bundle_artifact_count": s2_bundle_status.get("artifact_count", 0),
+        "s2_workspace_bundle_row_count": s2_bundle_status.get(
+            "normalized_row_count", 0
+        ),
         "s2_provider_schema_accepted": s2["provider_schema_accepted"],
         "s2_canonical_accepted": s2["canonical_accepted"],
         "s2_observed_at": s2["observed_at"],
+        "s2_failure_stage": s2_diagnostic.get("failure_stage"),
+        "s2_failure_reason": s2_diagnostic.get("failure_reason"),
+        "s2_response_shape_sha256": s2_diagnostic.get("response_shape_sha256"),
+        "s2_shape_table_count": s2_diagnostic.get("parsed_table_count", 0),
+        "s2_shape_column_count": s2_diagnostic.get("selected_table_column_count", 0),
+        "s2_shape_row_count": s2_diagnostic.get("selected_table_row_count", 0),
+        "s2_missing_required_columns": s2_diagnostic.get(
+            "missing_required_columns", []
+        ),
+        "s2_diagnostic_raw_payload_persisted": s2_diagnostic.get(
+            "raw_payload_persisted", False
+        ),
         "ifind_canonical_accepted": s2["canonical_accepted"],
     }

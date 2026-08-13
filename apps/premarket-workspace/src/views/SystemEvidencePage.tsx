@@ -91,10 +91,19 @@ function IfindFoundationEvidence({readiness, services, modules, pilot}: {readine
         <KpiCard label="S2 last run" value={readiness.s2_last_status ?? "NOT RUN"} state={String(readiness.s2_last_status ?? "PENDING")} />
         <KpiCard label="S2 acceptance" value={readiness.s2_acceptance_state ?? "NOT ACCEPTED"} state={readiness.s2_canonical_accepted === true ? "PASS" : "PENDING"} />
         <KpiCard label="S2 failure" value={readiness.s2_failure_code ?? "NONE"} state={readiness.s2_failure_code ? "BLOCKED" : "PASS"} />
+        <KpiCard label="S2 failure layer" value={readiness.s2_failure_stage ?? "NOT CAPTURED"} state={readiness.s2_failure_stage ? "BLOCKED" : "PENDING"} />
+        <KpiCard label="S2 failure reason" value={readiness.s2_failure_reason ?? "NOT CAPTURED"} state={readiness.s2_failure_reason ? "BLOCKED" : "PENDING"} />
+        <KpiCard label="S2 response shape" value={readiness.s2_response_shape_sha256 ? String(readiness.s2_response_shape_sha256).slice(0, 12) : "NOT CAPTURED"} warning="Metadata-only fingerprint; no provider values or raw payload" />
+        <KpiCard label="S2 parsed shape" value={`${String(readiness.s2_shape_table_count ?? 0)} tables / ${String(readiness.s2_shape_column_count ?? 0)} columns / ${String(readiness.s2_shape_row_count ?? 0)} rows`} />
+        <KpiCard label="S2 missing reviewed fields" value={Array.isArray(readiness.s2_missing_required_columns) && readiness.s2_missing_required_columns.length ? readiness.s2_missing_required_columns.join("; ") : "NONE RECORDED"} />
+        <KpiCard label="S2 diagnostic raw payload" value={readiness.s2_diagnostic_raw_payload_persisted === true ? "INVALID" : "NOT PERSISTED"} state={readiness.s2_diagnostic_raw_payload_persisted === true ? "BLOCKED" : "PASS"} />
         <KpiCard label="S2 failed scope" value={readiness.s2_failed_symbol ? `${String(readiness.s2_failed_symbol)} / ${String(readiness.s2_failed_tool ?? "UNKNOWN")}` : "NONE"} />
         <KpiCard label="S2 calls used" value={`${String(readiness.s2_data_call_count ?? 0)} / ${String(readiness.s2_data_call_budget ?? 4)}`} />
         <KpiCard label="S2 normalized rows" value={readiness.s2_normalized_row_count ?? 0} />
         <KpiCard label="S2 bundle" value={readiness.s2_bundle_id ?? "NOT PERSISTED"} state={readiness.s2_bundle_persisted === true ? "PASS" : "PENDING"} />
+        <KpiCard label="S2 manifest integrity" value={readiness.s2_bundle_manifest_sha256 ? String(readiness.s2_bundle_manifest_sha256).slice(0, 12) : "NOT ANCHORED"} state={readiness.s2_bundle_manifest_sha256 ? "PASS" : "PENDING"} />
+        <KpiCard label="S2 Workspace integrity" value={readiness.s2_workspace_bundle_integrity_state ?? "NOT ACCEPTED"} state={readiness.s2_workspace_bundle_integrity_state === "PASS" ? "PASS" : "PENDING"} warning={readiness.s2_workspace_bundle_failure_code ? String(readiness.s2_workspace_bundle_failure_code) : undefined} />
+        <KpiCard label="S2 Workspace bundle rows" value={`${String(readiness.s2_workspace_bundle_row_count ?? 0)} rows / ${String(readiness.s2_workspace_bundle_artifact_count ?? 0)} artifacts`} />
         <KpiCard label="S2 observed" value={readiness.s2_observed_at ?? "NOT RUN"} />
         <KpiCard label="S2 provider schema" value={readiness.s2_provider_schema_accepted === true ? "ACCEPTED" : "NOT ACCEPTED"} state={readiness.s2_provider_schema_accepted === true ? "PASS" : "PENDING"} />
         <KpiCard label="MCP services" value={readiness.supported_service_count ?? services.length} />

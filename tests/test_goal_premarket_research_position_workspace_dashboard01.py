@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from datetime import date, timedelta
 import hashlib
 import json
 from pathlib import Path
@@ -191,6 +192,10 @@ def test_ifind_pilot_symbols_are_browseable_without_fabricating_portfolio_eviden
         risk = repo.stock_risk(symbol, snapshot_date="2026-07-01")
         position = repo.stock_position(symbol, snapshot_date="2026-07-01")
         assert detail["portfolio_membership_state"] == "NOT_IN_REFERENCE_PORTFOLIO"
+        assert detail["ifind_paid_provider_evidence"]["state"] == (
+            "NOT_APPLICABLE_TO_IMMUTABLE_REPLAY"
+        )
+        assert detail["ifind_paid_provider_evidence"]["accepted_rows"] == 0
         assert fundamentals["research_only"] is True
         assert risk["risk_research_state"] == "RESEARCH_NOT_RUN_FOR_SECURITY_FOUNDATION"
         assert position["position_research_state"] == "POSITION_RESEARCH_NOT_RUN"
@@ -199,6 +204,15 @@ def test_ifind_pilot_symbols_are_browseable_without_fabricating_portfolio_eviden
 
     assert len(luxshare_market["candles"]) == 120
     assert hengtong_market["candles"] == []
+    assert hengtong_market["market_evidence_mode"] == "COMMITTED_RESEARCH_REPLAY"
+    assert (
+        "not projected into immutable replay" in hengtong_market["empty_state_reason"]
+    )
+    live_hengtong = repo.stock("600487.SH")
+    assert live_hengtong["ifind_paid_provider_evidence"]["accepted_rows"] == 0
+    assert (
+        live_hengtong["ifind_paid_provider_evidence"]["actionable_use_allowed"] is False
+    )
     stocks = repo.stocks()
     watchlist_seed = repo.watchlist_seed()["symbols"]
     assert len(watchlist_seed) == 8
@@ -229,6 +243,62 @@ def test_stock_market_and_fundamentals_keep_different_evidence_dates_visible() -
     assert fundamentals["pb"]["availability"] == "AVAILABLE"
     assert fundamentals["revenue"]["availability"] == "UNAVAILABLE"
     assert fundamentals["roe"]["value"] is None
+
+
+def test_live_dual_stock_read_model_projects_only_complete_accepted_s2_rows(
+    monkeypatch,
+) -> None:
+    repo = _repo()
+    security = [
+        {
+            "symbol": "600487.SH",
+            "as_of_date": "2026-08-12",
+            "listing_date": "2003-08-22",
+            "trading_status": "正常交易",
+            "total_shares": 2362190000.0,
+            "float_shares": 2362190000.0,
+            "industry_name": "通信设备",
+        }
+    ]
+    market = [
+        {
+            "symbol": "600487.SH",
+            "trade_date": (date(2026, 4, 15) + timedelta(days=index)).isoformat(),
+            "open": 10.0 + index / 100,
+            "high": 11.0 + index / 100,
+            "low": 9.0 + index / 100,
+            "close": 10.5 + index / 100,
+            "volume": 1000.0,
+            "amount": 10500.0,
+            "turnover": 1.2,
+        }
+        for index in range(120)
+    ]
+
+    monkeypatch.setattr(
+        repo,
+        "_ifind_s2_accepted_rows",
+        lambda symbol, snapshot_date: (
+            (security, market)
+            if symbol == "600487.SH" and snapshot_date is None
+            else ([], [])
+        ),
+    )
+
+    detail = repo.stock("600487.SH")
+    live_market = repo.stock_market("600487.SH")
+    replay_market = repo.stock_market("600487.SH", snapshot_date="2026-07-01")
+
+    assert detail["listing_date"]["value"] == "2003-08-22"
+    assert detail["total_shares"]["quality_status"] == ("S2_ACCEPTED_PAID_LOCAL_ONLY")
+    assert detail["ifind_paid_provider_evidence"]["accepted_rows"] == 121
+    assert live_market["market_evidence_mode"] == "IFIND_S2_ACCEPTED_LOCAL_BUNDLE"
+    assert len(live_market["candles"]) == 120
+    assert {row["source"] for row in live_market["candles"]} == {
+        "ifind_get_stock_performance_qfq"
+    }
+    assert replay_market["candles"] == []
+    assert replay_market["market_evidence_mode"] == "COMMITTED_RESEARCH_REPLAY"
 
 
 def test_portfolio_views_preserve_constraint_and_abstention_evidence() -> None:
@@ -373,10 +443,23 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         "s2_data_call_count",
         "s2_normalized_row_count",
         "s2_bundle_id",
+        "s2_bundle_manifest_sha256",
         "s2_bundle_persisted",
+        "s2_workspace_bundle_integrity_state",
+        "s2_workspace_bundle_failure_code",
+        "s2_workspace_bundle_artifact_count",
+        "s2_workspace_bundle_row_count",
         "s2_provider_schema_accepted",
         "s2_canonical_accepted",
         "s2_observed_at",
+        "s2_failure_stage",
+        "s2_failure_reason",
+        "s2_response_shape_sha256",
+        "s2_shape_table_count",
+        "s2_shape_column_count",
+        "s2_shape_row_count",
+        "s2_missing_required_columns",
+        "s2_diagnostic_raw_payload_persisted",
         "ifind_canonical_accepted",
     }
 
@@ -412,8 +495,18 @@ def test_system_views_expose_only_credential_safe_ifind_readiness(
         assert readiness["s2_data_call_count"] == 0
         assert readiness["s2_normalized_row_count"] == 0
         assert readiness["s2_bundle_persisted"] is False
+        assert readiness["s2_bundle_manifest_sha256"] is None
+        assert readiness["s2_workspace_bundle_integrity_state"] == "NOT_ACCEPTED"
+        assert readiness["s2_workspace_bundle_failure_code"] is None
+        assert readiness["s2_workspace_bundle_artifact_count"] == 0
+        assert readiness["s2_workspace_bundle_row_count"] == 0
         assert readiness["s2_provider_schema_accepted"] is False
         assert readiness["s2_canonical_accepted"] is False
+        assert readiness["s2_failure_stage"] is None
+        assert readiness["s2_failure_reason"] is None
+        assert readiness["s2_response_shape_sha256"] is None
+        assert readiness["s2_missing_required_columns"] == []
+        assert readiness["s2_diagnostic_raw_payload_persisted"] is False
         assert readiness["ifind_canonical_accepted"] is False
         if readiness["last_data_tool_called"]:
             assert readiness["last_data_call_count"] in {1, 2}

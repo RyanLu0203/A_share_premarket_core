@@ -1,5 +1,34 @@
 # 02 Data Engine
 
+## 2026-08-13 iFinD S2 offline response-contract hardening
+
+The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic
+historical result. Because that run intentionally retained neither raw response
+nor safe shape metadata, its exact failing layer and provider columns cannot be
+reconstructed offline. The current checkpoint therefore does not relabel it.
+
+Future failures are divided into fixed JSON-RPC, MCP result, provider envelope,
+provider Markdown, S2 table-selection, semantic and normalization stages. Only
+allowlisted reasons, bounded counts, fixed required-field presence and
+value-independent structural SHA-256 values may enter the sanitized S2 status.
+No provider value, response text, body hash, credential, header, query, path or
+raw exception is preserved.
+
+The parser now handles narrowly reviewed representation variants without
+weakening the typed data contract. A future accepted bundle is readable only
+from one explicit external root and only when its PASS status anchors the exact
+bundle id and manifest hash. The reader revalidates four artifacts, 242 rows,
+private permissions, path confinement, file and normalized checksums,
+schema/recomputed-request/license lineage, primary keys, numeric domains,
+explicit share/yuan/percentage units, exact symbols, QFQ, the exact governed
+120-session calendar, one provider availability timestamp per batch and PIT.
+Any failure produces zero rows.
+Live accepted evidence is projected as one complete provider panel; immutable
+replay and non-S2 modules remain unchanged.
+
+This work was entirely offline and did not read Keychain. Another provider
+call still requires a new explicit authorization.
+
 ## 2026-08-12 iFinD S2 live result
 
 After PR #54 deployment, the one authorized S2 run passed the same-client

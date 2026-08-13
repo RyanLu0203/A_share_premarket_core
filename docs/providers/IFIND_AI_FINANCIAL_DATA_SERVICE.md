@@ -7,12 +7,14 @@
 > 一次有界 S1 对立讯精密和亨通光电各调用一次且未重试；两条单行摘要均通过证券
 > 范围、公司身份和响应结构校验。call-plan v2 将其接纳为身份验收元数据：本地
 > `observed_at` 仅表示验收观察时间，provider `available_at` 明确未知，canonical
-> 行仍为 0。S2 仍需单独授权，未继续消耗 API 请求。
+> 行仍为 0。其后一个授权 S2 批次在首个立讯 `get_stock_info` 调用因通用响应
+> schema 不匹配而停止：1/4 次、零重试、零接纳行。
 
-> S2 离线基础现已按供应商 `ifind-finance-data-1.3.0` 股票参考固定为
+> S2 离线基础按供应商 `ifind-finance-data-1.3.0` 股票参考固定为
 > `get_stock_info` 与 `get_stock_performance` 各调用两只股票一次，共四次、零
-> 重试。它只表示请求、字段、日历和规范化合同就绪；live S2 调用、供应商输出
-> schema 与 canonical 数据仍未授权、未执行、未接纳。
+> 重试。2026-08-13 已离线完成分层、metadata-only 响应诊断和未来 accepted
+> bundle 的严格读门；没有再次调用供应商、读取钥匙串或接纳数据。旧失败没有
+> 足够形态元数据可供复原，下一次重试仍需单独授权。
 
 本文定义项目对已购买的同花顺 iFinD「AI 金融数据服务」的安全接入、数据分层、落盘和验收边界。iFinD 在本项目中的定位是付费专业金融数据源，用于补全证券主数据、行情、PIT 财务与估值、行业、公告元数据、宏观和市场结构证据；它不是自然语言选股器、推荐系统或交易执行入口。
 
@@ -117,15 +119,33 @@ Workspace 将“证券可浏览”与“参考组合成员资格”分开：两�
   `get_stock_info`、`get_stock_performance`；调用者不能提供 query、工具或
   symbol，调用预算固定为四次且不重试。
 - `get_stock_info` 每股必须返回一行证券代码、简称、数据日期、带时区的供应商
-  可用时间、上市日期、交易状态、总股本和流通股本。
+  可用时间、上市日期、交易状态、总股本和流通股本；两个股本单位都必须显式为
+  `股`，不接受把 `万股`、`手` 或未声明单位的数值直接映射为 canonical 股数。
 - `get_stock_performance` 每股必须恰好返回最近 120 个已完成交易日；日期集合
-  必须与现有受治理交易日历完全一致，复权必须明确为 QFQ，并带统一、带时区的
-  供应商可用时间。不能用本地抓取时间替代。
+  必须与现有受治理交易日历完全一致，复权必须明确为 QFQ，成交量/成交额/换手率
+  口径必须分别显式为 `股`、`元`、`百分比/%`，并带统一、带时区的供应商可用
+  时间。不能用本地抓取时间替代。
 - 任意跨股票行、列缺失、行数漂移、日历漂移、非 QFQ、无时区或可用时间晚于
   decision cutoff 都进入拒绝/隔离，不写外部 normalized bundle。
-- Workspace 只展示 `S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED`、
-  固定工具和预算；`s2_live_calls_authorized=false`、
-  `s2_provider_schema_accepted=false`、canonical iFinD 行数仍为 0。
+- Workspace 展示离线合同、固定工具/预算、最近一次 allowlisted S2 结果及未来
+  metadata-only 诊断字段；`s2_live_calls_authorized=false`、
+  `s2_provider_schema_accepted=false`、canonical iFinD 行数仍为 0。旧失败的
+  stage/reason/shape 显示为未捕获，而不是根据通用失败码猜测。
+
+### S2 离线响应诊断与 accepted bundle 读门
+
+旧状态只保留通用失败码，无法证明失败是在 JSON-RPC、MCP result、供应商
+envelope、Markdown 还是 S2 列选择；项目不会从缺失证据猜测原因。未来失败只
+保留固定阶段/原因、受限计数、固定必填列存在性和不含单元格值的结构指纹，
+不会保存正文、表格值、标题、body hash、异常文本、路径或凭据。
+
+未来完整 S2 bundle 还必须由 PASS 状态同时锚定 bundle id 与 manifest SHA-256，
+并经只读层重新校验权限、symlink/路径、四文件/242 行、文件与规范化校验和、
+schema/重算后的 request/license lineage、主键、数值域、双股范围、受治理的精确
+120 个交易日、单位、单一供应商可用时点、QFQ 和 PIT。任一失败整包返回零行；
+live evidence 不与 Provider02B 逐行混用，也不
+进入 immutable replay。完整数据质量结论见
+[IFIND_S2_RESPONSE_CONTRACT_DIAGNOSIS.md](IFIND_S2_RESPONSE_CONTRACT_DIAGNOSIS.md)。
 
 ## 规范化与本地存储
 

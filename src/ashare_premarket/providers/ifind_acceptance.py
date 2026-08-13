@@ -571,7 +571,9 @@ def _validate_stages(call_plan: Mapping[str, Any]) -> None:
             "上市日期",
             "交易状态",
             "总股本",
+            "总股本单位",
             "流通股本",
+            "流通股本单位",
         )
     )
     _require(
@@ -585,8 +587,11 @@ def _validate_stages(call_plan: Mapping[str, Any]) -> None:
             "最低",
             "收盘",
             "成交量",
+            "成交量单位",
             "成交额",
+            "成交额单位",
             "换手率",
+            "换手率口径",
             "复权方式",
             "数据可用时间",
         )

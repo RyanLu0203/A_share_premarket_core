@@ -233,6 +233,64 @@ _RESPONSE_SYMBOL_KEYS = {
     "股票代码",
 }
 
+IFIND_MCP_RESPONSE_DIAGNOSTIC_VERSION = "ifind_response_shape_v1"
+_RESPONSE_FAILURE_STAGES = {
+    "jsonrpc_contract",
+    "mcp_result_extraction",
+    "provider_envelope",
+    "provider_markdown",
+    "s2_table_selection",
+    "s2_semantic_validation",
+    "normalization",
+}
+_RESPONSE_FAILURE_REASONS = {
+    "jsonrpc_response_not_unique",
+    "jsonrpc_result_not_object",
+    "json_shape_invalid",
+    "content_item_count_invalid",
+    "content_item_type_invalid",
+    "content_text_not_json_object",
+    "structured_content_conflict",
+    "provider_unsuccessful",
+    "provider_data_not_string",
+    "markdown_control_characters",
+    "markdown_invalid_header",
+    "markdown_row_width_mismatch",
+    "markdown_empty_table",
+    "markdown_unsafe_cell",
+    "markdown_no_table",
+    "staging_format_mismatch",
+    "required_columns_missing",
+    "matching_table_ambiguous",
+    "row_count_mismatch",
+    "identity_mismatch",
+    "provider_availability_missing",
+    "qfq_mismatch",
+    "calendar_mismatch",
+    "unit_mismatch",
+    "pit_violation",
+}
+_RESULT_VARIANTS = {
+    "structured_content",
+    "single_json_text",
+    "invalid",
+    "unknown",
+}
+_PROVIDER_ENVELOPE_VARIANTS = {
+    "code_data_markdown",
+    "structured_json",
+    "invalid",
+    "unknown",
+}
+_PAYLOAD_SIZE_BUCKETS = {
+    "0",
+    "1_4k",
+    "4_64k",
+    "64_512k",
+    "over_limit",
+    "unknown",
+}
+
 _PILOT_STOCK_QUERY_TEMPLATES = {
     # The supplier's documented/portal-verified summary behavior is keyed by
     # the company name alone. S1 is an identity gate, not a valuation/PIT data
@@ -272,13 +330,15 @@ _PILOT_STOCK_QUERY_TEMPLATES = {
 IFIND_MCP_S2_QUERY_TEMPLATES = {
     "get_stock_info": (
         "返回{company_name}（{symbol}）的证券代码、证券简称、交易所、上市日期、"
-        "交易状态、ST状态、总股本、流通股本、所属行业、数据日期和数据可用时间；"
+        "交易状态、ST状态、总股本、总股本单位、流通股本、流通股本单位、所属行业、"
+        "数据日期和数据可用时间；"
         "数据可用时间必须包含时区；仅返回结构化字段。"
     ),
     "get_stock_performance": (
         "返回{company_name}（{symbol}）截至{cutoff_date}最近120个已完成交易日的"
         "前复权日线行情，包含证券代码、证券简称、交易日期、开盘、最高、最低、"
-        "收盘、成交量、成交额、换手率、复权方式和数据可用时间；数据可用时间必须"
+        "收盘、成交量、成交量单位、成交额、成交额单位、换手率、换手率口径、"
+        "复权方式和数据可用时间；数据可用时间必须"
         "包含时区；不得返回未来日期；仅返回结构化字段。"
     ),
 }
@@ -831,7 +891,9 @@ class IfindMcpClient:
         return stage_ifind_mcp_pilot_stock_result(
             result,
             (symbol,),
-            expected_company_names={symbol: company_name},
+            expected_company_names=(
+                {symbol: company_name} if tool_name == "get_stock_info" else None
+            ),
         )
 
     def call_pilot_stock_highfreq(
@@ -900,7 +962,13 @@ class IfindMcpClient:
             {"query": query},
             scope_symbols=(symbol,),
         )
-        return stage_ifind_mcp_pilot_stock_result(result, (symbol,))
+        return stage_ifind_mcp_pilot_stock_result(
+            result,
+            (symbol,),
+            expected_company_names=(
+                {symbol: company_name} if tool_name == "get_stock_info" else None
+            ),
+        )
 
     def _call_tool(
         self,
@@ -1023,24 +1091,294 @@ class IfindMcpClient:
             )
 
 
+def sanitize_ifind_mcp_response_diagnostic(value: Any) -> Mapping[str, Any]:
+    """Return a bounded metadata-only response diagnostic.
+
+    Arbitrary provider values, messages, titles, column names, paths, and
+    payload digests are intentionally not part of this contract.
+    """
+
+    source = value if isinstance(value, Mapping) else {}
+
+    def enum(field: str, allowed: set[str], fallback: str) -> str:
+        candidate = source.get(field)
+        return (
+            candidate
+            if isinstance(candidate, str) and candidate in allowed
+            else fallback
+        )
+
+    def count(field: str, maximum: int) -> int:
+        candidate = source.get(field)
+        if isinstance(candidate, bool) or not isinstance(candidate, int):
+            return 0
+        return min(max(candidate, 0), maximum)
+
+    def digest(field: str) -> Optional[str]:
+        candidate = source.get(field)
+        if isinstance(candidate, str) and re.fullmatch(r"[0-9a-f]{64}", candidate):
+            return candidate
+        return None
+
+    missing = source.get("missing_required_columns")
+    fixed_missing = []
+    if isinstance(missing, (list, tuple)):
+        for field in missing:
+            if (
+                field
+                in {
+                    "证券代码",
+                    "证券简称",
+                    "数据日期",
+                    "数据可用时间",
+                    "上市日期",
+                    "交易状态",
+                    "总股本",
+                    "总股本单位",
+                    "流通股本",
+                    "流通股本单位",
+                    "交易日期",
+                    "开盘",
+                    "最高",
+                    "最低",
+                    "收盘",
+                    "成交量",
+                    "成交量单位",
+                    "成交额",
+                    "成交额单位",
+                    "换手率",
+                    "换手率口径",
+                    "复权方式",
+                }
+                and field not in fixed_missing
+            ):
+                fixed_missing.append(field)
+    mask = source.get("required_column_presence_mask")
+    if not isinstance(mask, str) or not re.fullmatch(r"[01]{0,24}", mask):
+        mask = ""
+    diagnostic = {
+        "diagnostic_version": IFIND_MCP_RESPONSE_DIAGNOSTIC_VERSION,
+        "failure_stage": enum(
+            "failure_stage", _RESPONSE_FAILURE_STAGES, "mcp_result_extraction"
+        ),
+        "failure_reason": enum(
+            "failure_reason", _RESPONSE_FAILURE_REASONS, "json_shape_invalid"
+        ),
+        "mcp_result_variant": enum("mcp_result_variant", _RESULT_VARIANTS, "unknown"),
+        "provider_envelope_variant": enum(
+            "provider_envelope_variant", _PROVIDER_ENVELOPE_VARIANTS, "unknown"
+        ),
+        "payload_size_bucket": enum(
+            "payload_size_bucket", _PAYLOAD_SIZE_BUCKETS, "unknown"
+        ),
+        "line_count": count("line_count", _MAX_PROVIDER_MARKDOWN_LINES + 1),
+        "table_candidate_count": count(
+            "table_candidate_count", _MAX_PROVIDER_TABLES + 1
+        ),
+        "parsed_table_count": count("parsed_table_count", _MAX_PROVIDER_TABLES),
+        "selected_table_column_count": count(
+            "selected_table_column_count", _MAX_PROVIDER_TABLE_COLUMNS
+        ),
+        "selected_table_row_count": count(
+            "selected_table_row_count", _MAX_PROVIDER_TABLE_ROWS
+        ),
+        "required_column_presence_mask": mask,
+        "missing_required_columns": fixed_missing,
+        "ordered_column_shape_sha256": digest("ordered_column_shape_sha256"),
+        "response_shape_sha256": digest("response_shape_sha256"),
+        "quarantine_class": "METADATA_ONLY",
+        "raw_payload_persisted": False,
+    }
+    fingerprint_input = {
+        key: diagnostic[key]
+        for key in (
+            "diagnostic_version",
+            "failure_stage",
+            "failure_reason",
+            "mcp_result_variant",
+            "provider_envelope_variant",
+            "payload_size_bucket",
+            "line_count",
+            "table_candidate_count",
+            "parsed_table_count",
+            "selected_table_column_count",
+            "selected_table_row_count",
+            "required_column_presence_mask",
+            "ordered_column_shape_sha256",
+        )
+    }
+    diagnostic["response_shape_sha256"] = hashlib.sha256(
+        json.dumps(
+            fingerprint_input,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return diagnostic
+
+
+def _with_response_diagnostic(
+    error: IfindProviderError,
+    metadata: Mapping[str, Any],
+) -> IfindProviderError:
+    combined = {**getattr(error, "safe_metadata", {}), **metadata}
+    return IfindProviderError(
+        error.failure_code,
+        error.safe_message,
+        error.http_status,
+        safe_metadata=sanitize_ifind_mcp_response_diagnostic(combined),
+    )
+
+
+def _response_contract_error(
+    failure_code: str,
+    safe_message: str,
+    *,
+    failure_stage: str,
+    failure_reason: str,
+    metadata: Optional[Mapping[str, Any]] = None,
+) -> IfindProviderError:
+    return IfindProviderError(
+        failure_code,
+        safe_message,
+        safe_metadata=sanitize_ifind_mcp_response_diagnostic(
+            {
+                **(metadata or {}),
+                "failure_stage": failure_stage,
+                "failure_reason": failure_reason,
+            }
+        ),
+    )
+
+
+def _payload_size_bucket(size: int) -> str:
+    if size <= 0:
+        return "0"
+    if size <= 4 * 1024:
+        return "1_4k"
+    if size <= 64 * 1024:
+        return "4_64k"
+    if size <= 512 * 1024:
+        return "64_512k"
+    return "over_limit"
+
+
+def _result_shape_metadata(result: Mapping[str, Any]) -> dict[str, Any]:
+    structured = result.get("structuredContent")
+    content = result.get("content")
+    if isinstance(structured, Mapping):
+        variant = "structured_content"
+    elif (
+        isinstance(content, list)
+        and len(content) == 1
+        and isinstance(content[0], Mapping)
+        and content[0].get("type") == "text"
+        and isinstance(content[0].get("text"), str)
+    ):
+        variant = "single_json_text"
+    else:
+        variant = "invalid"
+    return {
+        "mcp_result_variant": variant,
+        "provider_envelope_variant": "unknown",
+        "payload_size_bucket": "unknown",
+    }
+
+
+def _markdown_shape_metadata(markdown: str) -> dict[str, Any]:
+    encoded_size = len(markdown.encode("utf-8"))
+    lines = markdown.splitlines()
+    candidates = 0
+    for index in range(max(len(lines) - 1, 0)):
+        if _looks_like_markdown_table_row(lines[index]) and _is_markdown_separator_row(
+            lines[index + 1]
+        ):
+            candidates += 1
+    return {
+        "provider_envelope_variant": "code_data_markdown",
+        "payload_size_bucket": _payload_size_bucket(encoded_size),
+        "line_count": min(len(lines), _MAX_PROVIDER_MARKDOWN_LINES + 1),
+        "table_candidate_count": min(candidates, _MAX_PROVIDER_TABLES + 1),
+    }
+
+
+def _successful_markdown_shape(
+    tables: Sequence[Mapping[str, Any]], metadata: Mapping[str, Any]
+) -> Mapping[str, Any]:
+    column_shapes = [
+        tuple(str(column) for column in table.get("columns", []))
+        for table in tables
+        if isinstance(table, Mapping) and isinstance(table.get("columns"), list)
+    ]
+    row_counts = [
+        len(table.get("rows", []))
+        for table in tables
+        if isinstance(table, Mapping) and isinstance(table.get("rows"), list)
+    ]
+    column_digest = hashlib.sha256(
+        json.dumps(
+            column_shapes,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    shape = {
+        "diagnostic_version": IFIND_MCP_RESPONSE_DIAGNOSTIC_VERSION,
+        "mcp_result_variant": metadata.get("mcp_result_variant", "unknown"),
+        "provider_envelope_variant": "code_data_markdown",
+        "payload_size_bucket": metadata.get("payload_size_bucket", "unknown"),
+        "line_count": metadata.get("line_count", 0),
+        "table_candidate_count": metadata.get("table_candidate_count", 0),
+        "parsed_table_count": len(column_shapes),
+        "selected_table_column_count": max(
+            (len(columns) for columns in column_shapes), default=0
+        ),
+        "selected_table_row_count": max(row_counts, default=0),
+        "ordered_column_shape_sha256": column_digest,
+        "raw_payload_persisted": False,
+    }
+    shape["response_shape_sha256"] = hashlib.sha256(
+        json.dumps(
+            shape, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
+    return shape
+
+
 def extract_ifind_mcp_structured_payload(
     result: Mapping[str, Any]
 ) -> Mapping[str, Any]:
     """Accept only structured JSON data; free-form MCP text stays non-canonical."""
 
+    metadata = _result_shape_metadata(result)
     if result.get("isError") is True:
         raise IfindProviderError(
             "IFIND_MCP_TOOL_CALL_FAILED", "MCP tool result is marked as an error"
         )
     structured = result.get("structuredContent")
-    if isinstance(structured, Mapping):
-        _validate_json_shape(structured)
-        return dict(structured)
     content = result.get("content")
+    if isinstance(structured, Mapping) and content is not None and content != []:
+        raise _response_contract_error(
+            "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
+            "MCP result ambiguously contains both structured and text content",
+            failure_stage="mcp_result_extraction",
+            failure_reason="structured_content_conflict",
+            metadata=metadata,
+        )
+    if isinstance(structured, Mapping):
+        try:
+            _validate_json_shape(structured)
+        except IfindProviderError as exc:
+            raise _with_response_diagnostic(exc, metadata) from exc
+        return dict(structured)
     if not isinstance(content, list) or len(content) != 1:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_UNSTRUCTURED_RESULT",
             "MCP result is not a single structured JSON payload",
+            failure_stage="mcp_result_extraction",
+            failure_reason="content_item_count_invalid",
+            metadata=metadata,
         )
     item = content[0]
     if (
@@ -1048,29 +1386,47 @@ def extract_ifind_mcp_structured_payload(
         or item.get("type") != "text"
         or not isinstance(item.get("text"), str)
     ):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_UNSTRUCTURED_RESULT",
             "MCP content type is not approved for canonical data",
+            failure_stage="mcp_result_extraction",
+            failure_reason="content_item_type_invalid",
+            metadata=metadata,
         )
     text = item["text"]
     if len(text.encode("utf-8")) > _MAX_RESPONSE_BYTES:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_TOO_LARGE",
             "MCP structured text exceeds the approved bound",
+            failure_stage="mcp_result_extraction",
+            failure_reason="json_shape_invalid",
+            metadata={**metadata, "payload_size_bucket": "over_limit"},
         )
     try:
         parsed = json.loads(text)
     except json.JSONDecodeError as exc:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_UNSTRUCTURED_RESULT",
             "free-form MCP text is not accepted as canonical provider data",
+            failure_stage="mcp_result_extraction",
+            failure_reason="content_text_not_json_object",
+            metadata={
+                **metadata,
+                "payload_size_bucket": _payload_size_bucket(len(text.encode("utf-8"))),
+            },
         ) from exc
     if not isinstance(parsed, Mapping):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_UNSTRUCTURED_RESULT",
             "MCP JSON result must be an object",
+            failure_stage="mcp_result_extraction",
+            failure_reason="content_text_not_json_object",
+            metadata=metadata,
         )
-    _validate_json_shape(parsed)
+    try:
+        _validate_json_shape(parsed)
+    except IfindProviderError as exc:
+        raise _with_response_diagnostic(exc, metadata) from exc
     return dict(parsed)
 
 
@@ -1082,16 +1438,43 @@ def stage_ifind_mcp_pilot_stock_result(
 ) -> Mapping[str, Any]:
     """Convert one untrusted MCP stock result into bounded, non-canonical staging rows."""
 
-    payload = extract_ifind_mcp_structured_payload(result)
+    result_metadata = _result_shape_metadata(result)
+    try:
+        payload = extract_ifind_mcp_structured_payload(result)
+    except IfindProviderError as exc:
+        raise _with_response_diagnostic(exc, result_metadata) from exc
     if "code" in payload or "data" in payload:
-        if payload.get("code") not in {1, "1"} or not isinstance(
-            payload.get("data"), str
-        ):
-            raise IfindProviderError(
+        if payload.get("code") not in {1, "1"}:
+            raise _response_contract_error(
                 "IFIND_MCP_PROVIDER_RESPONSE_ERROR",
-                "MCP stock provider envelope did not report a bounded success payload",
+                "MCP stock provider envelope did not report success",
+                failure_stage="provider_envelope",
+                failure_reason="provider_unsuccessful",
+                metadata={
+                    **result_metadata,
+                    "provider_envelope_variant": "invalid",
+                },
             )
-        tables = parse_ifind_mcp_provider_markdown_tables(str(payload["data"]))
+        if not isinstance(payload.get("data"), str):
+            raise _response_contract_error(
+                "IFIND_MCP_PROVIDER_RESPONSE_ERROR",
+                "MCP stock provider data is not a bounded text payload",
+                failure_stage="provider_envelope",
+                failure_reason="provider_data_not_string",
+                metadata={
+                    **result_metadata,
+                    "provider_envelope_variant": "invalid",
+                },
+            )
+        markdown = str(payload["data"])
+        markdown_metadata = {
+            **result_metadata,
+            **_markdown_shape_metadata(markdown),
+        }
+        try:
+            tables = parse_ifind_mcp_provider_markdown_tables(markdown)
+        except IfindProviderError as exc:
+            raise _with_response_diagnostic(exc, markdown_metadata) from exc
         corrections: list[str] = []
         if expected_company_names is not None:
             tables, corrections = _normalize_ifind_mcp_summary_identity_tables(
@@ -1105,6 +1488,7 @@ def stage_ifind_mcp_pilot_stock_result(
             "canonical_accepted": False,
             "tables": tables,
             "semantic_corrections": corrections,
+            "response_shape": _successful_markdown_shape(tables, markdown_metadata),
         }
     else:
         staged = {
@@ -1122,7 +1506,7 @@ def _normalize_ifind_mcp_summary_identity_tables(
     expected_symbols: Sequence[str],
     expected_company_names: Mapping[str, str],
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """Correct only the verified iFinD summary code/name column inversion."""
+    """Correct only the verified iFinD one-row code/name column inversion."""
 
     expected = tuple(expected_symbols)
     if (
@@ -1144,8 +1528,7 @@ def _normalize_ifind_mcp_summary_identity_tables(
         columns = table.get("columns")
         rows = table.get("rows")
         if (
-            table.get("title") == "A股股票公司基本信息"
-            and isinstance(columns, list)
+            isinstance(columns, list)
             and "证券代码" in columns
             and "证券简称" in columns
         ):
@@ -1204,23 +1587,33 @@ def parse_ifind_mcp_provider_markdown_tables(markdown: str) -> list[dict[str, An
     """Parse the supplier's documented Markdown table envelope without rendering prose."""
 
     encoded = markdown.encode("utf-8")
+    metadata = _markdown_shape_metadata(markdown)
     if not encoded or len(encoded) > _MAX_PROVIDER_MARKDOWN_BYTES:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_TOO_LARGE",
             "MCP provider Markdown is empty or exceeds the staging bound",
+            failure_stage="provider_markdown",
+            failure_reason="json_shape_invalid",
+            metadata=metadata,
         )
     if _CONTROL_RE.search(
         markdown.replace("\n", "").replace("\r", "").replace("\t", "")
     ):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP provider Markdown contains blocked control characters",
+            failure_stage="provider_markdown",
+            failure_reason="markdown_control_characters",
+            metadata=metadata,
         )
     lines = markdown.splitlines()
     if len(lines) > _MAX_PROVIDER_MARKDOWN_LINES:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_TOO_LARGE",
             "MCP provider Markdown contains too many lines",
+            failure_stage="provider_markdown",
+            failure_reason="json_shape_invalid",
+            metadata=metadata,
         )
     tables: list[dict[str, Any]] = []
     current_title = ""
@@ -1230,7 +1623,7 @@ def parse_ifind_mcp_provider_markdown_tables(markdown: str) -> list[dict[str, An
         if stripped.startswith("#"):
             current_title = stripped.lstrip("#").strip()[:256]
         if (
-            stripped.startswith("|")
+            _looks_like_markdown_table_row(stripped)
             and index + 1 < len(lines)
             and _is_markdown_separator_row(lines[index + 1])
         ):
@@ -1241,67 +1634,101 @@ def parse_ifind_mcp_provider_markdown_tables(markdown: str) -> list[dict[str, An
                 or any(not column or len(column) > 128 for column in columns)
                 or len(columns) != len(set(columns))
             ):
-                raise IfindProviderError(
+                raise _response_contract_error(
                     "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                     "MCP provider Markdown table has invalid columns",
+                    failure_stage="provider_markdown",
+                    failure_reason="markdown_invalid_header",
+                    metadata=metadata,
                 )
             index += 2
             rows: list[dict[str, str]] = []
-            while index < len(lines) and lines[index].strip().startswith("|"):
+            while index < len(lines) and _looks_like_markdown_table_row(lines[index]):
                 values = _markdown_cells(lines[index])
                 if len(values) != len(columns):
-                    raise IfindProviderError(
+                    raise _response_contract_error(
                         "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                         "MCP provider Markdown row width does not match its header",
+                        failure_stage="provider_markdown",
+                        failure_reason="markdown_row_width_mismatch",
+                        metadata=metadata,
                     )
                 rows.append(dict(zip(columns, values)))
                 if len(rows) > _MAX_PROVIDER_TABLE_ROWS:
-                    raise IfindProviderError(
+                    raise _response_contract_error(
                         "IFIND_MCP_RESPONSE_TOO_LARGE",
                         "MCP provider Markdown table exceeds the row bound",
+                        failure_stage="provider_markdown",
+                        failure_reason="json_shape_invalid",
+                        metadata=metadata,
                     )
                 index += 1
             if not rows:
-                raise IfindProviderError(
+                raise _response_contract_error(
                     "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                     "MCP provider Markdown table has no data rows",
+                    failure_stage="provider_markdown",
+                    failure_reason="markdown_empty_table",
+                    metadata=metadata,
                 )
             tables.append({"title": current_title, "columns": columns, "rows": rows})
             if len(tables) > _MAX_PROVIDER_TABLES:
-                raise IfindProviderError(
+                raise _response_contract_error(
                     "IFIND_MCP_RESPONSE_TOO_LARGE",
                     "MCP provider Markdown contains too many tables",
+                    failure_stage="provider_markdown",
+                    failure_reason="json_shape_invalid",
+                    metadata=metadata,
                 )
             continue
         index += 1
     if not tables:
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP provider response contains no parseable Markdown table",
+            failure_stage="provider_markdown",
+            failure_reason="markdown_no_table",
+            metadata=metadata,
         )
     return tables
 
 
 def _markdown_cells(line: str) -> list[str]:
     content = line.strip()
-    if not content.startswith("|") or not content.endswith("|"):
+    if not _looks_like_markdown_table_row(content):
         raise IfindProviderError(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP provider Markdown table row is not pipe-delimited",
         )
+    if content.startswith("|"):
+        content = content[1:]
+    if content.endswith("|") and not content.endswith("\\|"):
+        content = content[:-1]
     cells = [
-        cell.replace("\\|", "|").strip()
-        for cell in re.split(r"(?<!\\)\|", content[1:-1])
+        cell.replace("\\|", "|").strip() for cell in re.split(r"(?<!\\)\|", content)
     ]
     is_separator = bool(cells) and all(
         re.fullmatch(r":?-{3,}:?", cell) for cell in cells
     )
     if not is_separator and any(_spreadsheet_formula_risk(cell) for cell in cells):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP provider Markdown contains a spreadsheet-formula-risk cell",
+            failure_stage="provider_markdown",
+            failure_reason="markdown_unsafe_cell",
         )
     return cells
+
+
+def _looks_like_markdown_table_row(line: str) -> bool:
+    content = line.strip()
+    if not content or "|" not in content:
+        return False
+    if content.startswith("|"):
+        content = content[1:]
+    if content.endswith("|") and not content.endswith("\\|"):
+        content = content[:-1]
+    return bool(content and re.search(r"(?<!\\)\|", content))
 
 
 def _spreadsheet_formula_risk(value: str) -> bool:
@@ -2060,9 +2487,11 @@ def _parse_mcp_response(
                 return matching[0]
         if len(messages) == 1:
             return messages[0]
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP event stream did not contain one matching JSON-RPC response",
+            failure_stage="jsonrpc_contract",
+            failure_reason="jsonrpc_response_not_unique",
         )
     if content_type and "json" not in content_type:
         raise IfindProviderError(
@@ -2076,9 +2505,11 @@ def _parse_mcp_response(
             "IFIND_MCP_RESPONSE_INVALID_JSON", "MCP response is not valid JSON"
         ) from exc
     if not isinstance(parsed, Mapping):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP JSON-RPC response must be an object",
+            failure_stage="jsonrpc_contract",
+            failure_reason="jsonrpc_result_not_object",
         )
     _validate_json_shape(parsed)
     if request_id is not None and parsed.get("id") != request_id:
@@ -2113,9 +2544,11 @@ def _parse_sse_json_messages(body: bytes) -> Tuple[Mapping[str, Any], ...]:
                         "MCP event data is not valid JSON",
                     ) from exc
                 if not isinstance(parsed, Mapping):
-                    raise IfindProviderError(
+                    raise _response_contract_error(
                         "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                         "MCP event data must be a JSON object",
+                        failure_stage="jsonrpc_contract",
+                        failure_reason="jsonrpc_result_not_object",
                     )
                 _validate_json_shape(parsed)
                 messages.append(dict(parsed))
@@ -2136,15 +2569,19 @@ def _require_rpc_result(
     method: str,
 ) -> Mapping[str, Any]:
     if not isinstance(message, Mapping) or message.get("jsonrpc") != "2.0":
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             f"{method} did not return a JSON-RPC 2.0 object",
+            failure_stage="jsonrpc_contract",
+            failure_reason="jsonrpc_result_not_object",
         )
     result = message.get("result")
     if not isinstance(result, Mapping):
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             f"{method} did not return an object result",
+            failure_stage="jsonrpc_contract",
+            failure_reason="jsonrpc_result_not_object",
         )
     return result
 
@@ -2156,17 +2593,21 @@ def _validate_json_shape(value: Any) -> None:
         nonlocal item_count
         item_count += 1
         if item_count > _MAX_JSON_ITEMS or depth > _MAX_JSON_DEPTH:
-            raise IfindProviderError(
+            raise _response_contract_error(
                 "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                 "MCP JSON structure exceeds the approved depth or item bound",
+                failure_stage="mcp_result_extraction",
+                failure_reason="json_shape_invalid",
             )
         if item is None or isinstance(item, (str, int, bool)):
             return
         if isinstance(item, float):
             if not math.isfinite(item):
-                raise IfindProviderError(
+                raise _response_contract_error(
                     "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                     "MCP JSON contains a non-finite number",
+                    failure_stage="mcp_result_extraction",
+                    failure_reason="json_shape_invalid",
                 )
             return
         if isinstance(item, list):
@@ -2176,15 +2617,19 @@ def _validate_json_shape(value: Any) -> None:
         if isinstance(item, Mapping):
             for key, child in item.items():
                 if not isinstance(key, str) or key in _BLOCKED_KEYS:
-                    raise IfindProviderError(
+                    raise _response_contract_error(
                         "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
                         "MCP JSON contains an invalid or blocked object key",
+                        failure_stage="mcp_result_extraction",
+                        failure_reason="json_shape_invalid",
                     )
                 walk(child, depth + 1)
             return
-        raise IfindProviderError(
+        raise _response_contract_error(
             "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH",
             "MCP JSON contains an unsupported value type",
+            failure_stage="mcp_result_extraction",
+            failure_reason="json_shape_invalid",
         )
 
     walk(value, 0)

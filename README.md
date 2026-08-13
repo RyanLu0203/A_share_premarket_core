@@ -4,7 +4,7 @@
 PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可审计链路中；它不是
 自动交易系统，也不输出可执行的推荐、目标仓位或订单。
 
-## Current Project Truth — 2026-08-12
+## Current Project Truth — 2026-08-13
 
 | Area | Current state |
 | --- | --- |
@@ -13,7 +13,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
-| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. One authorized S2 batch stopped fail-closed after the first Luxshare `get_stock_info` response schema mismatch: 1/4 calls, zero retry, zero normalized/canonical rows |
+| Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. One authorized S2 batch stopped fail-closed after the first Luxshare `get_stock_info` response schema mismatch: 1/4 calls, zero retry, zero normalized/canonical rows. Offline metadata-only response diagnostics and a strict accepted-bundle read gate are implemented; no retry is authorized by that work |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -29,7 +29,7 @@ flowchart LR
     subgraph P["Provider acquisition — default network off"]
         T["Tencent / AKShare operational T-1"]
         C["Committed Baostock + AKShare research evidence"]
-        I["iFinD AI Financial Data Service\nS0: 7 services / 35 entitled tools"]
+        I["iFinD AI Financial Data Service\nS0 accepted; S2 diagnostics offline"]
     end
     subgraph G["Governance and evidence"]
         N["Schema normalization + provider reconciliation"]
@@ -48,7 +48,7 @@ flowchart LR
 
     T --> N
     C --> N
-    I -. "S0 + S1 identity accepted; 0 canonical rows" .-> N
+    I -. "S0 + S1 identity accepted; S2 blocked; 0 canonical rows" .-> N
     N --> Q --> S --> A --> U
     S --> D --> G11 --> L
 ```
@@ -108,7 +108,12 @@ and is not executed; see
 3. Preserve call-plan v2 temporal semantics: local `observed_at` is acceptance provenance, provider `available_at` is unknown, and canonical acceptance remains false.
 4. Keep the completed offline S1 status migration: two symbols verified, no Keychain read or provider request during migration, and zero canonical rows.
 5. Preserve the S2 typed preflight: fixed `get_stock_info` + `get_stock_performance`, four calls maximum, zero retry, exactly 120 governed QFQ sessions, explicit supplier availability and no caller-supplied query text.
-6. Diagnose the first S2 response schema mismatch offline. A new authorization is required before any further provider call; keep S3, S4 and all research promotion locked until provider schema, calendar, PIT, units, coverage and reconciliation pass.
+6. Preserve the completed offline response-contract diagnosis: fixed failure layers/reasons, value-independent shape hashes, conservative Markdown/identity/date compatibility and no raw response retention. The historical generic failure cannot be reconstructed and must remain `diagnostic_not_captured`.
+7. Keep the future accepted-bundle read path fail-closed: explicit external root, exact bundle and manifest hash, four private artifacts, 242 revalidated rows, whole-panel live projection and immutable replay isolation.
+8. Require a new authorization before one fixed Luxshare `get_stock_info` retry; stop again on the first failure. Keep S3, S4 and all research promotion locked until provider schema, calendar, PIT, units, coverage and reconciliation pass.
+
+The durable data-quality conclusion and validation matrix are recorded in
+[iFinD S2 Response Contract Diagnosis](docs/providers/IFIND_S2_RESPONSE_CONTRACT_DIAGNOSIS.md).
 
 The remainder of this README retains detailed goal history and operational
 notes for compatibility. For current truth, use the sections above and the
