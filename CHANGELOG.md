@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-13 - iFinD S2 offline response diagnostics and read gate
+
+- Kept the historical 1/4-call S2 failure unchanged because its exact response
+  shape was not retained and cannot be reconstructed without fabrication.
+- Added fixed-layer/fixed-reason, metadata-only response diagnostics with
+  bounded counts and value-independent structure fingerprints; provider
+  values, response text, body hashes, credentials, paths and raw exceptions
+  remain excluded from status and Workspace payloads.
+- Added conservative parser support for reviewed Markdown, identity, code,
+  listing-date alias and compact-date variants without relaxing required
+  columns, provider availability, PIT, QFQ, calendar, scope or row counts.
+- Anchored future accepted status to an exact manifest SHA-256 and added a
+  fail-closed external S2 bundle reader that revalidates private permissions,
+  four artifacts, 242 rows, hashes, checksums, recomputed request lineage,
+  primary keys, explicit share/yuan/percentage units, numeric domains, the
+  exact governed QFQ calendar, provider availability and PIT.
+- Added live-only dual-stock read-model projection for a complete accepted
+  bundle and explicit current S1/S2 evidence on stock and Provider Health
+  surfaces. Immutable replay and locked fundamentals/research/actionability
+  paths remain unchanged.
+- Added the durable data-quality diagnosis and offline regression matrix. No
+  provider request or Keychain read was performed; another S2 call still
+  requires new explicit owner authorization.
+
 ## 2026-08-12 - iFinD S2 live result
 
 - Merged/deployed PR #54 at `f7ebbe2` and verified production/API/dual-stock

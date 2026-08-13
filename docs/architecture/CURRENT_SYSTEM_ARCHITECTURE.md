@@ -1,6 +1,6 @@
 # Current System Architecture
 
-**As of:** 2026-08-09
+**As of:** 2026-08-13
 **Authoritative branch:** `project-current`
 **Scope:** current implemented architecture and locked boundaries, not a future-state roadmap
 
@@ -61,7 +61,7 @@ flowchart LR
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |
-| iFinD AI 金融数据服务 | S0 and S1 identity accepted; S2 live response schema blocked | The MCP/API Key channel passes seven services and 35/35 tools/schemas. Both fixed summaries passed scope, identity and schema. One authorized S2 run stopped on the first Luxshare `get_stock_info` response mismatch: 1/4 calls, zero retry, zero normalized/canonical rows. Further calls require offline diagnosis and new authorization; S3-S4/research remain locked. |
+| iFinD AI 金融数据服务 | S0 and S1 identity accepted; S2 live response schema blocked; offline diagnosis/read gate implemented | The MCP/API Key channel passes seven services and 35/35 tools/schemas. Both fixed summaries passed scope, identity and schema. One authorized S2 run stopped on the first Luxshare `get_stock_info` response mismatch: 1/4 calls, zero retry, zero normalized/canonical rows. The old exact shape is not recoverable. Future failures retain only metadata-only structural diagnostics, and a future accepted bundle must pass an exact manifest-hash/242-row integrity reader before live Workspace projection. Further calls require new authorization; S3-S4/research remain locked. |
 
 Canonical interface details are maintained in
 [`configs/project/canonical_interfaces.json`](../../configs/project/canonical_interfaces.json)
@@ -129,25 +129,29 @@ and the API composition root is
 
 ## 6. iFinD integration boundary
 
-The iFinD AI 金融数据服务 integration is at **purchased MCP/API Key client and
-contract readiness**, not live-data acceptance. The intended boundary is:
+The iFinD AI 金融数据服务 integration has accepted S0 and non-canonical S1
+identity metadata, while S2 provider-output and data acceptance remain
+blocked. The intended boundary is:
 
-1. rotate any credential that has appeared outside the approved secret store;
-2. replace the macOS Keychain Internet Password; use an environment API Key
-   only on runtimes without Keychain;
-3. explicitly opt in to global network ingestion, iFinD, and the MCP channel;
-4. perform `initialize` and `tools/list` against one of seven exact
-   `api-mcp.51ifind.com:8643` paths without executing a data tool;
-5. record which services, tools, markets, fields, history depth, quotas, and update
-   frequencies are actually entitled;
-6. run a separate one-tool bounded smoke test and accept only structured JSON;
-7. validate returned schemas, field semantics, units, adjustment conventions,
+1. keep every credential that appeared outside the approved secret store
+   permanently forbidden; the user reports replacement and governed S0 has
+   authenticated through the approved Keychain delivery path;
+2. keep global network, iFinD, MCP, and the separate data-call gates default
+   off;
+3. preserve the accepted 7-service / 35-entitled-tool input-schema S0 and the
+   two-symbol S1 identity metadata contract;
+4. classify future S2 failures using only fixed metadata-only response stages,
+   reasons, counts and value-independent structural hashes;
+5. validate returned schemas, field semantics, units, adjustment conventions,
    trade dates, PIT timestamps, pagination, and error taxonomy;
-8. normalize into the existing evidence contract and produce bounded coverage,
-   lineage, and checksum manifests before the provider can participate in any
-   accepted data path.
+6. normalize only a complete four-call result into the existing evidence
+   contract; accept exactly four private artifacts and 242 rows under an exact
+   status/manifest-hash anchor;
+7. expose a whole accepted S2 panel to live read models only, never raw data,
+   partial data, row-wise mixed provider evidence, or replay mutation;
+8. require a new explicit owner authorization for any provider retry.
 
-Until all of these checks pass, iFinD must not be described as live, complete,
+Until all S2 checks pass, iFinD data must not be described as complete,
 canonical, or a fallback source. API Keys and raw paid payloads must never be
 printed, persisted in manifests, or committed. The integration contract is
 [`configs/providers/ifind_ai_financial_data_service_contract.yaml`](../../configs/providers/ifind_ai_financial_data_service_contract.yaml).

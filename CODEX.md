@@ -58,7 +58,13 @@ two fixed tools × two symbols, four calls, zero retry, one security row and 120
 governed QFQ rows per symbol, with explicit provider availability. Live S2
 one authorized run stopped after the first Luxshare info call on response
 schema mismatch (1/4, zero retry, zero accepted rows). Any further calls require
-new authorization after offline diagnosis. S3-S4,
+new authorization. The offline diagnosis is now implemented without a provider
+call or Keychain read: future failures preserve only allowlisted layer/reason,
+bounded counts and value-independent shape fingerprints. A future accepted
+bundle must also pass an exact manifest-hash, four-artifact, 242-row, PIT/QFQ,
+permission and checksum reader before live Workspace projection; replay never
+uses this overlay. The old failure has no retained shape metadata and must not
+be retroactively reclassified. S3-S4,
 research, recommendation, position, target-price,
 order, broker, trading and production paths remain locked.
 
@@ -68,7 +74,7 @@ Authoritative remote repository: `RyanLu0203/A_share_premarket_core`.
 
 Authoritative remote branch: `project-current`.
 Latest confirmed remote commit before this governance gate:
-`e216aac7cac188f401e970a03defca73b11aa449`.
+`e6a82b7cbd93ed2b9922d1bae7df94f69632fb5c`.
 
 Remote rollback checkpoint:
 
@@ -118,10 +124,11 @@ Required reading order:
 Next allowed goals:
 
 1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
-2. Preserve the accepted iFinD S0 baseline, merge and deploy the exact-company-
-   name S1 query contract and, only after explicit approval, rerun the fixed
-   two-symbol S1.
-   The supplier Skill remains reference-only and must not execute unmodified.
+2. Preserve accepted iFinD S0 and S1 metadata, merge/deploy the offline S2
+   response-diagnostic and accepted-bundle read gates, and keep the fourth
+   data-call gate off. Only a new explicit owner authorization may permit one
+   fixed Luxshare `get_stock_info` retry. The supplier Skill remains
+   reference-only and must not execute unmodified.
 3. Complete the existing read-only Workspace data surfaces, then resume
    research only after data acceptance; Recommendation Tiering still requires
    a ready factor and explicit user approval.

@@ -1,5 +1,34 @@
 # 09 Step Iteration Log
 
+## 2026-08-13 - IFIND S2 OFFLINE RESPONSE DIAGNOSTICS AND READ GATE
+
+Status: `IMPLEMENTED_OFFLINE_S2_RETRY_STILL_REQUIRES_AUTHORIZATION`.
+
+- Preserved the prior fail-closed result exactly: the retained generic failure
+  cannot prove which response layer or column shape failed, and no historical
+  cause was inferred from missing raw evidence.
+- Added fixed, allowlisted response stages and reasons plus bounded,
+  value-independent shape fingerprints. Provider cells, titles, bodies, body
+  hashes, request text, exception strings, credentials and paths never enter
+  local status or Workspace responses.
+- Added conservative fixtures for standard Markdown pipes, the observed exact
+  code/company inversion, single-scope six-digit codes, the reviewed listing-
+  date alias and compact dates. Required fields, provider availability, PIT,
+  QFQ, calendar, row-count and identity gates remain strict.
+- Added manifest-SHA anchoring and a fail-closed reader for a future complete
+  S2 bundle. It accepts only four private immutable artifacts and 242 rows after
+  revalidating hashes, checksums, schema/license/request lineage, primary keys,
+  numeric domains, the shared 120-session QFQ calendar and PIT.
+- Added live-only Workspace projection for a future accepted bundle, without
+  row-level provider mixing. Immutable replay remains unchanged; current
+  blocked pages expose explicit S1/S2 evidence and fabricate no fields.
+- Offline validation passed for provider contracts, normalization, bundle
+  integrity, Workspace/API, frontend tests, TypeScript, lint and production
+  build. This checkpoint made no iFinD request and read no Keychain value.
+- A future retry is still a separate owner decision. S3-S4, research,
+  recommendation, position, order, broker, trading and production remain
+  locked.
+
 ## 2026-08-12 - IFIND S2 AUTHORIZED RUN STOPPED FAIL-CLOSED
 
 Status: `S2_BLOCKED_RESPONSE_SCHEMA_MISMATCH_ZERO_CANONICAL`.

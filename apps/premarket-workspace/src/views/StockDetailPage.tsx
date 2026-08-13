@@ -39,6 +39,9 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
   const operationalSource = String(detail.operational_provider ?? market.current_operational_provider ?? readSource(detail.latest_price) ?? "UNAVAILABLE");
   const freshness = status?.freshness_code ?? String(detail.freshness_state ?? "UNAVAILABLE");
   const portfolioMembership = String(detail.portfolio_membership_state ?? "UNAVAILABLE");
+  const ifindEvidence = record(detail.ifind_paid_provider_evidence ?? market.ifind_paid_provider_evidence);
+  const ifindEvidenceState = String(ifindEvidence.state ?? "S2_NOT_ACCEPTED");
+  const marketEvidenceMode = String(market.market_evidence_mode ?? "COMMITTED_RESEARCH_REPLAY");
   const abstentionState = detail.abstain === null || detail.abstain === undefined
     ? "NOT_APPLICABLE"
     : Boolean(detail.abstain) ? "ABSTAIN" : "NOT_ABSTAIN";
@@ -65,13 +68,22 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
       <div><span>Band status</span><StatusBadge state={String(detail.band_status)} /></div>
       <div><span>Abstention</span><StatusBadge state={abstentionState} /></div>
     </div>
+    <Panel title="Paid provider evidence" meta="iFinD acceptance is separate from portfolio membership and actionable use">
+      <div className="chart-evidence-strip">
+        <EvidenceMarker label="S1 identity" value={ifindEvidence.s1_identity_accepted === true ? "ACCEPTED METADATA" : "NOT ACCEPTED"} detail="Identity metadata does not satisfy canonical PIT data requirements" />
+        <EvidenceMarker label="S2 data state" value={ifindEvidenceState} detail={String(ifindEvidence.unavailable_reason ?? "No accepted S2 evidence")} />
+        <EvidenceMarker label="S2 accepted / expected rows" value={`${String(ifindEvidence.accepted_rows ?? 0)} / ${String(ifindEvidence.expected_rows ?? 121)}`} />
+        <EvidenceMarker label="Last S2 failure" value={String(ifindEvidence.last_failure_code ?? "NONE")} detail={String(ifindEvidence.failed_scope ?? "No failed scope recorded")} />
+        <EvidenceMarker label="Actionable use" value={ifindEvidence.actionable_use_allowed === false ? "FORBIDDEN" : "UNAVAILABLE"} detail="Research, recommendation, position and trading gates remain locked" />
+      </div>
+    </Panel>
     <Tabs.Root defaultValue={initialTab} className="stock-tabs">
       <Tabs.List aria-label="Stock detail views"><Tabs.Trigger value="overview">Overview</Tabs.Trigger><Tabs.Trigger value="market">Market</Tabs.Trigger><Tabs.Trigger value="fundamentals">Fundamentals</Tabs.Trigger><Tabs.Trigger value="chart">Price chart</Tabs.Trigger><Tabs.Trigger value="risk">Risk</Tabs.Trigger><Tabs.Trigger value="position">Position management</Tabs.Trigger></Tabs.List>
       <Tabs.Content value="overview"><EvidenceSection title="Identity & capital structure" values={pick(detail, ["company_name", "company_name_en", "exchange", "board", "industry", "industry_level1", "industry_level2", "listing_date", "st_status", "trading_status", "total_shares", "float_shares", "market_cap", "float_market_cap", "free_float_market_cap"])} /></Tabs.Content>
       <Tabs.Content value="market"><EvidenceSection title="Market evidence" values={pick(market, ["previous_close", "open", "high", "low", "latest_close", "latest_return", "volume", "amount", "turnover", "amplitude", "limit_up_price", "limit_down_price", "high_52_week", "low_52_week"])} /></Tabs.Content>
       <Tabs.Content value="fundamentals"><EvidenceSection title="Fundamentals" values={fundamentals} /></Tabs.Content>
       <Tabs.Content value="chart">
-        <Panel title="Daily candlestick and volume" meta={`T-1 committed evidence through ${cutoff}`}>
+        <Panel title="Daily candlestick and volume" meta={`${marketEvidenceMode} through ${cutoff}`}>
           <div className="chart-semantics-banner"><strong>NOT A LIVE QUOTE</strong><span>{mode === "replay" ? "DETERMINISTIC REPLAY SNAPSHOT" : "LIVE READINESS VIEW OVER COMMITTED DATA"}</span><StatusBadge state={freshness} /></div>
           <div className="chart-evidence-strip">
             <EvidenceMarker label="Current operational provider" value={operationalSource} detail={`${String(detail.operational_function ?? "UNAVAILABLE")} / ${String(detail.operational_adjustment ?? "UNAVAILABLE")}`} />
@@ -80,7 +92,7 @@ export function StockDetailPage({detail, market, fundamentals, risk, position, s
             <EvidenceMarker label="Provider discrepancies" value={String(discrepancies.length)} detail={discrepancies.length ? "Amber DQ markers identify affected dates" : "No committed discrepancy marker for this symbol"} />
             <EvidenceMarker label="Validated regime context" value={String(latestRegime.regime ?? "UNAVAILABLE")} detail={`${String(latestRegime.trade_date ?? "UNAVAILABLE")} / ${String(latestRegime.confidence_tier ?? "UNAVAILABLE")}`} />
           </div>
-          <PriceVolumeChart rows={candles} discrepancies={discrepancies} />
+          <PriceVolumeChart rows={candles} discrepancies={discrepancies} emptyReason={String(market.empty_state_reason ?? "No committed candlestick evidence for this symbol.")} />
         </Panel>
       </Tabs.Content>
       <Tabs.Content value="risk"><EvidenceSection title="Risk evidence" values={pick(risk, ["risk_research_state", "portfolio_membership_state", "volatility_20d", "volatility_60d", "ewma_volatility", "beta", "drawdown", "cvar_95", "marginal_risk_contribution", "component_risk_contribution", "correlation_cluster", "provider_quality", "quarantine_state"])} /></Tabs.Content>

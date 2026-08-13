@@ -541,6 +541,8 @@ def _normalize_row_types(row: dict[str, Any], *, naive_timezone: Optional[str]) 
     for field in (
         "trade_date",
         "as_of_date",
+        "listing_date",
+        "delisting_date",
         "report_period",
         "announcement_date",
         "effective_from",
@@ -624,6 +626,15 @@ def _validate_temporal_consistency(
             raise IfindProviderError(
                 "IFIND_PIT_CUTOFF_VIOLATION",
                 f"{field} is after the decision cutoff",
+            )
+    for field in ("trade_date", "as_of_date"):
+        if (
+            row.get(field)
+            and date.fromisoformat(str(row[field])) > availability_business_date
+        ):
+            raise IfindProviderError(
+                "IFIND_TEMPORAL_INCONSISTENCY",
+                f"{field} is after provider availability",
             )
     for field in ("announcement_date", "release_date"):
         if (

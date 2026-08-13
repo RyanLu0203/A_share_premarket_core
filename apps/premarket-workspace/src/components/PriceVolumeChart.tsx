@@ -12,7 +12,7 @@ export function selectRangeRows<T>(rows: T[], range: ChartRange): T[] {
   return range === "ALL" ? rows : rows.slice(-range);
 }
 
-export function PriceVolumeChart({rows, discrepancies = []}: {rows: CandleRow[]; discrepancies?: ProviderDiscrepancyMarker[]}) {
+export function PriceVolumeChart({rows, discrepancies = [], emptyReason}: {rows: CandleRow[]; discrepancies?: ProviderDiscrepancyMarker[]; emptyReason?: string}) {
   const container = useRef<HTMLDivElement>(null);
   const [timeframe, setTimeframe] = useState<ChartRange>(60);
   const visibleRows = useMemo(() => selectRangeRows(rows, timeframe), [rows, timeframe]);
@@ -83,7 +83,7 @@ export function PriceVolumeChart({rows, discrepancies = []}: {rows: CandleRow[];
     return () => {disposed = true; cleanup();};
   }, [discrepancies, visibleRows]);
 
-  if (rows.length === 0) return <div className="chart-empty">No committed candlestick evidence for this symbol.</div>;
+  if (rows.length === 0) return <div className="chart-empty">{emptyReason || "No committed candlestick evidence for this symbol."}</div>;
   const requested = timeframe === "ALL" ? rows.length : timeframe;
   return <div className="price-chart-stack">
     <div className="chart-toolbar">

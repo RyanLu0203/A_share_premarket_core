@@ -456,6 +456,9 @@ def _baseline_compatibility_projection(path: str, payload: Any) -> Any:
         "pilot_acceptance_state",
         "portfolio_membership_state",
         "security_browsing_state",
+        "ifind_s2_evidence_state",
+        "ifind_s2_accepted_rows",
+        "ifind_paid_provider_evidence",
     }
 
     def strip_stock_foundation(value: dict[str, Any]) -> dict[str, Any]:
@@ -494,6 +497,10 @@ def _baseline_compatibility_projection(path: str, payload: Any) -> Any:
         projected["count"] = len(rows)
     elif path.count("/") == 3 and path.startswith("/api/stocks/"):
         projected = strip_stock_foundation(projected)
+    elif path.endswith("/market") and path.startswith("/api/stocks/"):
+        projected.pop("ifind_paid_provider_evidence", None)
+        projected.pop("market_evidence_mode", None)
+        projected.pop("empty_state_reason", None)
     elif path.endswith("/risk") and path.startswith("/api/stocks/"):
         projected.pop("portfolio_membership_state", None)
         projected.pop("risk_research_state", None)

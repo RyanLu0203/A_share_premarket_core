@@ -98,7 +98,12 @@ const ifindReadiness = {
   s2_data_call_count: 0,
   s2_normalized_row_count: 0,
   s2_bundle_id: null,
+  s2_bundle_manifest_sha256: null,
   s2_bundle_persisted: false,
+  s2_workspace_bundle_integrity_state: "NOT_ACCEPTED",
+  s2_workspace_bundle_failure_code: null,
+  s2_workspace_bundle_artifact_count: 0,
+  s2_workspace_bundle_row_count: 0,
   s2_provider_schema_accepted: false,
   s2_canonical_accepted: false,
   s2_observed_at: null,
@@ -207,6 +212,8 @@ describe("functional workspace pages", () => {
   it("shows stock tabs and evidence-backed unavailable fundamentals", () => {
     render(<StockDetailPage detail={{symbol: "000333.SZ", display_name: "Midea Group", company_name: {value: "Midea Group", availability: "AVAILABLE"}, exchange: {value: "Shenzhen", availability: "AVAILABLE"}, board: {value: "Main", availability: "AVAILABLE"}, industry: {value: "Home Appliances", availability: "AVAILABLE"}, latest_price: {value: 72.1, asof_date: "2026-06-30", source: "akshare_sina", availability: "AVAILABLE"}, price_change: {value: 0.01, availability: "AVAILABLE"}, current_weight: 0.02, band_min: 0.01, band_max: 0.03, band_status: "WITHIN_BAND", confidence: 1, abstain: false, provider_lineage: ["akshare_sina", "baostock"], freshness_state: "FRESH_T_MINUS_ONE_DATA", listing_date: evidenceUnavailable, st_status: evidenceUnavailable, trading_status: evidenceUnavailable, total_shares: evidenceUnavailable, float_shares: evidenceUnavailable, market_cap: evidenceUnavailable, float_market_cap: evidenceUnavailable, free_float_market_cap: evidenceUnavailable}} market={{candles: [], candlestick_latest_date: "2026-05-21", latest_close: {value: 72.1}, latest_return: {value: 0.01}}} fundamentals={{pe_ttm: {value: 15, availability: "AVAILABLE", asof_date: "2026-05-21", source: "baostock", quality_status: "evidence", reason: null}, pb: {value: 2, availability: "AVAILABLE", asof_date: "2026-05-21", source: "baostock", quality_status: "evidence", reason: null}, revenue: evidenceUnavailable, roe: evidenceUnavailable}} risk={{quarantine_state: "NOT_QUARANTINED"}} position={{band_status: "WITHIN_BAND", abstain: false, constraints: []}} />);
     expect(screen.getByRole("tab", {name: "Fundamentals"})).toBeVisible();
+    expect(screen.getByText("Paid provider evidence")).toBeVisible();
+    expect(screen.getByText("S2_NOT_ACCEPTED")).toBeVisible();
     const fundamentalsTab = screen.getByRole("tab", {name: "Fundamentals"});
     fireEvent.mouseDown(fundamentalsTab, {button: 0, ctrlKey: false});
     expect(screen.getAllByText("UNAVAILABLE").length).toBeGreaterThan(0);

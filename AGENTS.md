@@ -337,7 +337,13 @@ Handoff policy:
   foundation for one security row and 120 governed QFQ rows per symbol. One
   authorized run stopped at 1/4 calls on the first Luxshare info response
   schema mismatch, with zero retry and zero accepted rows. Further calls require
-  new explicit authorization. Three handshake gates and a
+  new explicit authorization. The 2026-08-13 offline checkpoint does not
+  reinterpret the old generic failure: it adds allowlisted, metadata-only
+  response layers/reasons and value-independent shape fingerprints for a
+  future retry. A future accepted bundle also requires an exact manifest-hash
+  anchor and a four-artifact/242-row/PIT/QFQ/checksum integrity reader before
+  live-only Workspace projection; replay never uses this overlay. That
+  checkpoint made no provider request or Keychain read. Three handshake gates and a
   separate default-off fourth data-call gate remain mandatory. The supplier
   Skill is reference-only and QuantAPI HTTPS is optional only if separately
   entitled. This does not unlock generic Dashboard, research, recommendation,

@@ -1,8 +1,9 @@
 # Project State
 
-Last updated: 2026-08-12
+Last updated: 2026-08-13
 
-Deployment note: stable deployment is at merged PR #54 commit `f7ebbe2`.
+Deployment note: the last confirmed stable deployment is merged PR #55 commit
+`e6a82b7`.
 The exact prior two-call S1 status was migrated offline and now reports
 `S1_IDENTITY_ACCEPTANCE_METADATA_VERIFIED` for both symbols; the migration read
 no Keychain value, used no network and accepted no canonical row. S2 now has a
@@ -10,7 +11,14 @@ typed offline foundation. The owner authorized one S2 batch capped at four
 fixed calls with zero retries. It ran after deployment and stopped after the
 first call with `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`.
 
-## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 SEPARATELY LOCKED
+The current offline checkpoint does not reinterpret that historical failure.
+It adds fixed-layer, metadata-only response diagnostics for any future
+authorized retry; a conservative parser compatibility layer; an immutable
+manifest-hash anchor; a strict fail-closed accepted-bundle reader; and explicit
+S1/S2 evidence states on Provider Health and the two stock pages. It made no
+iFinD request, read no Keychain value and accepted no new row.
+
+## IFIND S0 AND S1 IDENTITY ACCEPTED / S2 DIAGNOSED OFFLINE AND LOCKED
 
 - The Keychain-delivered test credential completed one governed seven-service
   MCP S0 run on 2026-08-12. All seven services negotiated protocol
@@ -40,9 +48,10 @@ first call with `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`.
   two-call/no-failed-symbol/S0-and-schema-verified PIT-block state can be
   reclassified without a provider call; incomplete or failed-symbol states are
   rejected. Provider Health exposes only these allowlisted semantics.
-- S2 requires separate authorization after merge, deployment and local status
-  migration. S3-S4 and all research remain locked. No new API call, raw payload
-  or canonical row was created by the temporal-contract change.
+- S2 requires a new separate authorization after the response-diagnostic
+  checkpoint is merged and deployed. S3-S4 and all research remain locked. No
+  new API call, Keychain read, raw payload or canonical row was created by this
+  offline diagnosis.
 - The S2 offline foundation fixes exactly four calls with zero retry:
   `get_stock_info` and `get_stock_performance` once for each cohort symbol. It
   requires one typed security-master row and exactly 120 QFQ daily rows aligned
@@ -66,6 +75,18 @@ first call with `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH`.
   no raw payload, normalized row or paid-data bundle; canonical iFinD rows
   remain zero. A further provider call requires a new explicit authorization
   after an offline response-contract diagnosis.
+- The offline diagnosis proves that the old generic failure is not specific
+  enough to recover the rejected response shape. It therefore records no
+  invented cause. Future failures can persist only allowlisted stage/reason,
+  bounded counts, fixed required-field presence and value-independent shape
+  hashes; provider text, cells, titles, body hashes and raw exceptions remain
+  excluded.
+- A future accepted S2 read model is also fail-closed: it requires explicit
+  external storage, a PASS status anchored to the exact manifest SHA-256, four
+  private immutable artifacts, 242 fully revalidated rows, exact two-symbol
+  scope, a shared 120-session QFQ calendar, checksums, units and PIT. Any defect
+  returns zero rows; live S2 evidence is never mixed row-by-row with committed
+  Provider02B evidence and never changes immutable replay.
 
 ## IFIND DATA FOUNDATION AND WORKSPACE BASELINE
 
@@ -136,7 +157,8 @@ schemas are accepted at S0. The latest bounded S1 called both fixed cohort
 symbols exactly once: identity, scope and response schema passed for Luxshare
 and Hengtong. The approved v2 contract accepts that result only as non-canonical
 identity metadata; provider availability remains unknown. The next data gate is
-a separately authorized S2, not an automatic continuation.
+a separately authorized S2 retry after this offline diagnostic checkpoint is
+merged and deployed, not an automatic continuation.
 Recommendation, position, trading, broker, production, S2-S4 and research
 capabilities remain locked.
 

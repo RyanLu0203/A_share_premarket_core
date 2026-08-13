@@ -589,6 +589,48 @@ def test_ifind_mcp_s2_wrapper_builds_only_the_fixed_reviewed_query() -> None:
     assert len(transport.calls) == before
 
 
+def test_ifind_mcp_s2_performance_staging_does_not_apply_one_row_summary_repair() -> (
+    None
+):
+    class PerformanceMarkdownTransport(HandshakeTransport):
+        def __call__(self, url, headers, payload, timeout):
+            if payload["method"] == "tools/call":
+                self.calls.append((url, dict(headers), dict(payload)))
+                markdown = (
+                    "|证券代码|证券简称|交易日期|收盘|复权方式|数据可用时间|\n"
+                    "|---|---|---|---|---|---|\n"
+                    "|002475.SZ|立讯精密|2026-08-11|40.0|前复权|2026-08-12T08:00:00+08:00|\n"
+                    "|002475.SZ|立讯精密|2026-08-12|41.0|前复权|2026-08-12T08:00:00+08:00|\n"
+                )
+                return _json_response(
+                    {
+                        "jsonrpc": "2.0",
+                        "id": payload["id"],
+                        "result": {
+                            "isError": False,
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": json.dumps(
+                                        {"code": 1, "data": markdown},
+                                        ensure_ascii=False,
+                                    ),
+                                }
+                            ],
+                        },
+                    }
+                )
+            return super().__call__(url, headers, payload, timeout)
+
+    staged = _client(
+        PerformanceMarkdownTransport(), data_calls=True
+    ).call_s2_stock_tool("002475.SZ", "get_stock_performance", "2026-08-12")
+
+    assert staged["staging_format"] == "provider_markdown_tables_v1"
+    assert len(staged["tables"][0]["rows"]) == 2
+    assert staged["semantic_corrections"] == []
+
+
 def test_ifind_mcp_summary_only_scope_validates_the_actual_tool() -> None:
     transport = HandshakeTransport()
     scope = IfindMcpCallScope(
@@ -772,6 +814,72 @@ def test_ifind_mcp_markdown_parser_rejects_empty_data_table() -> None:
     with pytest.raises(IfindProviderError) as exc:
         parse_ifind_mcp_provider_markdown_tables(empty_table)
     assert exc.value.failure_code == "IFIND_MCP_RESPONSE_SCHEMA_MISMATCH"
+
+
+def test_ifind_mcp_markdown_parser_accepts_standard_rows_without_outer_pipes() -> None:
+    tables = parse_ifind_mcp_provider_markdown_tables(
+        "证券代码|证券简称\n---|---\n002475.SZ|立讯精密\n"
+    )
+
+    assert tables[0]["columns"] == ["证券代码", "证券简称"]
+    assert tables[0]["rows"] == [{"证券代码": "002475.SZ", "证券简称": "立讯精密"}]
+
+
+def test_ifind_mcp_shape_fingerprint_excludes_provider_values() -> None:
+    def stage(company: str, address: str):
+        markdown = (
+            "|证券代码|证券简称|注册地址|\n"
+            "|---|---|---|\n"
+            f"|002475.SZ|{company}|{address}|\n"
+        )
+        return stage_ifind_mcp_pilot_stock_result(
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(
+                            {"code": 1, "data": markdown}, ensure_ascii=False
+                        ),
+                    }
+                ]
+            },
+            ("002475.SZ",),
+        )
+
+    first = stage("立讯精密", "fixture-secret-one")
+    second = stage("不同值", "fixture-secret-two")
+
+    assert (
+        first["response_shape"]["response_shape_sha256"]
+        == second["response_shape"]["response_shape_sha256"]
+    )
+    rendered = json.dumps(first["response_shape"], ensure_ascii=False)
+    assert "立讯精密" not in rendered
+    assert "fixture-secret-one" not in rendered
+
+
+def test_ifind_mcp_failure_diagnostic_is_bounded_and_reason_specific() -> None:
+    with pytest.raises(IfindProviderError) as exc:
+        parse_ifind_mcp_provider_markdown_tables("not a table")
+
+    metadata = exc.value.safe_metadata
+    assert metadata["failure_stage"] == "provider_markdown"
+    assert metadata["failure_reason"] == "markdown_no_table"
+    assert metadata["raw_payload_persisted"] is False
+    assert len(metadata["response_shape_sha256"]) == 64
+    assert "not a table" not in json.dumps(metadata, ensure_ascii=False)
+
+
+def test_ifind_mcp_rejects_conflicting_structured_and_text_results() -> None:
+    with pytest.raises(IfindProviderError) as exc:
+        extract_ifind_mcp_structured_payload(
+            {
+                "structuredContent": {"symbol": "002475.SZ"},
+                "content": [{"type": "text", "text": "{}"}],
+            }
+        )
+
+    assert exc.value.safe_metadata["failure_reason"] == ("structured_content_conflict")
 
 
 def test_ifind_mcp_rejects_out_of_scope_stock_response() -> None:

@@ -130,12 +130,22 @@ class IfindProviderError(RuntimeError):
     """A credential-safe iFinD failure with a stable classification code."""
 
     def __init__(
-        self, failure_code: str, safe_message: str, http_status: Optional[int] = None
+        self,
+        failure_code: str,
+        safe_message: str,
+        http_status: Optional[int] = None,
+        *,
+        safe_metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
         super().__init__(f"{failure_code}: {safe_message}")
         self.failure_code = failure_code
         self.safe_message = safe_message
         self.http_status = http_status
+        # Metadata is never rendered or persisted directly. Consumers must
+        # project it through their own fixed allowlist before it can leave the
+        # process. This lets a live paid-data call retain structural failure
+        # evidence without retaining provider values, response text, or keys.
+        self.safe_metadata = dict(safe_metadata or {})
 
 
 @dataclass(frozen=True, repr=False)

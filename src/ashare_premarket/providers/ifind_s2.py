@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import tempfile
 from dataclasses import dataclass
@@ -23,6 +24,7 @@ from ashare_premarket.providers.ifind_mcp import (
     IfindMcpCallScope,
     IfindMcpClient,
     IfindMcpNetworkPolicy,
+    sanitize_ifind_mcp_response_diagnostic,
 )
 from ashare_premarket.providers.ifind_normalization import (
     IfindNormalizedBatch,
@@ -36,6 +38,7 @@ IFIND_S2_FIXED_TOOLS = ("get_stock_info", "get_stock_performance")
 IFIND_S2_DATA_CALL_BUDGET = 4
 IFIND_S2_DAILY_SESSION_COUNT = 120
 IFIND_S2_ADJUSTMENT_MODE = "qfq"
+_S2_BUNDLE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,95}$")
 IFIND_S2_PREFLIGHT_STATE = "S2_OFFLINE_FOUNDATION_READY_AUTHORIZATION_REQUIRED"
 IFIND_S2_LOCAL_STATUS = "outputs/local/ifind/mcp_s2_status.json"
 IFIND_S2_ACCEPTANCE_STATE = "S2_SECURITY_MASTER_AND_DAILY_MARKET_ACCEPTED"
@@ -50,7 +53,9 @@ _SECURITY_REQUIRED_COLUMNS = (
     "上市日期",
     "交易状态",
     "总股本",
+    "总股本单位",
     "流通股本",
+    "流通股本单位",
 )
 _MARKET_REQUIRED_COLUMNS = (
     "证券代码",
@@ -61,11 +66,15 @@ _MARKET_REQUIRED_COLUMNS = (
     "最低",
     "收盘",
     "成交量",
+    "成交量单位",
     "成交额",
+    "成交额单位",
     "换手率",
+    "换手率口径",
     "复权方式",
     "数据可用时间",
 )
+_S2_COLUMN_ALIASES = {"首发上市日期": "上市日期"}
 
 
 @dataclass(frozen=True)
@@ -138,7 +147,7 @@ def run_ifind_s2_live_acceptance(
         repository_root, cutoff_date=cutoff_date, s1_status=s1_status
     )
     decision_cutoff = _validate_decision_timestamp(decision_timestamp)
-    expected_dates = _expected_trade_dates(repository_root, plan.cutoff_date)
+    expected_dates = expected_ifind_s2_trade_dates(repository_root, plan.cutoff_date)
     source = environ if environ is not None else os.environ
     policy = IfindMcpNetworkPolicy.from_environment(source)
     policy.require_data_call_access()
@@ -168,6 +177,7 @@ def run_ifind_s2_live_acceptance(
                     expected_trade_dates=expected_dates,
                 )
         except IfindProviderError as exc:
+            diagnostic = _s2_failure_diagnostic(exc)
             return IfindS2LiveResult(
                 safe_result={
                     "status": "BLOCKED",
@@ -185,6 +195,7 @@ def run_ifind_s2_live_acceptance(
                     "input_schemas_verified": True,
                     "normalized_batch_count": len(batches),
                     "normalized_row_count": sum(len(item.rows) for item in batches),
+                    "response_diagnostic": diagnostic,
                     "raw_payload_persisted": False,
                     "canonical_accepted": False,
                 }
@@ -217,6 +228,7 @@ def run_ifind_s2_live_acceptance(
             "normalized_row_count": sum(len(item.rows) for item in batches),
             "batch_summaries": summaries,
             "raw_payload_persisted": False,
+            "credential_exposed": False,
             "provider_schema_accepted": True,
             "canonical_accepted": False,
         },
@@ -295,7 +307,16 @@ def normalize_ifind_s2_security_master(
     rows = _require_markdown_rows(staged, _SECURITY_REQUIRED_COLUMNS, exact_rows=1)
     row = rows[0]
     _validate_identity(row, symbol, company_name)
-    provider_available_at = _required_text(row, "数据可用时间")
+    row["证券代码"] = symbol
+    if (
+        _required_text(row, "总股本单位") != "股"
+        or _required_text(row, "流通股本单位") != "股"
+    ):
+        raise IfindProviderError(
+            "IFIND_MCP_S2_UNIT_MISMATCH",
+            "S2 security share units must explicitly match the reviewed share contract",
+        )
+    provider_available_at = _required_provider_availability(row)
     table = _columnar_table(rows)
     mapping = {
         "证券代码": "symbol",
@@ -315,11 +336,7 @@ def normalize_ifind_s2_security_master(
         source_function="get_stock_info",
         available_at=provider_available_at,
         decision_cutoff=decision_cutoff,
-        request_descriptor={
-            "stage_id": IFIND_S2_STAGE_ID,
-            "tool_name": "get_stock_info",
-            "symbol": symbol,
-        },
+        request_descriptor=ifind_s2_request_descriptor("get_stock_info", symbol),
         quality_flags=("S2_TYPED_PROVIDER_SCHEMA",),
     )
 
@@ -345,19 +362,29 @@ def normalize_ifind_s2_daily_market(
     )
     for row in rows:
         _validate_identity(row, symbol, company_name)
+        row["证券代码"] = symbol
         if _required_text(row, "复权方式").lower() not in {"前复权", "qfq"}:
             raise IfindProviderError(
                 "IFIND_MCP_S2_ADJUSTMENT_MISMATCH",
                 "S2 market rows must explicitly report qfq adjustment",
             )
         row["复权方式"] = IFIND_S2_ADJUSTMENT_MODE
+        if (
+            _required_text(row, "成交量单位") != "股"
+            or _required_text(row, "成交额单位") != "元"
+            or _required_text(row, "换手率口径") not in {"百分比", "%"}
+        ):
+            raise IfindProviderError(
+                "IFIND_MCP_S2_UNIT_MISMATCH",
+                "S2 market units must explicitly match the reviewed share/yuan/percent contract",
+            )
     actual_dates = tuple(sorted(_required_text(row, "交易日期") for row in rows))
     if actual_dates != tuple(sorted(expected_dates)):
         raise IfindProviderError(
             "IFIND_MCP_S2_CALENDAR_MISMATCH",
             "S2 market rows do not exactly match the governed 120-session calendar",
         )
-    available_values = {_required_text(row, "数据可用时间") for row in rows}
+    available_values = {_required_provider_availability(row) for row in rows}
     if len(available_values) != 1:
         raise IfindProviderError(
             "IFIND_MCP_S2_AVAILABILITY_AMBIGUOUS",
@@ -381,13 +408,9 @@ def normalize_ifind_s2_daily_market(
         source_function="get_stock_performance",
         available_at=next(iter(available_values)),
         decision_cutoff=decision_cutoff,
-        request_descriptor={
-            "stage_id": IFIND_S2_STAGE_ID,
-            "tool_name": "get_stock_performance",
-            "symbol": symbol,
-            "session_count": IFIND_S2_DAILY_SESSION_COUNT,
-            "adjustment_mode": IFIND_S2_ADJUSTMENT_MODE,
-        },
+        request_descriptor=ifind_s2_request_descriptor(
+            "get_stock_performance", symbol, cutoff_date=expected_dates[-1]
+        ),
         quality_flags=("S2_TYPED_PROVIDER_SCHEMA", "GOVERNED_CALENDAR_ALIGNED"),
     )
 
@@ -404,16 +427,76 @@ def write_ifind_s2_acceptance_bundle(
         result.safe_result.get("status") != "PASS"
         or result.safe_result.get("acceptance_state") != IFIND_S2_ACCEPTANCE_STATE
         or len(result.batches) != IFIND_S2_DATA_CALL_BUDGET
-        or not bundle_id
-        or len(bundle_id) > 96
-        or any(
-            character not in "abcdefghijklmnopqrstuvwxyz0123456789-._"
-            for character in bundle_id
-        )
+        or not _S2_BUNDLE_ID_RE.fullmatch(bundle_id)
+        or result.safe_result.get("data_call_count") != IFIND_S2_DATA_CALL_BUDGET
+        or result.safe_result.get("normalized_row_count") != 242
+        or result.safe_result.get("live_handshake_verified") is not True
+        or result.safe_result.get("input_schemas_verified") is not True
+        or result.safe_result.get("provider_schema_accepted") is not True
+        or result.safe_result.get("raw_payload_persisted") is not False
+        or result.safe_result.get("credential_exposed") is not False
     ):
         raise IfindProviderError(
             "IFIND_MCP_S2_BUNDLE_INVALID",
             "S2 bundle requires one complete accepted four-batch result",
+        )
+    cutoff_date = _validate_cutoff_date(
+        str(result.safe_result.get("cutoff_date") or "")
+    )
+    expected_batches = {
+        (module_id, symbol)
+        for module_id in ("security_master", "daily_market_and_calendar")
+        for symbol in IFIND_DUAL_STOCK_SYMBOLS
+    }
+    batch_keys: set[tuple[str, str]] = set()
+    for batch in result.batches:
+        symbols = {str(row.get("symbol")) for row in batch.rows}
+        if len(symbols) != 1:
+            raise IfindProviderError(
+                "IFIND_MCP_S2_BUNDLE_INVALID",
+                "S2 batch does not map to one fixed cohort symbol",
+            )
+        symbol = next(iter(symbols))
+        key = (batch.module_id, symbol)
+        expected_source = (
+            "get_stock_info"
+            if batch.module_id == "security_master"
+            else (
+                "get_stock_performance"
+                if batch.module_id == "daily_market_and_calendar"
+                else ""
+            )
+        )
+        expected_rows = 1 if batch.module_id == "security_master" else 120
+        expected_digest = (
+            ifind_s2_request_digest(
+                expected_source,
+                symbol,
+                cutoff_date=(
+                    cutoff_date
+                    if batch.module_id == "daily_market_and_calendar"
+                    else None
+                ),
+            )
+            if key in expected_batches
+            else ""
+        )
+        if (
+            key not in expected_batches
+            or key in batch_keys
+            or batch.source_function != expected_source
+            or len(batch.rows) != expected_rows
+            or batch.request_digest != expected_digest
+        ):
+            raise IfindProviderError(
+                "IFIND_MCP_S2_BUNDLE_INVALID",
+                "S2 batches do not exactly match the four-call acceptance contract",
+            )
+        batch_keys.add(key)
+    if batch_keys != expected_batches:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_BUNDLE_INVALID",
+            "S2 batches do not cover the exact two-symbol/two-module contract",
         )
     if not os.environ.get("ASHARE_PREMARKET_DATA_ROOT", "").strip():
         raise IfindProviderError(
@@ -461,11 +544,9 @@ def write_ifind_s2_acceptance_bundle(
             os.chmod(path, 0o600)
             artifacts.append(
                 {
+                    **batch.manifest(),
                     "file": file_name,
-                    "module_id": batch.module_id,
                     "symbol": symbols[0],
-                    "row_count": len(batch.rows),
-                    "normalized_checksum": batch.normalized_checksum,
                     "file_sha256": _sha256_file(path),
                 }
             )
@@ -564,8 +645,13 @@ def _sanitize_s2_status(value: Mapping[str, Any]) -> Mapping[str, Any]:
     if failed_tool not in IFIND_S2_FIXED_TOOLS:
         failed_tool = None
     bundle_id = value.get("bundle_id")
-    if not isinstance(bundle_id, str) or len(bundle_id) > 96:
+    if not isinstance(bundle_id, str) or not _S2_BUNDLE_ID_RE.fullmatch(bundle_id):
         bundle_id = None
+    manifest_sha256 = value.get("bundle_manifest_sha256")
+    if not isinstance(manifest_sha256, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", manifest_sha256
+    ):
+        manifest_sha256 = None
     accepted = (
         status == "PASS"
         and acceptance_state == IFIND_S2_ACCEPTANCE_STATE
@@ -573,19 +659,39 @@ def _sanitize_s2_status(value: Mapping[str, Any]) -> Mapping[str, Any]:
         and row_count == 242
         and value.get("bundle_persisted") is True
         and bundle_id is not None
+        and manifest_sha256 is not None
+        and value.get("live_handshake_verified") is True
+        and value.get("input_schemas_verified") is True
+        and value.get("provider_schema_accepted") is True
+        and value.get("canonical_accepted") is True
+        and value.get("raw_payload_persisted") is False
+        and value.get("credential_exposed") is False
     )
+    projected_status = (
+        "INVALID_LOCAL_STATUS" if status == "PASS" and not accepted else status
+    )
+    if projected_status == "INVALID_LOCAL_STATUS" and failure_code is None:
+        failure_code = "IFIND_MCP_S2_STATUS_CONTRACT_INVALID"
+    response_diagnostic = None
+    if status == "BLOCKED" and isinstance(value.get("response_diagnostic"), Mapping):
+        response_diagnostic = sanitize_ifind_mcp_response_diagnostic(
+            value["response_diagnostic"]
+        )
     return {
-        "status": status,
-        "mode": "live_stage_s2" if status in {"PASS", "BLOCKED"} else "none",
-        "acceptance_state": acceptance_state,
-        "failure_code": None if status == "PASS" else failure_code,
-        "failed_symbol": None if status == "PASS" else failed_symbol,
-        "failed_tool": None if status == "PASS" else failed_tool,
+        "status": projected_status,
+        "mode": (
+            "live_stage_s2" if projected_status in {"PASS", "BLOCKED"} else "none"
+        ),
+        "acceptance_state": (IFIND_S2_ACCEPTANCE_STATE if accepted else "NOT_ACCEPTED"),
+        "failure_code": None if accepted else failure_code,
+        "failed_symbol": None if accepted else failed_symbol,
+        "failed_tool": None if accepted else failed_tool,
         "data_call_count": count,
         "data_call_budget": IFIND_S2_DATA_CALL_BUDGET,
         "retries_per_request": 0,
         "normalized_row_count": row_count,
         "bundle_id": bundle_id if accepted else None,
+        "bundle_manifest_sha256": manifest_sha256 if accepted else None,
         "bundle_persisted": accepted,
         "live_handshake_verified": value.get("live_handshake_verified") is True,
         "input_schemas_verified": value.get("input_schemas_verified") is True,
@@ -596,9 +702,52 @@ def _sanitize_s2_status(value: Mapping[str, Any]) -> Mapping[str, Any]:
             if isinstance(value.get("observed_at"), str)
             else None
         ),
+        "response_diagnostic": response_diagnostic,
         "credential_exposed": False,
         "raw_payload_persisted": False,
     }
+
+
+def _s2_failure_diagnostic(error: IfindProviderError) -> Mapping[str, Any]:
+    metadata = dict(getattr(error, "safe_metadata", {}))
+    fallback = {
+        "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH": (
+            "s2_table_selection",
+            "staging_format_mismatch",
+        ),
+        "IFIND_MCP_S2_REQUIRED_COLUMNS_MISSING": (
+            "s2_table_selection",
+            "required_columns_missing",
+        ),
+        "IFIND_MCP_S2_ROW_COUNT_MISMATCH": (
+            "s2_table_selection",
+            "row_count_mismatch",
+        ),
+        "IFIND_MCP_S2_IDENTITY_MISMATCH": (
+            "s2_semantic_validation",
+            "identity_mismatch",
+        ),
+        "IFIND_MCP_S2_AVAILABILITY_AMBIGUOUS": (
+            "s2_semantic_validation",
+            "provider_availability_missing",
+        ),
+        "IFIND_MCP_S2_ADJUSTMENT_MISMATCH": (
+            "s2_semantic_validation",
+            "qfq_mismatch",
+        ),
+        "IFIND_MCP_S2_CALENDAR_MISMATCH": (
+            "s2_semantic_validation",
+            "calendar_mismatch",
+        ),
+        "IFIND_MCP_S2_UNIT_MISMATCH": (
+            "s2_semantic_validation",
+            "unit_mismatch",
+        ),
+        "IFIND_PIT_CUTOFF_VIOLATION": ("normalization", "pit_violation"),
+    }.get(error.failure_code, ("mcp_result_extraction", "json_shape_invalid"))
+    metadata.setdefault("failure_stage", fallback[0])
+    metadata.setdefault("failure_reason", fallback[1])
+    return sanitize_ifind_mcp_response_diagnostic(metadata)
 
 
 def _validate_s1_status(status: Mapping[str, Any]) -> None:
@@ -628,6 +777,7 @@ def _require_markdown_rows(
     *,
     exact_rows: int,
 ) -> list[dict[str, Any]]:
+    diagnostic = _s2_table_diagnostic(staged, required_columns)
     if (
         staged.get("canonical_accepted") is not False
         or staged.get("staging_format") != "provider_markdown_tables_v1"
@@ -635,32 +785,151 @@ def _require_markdown_rows(
         raise IfindProviderError(
             "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH",
             "S2 accepts only bounded non-canonical provider Markdown staging",
+            safe_metadata={
+                **diagnostic,
+                "failure_stage": "s2_table_selection",
+                "failure_reason": "staging_format_mismatch",
+            },
         )
     tables = staged.get("tables")
     if not isinstance(tables, list):
         raise IfindProviderError(
-            "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH", "S2 tables are missing"
+            "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH",
+            "S2 tables are missing",
+            safe_metadata={
+                **diagnostic,
+                "failure_stage": "s2_table_selection",
+                "failure_reason": "staging_format_mismatch",
+            },
         )
     matches = []
     required = set(required_columns)
     for table in tables:
         if not isinstance(table, Mapping) or not isinstance(table.get("columns"), list):
             continue
-        columns = tuple(str(value) for value in table["columns"])
+        normalized = _normalize_s2_table_aliases(table)
+        columns = tuple(str(value) for value in normalized["columns"])
         if required.issubset(columns):
-            matches.append(table)
+            matches.append(normalized)
+    if not matches:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_REQUIRED_COLUMNS_MISSING",
+            "S2 response is missing one or more reviewed columns",
+            safe_metadata={
+                **diagnostic,
+                "failure_stage": "s2_table_selection",
+                "failure_reason": "required_columns_missing",
+            },
+        )
     if len(matches) != 1 or not isinstance(matches[0].get("rows"), list):
         raise IfindProviderError(
             "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH",
-            "S2 response must contain exactly one reviewed table",
+            "S2 response contains an ambiguous reviewed table selection",
+            safe_metadata={
+                **diagnostic,
+                "failure_stage": "s2_table_selection",
+                "failure_reason": "matching_table_ambiguous",
+            },
         )
     rows = matches[0]["rows"]
     if len(rows) != exact_rows or any(not isinstance(row, Mapping) for row in rows):
         raise IfindProviderError(
             "IFIND_MCP_S2_ROW_COUNT_MISMATCH",
             "S2 response row count does not match the fixed request contract",
+            safe_metadata={
+                **diagnostic,
+                "failure_stage": "s2_table_selection",
+                "failure_reason": "row_count_mismatch",
+            },
         )
     return [dict(row) for row in rows]
+
+
+def _normalize_s2_table_aliases(table: Mapping[str, Any]) -> dict[str, Any]:
+    columns = table.get("columns")
+    rows = table.get("rows")
+    if not isinstance(columns, list) or not isinstance(rows, list):
+        return dict(table)
+    normalized_columns = []
+    for value in columns:
+        column = str(value)
+        target = _S2_COLUMN_ALIASES.get(column, column)
+        if target in normalized_columns:
+            raise IfindProviderError(
+                "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH",
+                "S2 response contains an ambiguous reviewed column alias",
+                safe_metadata={
+                    "failure_stage": "s2_table_selection",
+                    "failure_reason": "matching_table_ambiguous",
+                },
+            )
+        normalized_columns.append(target)
+    normalized_rows = []
+    for value in rows:
+        if not isinstance(value, Mapping):
+            normalized_rows.append(value)
+            continue
+        normalized_row: dict[str, Any] = {}
+        for key, cell in value.items():
+            target = _S2_COLUMN_ALIASES.get(str(key), str(key))
+            if target in normalized_row:
+                raise IfindProviderError(
+                    "IFIND_MCP_S2_RESPONSE_SCHEMA_MISMATCH",
+                    "S2 response contains an ambiguous reviewed column alias",
+                    safe_metadata={
+                        "failure_stage": "s2_table_selection",
+                        "failure_reason": "matching_table_ambiguous",
+                    },
+                )
+            normalized_row[target] = cell
+        normalized_rows.append(normalized_row)
+    return {**table, "columns": normalized_columns, "rows": normalized_rows}
+
+
+def _s2_table_diagnostic(
+    staged: Mapping[str, Any], required_columns: Sequence[str]
+) -> Mapping[str, Any]:
+    base = staged.get("response_shape")
+    metadata = dict(base) if isinstance(base, Mapping) else {}
+    tables = staged.get("tables")
+    table_rows = tables if isinstance(tables, list) else []
+    required = tuple(str(value) for value in required_columns)
+    best_columns: tuple[str, ...] = ()
+    best_rows = 0
+    best_score = -1
+    for table in table_rows:
+        if not isinstance(table, Mapping) or not isinstance(table.get("columns"), list):
+            continue
+        columns = tuple(
+            _S2_COLUMN_ALIASES.get(str(value), str(value)) for value in table["columns"]
+        )
+        score = sum(column in columns for column in required)
+        if score > best_score:
+            best_score = score
+            best_columns = columns
+            best_rows = len(table["rows"]) if isinstance(table.get("rows"), list) else 0
+    missing = [column for column in required if column not in best_columns]
+    mask = "".join("1" if column in best_columns else "0" for column in required)
+    column_digest = (
+        hashlib.sha256(
+            json.dumps(
+                best_columns,
+                ensure_ascii=False,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+        if best_columns
+        else None
+    )
+    return {
+        **metadata,
+        "parsed_table_count": len(table_rows),
+        "selected_table_column_count": len(best_columns),
+        "selected_table_row_count": best_rows,
+        "required_column_presence_mask": mask,
+        "missing_required_columns": missing,
+        "ordered_column_shape_sha256": column_digest,
+    }
 
 
 def _validate_identity(row: Mapping[str, Any], symbol: str, company_name: str) -> None:
@@ -669,7 +938,7 @@ def _validate_identity(row: Mapping[str, Any], symbol: str, company_name: str) -
             "IFIND_MCP_DATA_SCOPE_VIOLATION", "S2 symbol is outside the fixed cohort"
         )
     if (
-        _required_text(row, "证券代码").upper() != symbol
+        _required_text(row, "证券代码").upper() not in {symbol, symbol[:6]}
         or _required_text(row, "证券简称") != company_name
     ):
         raise IfindProviderError(
@@ -692,6 +961,20 @@ def _required_text(row: Mapping[str, Any], field: str) -> str:
             f"S2 field {field} must not be empty",
         )
     return text
+
+
+def _required_provider_availability(row: Mapping[str, Any]) -> str:
+    try:
+        return _required_text(row, "数据可用时间")
+    except IfindProviderError as exc:
+        raise IfindProviderError(
+            "IFIND_MCP_S2_AVAILABILITY_AMBIGUOUS",
+            "S2 requires one explicit provider availability timestamp",
+            safe_metadata={
+                "failure_stage": "s2_semantic_validation",
+                "failure_reason": "provider_availability_missing",
+            },
+        ) from exc
 
 
 def _columnar_table(rows: Sequence[Mapping[str, Any]]) -> Mapping[str, list[Any]]:
@@ -742,7 +1025,9 @@ def _validate_decision_timestamp(value: str) -> str:
     return parsed.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def _expected_trade_dates(repository_root: Path, cutoff_date: str) -> Tuple[str, ...]:
+def expected_ifind_s2_trade_dates(
+    repository_root: Path, cutoff_date: str
+) -> Tuple[str, ...]:
     cutoff = _validate_cutoff_date(cutoff_date)
     try:
         rows = trading_calendar(Path(repository_root).resolve())
@@ -764,6 +1049,42 @@ def _expected_trade_dates(repository_root: Path, cutoff_date: str) -> Tuple[str,
     return dates
 
 
+def ifind_s2_request_descriptor(
+    tool_name: str, symbol: str, *, cutoff_date: Optional[str] = None
+) -> Mapping[str, Any]:
+    if tool_name == "get_stock_info" and symbol in IFIND_DUAL_STOCK_SYMBOLS:
+        return {
+            "stage_id": IFIND_S2_STAGE_ID,
+            "tool_name": tool_name,
+            "symbol": symbol,
+        }
+    if tool_name == "get_stock_performance" and symbol in IFIND_DUAL_STOCK_SYMBOLS:
+        normalized_cutoff = _validate_cutoff_date(str(cutoff_date or ""))
+        return {
+            "stage_id": IFIND_S2_STAGE_ID,
+            "tool_name": tool_name,
+            "symbol": symbol,
+            "session_count": IFIND_S2_DAILY_SESSION_COUNT,
+            "adjustment_mode": IFIND_S2_ADJUSTMENT_MODE,
+            "cutoff_date": normalized_cutoff,
+        }
+    raise _s2_contract_error()
+
+
+def ifind_s2_request_digest(
+    tool_name: str, symbol: str, *, cutoff_date: Optional[str] = None
+) -> str:
+    descriptor = ifind_s2_request_descriptor(tool_name, symbol, cutoff_date=cutoff_date)
+    return hashlib.sha256(
+        json.dumps(
+            descriptor,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+
+
 def _keychain_s2_client_factory(
     policy: IfindMcpNetworkPolicy, scope: IfindMcpCallScope
 ) -> IfindMcpClient:
@@ -780,6 +1101,18 @@ def s2_bundle_id(result: IfindS2LiveResult) -> str:
         "|".join(batch.normalized_checksum for batch in result.batches).encode("utf-8")
     ).hexdigest()[:16]
     return f"s2-{cutoff}-{digest}"
+
+
+def s2_manifest_sha256(path: Path) -> str:
+    """Return the integrity anchor for one persisted, bounded S2 manifest."""
+
+    resolved = Path(path).resolve()
+    if resolved.name != "manifest.json" or not resolved.is_file():
+        raise IfindProviderError(
+            "IFIND_MCP_S2_BUNDLE_INVALID",
+            "S2 manifest hash requires one persisted manifest file",
+        )
+    return _sha256_file(resolved)
 
 
 def _sha256_file(path: Path) -> str:

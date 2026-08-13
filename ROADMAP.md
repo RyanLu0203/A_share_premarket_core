@@ -15,6 +15,13 @@ status has been migrated offline after deployment. One authorized S2 run
 stopped after the first call on response-schema mismatch; zero rows passed. S3-S4
 and all research promotion remain locked.
 
+The offline diagnosis is now implemented without a provider call. It preserves
+only fixed failure stages/reasons, bounded counts and value-independent shape
+hashes for future attempts, and adds an exact manifest-hash/242-row accepted-
+bundle reader for live-only Workspace projection. The old response shape is not
+recoverable and remains unclassified beyond its original failure code. A retry
+still requires new authorization.
+
 ## 2026-08-09 iFinD Data and Workspace Foundation
 
 The purchased provider is Tonghuashun iFinD **AI Financial Data Service**.
@@ -38,9 +45,9 @@ Delivery order from this checkpoint:
 4. Preserve the approved identity-only metadata contract and migrate only the
    exact safe local status after deployment. Do not weaken PIT requirements for
    market, fundamental or event data.
-5. Diagnose the first S2 response mismatch offline. A future retry requires
-   separate authorization for security master and bounded 120-day market
-   evidence. Its offline contract is fixed at
+5. Preserve the completed offline response diagnosis and future accepted-
+   bundle integrity gate. A future retry requires separate authorization for
+   security master and bounded 120-day market evidence. Its contract is fixed at
    `get_stock_info` + `get_stock_performance`, two symbols, four calls, zero
    retry, QFQ and explicit supplier availability. Luxshare already has 120
    Provider02B dates; Hengtong remains identity-only until accepted iFinD
@@ -108,8 +115,9 @@ Current path:
 2. The named Issue #24 Workspace is a read-only research interface and GOAL-11
    is implemented research-only; Daily Refresh is the separate governed
    operational path.
-3. Resolve external iFinD MCP authentication, then complete S0-S3 entitlement,
-   schema, PIT and data acceptance plus the existing Workspace read models.
+3. Preserve accepted iFinD S0/S1, deploy the S2 diagnostic/read gate, then use
+   a separately authorized single-call retry to continue S2 provider-output,
+   PIT and data acceptance plus the existing Workspace read models.
 4. Resume research only over accepted versioned snapshots.
 5. Rec Tiering remains conditional on `ready_factor_count > 0` and explicit
    user approval.
@@ -124,8 +132,8 @@ factor-mining, and DQN/RL remain locked.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.
 - First Codex Max smoke goal:
   `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`.
-- Next data goal: inspect the supplier response contract offline and harden the
-  accepted parser/query contract without another paid call. A future S2 retry
+- Next data goal: merge and deploy the completed supplier response-diagnostic
+  and accepted-bundle read gate without another paid call. A future S2 retry
   requires new owner authorization. S3 remains blocked.
 - Next research goal: GOAL-11/alpha research over accepted versioned iFinD
   snapshots only; DataExpansion01, Regime02, and Quant04 are already complete.
