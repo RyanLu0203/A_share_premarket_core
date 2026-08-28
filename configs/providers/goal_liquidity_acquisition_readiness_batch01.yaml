@@ -3,6 +3,7 @@ mode: implemented_infrastructure_only
 workstreams:
   schema_smoke_plan: ready_design_only_not_authorized
   candidate_normalizers: implemented_offline
+  schema_fixtures: pass_synthetic_not_live_verified
   pit_availability: blocked_row_available_at_missing
   universe100: blocked_current_50_required_100
 schema_smoke:

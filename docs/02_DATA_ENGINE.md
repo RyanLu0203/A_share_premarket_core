@@ -40,6 +40,14 @@ symbols are insufficient, so the selector returns no accepted partial list.
 Missing row-level availability also blocks PIT acceptance. Zero provider rows
 or canonical data are created.
 
+The follow-up candidate-source gate defines the missing security-master
+boundary explicitly: source class, symbol/exchange identity, A-share type,
+listing state, lineage, and timezone-aware availability are mandatory.
+Outcome-like fields are rejected before selection. The 50-symbol Provider02B
+evaluation panel therefore remains an input observation, not an accepted
+100-symbol source. Synthetic provider field-name fixtures pass only the
+offline parser contracts; no live schema claim or provider row is created.
+
 ## 2026-08-13 iFinD S2 offline response-contract hardening
 
 The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic

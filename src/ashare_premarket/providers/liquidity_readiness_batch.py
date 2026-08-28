@@ -12,6 +12,7 @@ from ashare_premarket.providers.liquidity_pit_availability import (
     documented_provider_contracts,
 )
 from ashare_premarket.providers.liquidity_schema_smoke_plan import (
+    evaluate_observed_field_names,
     schema_smoke_calls,
     validate_plan,
 )
@@ -29,6 +30,7 @@ SOURCE_ACCEPTANCE_INPUT = (
 
 PREFIX = "outputs/providers/goal_liquidity_acquisition_readiness_batch01_"
 SMOKE_PLAN = PREFIX + "schema_smoke_plan.csv"
+SCHEMA_FIXTURE_ACCEPTANCE = PREFIX + "schema_fixture_acceptance.csv"
 NORMALIZER_CONTRACT = PREFIX + "normalizer_contract.csv"
 PIT_CONTRACT = PREFIX + "pit_availability_contract.csv"
 UNIVERSE_DECISION = PREFIX + "universe100_decision.csv"
@@ -105,6 +107,28 @@ def _smoke_rows() -> list[dict[str, object]]:
     return rows
 
 
+def _schema_fixture_rows() -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for call in schema_smoke_calls():
+        provider = str(call["provider"])
+        if provider in seen:
+            continue
+        seen.add(provider)
+        result = evaluate_observed_field_names(provider, list(call["expected_fields"]))
+        rows.append(
+            {
+                "provider": provider,
+                "fixture_type": "synthetic_field_names_only",
+                "status": result["status"],
+                "live_schema_verified": "false",
+                "provider_calls_authorized": "false",
+                "accepted_provider_rows": 0,
+            }
+        )
+    return rows
+
+
 def _current_universe_decision(root: Path) -> dict[str, object]:
     with (root / PANEL_INPUT).open(encoding="utf-8", newline="") as handle:
         symbols = sorted({row["symbol"] for row in csv.DictReader(handle)})
@@ -137,6 +161,7 @@ def readiness_row(root: Path) -> dict[str, object]:
         "goal_status": "PASS_WITH_WARNINGS",
         "schema_smoke_plan_state": "READY_DESIGN_ONLY_NOT_AUTHORIZED",
         "schema_smoke_call_budget": 4,
+        "schema_fixture_state": "PASS_SYNTHETIC_NOT_LIVE_VERIFIED",
         "normalizer_state": "IMPLEMENTED_OFFLINE",
         "pit_availability_state": "BLOCKED_ROW_AVAILABLE_AT_MISSING",
         "universe100_state": universe["status"],
@@ -154,6 +179,7 @@ def readiness_row(root: Path) -> dict[str, object]:
 
 def run_goal(root: Path) -> bool:
     smoke = _smoke_rows()
+    schema_fixtures = _schema_fixture_rows()
     normalizers = normalizer_contract_rows()
     pit = documented_provider_contracts()
     universe = _current_universe_decision(root)
@@ -163,6 +189,12 @@ def run_goal(root: Path) -> bool:
         return False
 
     _write_csv(root, SMOKE_PLAN, smoke[0].keys(), smoke)
+    _write_csv(
+        root,
+        SCHEMA_FIXTURE_ACCEPTANCE,
+        schema_fixtures[0].keys(),
+        schema_fixtures,
+    )
     _write_csv(root, NORMALIZER_CONTRACT, normalizers[0].keys(), normalizers)
     _write_csv(root, PIT_CONTRACT, pit[0].keys(), pit)
     _write_csv(root, UNIVERSE_DECISION, universe.keys(), [universe])
@@ -187,6 +219,9 @@ def run_goal(root: Path) -> bool:
                 "is emitted. Both provider candidates also lack accepted row-level "
                 "availability timestamps.",
                 "",
+                "Synthetic field-name fixtures pass both provider parser contracts, "
+                "but this is not live schema verification and accepts no provider row.",
+                "",
                 "The schema smoke remains design-only and unauthorized. No provider "
                 "call, credential read, raw payload, accepted row, factor construction, "
                 "or downstream unlock occurred.",
@@ -199,6 +234,7 @@ def run_goal(root: Path) -> bool:
     inputs = [PANEL_INPUT, COVERAGE_INPUT, SOURCE_ACCEPTANCE_INPUT]
     outputs = [
         SMOKE_PLAN,
+        SCHEMA_FIXTURE_ACCEPTANCE,
         NORMALIZER_CONTRACT,
         PIT_CONTRACT,
         UNIVERSE_DECISION,
@@ -210,6 +246,7 @@ def run_goal(root: Path) -> bool:
         "acquisition_preflight_status": "BLOCKED",
         "schema_smoke_plan_state": "READY_DESIGN_ONLY_NOT_AUTHORIZED",
         "schema_smoke_call_budget": 4,
+        "schema_fixture_state": "PASS_SYNTHETIC_NOT_LIVE_VERIFIED",
         "normalizer_state": "IMPLEMENTED_OFFLINE",
         "pit_availability_state": "BLOCKED_ROW_AVAILABLE_AT_MISSING",
         "universe100_state": universe["status"],
@@ -244,6 +281,8 @@ def audit_goal(root: Path) -> bool:
             and manifest["schema_smoke_plan_state"]
             == "READY_DESIGN_ONLY_NOT_AUTHORIZED"
             and manifest["schema_smoke_call_budget"] == 4
+            and manifest["schema_fixture_state"]
+            == "PASS_SYNTHETIC_NOT_LIVE_VERIFIED"
             and manifest["normalizer_state"] == "IMPLEMENTED_OFFLINE"
             and manifest["pit_availability_state"]
             == "BLOCKED_ROW_AVAILABLE_AT_MISSING"

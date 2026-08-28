@@ -21,7 +21,7 @@ data = [
 ]
 test = [
   "httpx>=0.27,<0.29",
-  "httpx2>=2.7,<3",
+  "httpx2>=2.7,<3; python_version >= '3.10'",
   "pytest>=8,<10",
 ]
 

@@ -2,6 +2,8 @@ import ast
 from pathlib import Path
 
 from ashare_premarket.providers.liquidity_schema_smoke_plan import (
+    SCHEMA_FIXTURE_ACCEPTED,
+    evaluate_observed_field_names,
     FAILURE_TAXONOMY,
     PROVIDER_CALLS_AUTHORIZED,
     SANITIZED_METADATA_FIELDS,
@@ -14,6 +16,33 @@ from ashare_premarket.providers.liquidity_schema_smoke_plan import (
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "src/ashare_premarket/providers/liquidity_schema_smoke_plan.py"
+
+
+def test_synthetic_field_name_contracts_pass_without_live_verification() -> None:
+    tushare = evaluate_observed_field_names(
+        "tushare_pro",
+        ["ts_code", "trade_date", "turnover_rate", "turnover_rate_f", "float_share", "free_share"],
+    )
+    baostock = evaluate_observed_field_names(
+        "baostock",
+        ["date", "code", "volume", "adjustflag", "turn", "tradestatus"],
+    )
+    assert tushare["status"] == SCHEMA_FIXTURE_ACCEPTED
+    assert baostock["status"] == SCHEMA_FIXTURE_ACCEPTED
+    assert not tushare["live_schema_verified"]
+    assert not baostock["provider_calls_authorized"]
+
+
+def test_field_name_contract_classifies_missing_and_unexpected_fields() -> None:
+    missing = evaluate_observed_field_names("tushare_pro", ["ts_code"])
+    unexpected = evaluate_observed_field_names(
+        "baostock",
+        ["date", "code", "volume", "adjustflag", "turn", "tradestatus", "raw_body"],
+    )
+    assert missing["status"] == "EXPECTED_FIELD_MISSING"
+    assert "free_share" in missing["missing_field_names"]
+    assert unexpected["status"] == "UNEXPECTED_FIELD_SET"
+    assert unexpected["unexpected_field_names"] == ("raw_body",)
 
 
 def test_plan_is_exact_four_call_zero_retry_matrix() -> None:

@@ -1,5 +1,22 @@
 # 09 Step Iteration Log
 
+## 2026-08-28 - GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01
+
+Status: `PASS_WITH_WARNINGS`; current source `BLOCKED`;
+`implemented_infrastructure_only`.
+
+- Defined three admissible source classes and mandatory PIT identity/listing
+  fields for an exact-100 universe.
+- Rejected future/forward returns, factors, alpha, performance, labels, and
+  targets at the source-schema boundary.
+- Classified current Provider02B evidence as incomplete security-master input:
+  50 symbols, zero accepted universe symbols, and no partial output.
+- Accepted sanitized synthetic Tushare/Baostock field-name fixtures only as
+  offline parser-contract evidence; live schema verification remains false.
+- Preserved Python `>=3.9` while making `httpx2` conditional on Python 3.10+;
+  dependency resolution passed for Python 3.9 and 3.12.
+- Performed no provider call and preserved all downstream locks.
+
 ## 2026-08-28 - GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01
 
 Status: `PASS_WITH_WARNINGS`; acquisition preflight `BLOCKED`;

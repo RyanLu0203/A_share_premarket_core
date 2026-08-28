@@ -1,0 +1,26 @@
+goal_id: GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01
+mode: implemented_infrastructure_only
+required_symbol_count: 100
+allowed_source_classes:
+  - official_exchange_listing
+  - licensed_security_master
+  - owner_supplied_governed_bundle
+required_fields:
+  - symbol
+  - exchange
+  - security_type
+  - listing_status
+  - source_id
+  - available_at
+selection_inputs_forbidden:
+  - future_return
+  - forward_return
+  - factor
+  - alpha
+  - performance
+  - label
+  - target
+network_access_authorized: false
+provider_calls_authorized: false
+partial_universe_allowed: false
+current_source_status: BLOCKED_REQUIRED_SOURCE_FIELDS_MISSING

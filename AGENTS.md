@@ -106,6 +106,16 @@ Handoff policy:
 
 ## Current System Truth
 
+- GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 is
+  `implemented_infrastructure_only` with `PASS_WITH_WARNINGS`. It defines a
+  PIT-safe exact-100 security-master source contract, rejects outcome-like
+  selection fields, and currently accepts zero universe symbols because the
+  50-symbol Provider02B panel is incomplete source evidence.
+- Tushare/Baostock synthetic field-name fixtures pass offline parser contracts
+  only; live schema verification, provider calls, and row acceptance remain
+  unauthorized. Python `>=3.9` is retained with `httpx2` conditional on Python
+  3.10+, and dependency resolution is verified for 3.9 and 3.12.
+
 - Approved symbols: `002475.SZ`, `600036.SH`.
 - Blocked/pending: `000625.SZ`, `000858.SZ`, `601138.SH`, `601208.SH`.
 - Separate iFinD acceptance-only cohort: `002475.SZ`, `600487.SH`.

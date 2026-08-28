@@ -18,6 +18,11 @@ def test_python39_is_declared_supported() -> None:
     assert 'requires-python = ">=3.9"' in pyproject
 
 
+def test_python39_dependency_resolution_excludes_python310_only_httpx2() -> None:
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"httpx2>=2.7,<3; python_version >= \'3.10\'"' in pyproject
+
+
 def test_stable_regression_report_has_local_only_runtime() -> None:
     path = ROOT / "outputs/audits/goal06b_regression_suite_report.csv"
     with path.open(newline="", encoding="utf-8") as handle:

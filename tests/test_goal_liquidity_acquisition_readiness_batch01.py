@@ -20,6 +20,7 @@ def test_batch_readiness_integrates_four_blocked_safe_workstreams() -> None:
         "BLOCKED_ROW_AVAILABLE_AT_MISSING"
     )
     assert readiness["universe100_state"] == "BLOCKED"
+    assert readiness["schema_fixture_state"] == "PASS_SYNTHETIC_NOT_LIVE_VERIFIED"
     assert readiness["current_eligible_symbol_count"] == 50
     assert readiness["provider_calls_authorized"] == "false"
     assert readiness["accepted_rows"] == 0

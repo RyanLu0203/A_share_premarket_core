@@ -38,6 +38,8 @@ FAILURE_TAXONOMY = (
     "UNSANITIZED_METADATA",
 )
 
+SCHEMA_FIXTURE_ACCEPTED = "SYNTHETIC_CONTRACT_FIXTURE_ACCEPTED_NOT_LIVE_VERIFIED"
+
 _EXPECTED_SCHEMAS = {
     "tushare_pro": {
         "endpoint": "daily_basic",
@@ -181,3 +183,46 @@ def validate_sanitized_metadata(metadata: Mapping[str, object]) -> bool:
         and metadata.get("retry_count") == 0
         and metadata.get("call_count") in {0, 1}
     )
+
+
+def evaluate_observed_field_names(
+    provider: str,
+    observed_field_names: object,
+) -> dict[str, object]:
+    """Evaluate field names only, without accepting values or live schema proof.
+
+    This supports sanitized synthetic fixtures and future live smoke metadata.
+    Passing a synthetic fixture proves parser-contract readiness only; it never
+    changes ``provider_calls_authorized`` or live verification state.
+    """
+
+    if provider not in _EXPECTED_SCHEMAS:
+        raise ValueError("UNKNOWN_PROVIDER")
+    if not isinstance(observed_field_names, (tuple, list)) or any(
+        not isinstance(field, str) or not field or field != field.strip()
+        for field in observed_field_names
+    ):
+        raise ValueError("INVALID_FIELD_NAME_LIST")
+    observed = tuple(observed_field_names)
+    if len(observed) != len(set(observed)):
+        raise ValueError("DUPLICATE_FIELD_NAME")
+    expected = set(_EXPECTED_SCHEMAS[provider]["expected_fields"])
+    actual = set(observed)
+    missing = tuple(sorted(expected - actual))
+    unexpected = tuple(sorted(actual - expected))
+    if missing:
+        status = "EXPECTED_FIELD_MISSING"
+    elif unexpected:
+        status = "UNEXPECTED_FIELD_SET"
+    else:
+        status = SCHEMA_FIXTURE_ACCEPTED
+    return {
+        "provider": provider,
+        "status": status,
+        "expected_field_names": tuple(sorted(expected)),
+        "observed_field_names": tuple(sorted(actual)),
+        "missing_field_names": missing,
+        "unexpected_field_names": unexpected,
+        "live_schema_verified": False,
+        "provider_calls_authorized": False,
+    }

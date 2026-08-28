@@ -2,7 +2,7 @@
 
 Workflow Status Audit: PASS
 
-Rows checked: `95`
+Rows checked: `96`
 Failures: `0`
 Warnings: `0`
 

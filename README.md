@@ -41,12 +41,21 @@ PIT timestamps, and defines an exact-100 deterministic universe. Current
 evidence has only 50 eligible candidates (41 with acquired deep history), so
 the universe emits no partial accepted list and acquisition remains blocked.
 
+The follow-up offline gate now accepts both providers' synthetic field-name
+fixtures as parser-contract evidence only and defines the admissible source
+contract for a future 100-symbol universe. Current Provider02B evidence remains
+blocked because it has 50 symbols and is not a complete PIT-safe security
+master. Python `>=3.9` support is preserved with `httpx2` installed only on
+Python 3.10+; dependency resolution is verified for Python 3.9 and 3.12.
+
 | Area | Current state |
 | --- | --- |
 | Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |
 | Operational acquisition | AKShare `stock_zh_a_hist_tx` / Tencent, one complete QFQ T-1 batch or fail closed |
 | Future liquidity evidence | Tushare Pro `daily_basic` free-float candidate + Baostock history cross-check; documentation accepted, live/PIT verification pending |
 | Liquidity readiness batch | 4-call schema design + offline normalizers + PIT contract + exact-100 universe contract; calls unauthorized and preflight blocked |
+| Candidate-source contract | Official/ licensed/ governed sources only; current 50-symbol panel lacks complete security-master and PIT fields, so accepted universe is empty |
+| Python compatibility | Project policy remains `>=3.9`; `httpx2` is conditional on 3.10+, with 3.9 and 3.12 dependency resolution verified |
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
