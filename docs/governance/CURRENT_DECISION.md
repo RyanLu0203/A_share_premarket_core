@@ -1,7 +1,7 @@
 # Current Decision
 
-Last reviewed: 2026-08-28 after public-release integration of the factor and
-liquidity evidence gates
+Last reviewed: 2026-08-28 after provider-schema and free-float-source
+documentation acceptance
 
 This is the single current decision entrypoint for selecting the next project
 goal. Historical `next`, `next goal`, and `allowed next` statements elsewhere
@@ -11,8 +11,8 @@ document, `PROJECT_STATE.md`, or `configs/project/workflow_status.csv`.
 ## Authoritative Baseline
 
 - Authoritative branch: `project-current`.
-- Integration baseline: public-release merge
-  `0ca2b8648c01ae2af6c342c468aa79694ec4ce9e`.
+- Integration baseline: merged PR #58 commit
+  `caed1984ea8a72b541fc46b98614dff453c2fe89`.
 - Stable rollback branch and tag: `checkpoint/arch03-stable-310559`.
 - DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
   the governed daily refresh are implemented within their documented
@@ -54,6 +54,16 @@ bundle validator and failure taxonomy, but remains blocked before network at
 41/100 symbols, 1/2 verified providers, and no verified historical free-float
 source. The next legitimate work is provider-schema and free-float-source
 acceptance; a live pilot remains unauthorized.
+
+GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01 is implemented
+infrastructure-only with `PASS_WITH_WARNINGS`. Official documentation is
+accepted for Tushare Pro `daily_basic` (`free_share`, free-float turnover) and
+Baostock history (volume, turnover, trade status, QFQ flag). Tushare is the
+selected historical free-float candidate and Baostock the selected liquidity
+cross-check. Neither live schema nor a row-level provider availability
+contract is accepted, so the acquisition preflight remains `BLOCKED` with
+zero calls and zero rows. A bounded schema smoke is the next possible external
+step and still requires explicit authority.
 
 The implemented failure-attribution goal was bounded to:
 

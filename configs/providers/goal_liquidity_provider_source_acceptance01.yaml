@@ -1,0 +1,20 @@
+goal_id: GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01
+mode: implemented_infrastructure_only
+network_allowed: false
+provider_calls_authorized: false
+raw_payload_persistence: false
+accepted_rows: 0
+minimum_live_verified_complete_providers: 2
+selected_candidates:
+  historical_free_float: tushare_pro.daily_basic
+  liquidity_crosscheck: baostock.query_history_k_data_plus
+official_references:
+  tushare_daily_basic: https://tushare.pro/document/2?doc_id=32
+  baostock_package: https://pypi.org/project/baostock/
+acceptance_boundary:
+  documentation_schema: accepted_with_warnings
+  live_schema: pending
+  row_level_provider_availability: pending
+  acquisition_preflight: blocked
+  factor_construction: false
+  recommendation_tiering: false

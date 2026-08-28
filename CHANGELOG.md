@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-28 - Liquidity provider and source documentation acceptance
+
+- Selected Tushare Pro `daily_basic` as the documented historical free-float
+  candidate and Baostock history as the documented liquidity cross-check.
+- Added explicit source-unit normalization and fail-closed provider
+  availability rules, plus deterministic outputs, report, manifest and audit.
+- Kept both live schemas, provider availability, the acquisition pilot, factor
+  construction and every downstream capability blocked; performed zero calls
+  and accepted zero rows.
+
 ## 2026-08-28 - Offline factor and liquidity gates integrated
 
 - Integrated the factor-failure attribution, alpha-hypothesis redesign,

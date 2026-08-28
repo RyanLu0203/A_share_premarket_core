@@ -1,0 +1,26 @@
+{
+  "accepted_rows": 0,
+  "acquisition_preflight_status": "BLOCKED",
+  "documentation_candidates_accepted": 2,
+  "factor_construction_unlocked": false,
+  "goal_id": "GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01",
+  "goal_status": "PASS_WITH_WARNINGS",
+  "inputs": {
+    "outputs/audits/goal_liquidity_evidence_acquisition_foundation01_manifest.json": "eb4cfe4ca2a5bd96c57c1a1a23af2dd402fcc044ca8a85cebb84f108fc1642d8",
+    "outputs/providers/goal_data_provider02a_provider_schema_mapping.csv": "d7d88f1acb5b3c093da43f3630936a4437d1767ca9640ce6c3c4bc77f4d34433"
+  },
+  "live_pilot_authorized": false,
+  "live_verified_complete_provider_count": 1,
+  "outputs": {
+    "outputs/providers/goal_liquidity_provider_source_acceptance01_free_float_source_decision.csv": "d908fbfeb7ed1c61a09e4b60acb3c7440a96535ac98c4e2c3638c5a228a97c4c",
+    "outputs/providers/goal_liquidity_provider_source_acceptance01_provider_schema_evaluation.csv": "8937795cfa327a7f07fe3e0580cc557a54486d416fd43b31e539ac37a729cc8b",
+    "outputs/providers/goal_liquidity_provider_source_acceptance01_readiness_decision.csv": "dbdd5188d6471b4c155bc6809d1563a61b77548154f01ed0f263496451e39b3c",
+    "outputs/providers/goal_liquidity_provider_source_acceptance01_temporal_unit_contract.csv": "8f5da4e33ae502a8bb939e7a45e1581f7d63d0aeb617c3df219f301efc468520"
+  },
+  "provider_availability_contract_accepted": false,
+  "provider_calls_performed": false,
+  "rec_tiering_unlocked": false,
+  "required_live_verified_provider_count": 2,
+  "selected_free_float_candidate": "tushare_pro.daily_basic",
+  "selected_liquidity_crosscheck_candidate": "baostock.query_history_k_data_plus"
+}

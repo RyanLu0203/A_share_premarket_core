@@ -1,5 +1,12 @@
 # Canonical Workflow Status
 
+## 2026-08-28 Liquidity source acceptance checkpoint
+
+The offline provider/source gate accepts Tushare Pro `daily_basic` and
+Baostock history only as documentation-backed candidates. Live schema and PIT
+availability verification remain pending, acquisition remains blocked, and no
+research or downstream workflow block is promoted.
+
 The canonical machine-readable workflow status contract is:
 
 `configs/project/workflow_status.csv`
