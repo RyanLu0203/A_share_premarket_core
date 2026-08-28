@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-28 - Offline factor and liquidity gates integrated
+
+- Integrated the factor-failure attribution, alpha-hypothesis redesign,
+  liquidity-evidence acceptance contract, and default-off acquisition
+  foundation onto the public `project-current` baseline.
+- Registered all eight new run/audit commands in the public command inventory
+  and regenerated input hashes against the sanitized public tree.
+- Normalized the missing-local-status iFinD S1 availability projection to a
+  credential-safe boolean `false`, restoring clean-clone test determinism.
+- Performed no provider call and unlocked no recommendation, position,
+  backtest, trading, broker, production, factor-mining, or DQN/RL capability.
+
 ## 2026-08-28 - Public repository presentation and security hardening
 
 - Reworked the README entry surface around the current provider-to-evidence-to-

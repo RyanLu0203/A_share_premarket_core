@@ -1,5 +1,19 @@
 # 09 Step Iteration Log
 
+## 2026-08-28 - OFFLINE FACTOR AND LIQUIDITY GATE INTEGRATION
+
+Status: `IMPLEMENTED_WITH_EXISTING_LOCKS_PRESERVED`.
+
+- Integrated four previously isolated research/design/infrastructure goals
+  onto the sanitized public `project-current` baseline.
+- Re-anchored the liquidity acceptance manifest to the current committed PIT
+  input, registered all eight public run/audit commands, and preserved the
+  default-off network gate.
+- Made missing local iFinD S1 availability evidence project as boolean `false`
+  rather than nullable in the credential-safe system view.
+- No external provider call, accepted liquidity row, factor promotion, or
+  downstream capability unlock occurred.
+
 ## 2026-08-28 - PUBLIC REPOSITORY PRESENTATION AND SECURITY HARDENING
 
 Status: `IMPLEMENTED_INFRASTRUCTURE_ONLY`.
