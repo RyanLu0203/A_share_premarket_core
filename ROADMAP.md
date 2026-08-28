@@ -17,8 +17,11 @@ The contract is implemented and currently `NOT_READY`: 41/100 symbols,
 one/two providers, incomplete liquidity/PIT fields, and zero accepted rows.
 
 The default-off acquisition foundation is implemented and preflight-blocked.
-The next gate is provider-schema plus historical free-float-source acceptance,
-not a live acquisition or factor construction run.
+Provider-schema plus historical free-float-source documentation acceptance is
+now implemented: Tushare Pro `daily_basic` is selected for free-float history
+and Baostock history for liquidity cross-checking. Live schemas and provider
+availability remain pending. The next possible external gate is a separately
+authorized bounded schema smoke, not a full acquisition or factor run.
 
 ## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 

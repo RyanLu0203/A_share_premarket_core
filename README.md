@@ -29,10 +29,17 @@ The default-off acquisition foundation is also implemented. Current preflight
 blocks before network at 41/100 symbols, 1/2 verified sources, and no verified
 historical free-float source; calls and accepted rows remain zero.
 
+The provider/source acceptance gate now selects Tushare Pro `daily_basic` as
+the documented historical free-float candidate and Baostock history as the
+documented liquidity cross-check. This is documentation acceptance only:
+live schemas and provider availability remain unverified, so acquisition is
+still blocked and zero rows are accepted.
+
 | Area | Current state |
 | --- | --- |
 | Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |
 | Operational acquisition | AKShare `stock_zh_a_hist_tx` / Tencent, one complete QFQ T-1 batch or fail closed |
+| Future liquidity evidence | Tushare Pro `daily_basic` free-float candidate + Baostock history cross-check; documentation accepted, live/PIT verification pending |
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |

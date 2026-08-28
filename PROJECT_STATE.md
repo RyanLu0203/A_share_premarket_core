@@ -57,6 +57,14 @@ override that current decision entrypoint.
   `BLOCKED`. Default-off gating, strict normalization, atomic complete-bundle
   validation and failure taxonomy are implemented. No provider call or row
   acceptance occurred; live pilot authorization remains false.
+- GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01 is implemented
+  infrastructure-only with `PASS_WITH_WARNINGS`. Official documentation
+  supports Tushare Pro `daily_basic` as the historical free-float candidate
+  and Baostock history as the volume/turnover/trade-status/QFQ cross-check.
+  Both still lack live schema verification and an accepted row-level provider
+  availability contract, so the acquisition preflight remains `BLOCKED`,
+  calls and accepted rows remain zero, and the next external step requires
+  explicit bounded schema-smoke authority.
 
 Deployment note: the last confirmed stable deployment is merged PR #55 commit
 `e6a82b7`.

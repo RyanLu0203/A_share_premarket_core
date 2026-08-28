@@ -25,6 +25,14 @@ GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 implements the default-off
 preflight and atomic bundle mechanics. It does not activate a provider. Current
 schema/source readiness blocks before network and preserves zero accepted rows.
 
+GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01 accepts only documentation-level
+source contracts. Tushare Pro `daily_basic` supplies the documented
+`free_share` and free-float turnover candidates; Baostock history supplies the
+documented volume, turnover, trade-status, and adjustment cross-check. Source
+units are explicitly normalized, but row-level provider availability and live
+schemas remain unaccepted. No provider was called and acquisition remains
+blocked.
+
 ## 2026-08-13 iFinD S2 offline response-contract hardening
 
 The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic

@@ -29,6 +29,14 @@ GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 is implemented
 infrastructure-only and blocked before network. Do not authorize a live pilot
 until provider schema and historical free-float source acceptance pass.
 
+GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01 is implemented
+infrastructure-only with documentation-level `PASS_WITH_WARNINGS`. Tushare Pro
+`daily_basic` is the selected historical free-float candidate and Baostock
+history is the selected liquidity cross-check. Neither live schema nor
+row-level provider availability is accepted. The next external action may be
+only a separately authorized bounded schema smoke; full acquisition and all
+downstream stages remain locked.
+
 ## Issue #36 Tencent Primary Authorization
 
 `GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01` authorizes real operational

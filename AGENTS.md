@@ -351,6 +351,12 @@ Handoff policy:
 - GOAL-DATA-EXPANSION-RESEARCH-01 is `implemented_research_only` (reconciled from the Regime02 research lineage; offline committed-evidence market-regime data expansion).
 - GOAL-REGIME-LABEL-RESEARCH-02 is `implemented_research_only` (expanded market regime label refinement over DataExpansion01 evidence; no factor evaluation).
 - GOAL-QUANT-RESEARCH-04 is `implemented_research_only` (regime-conditional factor evaluation over committed Regime02 evidence; ready_factor_count remains 0; does not unlock recommendation tiering).
+- GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01 is
+  `implemented_infrastructure_only` and currently `PASS_WITH_WARNINGS`.
+  Tushare Pro `daily_basic` is the documentation-accepted historical
+  free-float candidate and Baostock history is the documentation-accepted
+  liquidity cross-check. Live schemas and row-level provider availability are
+  not accepted; preflight remains blocked with zero calls and zero rows.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.

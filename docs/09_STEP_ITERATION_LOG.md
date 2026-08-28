@@ -1,5 +1,21 @@
 # 09 Step Iteration Log
 
+## 2026-08-28 - GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01
+
+Status: documentation `PASS_WITH_WARNINGS`; acquisition preflight `BLOCKED`;
+`implemented_infrastructure_only`.
+
+- Accepted official documentation for Tushare Pro `daily_basic` historical
+  free-float fields and Baostock daily volume/turnover/trade-status/QFQ fields.
+- Selected Tushare as the free-float candidate and Baostock as the liquidity
+  cross-check, with explicit ten-thousand-share, percent, status and adjustment
+  normalization rules.
+- Refused to infer row-level provider availability from a documented update
+  window. Both live schemas and PIT acceptance remain pending.
+- Made no provider call or credential read, accepted zero rows, and preserved
+  every factor, recommendation, position, backtest, trading and production
+  lock.
+
 ## 2026-08-28 - OFFLINE FACTOR AND LIQUIDITY GATE INTEGRATION
 
 Status: `IMPLEMENTED_WITH_EXISTING_LOCKS_PRESERVED`.
