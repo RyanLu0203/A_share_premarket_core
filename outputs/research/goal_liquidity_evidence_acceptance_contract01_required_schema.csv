@@ -1,0 +1,11 @@
+field,type,rule,required,silent_imputation_allowed
+symbol,string,primary_key,true,false
+trade_date,date,primary_key,true,false
+volume,float,shares_nonnegative,true,false
+turnover_rate,float,fraction_nonnegative,true,false
+free_float_shares,float,shares_positive,true,false
+trade_status,enum,explicit_not_inferred,true,false
+source_provider,string,lineage,true,false
+available_at,timestamp,pit_required,true,false
+adjustment,enum,qfq_required,true,false
+snapshot_id,string,immutable_lineage,true,false

@@ -1,0 +1,11 @@
+goal_id: GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01
+mode: implemented_infrastructure_only
+network_gate: ASHARE_ALLOW_LIQUIDITY_EVIDENCE_ACQUISITION
+network_default: off
+exact_symbol_count: 100
+minimum_verified_providers: 2
+zero_retry: true
+partial_acceptance: false
+raw_payload_persistence: false
+factor_construction_allowed: false
+provider_calls_authorized: false

@@ -10,6 +10,54 @@ the tracked tree, and `audit_public_release_readiness.py` is the deterministic
 tracked-tree gate. This changes no scientific output or downstream capability
 lock.
 
+Current goal-selection authority: `docs/governance/CURRENT_DECISION.md`.
+Historical `next goal` statements below record earlier checkpoints and do not
+override that current decision entrypoint.
+
+## CURRENT CONTROL-PLANE DECISION
+
+- The authoritative branch remains `project-current`; this integration is
+  based on public-release merge `0ca2b8648c01ae2af6c342c468aa79694ec4ce9e`.
+- DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
+  the governed daily refresh are already implemented within their existing
+  boundaries. Earlier text naming them as next work is historical-only.
+- `ready_factor_count` remains `0`. The expanded readiness rerun evaluated 120
+  fixed candidates over 41 acquired symbols and 843 trading dates; all remain
+  `not_ready`.
+- Factor failure attribution and hypothesis redesign are now implemented
+  within their research/design-only boundaries. The next legitimate advance
+  is provider-schema and historical free-float-source acceptance; a live
+  liquidity pilot remains unauthorized.
+- iFinD S2 remains an independent, authorization-required provider track. No
+  call, retry, network access, Keychain read, or data acceptance is authorized
+  by this checkpoint.
+- Recommendation tiering, GOAL-10B.4, position validation, GOAL-DATA-PANEL-02,
+  GOAL-10D, generic Dashboard / Daily Report, backtests, trading, broker,
+  production, V2 factor mining, and DQN/RL remain locked.
+- GOAL-FACTOR-FAILURE-ATTRIBUTION-01 is implemented research-only with
+  `PASS_WITH_WARNINGS`: 120/120 candidates remain not-ready, four core
+  readiness criteria fail for every candidate, 63 candidates lost prior
+  conditional status, and 104 candidates share exact existing metric
+  fingerprints within their family. All five current factor families are
+  classified `stop_current_family_definition`; no new factor or promotion was
+  created.
+- GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 is implemented design-only with
+  `PASS_WITH_WARNINGS`. It freezes the five failed families and pre-registers
+  liquidity-shock, event-drift, PIT fundamental-revision, and sector-neutral
+  valuation/quality hypotheses. All four are `evidence_not_ready`; no factor
+  values were constructed. Liquidity shock is the preferred first design,
+  conditional on a separate 100-symbol PIT-safe evidence-acceptance gate.
+- GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01 is implemented
+  infrastructure-only with contract `PASS` and current evidence `NOT_READY`.
+  It requires 100 symbols, two independent providers, and complete PIT-safe
+  liquidity fields; current evidence has 41 symbols, one provider, and no
+  accepted complete field bundle. Accepted rows remain zero.
+- GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 is implemented
+  infrastructure-only with foundation `PASS` and acquisition preflight
+  `BLOCKED`. Default-off gating, strict normalization, atomic complete-bundle
+  validation and failure taxonomy are implemented. No provider call or row
+  acceptance occurred; live pilot authorization remains false.
+
 Deployment note: the last confirmed stable deployment is merged PR #55 commit
 `e6a82b7`.
 The exact prior two-call S1 status was migrated offline and now reports

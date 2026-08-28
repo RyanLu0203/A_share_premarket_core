@@ -322,8 +322,8 @@ def _safe_ifind_readiness(root: Path) -> dict[str, Any]:
         "s1_acceptance_state": probe.get("acceptance_state"),
         "s1_temporal_class": probe.get("temporal_class"),
         "s1_provider_available_at_status": probe.get("provider_available_at_status"),
-        "s1_provider_available_at_verified": probe.get(
-            "provider_available_at_verified"
+        "s1_provider_available_at_verified": (
+            probe.get("provider_available_at_verified") is True
         ),
         "s1_identity_observed_at": probe.get("identity_observed_at"),
         "s1_staged_symbol_count": probe.get("staged_symbol_count"),

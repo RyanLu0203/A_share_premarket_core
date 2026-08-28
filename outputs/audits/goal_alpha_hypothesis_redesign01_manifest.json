@@ -1,0 +1,40 @@
+{
+  "downstream_locks_preserved": true,
+  "evidence_ready_hypothesis_count": 0,
+  "factor_values_created": false,
+  "frozen_candidate_count": 120,
+  "frozen_family_count": 5,
+  "goal_id": "GOAL-ALPHA-HYPOTHESIS-REDESIGN-01",
+  "hypothesis_count": 4,
+  "mode": "implemented_design_only",
+  "outputs": {
+    "decision": {
+      "path": "outputs/research/goal_alpha_hypothesis_redesign01_program_decision.csv",
+      "sha256": "63cf5e1e95da0fe5f9bf5fd102131f3731d924d4651a11864d06f06fdcb5dcc6"
+    },
+    "evidence": {
+      "path": "outputs/research/goal_alpha_hypothesis_redesign01_evidence_readiness.csv",
+      "sha256": "ca9de9efe35b0da8e082b6d383f76f22c6fc292f20feed38621e75a892dcf5d0"
+    },
+    "experiments": {
+      "path": "outputs/research/goal_alpha_hypothesis_redesign01_pre_registered_experiment_plan.csv",
+      "sha256": "83f086ac16d56f7044e08f0d3cad5be23b286336248e0b18213a383442d3bac2"
+    },
+    "freeze": {
+      "path": "outputs/research/goal_alpha_hypothesis_redesign01_existing_family_freeze.csv",
+      "sha256": "db59e7ce7e3d682d1369e05f11188382171a507523def4be3a746f22e7707075"
+    },
+    "registry": {
+      "path": "outputs/research/goal_alpha_hypothesis_redesign01_hypothesis_registry.csv",
+      "sha256": "6d60d208a13f189665bb6cbd3f1d548a903691057bbafa3d286194daa8e3f41d"
+    }
+  },
+  "preferred_hypothesis_id": "HYP-LIQUIDITY-SHOCK-01",
+  "provider_calls_performed": false,
+  "rec_tiering_unlocked": false,
+  "source_manifest": "outputs/audits/goal_factor_failure_attribution01_manifest.json",
+  "source_manifest_sha256": "f70feffa3a57848d7c6bcc86b36c4b3d7bc6cc8677b59aed67dcfb0fdff5779c",
+  "status": "PASS_WITH_WARNINGS",
+  "thresholds_changed": false,
+  "v2_factor_mining_unlocked": false
+}

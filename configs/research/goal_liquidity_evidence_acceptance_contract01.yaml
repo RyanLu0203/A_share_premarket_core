@@ -1,0 +1,8 @@
+goal_id: GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01
+mode: implemented_infrastructure_only
+minimum_symbols: 100
+minimum_independent_providers: 2
+required_fields: [symbol, trade_date, volume, turnover_rate, free_float_shares, trade_status, source_provider, available_at, adjustment, snapshot_id]
+silent_imputation_allowed: false
+provider_calls_authorized: false
+factor_construction_allowed: false

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-28 - Offline factor and liquidity gates integrated
+
+- Integrated the factor-failure attribution, alpha-hypothesis redesign,
+  liquidity-evidence acceptance contract, and default-off acquisition
+  foundation onto the public `project-current` baseline.
+- Registered all eight new run/audit commands in the public command inventory
+  and regenerated input hashes against the sanitized public tree.
+- Normalized the missing-local-status iFinD S1 availability projection to a
+  credential-safe boolean `false`, restoring clean-clone test determinism.
+- Performed no provider call and unlocked no recommendation, position,
+  backtest, trading, broker, production, factor-mining, or DQN/RL capability.
+
 ## 2026-08-28 - Public repository presentation and security hardening
 
 - Reworked the README entry surface around the current provider-to-evidence-to-
@@ -16,6 +28,54 @@
   workflow status, recommendation, position, trading or production capability
   changed.
 
+## 2026-08-27 - Default-off liquidity acquisition foundation
+
+- Added strict row normalization, exact-grid atomic bundle validation,
+  provider capability states, preflight and failure taxonomy.
+- Classified current acquisition preflight blocked before network at 41/100
+  symbols, 1/2 verified providers and no historical free-float source.
+- Performed zero calls and accepted zero rows; no factor or downstream unlock.
+
+## 2026-08-25 - Liquidity evidence acceptance contract
+
+- Added a deterministic offline acceptance contract requiring 100 symbols,
+  two providers, complete PIT-safe liquidity fields, QFQ, immutable lineage,
+  and no silent imputation.
+- Classified current evidence `NOT_READY` and accepted zero rows; no provider
+  call or factor construction was authorized.
+
+## 2026-08-25 - Design-only alpha hypothesis reset
+
+- Added GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 to freeze five failed families and
+  pre-register four orthogonal hypotheses with evidence and falsification
+  requirements.
+- Selected liquidity-shock normalization as the preferred first design while
+  keeping it blocked on a separate 100-symbol PIT-safe evidence contract.
+- Created no factor value, provider call, threshold search, evaluation row, or
+  downstream unlock.
+
+## 2026-08-25 - Existing factor failure attribution
+
+- Added GOAL-FACTOR-FAILURE-ATTRIBUTION-01 over committed Rerun02 and Quant04
+  diagnostics only, with deterministic candidate, criterion, family, regime,
+  redundancy, decision, manifest, report, and audit artifacts.
+- Found four universal binding readiness failures across 120 candidates, 63
+  lost conditional statuses, and 104 exact existing-metric fingerprint
+  redundancies; stopped expansion of all five current factor families.
+- Created no new factor, threshold change, provider call, ready classification,
+  recommendation, position, backtest, dashboard, execution, production,
+  factor-mining, broker, local-lake, or DQN/RL output or unlock.
+
+## 2026-08-25 - Current decision control-plane consolidation
+
+- Added `docs/governance/CURRENT_DECISION.md` as the single current
+  goal-selection entrypoint and marked older next-goal prose as historical.
+- Reconciled the current planning summary with completed DataExpansion01,
+  Regime02, Quant04, GOAL-11, Workspace, daily-refresh, and S2 diagnostic
+  checkpoints without changing their statuses or evidence.
+- Recommended only a future separately approved research-only factor
+  failure-attribution goal over committed evidence. No research goal, provider
+  call, scientific output, threshold change, or downstream unlock was created.
 ## 2026-08-13 - iFinD S2 offline response diagnostics and read gate
 
 - Kept the historical 1/4-call S2 failure unchanged because its exact response

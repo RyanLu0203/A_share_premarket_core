@@ -1,5 +1,25 @@
 # Roadmap
 
+Current planning authority: `docs/governance/CURRENT_DECISION.md` (reviewed
+2026-08-28). Historical next-goal statements below remain checkpoint evidence
+and do not override that document.
+
+GOAL-FACTOR-FAILURE-ATTRIBUTION-01 is implemented research-only. Its current
+decision is to stop proliferating the five existing factor families: all 120
+candidates remain not-ready and no downstream unlock is justified.
+
+GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 is implemented design-only. The preferred
+future path is a separate liquidity-evidence acceptance contract requiring at
+least 100 symbols and PIT-safe volume, turnover, free-float, trade-status, and
+availability evidence before any factor construction.
+
+The contract is implemented and currently `NOT_READY`: 41/100 symbols,
+one/two providers, incomplete liquidity/PIT fields, and zero accepted rows.
+
+The default-off acquisition foundation is implemented and preflight-blocked.
+The next gate is provider-schema plus historical free-float-source acceptance,
+not a live acquisition or factor construction run.
+
 ## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial
@@ -127,6 +147,10 @@ factor-mining, and DQN/RL remain locked.
 
 ## Codex Operating System Path
 
+- Historical checkpoint section: GOAL-CODEX-OPERATING-SYSTEM-01,
+  DataExpansion01, Regime02, Quant04, GOAL-11, and the offline S2 diagnostic
+  gate named below are already complete within their documented boundaries.
+  Use `docs/governance/CURRENT_DECISION.md` for current goal selection.
 - Current checkpoint node: GOAL-REPOSITORY-CHECKPOINT-01 at stable rollback
   commit `310559ae18bbf203e795c1d66bc7181a6b11c14a`.
 - Immediate next goal: `GOAL-CODEX-OPERATING-SYSTEM-01`.

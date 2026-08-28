@@ -1,0 +1,5 @@
+check_id,current,required,status,blocking
+symbol_breadth,41,100,NOT_READY,true
+independent_provider_count,1,2,NOT_READY,true
+required_liquidity_fields,0,7,NOT_READY,true
+pit_availability_contract,0,1,NOT_READY,true

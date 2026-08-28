@@ -1,0 +1,9 @@
+goal_id: GOAL-FACTOR-FAILURE-ATTRIBUTION-01
+workflow_id: goal_factor_failure_attribution01
+mode: research_only_existing_evidence_failure_attribution
+constructs_new_factors: false
+changes_thresholds: false
+performs_provider_calls: false
+unlocks_rec_tiering: false
+unlocks_goal10d: false
+uses_existing_committed_evidence_only: true

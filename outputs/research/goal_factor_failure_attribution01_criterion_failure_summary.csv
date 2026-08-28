@@ -1,0 +1,8 @@
+criterion,failure_count,candidate_count,failure_rate,binding_rank,interpretation
+aligned_horizons_ge_2,120,120,1.000000,1,binding
+base_precondition_pass,120,120,1.000000,2,binding
+holdout_sign_stable_1d,120,120,1.000000,3,binding
+holdout_strong_ic_1d,120,120,1.000000,4,binding
+walk_forward_stable,30,120,0.250000,5,secondary
+holdout_sample_sufficient,20,120,0.166667,6,secondary
+provider_robustness_checked,0,120,0.000000,7,secondary

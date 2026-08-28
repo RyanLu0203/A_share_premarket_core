@@ -1,5 +1,34 @@
 # CODEX Project Memory
 
+## Current Decision Authority
+
+Read `docs/governance/CURRENT_DECISION.md` before selecting or assigning the
+next goal. It is the single current planning entrypoint. Historical `next`,
+`next goal`, and `allowed next` statements elsewhere describe their original
+checkpoint and do not override it.
+
+As of 2026-08-28, GOAL-FACTOR-FAILURE-ATTRIBUTION-01 is implemented
+research-only. It leaves 120/120 candidates not-ready, identifies four
+universal binding criteria, and stops expansion of the five existing factor
+families under their current definitions. The next legitimate work is
+provider-schema and historical free-float-source acceptance. No live pilot,
+new factor construction, threshold relaxation, recommendation tiering,
+position validation, backtest, dashboard, execution, production,
+factor-mining, or DQN/RL path is authorized.
+
+GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 is implemented design-only. It freezes the
+five existing families and pre-registers four evidence-not-ready hypotheses.
+The preferred next goal is a contract-only liquidity evidence acceptance gate;
+it must not acquire data or construct factors without separate authorization.
+
+GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01 is implemented infrastructure-
+only and current evidence is `NOT_READY`. Any acquisition now requires a new
+explicit external-call or owner-supplied-bundle authority.
+
+GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 is implemented
+infrastructure-only and blocked before network. Do not authorize a live pilot
+until provider schema and historical free-float source acceptance pass.
+
 ## Issue #36 Tencent Primary Authorization
 
 `GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01` authorizes real operational
@@ -108,20 +137,22 @@ backtest, local-lake, factor-mining, and DQN/RL.
 
 Required reading order:
 
-1. `CODEX.md`
-2. `PROJECT_STATE.md`
-3. `ROADMAP.md`
-4. `configs/project/workflow_status.csv`
-5. `docs/governance/PROJECT_AUTHORITY_MODEL.md`
-6. `docs/governance/GITHUB_ONLY_SOURCE_POLICY.md`
-7. `docs/governance/WINDOWS_COMPATIBILITY_POLICY.md`
-8. `docs/governance/CODEX_MAX_REMOTE_WINDOWS_PROTOCOL.md`
-9. `docs/governance/CODEX_MAX_OPERATING_PROTOCOL.md`
-10. `docs/governance/GOAL_QUEUE.md`
-11. `docs/governance/LOCKED_BOUNDARIES.md`
-12. `docs/governance/GOAL_ACCEPTANCE_STANDARD.md`
+1. `docs/governance/CURRENT_DECISION.md`
+2. `CODEX.md`
+3. `PROJECT_STATE.md`
+4. `ROADMAP.md`
+5. `configs/project/workflow_status.csv`
+6. `docs/governance/PROJECT_AUTHORITY_MODEL.md`
+7. `docs/governance/GITHUB_ONLY_SOURCE_POLICY.md`
+8. `docs/governance/WINDOWS_COMPATIBILITY_POLICY.md`
+9. `docs/governance/CODEX_MAX_REMOTE_WINDOWS_PROTOCOL.md`
+10. `docs/governance/CODEX_MAX_OPERATING_PROTOCOL.md`
+11. `docs/governance/GOAL_QUEUE.md`
+12. `docs/governance/LOCKED_BOUNDARIES.md`
+13. `docs/governance/GOAL_ACCEPTANCE_STANDARD.md`
 
-Next allowed goals:
+Historical next-goal record (superseded for current selection by
+`docs/governance/CURRENT_DECISION.md`):
 
 1. `GOAL-CODEX-MAX-ONBOARDING-SMOKE-01-REMOTE-WINDOWS-GITHUB-ONLY-COMPLIANCE-GATE`
 2. Preserve accepted iFinD S0 and S1 metadata, merge/deploy the offline S2

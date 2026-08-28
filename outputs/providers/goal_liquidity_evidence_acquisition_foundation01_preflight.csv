@@ -1,0 +1,2 @@
+status,reason_codes,network_enabled,current_symbol_count,required_symbol_count,verified_provider_count,required_provider_count,data_calls_performed,accepted_rows
+BLOCKED,NETWORK_GATE_DISABLED;SYMBOL_SCOPE_NOT_EXACT_100;PROVIDER_COUNT_BELOW_TWO;UNVERIFIED_PROVIDER_SCHEMA;FREE_FLOAT_SOURCE_UNAVAILABLE,false,41,100,1,2,false,0
