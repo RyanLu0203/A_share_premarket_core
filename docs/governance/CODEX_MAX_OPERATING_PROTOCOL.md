@@ -32,7 +32,7 @@ Codex Max must not:
 
 1. Start from stale `main` unless explicitly instructed.
 2. Use local Mac paths.
-3. Use `/Users/luxinyu` paths.
+3. Use owner-specific absolute macOS paths.
 4. Use local bundle backup.
 5. Use local uncommitted data.
 6. Use local provider caches.

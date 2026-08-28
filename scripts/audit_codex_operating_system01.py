@@ -113,7 +113,7 @@ def _check_root_markers(failures: list[str]) -> None:
         CHECKPOINT_BRANCH,
         CHECKPOINT_TAG,
         STABLE_ARCH03_COMMIT,
-        "must not rely on `/Users/luxinyu`",
+        "must not rely on owner-specific absolute macOS paths",
         "must not rely on local bundle backup",
         "GitHub-committed artifacts",
         "codex-max/<goal-id>",

@@ -21,7 +21,7 @@ GitHub is the only authoritative source for Codex Max.
 Codex Max must not rely on:
 
 - local Mac files
-- `/Users/luxinyu` paths
+- owner-specific absolute macOS paths
 - local bundle backups
 - local uncommitted data
 - local provider caches

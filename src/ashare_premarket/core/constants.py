@@ -183,6 +183,7 @@ PUBLIC_COMMANDS = [
     "scripts/audit_goal_global_codebase_consolidation_stock_chart01.py",
     "scripts/run_daily_incremental_evidence_refresh.py",
     "scripts/run_east_money_health_probe.py",
+    "scripts/audit_public_release_readiness.py",
     "scripts/audit_local_workspace_boundary.py",
     "scripts/run_ifind_mcp_dual_stock_acceptance.py",
     "scripts/run_ifind_mcp_probe.py",

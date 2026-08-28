@@ -44,7 +44,7 @@ This branch is read-only by convention.
 ## 8. Local bundle backup
 
 Bundle path:
-`/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+`<private-macos-home>/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
 
 Bundle verification status: `PASS`
 

@@ -1,6 +1,6 @@
 # Current System Architecture
 
-**As of:** 2026-08-13
+**As of:** 2026-08-28
 **Authoritative branch:** `project-current`
 **Scope:** current implemented architecture and locked boundaries, not a future-state roadmap
 
@@ -19,7 +19,7 @@ workspace over governed evidence. Its operational data path is:
 3. point-in-time (PIT), completeness, freshness, and lineage validation;
 4. checksummed immutable snapshots and manifests;
 5. application read models;
-6. a loopback FastAPI service with exactly 22 GET routes and no write routes;
+6. an enforced-loopback FastAPI service with exactly 22 GET routes and no write routes;
 7. a 23-page Next.js Workspace.
 
 The API and Workspace read accepted evidence. They do not fetch providers,
@@ -57,7 +57,7 @@ flowchart LR
 | Acquisition | Implemented, provider-gated | Network access is disabled by default. A live run requires explicit provider opt-in and must fail closed on partial coverage or schema drift. Tencent via AKShare is the documented operational primary for the last accepted 41-symbol runs. |
 | Normalization and PIT | Implemented | Provider fields and units are normalized before use. Trade-date, freshness, no-lookahead, completeness, provenance, and checksum checks precede snapshot promotion. Missing values are preserved as unavailable; they are not fabricated. |
 | Evidence storage | Implemented | Accepted data is exposed through immutable, checksummed snapshots and bounded manifests. Raw or paid full-provider payloads, credentials, databases, caches, and private logs are not GitHub artifacts. |
-| Application/API | Implemented, read-only | The canonical interface registry declares 22 GET routes. The FastAPI application permits GET-only loopback access and has no write routes. Provider acquisition is not invoked by API reads. |
+| Application/API | Implemented, read-only | The canonical interface registry declares 22 GET routes. Both launchers reject non-loopback hosts; the FastAPI application has no write routes. Provider acquisition is not invoked by API reads. |
 | Local Workspace | Implemented, research-only | The Next.js Workspace has 23 registered pages. Effective governance state is 16 available, 1 hybrid, and 6 locked. The named Workspace is not the generic Dashboard / Daily Report workflow. |
 | Quant research | Implemented, research-only | `DataExpansion01 -> Regime02 -> Quant04` is complete as a research lineage. `ready_factor_count` remains `0`; no recommendation-tiering promotion is permitted. |
 | GOAL-11 | Implemented, research-only | Provides deterministic PIT features, interpretable alpha construction, a fixed-ridge baseline, chronological evaluation, and risk adjustment. Runtime research evidence remains local/ignored and does not alter production locks. |

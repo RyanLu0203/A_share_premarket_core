@@ -26,7 +26,7 @@ Codex Max must operate from GitHub and remain Windows-compatible.
 Codex Max must not:
 
 1. Use local Mac paths.
-2. Use `/Users/luxinyu` paths.
+2. Use owner-specific absolute macOS paths.
 3. Use local bundle backup.
 4. Use local uncommitted data.
 5. Use stale `main`.

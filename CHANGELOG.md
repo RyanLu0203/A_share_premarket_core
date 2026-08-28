@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-28 - Public repository presentation and security hardening
+
+- Reworked the README entry surface around the current provider-to-evidence-to-
+  research-to-read-only-Workspace architecture and added a compact repository
+  map for first-time reviewers.
+- Enforced loopback-only API and Workspace launch hosts; unsupported LAN/public
+  bindings now fail closed before either service starts.
+- Upgraded Next.js and `eslint-config-next` to 16.3.3 and refreshed transitive
+  locks until the package audit reported zero known vulnerabilities.
+- Replaced owner-specific local paths in the tracked tree with public-safe
+  labels, moved the private checkpoint default under ignored `.local/`, and
+  added a deterministic tracked-tree public-release audit.
+- Added a public security policy. No provider call, scientific conclusion,
+  workflow status, recommendation, position, trading or production capability
+  changed.
+
 ## 2026-08-13 - iFinD S2 offline response diagnostics and read gate
 
 - Kept the historical 1/4-call S2 failure unchanged because its exact response
@@ -451,7 +467,7 @@ Status: `IMPLEMENTED_RESEARCH_ONLY_PASS`; ready for feature-branch review.
   `checkpoint/arch03-stable-310559`, and
   `checkpoint-arch03-stable-310559`.
 - Created and verified the local bundle backup at
-  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+  `<private-macos-home>/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
 - Preserved scientific outputs, ready factor count 0, workflow locks, and all
   downstream execution prohibitions.
 

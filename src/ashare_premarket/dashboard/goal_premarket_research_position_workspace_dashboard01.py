@@ -98,6 +98,7 @@ REQUIRED_FILES = (
     "src/ashare_premarket/dashboard/store.py",
     "src/ashare_premarket/interfaces/api/app.py",
     "src/ashare_premarket/interfaces/api/errors.py",
+    "src/ashare_premarket/interfaces/api/network.py",
     "src/ashare_premarket/interfaces/api/routers/portfolio.py",
     "src/ashare_premarket/interfaces/api/routers/quant.py",
     "src/ashare_premarket/interfaces/api/routers/status.py",
