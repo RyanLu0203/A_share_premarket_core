@@ -4,7 +4,7 @@
 PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可审计链路中；它不是
 自动交易系统，也不输出可执行的推荐、目标仓位或订单。
 
-## Current Project Truth — 2026-08-13
+## Current Project Truth — 2026-08-28
 
 | Area | Current state |
 | --- | --- |
@@ -14,6 +14,7 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |
 | Paid provider foundation | iFinD MCP S0 accepted: 7/7 services and 35/35 entitled tools/schemas. S1 identity acceptance is verified for both fixed symbols as `acceptance_metadata_only`. One authorized S2 batch stopped fail-closed after the first Luxshare `get_stock_info` response schema mismatch: 1/4 calls, zero retry, zero normalized/canonical rows. Offline metadata-only response diagnostics and a strict accepted-bundle read gate are implemented; no retry is authorized by that work |
+| Public release boundary | Source, contracts and bounded sanitized evidence may be public; credentials, raw paid payloads, local lake data, private paths, caches, databases and runtime logs remain external and forbidden |
 | Execution boundary | Recommendation tiering, target prices, actionable positions, orders, broker, production writes and live trading remain locked |
 
 The named Issue #24 read-only Workspace is already implemented under its own
@@ -62,6 +63,28 @@ The audited local checkout/deployment roles and non-destructive cleanup gate are
 documented in
 [Local Checkout and Deployment Inventory](docs/operations/LOCAL_CHECKOUT_AND_DEPLOYMENT_INVENTORY.md).
 
+## Latest Repository Structure
+
+```text
+A_share_premarket_core/
+├── src/ashare_premarket/       # Provider, evidence, research, risk and read-model modules
+├── apps/premarket-workspace/   # 23-page local Next.js research workspace
+├── configs/                    # Machine-readable contracts, workflows and capability locks
+├── outputs/                    # Bounded, sanitized and checksummed review evidence
+├── scripts/                    # Governed runners, audits and local launchers
+├── tests/                      # Contract, leakage, security and regression coverage
+├── docs/                       # Current architecture, governance and goal records
+└── .github/                    # Ownership and issue / pull-request workflow
+```
+
+The runtime flow is deliberately one-way:
+
+`bounded providers → normalization → PIT/quality gates → immutable evidence → read models → GET-only API → local Workspace`
+
+Research branches consume accepted evidence but do not unlock recommendation or
+execution stages. The API and Workspace are enforced as loopback-only; remote
+serving is not a supported mode.
+
 ## Data Scope Is Deliberately Split
 
 These counts answer different questions and must not be mixed:
@@ -88,6 +111,7 @@ python -m ashare_premarket doctor
 python scripts/run_premarket_workspace.py --check
 python scripts/run_premarket_workspace.py
 python scripts/run_ifind_mcp_probe.py
+python scripts/audit_public_release_readiness.py
 python scripts/audit_local_workspace_boundary.py
 python scripts/run_program_validation_profile.py
 ```

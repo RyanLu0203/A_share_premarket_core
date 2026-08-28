@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -12,7 +13,16 @@ SOURCE_BRANCH = "codex/cloakbrowser-reference-tagging"
 PROJECT_CURRENT_BRANCH = "project-current"
 CHECKPOINT_BRANCH = "checkpoint/arch03-stable-310559"
 CHECKPOINT_TAG = "checkpoint-arch03-stable-310559"
-USER_PRIVATE_BUNDLE_PATH = Path("/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle")
+USER_PRIVATE_BUNDLE_LABEL = (
+    "environment:ASHARE_PRIVATE_CHECKPOINT_BUNDLE or "
+    ".local/rollback/A_share_premarket_core_checkpoint_310559.bundle"
+)
+USER_PRIVATE_BUNDLE_PATH = Path(
+    os.environ.get(
+        "ASHARE_PRIVATE_CHECKPOINT_BUNDLE",
+        str(ROOT / ".local/rollback/A_share_premarket_core_checkpoint_310559.bundle"),
+    )
+)
 REPORT_PATH = ROOT / "outputs/audits/goal_repository_checkpoint01_audit.md"
 
 FORBIDDEN_OUTPUT_PARTS = {
@@ -59,7 +69,7 @@ def main() -> int:
                 f"Project current branch: `{PROJECT_CURRENT_BRANCH}`",
                 f"Frozen checkpoint branch: `{CHECKPOINT_BRANCH}`",
                 f"Annotated tag: `{CHECKPOINT_TAG}`",
-                f"User-private bundle path: `{USER_PRIVATE_BUNDLE_PATH}`",
+                f"User-private bundle location: `{USER_PRIVATE_BUNDLE_LABEL}`",
                 "Bundle status: user-private backup only; not a Codex Max input, onboarding dependency, or validation dependency.",
                 "",
                 "## Failures",
@@ -233,7 +243,9 @@ def _check_file_sizes(failures: list[str]) -> None:
 
 def _check_bundle(warnings: list[str]) -> None:
     if not USER_PRIVATE_BUNDLE_PATH.exists():
-        warnings.append(f"user-private bundle not visible from this environment: {USER_PRIVATE_BUNDLE_PATH}")
+        warnings.append(
+            f"user-private bundle not visible from configured location: {USER_PRIVATE_BUNDLE_LABEL}"
+        )
         return
     result = subprocess.run(["git", "bundle", "verify", str(USER_PRIVATE_BUNDLE_PATH)], cwd=ROOT, text=True, capture_output=True)
     if result.returncode:

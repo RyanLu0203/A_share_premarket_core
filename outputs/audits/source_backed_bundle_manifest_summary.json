@@ -5,7 +5,7 @@
   "bundle_id": "goal06c7_provider_ladder_engineering_pilot_current",
   "bundle_tier": "engineering_pilot",
   "candidate_symbols": 240,
-  "data_root": "/Users/luxinyu/data/ashare_premarket",
+  "data_root": "<private-macos-home>/data/ashare_premarket",
   "engineering_pilot_met": true,
   "goal06d_allowed_to_proceed": true,
   "goal06d_mode": "review_only",
@@ -13,7 +13,7 @@
   "health_status": "PASS",
   "heavy_data_committed": false,
   "label_ready_rows": 6000,
-  "local_bundle_path": "/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current",
+  "local_bundle_path": "<private-macos-home>/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current",
   "local_import_status": {
     "available_roles": [],
     "missing_roles": [

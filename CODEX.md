@@ -162,8 +162,8 @@ destructive-change disclosure, fresh-clone status when required, and review
 questions.
 
 Codex Max must clone or checkout `project-current`, must use only
-GitHub-committed artifacts as data/evidence, must not rely on `/Users/luxinyu`
-or any local Mac path, must not rely on local bundle backup, must not rely on
+GitHub-committed artifacts as data/evidence, must not rely on owner-specific
+absolute macOS paths or any local Mac path, must not rely on local bundle backup, must not rely on
 local caches or local data lake paths, must not fetch live data unless an
 assigned future goal explicitly allows network opt-in, must keep provider
 registry network disabled by default, and must push work to a

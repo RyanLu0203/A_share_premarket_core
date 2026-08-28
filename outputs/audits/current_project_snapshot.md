@@ -12,7 +12,7 @@ Stable Arch03 commit: `310559ae18bbf203e795c1d66bc7181a6b11c14a`
 
 The local bundle path is recorded as a user-private backup only. It is
 not a Codex Max input, onboarding dependency, or validation dependency.
-User-private local bundle path: `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
+User-private local bundle path: `<private-macos-home>/Desktop/A_share_premarket_core_checkpoint_310559.bundle`
 
 Latest scientific status: `review_only_research_only_outputs_unchanged`
 Ready factor count: `0`

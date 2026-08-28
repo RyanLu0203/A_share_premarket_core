@@ -16,7 +16,7 @@ Codex Max operated as a high-capacity executor for this explicitly assigned goal
 - Repository cloned over plain HTTPS from `https://github.com/RyanLu0203/A_share_premarket_core.git`.
 - Authoritative base: remote branch `project-current` at commit `823b50619aca52723d4bcfc7542674a697af60af` (verified equal to `origin/project-current` after `git fetch --all --tags`).
 - Only GitHub-committed artifacts were used as code, config, docs, and evidence sources.
-- Not used: local Mac paths (`/Users/luxinyu/...`), local git bundle backups, local data lake, local provider caches, local uncommitted files, local-only environment variables, stale default `main` (never checked out).
+- Not used: local Mac paths (`<private-macos-home>/...`), local git bundle backups, local data lake, local provider caches, local uncommitted files, local-only environment variables, stale default `main` (never checked out).
 
 ## 4. Windows-compatible environment confirmation
 

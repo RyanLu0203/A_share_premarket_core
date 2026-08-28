@@ -19,7 +19,7 @@ acceptance were therefore not started.
 - Included PR #32 fix commit:
   `7f54f24f1e62f3509f4297162e21c2ef27ffb322`
 - Recovery branch: `codex/macos-live-refresh-and-provider-recovery`
-- Deployment checkout: `/Users/luxinyu/Desktop/A_share_premarket_core_current`
+- Deployment checkout: `<private-macos-home>/Desktop/A_share_premarket_core_current`
 - The forbidden `codex/runtime-calendar-source-authority-fix` branch was not
   used for deployment.
 

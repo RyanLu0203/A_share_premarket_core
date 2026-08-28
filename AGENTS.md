@@ -9,8 +9,8 @@ This file is long-term project memory for Codex and other coding agents.
 - Use GitHub as the durable source of truth.
 - Treat `RyanLu0203/A_share_market_analysis_and_prediction` as historical
   legacy/evidence reference only.
-- Keep `/Users/luxinyu/Desktop/A_share_premarket_core` as the only same-prefix
-  Desktop entry. Never create a sibling checkout, runtime, rollback or deploy
+- Keep this repository as the only same-prefix Desktop entry. Never create a
+  sibling checkout, runtime, rollback or deploy
   directory beside it; local archives and supplier references belong under
   the ignored repository `/.local/` boundary. Verify with
   `python scripts/audit_local_workspace_boundary.py`.
@@ -476,6 +476,7 @@ python scripts/audit_stage6c_ranking_baselines.py
 python scripts/run_stage6c_walk_forward_validation.py
 python scripts/run_safety_gate.py
 python scripts/run_adapter_audit.py
+python scripts/audit_public_release_readiness.py
 python scripts/audit_local_workspace_boundary.py
 ```
 

@@ -5,5 +5,4 @@ STABLE_COMMIT = "310559ae18bbf203e795c1d66bc7181a6b11c14a"
 PROJECT_CURRENT_BRANCH = "project-current"
 CHECKPOINT_BRANCH = "checkpoint/arch03-stable-310559"
 CHECKPOINT_TAG = "checkpoint-arch03-stable-310559"
-BUNDLE_PATH = "/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle"
-
+BUNDLE_PATH = "environment:ASHARE_PRIVATE_CHECKPOINT_BUNDLE"

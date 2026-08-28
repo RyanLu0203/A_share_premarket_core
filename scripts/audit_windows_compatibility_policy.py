@@ -32,7 +32,7 @@ def main() -> int:
         text = policy.read_text(encoding="utf-8")
         for marker in [
             "pathlib",
-            "Do not hardcode `/Users/luxinyu` paths",
+            "Do not hardcode owner-specific absolute home paths",
             "Do not require bash-only commands",
             "Do not require `chmod`",
             "Do not require symlink behavior",

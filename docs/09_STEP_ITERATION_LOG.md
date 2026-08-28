@@ -1,5 +1,21 @@
 # 09 Step Iteration Log
 
+## 2026-08-28 - PUBLIC REPOSITORY PRESENTATION AND SECURITY HARDENING
+
+Status: `IMPLEMENTED_INFRASTRUCTURE_ONLY`.
+
+- Added a current repository map and compact architecture entry point for
+  external reviewers while preserving the detailed governed history below it.
+- Enforced loopback-only FastAPI and Workspace launch addresses. Non-loopback
+  host values now fail closed; no remote authentication mode was introduced.
+- Upgraded the local Workspace framework to Next.js 16.3.3, refreshed the lock,
+  and cleared the current npm advisory set.
+- Sanitized owner-specific paths from the tracked tree, made the checkpoint
+  bundle location environment/`.local` based, and added a public-release audit
+  for tracked credentials, private keys, user-home paths and forbidden files.
+- This infrastructure-only hardening changes no data, factor, risk,
+  recommendation, position, trading, broker, production or workflow lock.
+
 ## 2026-08-13 - IFIND S2 OFFLINE RESPONSE DIAGNOSTICS AND READ GATE
 
 Status: `IMPLEMENTED_OFFLINE_S2_RETRY_STILL_REQUIRES_AUTHORIZATION`.
@@ -736,7 +752,7 @@ Safety:
   `checkpoint/arch03-stable-310559`, and
   `checkpoint-arch03-stable-310559`.
 - Created and verified local bundle backup
-  `/Users/luxinyu/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
+  `<private-macos-home>/Desktop/A_share_premarket_core_checkpoint_310559.bundle`.
 - Added Codex Max entrypoint docs, rollback playbook, repository checkpoint
   documentation, current project snapshots, git-ref evidence, and a read-only
   audit script.
@@ -2039,7 +2055,7 @@ Evidence:
 - `outputs/audits/source_backed_bundle_manifest_summary.json`
 - `outputs/stage6c/STAGE6C_source_backed_engineering_panel_coverage_summary.csv`
 - Local full bundle:
-  `/Users/luxinyu/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current/`
+  `<private-macos-home>/data/ashare_premarket/bundles/engineering_pilot/goal06c7_provider_ladder_engineering_pilot_current/`
 
 Failure classification:
 

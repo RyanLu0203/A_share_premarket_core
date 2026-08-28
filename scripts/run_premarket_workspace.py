@@ -11,6 +11,7 @@ import time
 
 from _bootstrap import ROOT
 from ashare_premarket.dashboard.api import create_app
+from ashare_premarket.interfaces.api.network import require_loopback_host
 
 
 FRONTEND = ROOT / "apps" / "premarket-workspace"
@@ -29,6 +30,7 @@ def main() -> int:
     )
     parser.add_argument("--check", action="store_true", help="validate both services without starting them")
     args = parser.parse_args()
+    args.host = require_loopback_host(args.host)
 
     api_url = f"http://{args.host}:{args.api_port}"
     web_url = f"http://{args.host}:{args.web_port}"

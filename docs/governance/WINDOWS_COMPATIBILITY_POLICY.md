@@ -5,7 +5,7 @@ Codex Max may run in a remote Windows-compatible environment.
 ## Required Practices
 
 - Use Python `pathlib` for filesystem paths.
-- Do not hardcode `/Users/luxinyu` paths.
+- Do not hardcode owner-specific absolute home paths.
 - Do not hardcode POSIX-only absolute paths.
 - Do not require bash-only commands for Codex Max.
 - Do not require `chmod`.

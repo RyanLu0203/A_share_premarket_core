@@ -1,6 +1,14 @@
 # Project State
 
-Last updated: 2026-08-13
+Last updated: 2026-08-28
+
+Public-release infrastructure note: the current repository presentation now
+leads with the implemented provider-to-evidence-to-research-to-read-only-
+Workspace architecture. Launchers enforce loopback-only serving, the frontend
+framework is on the patched 16.3.3 line, owner-specific paths are absent from
+the tracked tree, and `audit_public_release_readiness.py` is the deterministic
+tracked-tree gate. This changes no scientific output or downstream capability
+lock.
 
 Deployment note: the last confirmed stable deployment is merged PR #55 commit
 `e6a82b7`.

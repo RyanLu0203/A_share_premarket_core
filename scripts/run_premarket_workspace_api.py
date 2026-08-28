@@ -6,6 +6,7 @@ import uvicorn
 
 from _bootstrap import ROOT
 from ashare_premarket.dashboard.api import create_app
+from ashare_premarket.interfaces.api.network import require_loopback_host
 
 
 def main() -> int:
@@ -14,6 +15,7 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--check", action="store_true", help="load contracts and routes without serving")
     args = parser.parse_args()
+    args.host = require_loopback_host(args.host)
 
     app = create_app(ROOT)
     if args.check:
