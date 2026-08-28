@@ -7,7 +7,7 @@
   "goal_id": "GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01",
   "goal_status": "PASS",
   "inputs": {
-    "outputs/research/goal_network_evidence_ingestion01_pit_availability_contract.csv": "52160dd6a7c9c5417163d84794fd97ec652bff7a9ea2115c70e4d2ba83c96e23",
+    "outputs/research/goal_network_evidence_ingestion01_pit_availability_contract.csv": "d290df20cdd01b0137d64e9a8fb0580da748a09c626d5fc9ed12d51f39dc34c7",
     "outputs/research/network_ingestion/daily_panel.csv": "74f2cf3715a6e6aacd908c8efaae7ffb1ae9eb5f6e424592157ac3b8c5cdbc07",
     "outputs/research/network_ingestion/symbol_coverage.csv": "63d9d5261b45739b31158504fb96220067657df1287362906fb9eb54554fa636"
   },
