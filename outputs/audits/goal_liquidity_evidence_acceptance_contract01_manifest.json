@@ -1,0 +1,25 @@
+{
+  "accepted_row_count": 0,
+  "current_evidence_status": "NOT_READY",
+  "current_provider_count": 1,
+  "current_symbol_count": 41,
+  "factor_construction_allowed": false,
+  "goal_id": "GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01",
+  "goal_status": "PASS",
+  "inputs": {
+    "outputs/research/goal_network_evidence_ingestion01_pit_availability_contract.csv": "52160dd6a7c9c5417163d84794fd97ec652bff7a9ea2115c70e4d2ba83c96e23",
+    "outputs/research/network_ingestion/daily_panel.csv": "74f2cf3715a6e6aacd908c8efaae7ffb1ae9eb5f6e424592157ac3b8c5cdbc07",
+    "outputs/research/network_ingestion/symbol_coverage.csv": "63d9d5261b45739b31158504fb96220067657df1287362906fb9eb54554fa636"
+  },
+  "outputs": {
+    "outputs/research/goal_liquidity_evidence_acceptance_contract01_current_evidence_evaluation.csv": "79275d16d37bebb10400a056670c76790217b99981b4f720f1c5d581c0f506f1",
+    "outputs/research/goal_liquidity_evidence_acceptance_contract01_decision.csv": "8bf7a953b9b2a7b5d3cf933f1b2ce5448501c6ed6f5bf5f81cb6b8bae34b4c2e",
+    "outputs/research/goal_liquidity_evidence_acceptance_contract01_required_schema.csv": "fbed8ae0ff7ba3e070b2f74a76c327b01ef588b1a88a58212f2469d99747a47a"
+  },
+  "provider_calls_authorized": false,
+  "provider_calls_performed": false,
+  "rec_tiering_unlocked": false,
+  "required_provider_count": 2,
+  "required_symbol_count": 100,
+  "v2_factor_mining_unlocked": false
+}

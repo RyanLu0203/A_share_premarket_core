@@ -1,0 +1,6 @@
+factor_family,candidate_count,average_failed_criteria,lost_conditional_count,holdout_sign_unstable_count,regime_sign_flip_count,redundant_candidate_count,family_decision,promotion_allowed
+benchmark_relative_strength,20,4.250000,15,20,10,17,stop_current_family_definition,false
+downside_volatility_adjusted_signal,20,4.000000,14,20,9,17,stop_current_family_definition,false
+price_volume_confirmation,20,6.000000,4,20,14,19,stop_current_family_definition,false
+risk_adjusted_alpha_candidate,20,4.000000,15,20,9,17,stop_current_family_definition,false
+volatility_adjusted_momentum,40,4.125000,15,40,25,34,stop_current_family_definition,false

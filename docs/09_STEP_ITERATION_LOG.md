@@ -16,6 +16,77 @@ Status: `IMPLEMENTED_INFRASTRUCTURE_ONLY`.
 - This infrastructure-only hardening changes no data, factor, risk,
   recommendation, position, trading, broker, production or workflow lock.
 
+## 2026-08-27 - GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01
+
+Status: foundation `PASS`; acquisition preflight `BLOCKED`;
+`implemented_infrastructure_only`.
+
+- Implemented a separate default-off network gate, exact-100-symbol preflight,
+  strict normalized-row contract, and atomic complete-bundle validator.
+- Added fail-closed reasons for schema, free-float, PIT, QFQ, numeric, duplicate,
+  partial-batch and provider-discrepancy failures with zero retry/acceptance.
+- Recorded Tencent volume as verified, Baostock liquidity fields as
+  contract-only, and historical free-float evidence as unavailable.
+- Stopped before network at 41/100 symbols and 1/2 verified providers; calls
+  and accepted rows remain zero.
+
+## 2026-08-25 - GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01
+
+Status: contract `PASS`; current evidence `NOT_READY`;
+`implemented_infrastructure_only`.
+
+- Defined a fail-closed 100-symbol, two-provider liquidity evidence contract.
+- Required explicit volume, turnover rate, free-float shares, trade status,
+  provider availability, QFQ, and immutable snapshot lineage.
+- Evaluated current evidence at 41 symbols, one provider, incomplete required
+  fields, and zero accepted rows.
+- Authorized no network, provider call, acquisition, factor construction,
+  threshold search, or downstream unlock.
+
+## 2026-08-25 - GOAL-ALPHA-HYPOTHESIS-REDESIGN-01
+
+Status: `PASS_WITH_WARNINGS`; `implemented_design_only`.
+
+- Froze all five existing factor families and their 120 variants.
+- Pre-registered four orthogonal economic hypotheses with fixed evidence,
+  sample, test, and falsification requirements.
+- Prioritized liquidity-shock normalization, conditional on a separate
+  evidence-acceptance gate with at least 100 symbols and PIT-safe volume,
+  turnover, free-float, trade-status, and availability evidence.
+- Kept all hypotheses evidence-not-ready and created no factor values,
+  threshold search, provider call, evaluation, or downstream unlock.
+
+## 2026-08-25 - GOAL-FACTOR-FAILURE-ATTRIBUTION-01
+
+Status: `PASS_WITH_WARNINGS`; `implemented_research_only`.
+
+- Attributed existing Rerun02 and Quant04 evidence without constructing or
+  recalculating a factor and without searching or lowering thresholds.
+- Confirmed 120/120 candidates remain not-ready; base precondition, strong IC,
+  1-day sign stability, and two aligned horizons fail for all 120.
+- Recorded 63 lost conditional statuses, 104 exact existing-metric fingerprint
+  redundancies, limited 41-symbol breadth, and provider discrepancy warnings.
+- Classified all five current families `stop_current_family_definition`.
+- Kept GOAL-10D and all recommendation, position, backtest, dashboard,
+  execution, production, factor-mining, broker, local-lake, and DQN/RL paths
+  locked.
+
+## 2026-08-25 - CURRENT DECISION CONTROL-PLANE CONSOLIDATION
+
+Status: `IMPLEMENTED_GOVERNANCE_ONLY_NO_DOWNSTREAM_UNLOCK`.
+
+- Added `docs/governance/CURRENT_DECISION.md` as the single current
+  goal-selection entrypoint while preserving historical planning statements.
+- Recorded completed goals that supersede stale next-goal text without
+  deleting or rewriting historical evidence.
+- Recommended a separately approved research-only factor
+  failure-attribution goal over existing committed evidence; this checkpoint
+  does not implement that research work or create a new scientific result.
+- Kept `ready_factor_count = 0`, iFinD S2 authorization off, and every
+  recommendation, position, backtest, dashboard, execution, production,
+  factor-mining, and DQN/RL boundary locked.
+- Made no provider request, Keychain read, raw-data write, or scientific
+  artifact change.
 ## 2026-08-13 - IFIND S2 OFFLINE RESPONSE DIAGNOSTICS AND READ GATE
 
 Status: `IMPLEMENTED_OFFLINE_S2_RETRY_STILL_REQUIRES_AUTHORIZATION`.

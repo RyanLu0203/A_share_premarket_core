@@ -1,0 +1,22 @@
+{
+  "accepted_rows": 0,
+  "acquisition_preflight_status": "BLOCKED",
+  "atomic_bundle_validation_implemented": true,
+  "current_symbol_count": 41,
+  "data_calls_performed": false,
+  "factor_construction_unlocked": false,
+  "free_float_source_verified": false,
+  "goal_id": "GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01",
+  "goal_status": "PASS",
+  "network_default_off": true,
+  "normalizer_implemented": true,
+  "outputs": {
+    "outputs/providers/goal_liquidity_evidence_acquisition_foundation01_failure_taxonomy.csv": "6d9195de72b2fe72bc68eba9efe8702b6a9f47eb4563522918fdb6d0160c31eb",
+    "outputs/providers/goal_liquidity_evidence_acquisition_foundation01_preflight.csv": "292b3270f44bbe7f8e331033d8093a290128c1738d57791d9bdb27d2e8c2da1c",
+    "outputs/providers/goal_liquidity_evidence_acquisition_foundation01_provider_capability_plan.csv": "f0faf61d1bd61a09892b8d2f5e67fb72c9f8969519ad1d6e8dd5537fbe23dc5f"
+  },
+  "rec_tiering_unlocked": false,
+  "required_provider_count": 2,
+  "required_symbol_count": 100,
+  "verified_provider_count": 1
+}

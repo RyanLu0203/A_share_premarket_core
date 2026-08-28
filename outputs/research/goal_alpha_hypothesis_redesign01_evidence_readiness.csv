@@ -1,0 +1,17 @@
+hypothesis_id,dimension,required,current,status
+HYP-LIQUIDITY-SHOCK-01,symbol_breadth,100,41,not_ready
+HYP-LIQUIDITY-SHOCK-01,temporal_depth,500,843,ready
+HYP-LIQUIDITY-SHOCK-01,orthogonal_fields,volume;turnover_rate;free_float_shares;trade_status,not_accepted_for_this_hypothesis,not_ready
+HYP-LIQUIDITY-SHOCK-01,pit_availability,known_by_trade_date_close_or_earlier,not_verified_for_this_hypothesis,not_ready
+HYP-EVENT-DRIFT-01,symbol_breadth,100,41,not_ready
+HYP-EVENT-DRIFT-01,temporal_depth,500,843,ready
+HYP-EVENT-DRIFT-01,orthogonal_fields,event_type;published_at;available_at;symbol;revision_id,not_accepted_for_this_hypothesis,not_ready
+HYP-EVENT-DRIFT-01,pit_availability,provider_available_at_verified_before_feature_cutoff,not_verified_for_this_hypothesis,not_ready
+HYP-FUNDAMENTAL-REVISION-01,symbol_breadth,200,41,not_ready
+HYP-FUNDAMENTAL-REVISION-01,temporal_depth,750,843,ready
+HYP-FUNDAMENTAL-REVISION-01,orthogonal_fields,report_period;published_at;available_at;revision_id;fundamental_metric,not_accepted_for_this_hypothesis,not_ready
+HYP-FUNDAMENTAL-REVISION-01,pit_availability,revision_aware_asof_join_before_feature_cutoff,not_verified_for_this_hypothesis,not_ready
+HYP-SECTOR-NEUTRAL-VALUATION-01,symbol_breadth,300,41,not_ready
+HYP-SECTOR-NEUTRAL-VALUATION-01,temporal_depth,750,843,ready
+HYP-SECTOR-NEUTRAL-VALUATION-01,orthogonal_fields,valuation_metric;quality_metric;industry_membership;published_at;available_at,not_accepted_for_this_hypothesis,not_ready
+HYP-SECTOR-NEUTRAL-VALUATION-01,pit_availability,historical_industry_and_fundamental_asof_join,not_verified_for_this_hypothesis,not_ready

@@ -1,0 +1,2 @@
+acceptance_status,accepted_row_count,canonical_projection_allowed,factor_construction_allowed,provider_calls_authorized,next_action
+NOT_READY,0,false,false,false,explicit_bounded_evidence_acquisition_goal_required

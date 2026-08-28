@@ -1,0 +1,4 @@
+provider,role,fields,schema_state,network_default,canonical_use
+tencent_akshare,volume_crosscheck,volume,verified,off,forbidden_by_this_goal
+baostock,candidate_primary_liquidity_history,volume;turnover_rate;trade_status;adjustment,contract_only_not_live_verified,off,forbidden_by_this_goal
+free_float_source_tbd,required_free_float_history,free_float_shares;available_at,unavailable,off,forbidden_by_this_goal

@@ -1,0 +1,76 @@
+{
+  "candidate_count": 120,
+  "downstream_locks_preserved": true,
+  "effective_date_count": 843,
+  "effective_symbol_count": 41,
+  "family_count": 5,
+  "goal10d_unlocked": false,
+  "goal_id": "GOAL-FACTOR-FAILURE-ATTRIBUTION-01",
+  "inputs": {
+    "comparison": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_old_new_readiness_comparison.csv",
+      "sha256": "8a27f9660c45a5ddcc7e7275c1d3268c69f8e00350e55546f9a7c505f20d6662"
+    },
+    "panel": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_reconstructed_panel_summary.csv",
+      "sha256": "d2df4268e83ea2e0ca33f3cf885245b2e8ee35975d40c2252c07b2e50d3c9a66"
+    },
+    "provider": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_provider_robustness_summary.csv",
+      "sha256": "3dc1ee1e9efb18a51340f0db89414841322cfea0c2724452cc95ec1fde318b49"
+    },
+    "reasons": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_readiness_decision_reasons.csv",
+      "sha256": "fca9c44bfef6987e6397953dd5fa50b9ae27b34064b80b78aee40fd58cfce6d4"
+    },
+    "regime": {
+      "path": "outputs/research/goal_quant_research04_regime_conditional_evaluation_summary.csv",
+      "sha256": "376d2ccdc3dbd01d558ea6aa606695c2ba56456dbbbfa92f045ec1322ac6552d"
+    },
+    "status": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_factor_readiness_status.csv",
+      "sha256": "b3f34bf6cc226625b03ca59b5ce768362455e0ee11d5f74d6b62ed01a8141655"
+    },
+    "walk": {
+      "path": "outputs/research/goal_factor_readiness_rerun02_walk_forward_validation_summary.csv",
+      "sha256": "52aae7d823832012ed1d8b9c18eb77e0c21057f6ed5745f7d1474f66ce443b1b"
+    }
+  },
+  "metric_fingerprint_redundant_candidate_count": 104,
+  "new_factors_constructed": false,
+  "outputs": {
+    "criteria": {
+      "path": "outputs/research/goal_factor_failure_attribution01_criterion_failure_summary.csv",
+      "sha256": "1c73a690e50ce97185dd8b4c25fe820984dd30e9d4a8386e41fb83db65724648"
+    },
+    "decision": {
+      "path": "outputs/research/goal_factor_failure_attribution01_program_decision.csv",
+      "sha256": "81476950326189d9fc52ac5b4fd4f1649629f7af987de7dbbe742ed238c4086c"
+    },
+    "families": {
+      "path": "outputs/research/goal_factor_failure_attribution01_family_attribution_summary.csv",
+      "sha256": "08b98106d84d9df97ad9fb20f3d2d5da856c9474065448b5744d74737c7ecb46"
+    },
+    "matrix": {
+      "path": "outputs/research/goal_factor_failure_attribution01_candidate_failure_matrix.csv",
+      "sha256": "1c4926306229e3c29c0b0346378999e3b6306d9addea2aa65fe331e89f8103c9"
+    },
+    "redundancy": {
+      "path": "outputs/research/goal_factor_failure_attribution01_candidate_redundancy_summary.csv",
+      "sha256": "78f1e98ebe2a7568e63d9b91e121b7106622cfc33a27aa16be7791c9717b4177"
+    },
+    "regimes": {
+      "path": "outputs/research/goal_factor_failure_attribution01_regime_sign_instability.csv",
+      "sha256": "60d593cb015ab87c1d972bd2b50ad0cdf1a75da55f2db22d1d8d6453ffdfa689"
+    }
+  },
+  "provider_calls_performed": false,
+  "ready_factor_count_after": 0,
+  "ready_factor_count_before": 0,
+  "rec_tiering_unlocked": false,
+  "research_only": true,
+  "status": "PASS_WITH_WARNINGS",
+  "thresholds_changed": false,
+  "top_failed_criterion": "aligned_horizons_ge_2",
+  "top_failed_criterion_count": 120
+}

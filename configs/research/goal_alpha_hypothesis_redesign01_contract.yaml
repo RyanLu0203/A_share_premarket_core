@@ -1,0 +1,9 @@
+goal_id: GOAL-ALPHA-HYPOTHESIS-REDESIGN-01
+workflow_id: goal_alpha_hypothesis_redesign01
+mode: implemented_design_only
+source_goal: GOAL-FACTOR-FAILURE-ATTRIBUTION-01
+constructs_factor_values: false
+searches_thresholds: false
+performs_provider_calls: false
+unlocks_v2_factor_mining: false
+unlocks_rec_tiering: false

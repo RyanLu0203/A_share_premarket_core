@@ -6,6 +6,29 @@ PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可
 
 ## Current Project Truth — 2026-08-28
 
+The single current goal-selection entrypoint is
+[`docs/governance/CURRENT_DECISION.md`](docs/governance/CURRENT_DECISION.md).
+Historical `next goal` text elsewhere is checkpoint evidence, not current
+authorization.
+
+GOAL-FACTOR-FAILURE-ATTRIBUTION-01 is now implemented research-only. It finds
+120/120 existing candidates not-ready and recommends stopping expansion of the
+five current factor families pending an explicit hypothesis-redesign, new
+evidence, or stop decision. No downstream capability is unlocked.
+
+GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 subsequently freezes those families and
+pre-registers four orthogonal hypotheses design-only. Liquidity shock is first
+priority, but remains blocked pending a separate 100-symbol PIT-safe evidence
+acceptance contract; no factor values have been created.
+
+That liquidity-evidence contract is now implemented infrastructure-only. The
+contract passes but current evidence is `NOT_READY` (41/100 symbols, one/two
+providers, incomplete required fields), so zero rows are accepted.
+
+The default-off acquisition foundation is also implemented. Current preflight
+blocks before network at 41/100 symbols, 1/2 verified sources, and no verified
+historical free-float source; calls and accepted rows remain zero.
+
 | Area | Current state |
 | --- | --- |
 | Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |

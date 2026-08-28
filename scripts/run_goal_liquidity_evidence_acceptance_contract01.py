@@ -1,0 +1,3 @@
+from _bootstrap import ROOT
+from ashare_premarket.research.goal_liquidity_evidence_acceptance_contract01 import run_goal_liquidity_evidence_acceptance_contract01
+if __name__=="__main__":raise SystemExit(0 if run_goal_liquidity_evidence_acceptance_contract01(ROOT) else 1)

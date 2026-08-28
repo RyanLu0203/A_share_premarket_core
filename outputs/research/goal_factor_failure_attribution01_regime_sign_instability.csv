@@ -1,0 +1,6 @@
+factor_family,regime_cells,sign_flip_count,unstable_cell_count,not_evaluable_cell_count,regime_instability_status
+benchmark_relative_strength,30,10,20,10,material
+downside_volatility_adjusted_signal,30,9,20,10,material
+price_volume_confirmation,30,14,23,7,material
+risk_adjusted_alpha_candidate,30,9,20,10,material
+volatility_adjusted_momentum,60,25,45,15,material

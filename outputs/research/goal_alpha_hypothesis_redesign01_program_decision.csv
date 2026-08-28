@@ -1,0 +1,5 @@
+decision_id,decision,status
+D1,freeze_existing_five_factor_families,effective
+D2,prioritize_liquidity_shock_hypothesis_after_evidence_acceptance,design_only
+D3,require_materially_different_pit_evidence_before_construction,mandatory
+D4,keep_all_downstream_and_v2_factor_mining_locks,mandatory

@@ -1,5 +1,30 @@
 # 02 Data Engine
 
+## 2026-08-25 control-plane clarification
+
+The current program decision is maintained in
+`docs/governance/CURRENT_DECISION.md`. iFinD S2 remains an independent,
+default-off provider-acceptance track. This governance checkpoint authorizes
+no retry, network access, Keychain read, provider-data acceptance, canonical
+panel change, or research use of iFinD evidence.
+
+GOAL-FACTOR-FAILURE-ATTRIBUTION-01 consumes only previously committed Rerun02
+and Quant04 diagnostics. It performs no provider request and changes no data,
+PIT, label, canonical-panel, or storage contract.
+
+GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 identifies future liquidity evidence
+requirements but performs no acquisition and changes no provider or data
+contract. Its preferred hypothesis remains blocked pending a separately
+approved evidence-acceptance contract.
+
+GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01 now defines that contract. It
+passes as infrastructure, but current evidence is `NOT_READY` and accepted
+rows remain zero. External acquisition still requires separate authority.
+
+GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 implements the default-off
+preflight and atomic bundle mechanics. It does not activate a provider. Current
+schema/source readiness blocks before network and preserves zero accepted rows.
+
 ## 2026-08-13 iFinD S2 offline response-contract hardening
 
 The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic

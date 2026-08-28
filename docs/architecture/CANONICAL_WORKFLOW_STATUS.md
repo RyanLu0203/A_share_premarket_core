@@ -4,6 +4,11 @@ The canonical machine-readable workflow status contract is:
 
 `configs/project/workflow_status.csv`
 
+Current goal selection is summarized in
+`docs/governance/CURRENT_DECISION.md`. The CSV remains authoritative for
+implementation and lock status; historical next-goal prose does not authorize
+promotion.
+
 Future goals must update that file before they can be considered complete. The
 CSV governs diagram edge type, allowed next action, promotion rules, and whether
 a block is implemented in this repository.
@@ -92,6 +97,8 @@ Implemented review-only:
 
 Implemented research-only:
 
+- GOAL-FACTOR-FAILURE-ATTRIBUTION-01 existing-evidence failure attribution
+  (`PASS_WITH_WARNINGS`; 120/120 not-ready; no downstream unlock)
 - GOAL-11 Quant Intelligence Foundation (deterministic PIT features,
   interpretable alpha, fixed-ridge baseline, chronological evaluation, and
   risk adjustment; local generated evidence only; no downstream unlock)
@@ -119,12 +126,18 @@ Implemented engineering research-support:
 
 Implemented design-only:
 
+- GOAL-ALPHA-HYPOTHESIS-REDESIGN-01 orthogonal hypothesis pre-registration
+  (`PASS_WITH_WARNINGS`; all hypotheses evidence-not-ready)
 - GOAL-07A Risk Overlay Design (`PASS_WITH_WARNINGS`)
 - GOAL-08A Recommendation Contract Design Gate (`PASS`)
 - GOAL-10A Backtest Contract Design Gate (`PASS_WITH_WARNINGS`)
 
 Implemented infrastructure-only:
 
+- GOAL-LIQUIDITY-EVIDENCE-ACQUISITION-FOUNDATION-01 (`PASS` foundation;
+  preflight `BLOCKED`; zero calls and accepted rows)
+- GOAL-LIQUIDITY-EVIDENCE-ACCEPTANCE-CONTRACT-01 (`PASS` contract;
+  current evidence `NOT_READY`; zero accepted rows)
 - GOAL-STORAGE-01 Local Research Lake Hardening Gate (`PASS`)
 - GOAL-V1-INTEGRITY-01 Artifact Lineage and Structure Gate
   (`PASS_WITH_WARNINGS`)
