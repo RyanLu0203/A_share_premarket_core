@@ -1,5 +1,13 @@
 # Canonical Workflow Status
 
+## 2026-08-28 Candidate-source and runtime compatibility checkpoint
+
+The workflow adds an infrastructure-only PIT-safe candidate-source acceptance
+gate after the exact-100 universe design. Current evidence remains blocked at
+50 symbols and zero accepted universe rows. Synthetic provider schema fixtures
+pass offline only; live calls and downstream promotion remain locked. Python
+3.9 and 3.12 dependency resolution are both valid under conditional `httpx2`.
+
 ## 2026-08-28 Multi-workstream liquidity readiness checkpoint
 
 The workflow now includes design/infrastructure-only schema-smoke, provider

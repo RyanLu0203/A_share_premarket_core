@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-28 - Runtime and liquidity offline readiness follow-up
+
+- Preserved Python `>=3.9` while restricting the Python-3.10-only `httpx2`
+  test dependency to compatible interpreters; dependency resolution now passes
+  for both Python 3.9 and 3.12.
+- Added sanitized synthetic field-name acceptance for the Tushare and Baostock
+  parser contracts without claiming live schema verification.
+- Added a PIT-safe 100-symbol candidate-source acceptance contract that rejects
+  outcome-like fields and incomplete security-master evidence. Current source
+  evidence remains blocked at 50 symbols and zero accepted universe rows.
+
 ## 2026-08-28 - Multi-workstream liquidity acquisition readiness batch
 
 - Added a fixed, unauthorized four-call schema-smoke plan for two providers

@@ -21,6 +21,10 @@ acquired deep history. Because 100 are required, the universe gate returns
 `BLOCKED` and emits no partial accepted list. Both provider candidates also
 lack accepted row-level availability timestamps.
 
+Both sanitized synthetic field-name fixtures pass the offline provider schema
+contracts. This proves parser-contract readiness only; it is not live schema
+verification and does not authorize or record a provider call.
+
 No provider call, credential read, raw payload, accepted row, factor
 construction, recommendation, position, backtest, trading, broker, production,
 factor mining, or DQN/RL unlock occurred.

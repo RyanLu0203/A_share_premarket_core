@@ -1,0 +1,19 @@
+{
+  "accepted_symbol_count": 0,
+  "current_distinct_symbol_count": 50,
+  "current_source_reason": "REQUIRED_SOURCE_FIELDS_MISSING",
+  "current_source_status": "BLOCKED",
+  "downstream_unlock": false,
+  "goal_id": "GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01",
+  "goal_status": "PASS_WITH_WARNINGS",
+  "inputs": {
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv": "950b1b0f1edc725221cc484fcdb2e35270683eec751f3312c003f07b38242070"
+  },
+  "outputs": {
+    "outputs/research/goal_liquidity_candidate_source_acceptance01_decision.csv": "47fc88e0891ce5822f36d69f1787679fe89a17e174403383b3b87f97a889c57f"
+  },
+  "partial_universe_emitted": false,
+  "provider_calls_authorized": false,
+  "provider_calls_performed": false,
+  "required_symbol_count": 100
+}

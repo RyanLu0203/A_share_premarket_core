@@ -1,7 +1,7 @@
 # Current Decision
 
-Last reviewed: 2026-08-28 after the multi-workstream liquidity acquisition
-readiness batch
+Last reviewed: 2026-08-28 after the candidate-source and runtime compatibility
+follow-up
 
 This is the single current decision entrypoint for selecting the next project
 goal. Historical `next`, `next goal`, and `allowed next` statements elsewhere
@@ -11,8 +11,8 @@ document, `PROJECT_STATE.md`, or `configs/project/workflow_status.csv`.
 ## Authoritative Baseline
 
 - Authoritative branch: `project-current`.
-- Integration baseline: merged PR #58 commit
-  `caed1984ea8a72b541fc46b98614dff453c2fe89`.
+- Integration baseline: merged PR #60 commit
+  `af433183a0c0b02570c69631f216004157def47a`.
 - Stable rollback branch and tag: `checkpoint/arch03-stable-310559`.
 - DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
   the governed daily refresh are implemented within their documented
@@ -74,6 +74,13 @@ symbols and 41 acquired deep-history symbols against 100 required, so no
 partial accepted universe is emitted. Missing row-level provider availability
 also blocks PIT acceptance. The next possible external step requires explicit
 bounded smoke authority plus an approved 100-symbol candidate source.
+
+GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 now defines that source
+boundary. Only official exchange, licensed security-master, or governed owner
+bundle evidence with complete PIT identity/listing fields is admissible;
+outcome-like fields are rejected. Current Provider02B evidence remains blocked
+at 50 symbols and zero accepted universe rows. Synthetic provider field-name
+fixtures pass offline parser contracts only and do not verify live schemas.
 
 The implemented failure-attribution goal was bounded to:
 

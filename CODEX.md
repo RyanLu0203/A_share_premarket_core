@@ -42,7 +42,20 @@ the fixed schema-smoke plan, strict Tushare/Baostock normalizers, explicit PIT
 availability rules, and an exact-100 universe contract. Current committed
 evidence contains 50 eligible candidates and 41 acquired deep-history symbols;
 no partial universe may be accepted. Provider calls remain unauthorized. Do
-not run the smoke or acquire rows without new explicit authority, and do not
+not run the smoke or acquire rows without new explicit authority.
+
+GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 is implemented infrastructure-
+only. It allows only official exchange, licensed security-master, or governed
+owner-supplied sources with complete PIT identity/listing fields, and rejects
+outcome-like fields at schema level. Current evidence remains blocked at 50
+symbols with zero accepted universe rows. Synthetic provider field fixtures
+pass offline only; live schema verification remains pending.
+
+Python `>=3.9` remains supported. The `httpx2` test compatibility dependency
+is conditional on Python 3.10+, and dependency resolution is verified for 3.9
+and 3.12.
+
+Do not run the smoke or acquire rows without new explicit authority, and do not
 unlock factor construction or downstream stages.
 
 ## Issue #36 Tencent Primary Authorization

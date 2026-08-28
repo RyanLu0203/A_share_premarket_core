@@ -16,7 +16,8 @@
   "outputs": {
     "outputs/providers/goal_liquidity_acquisition_readiness_batch01_normalizer_contract.csv": "edaca203ebe8a29fc5db2f9d79c0f7e34e9747bd640c77d9b385289f2c50cea7",
     "outputs/providers/goal_liquidity_acquisition_readiness_batch01_pit_availability_contract.csv": "2fc8537d312b21f578bf2dd6131c43f87e6a625e9d9b877801a4981a7d6b0f4d",
-    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_readiness_decision.csv": "f09a0c6a28c47cccbcf189b5ec8aef7ca90a89f2df2360a02d8f2d0f3cb33a8a",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_readiness_decision.csv": "3d9cd07b9b2c763849c2126da9de99afe1878b21e2a9b81e2cc9568f741c3c5c",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_schema_fixture_acceptance.csv": "cbfc41cff7625b8a195b8d92d9225ba6a57386f5a5fb0638617246217e454ed8",
     "outputs/providers/goal_liquidity_acquisition_readiness_batch01_schema_smoke_plan.csv": "c9d8bd64b9848dd8389f0c7c41698a3fbea4d3a49c9866e31ea2d5fc33f6273a",
     "outputs/providers/goal_liquidity_acquisition_readiness_batch01_universe100_decision.csv": "acc998f264a8f282975cdca583dfea7bf8dbafed533c1c87ede8cd99ec3bf445"
   },
@@ -26,6 +27,7 @@
   "provider_calls_performed": false,
   "rec_tiering_unlocked": false,
   "required_symbol_count": 100,
+  "schema_fixture_state": "PASS_SYNTHETIC_NOT_LIVE_VERIFIED",
   "schema_smoke_call_budget": 4,
   "schema_smoke_plan_state": "READY_DESIGN_ONLY_NOT_AUTHORIZED",
   "universe100_state": "BLOCKED"

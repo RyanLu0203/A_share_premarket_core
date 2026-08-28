@@ -16,8 +16,19 @@ override that current decision entrypoint.
 
 ## CURRENT CONTROL-PLANE DECISION
 
+- GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 is implemented
+  infrastructure-only with `PASS_WITH_WARNINGS`. It defines a complete PIT-safe
+  security-master contract, rejects outcome-like selection fields, and accepts
+  no partial universe. Current Provider02B evidence has 50 symbols but lacks
+  required exchange, security-type, listing-status, and availability fields;
+  accepted universe count remains zero.
+- Sanitized synthetic Tushare/Baostock field-name fixtures pass their offline
+  parser contracts, but live schema verification and all provider calls remain
+  unauthorized. Python dependency resolution now succeeds for both 3.9 and
+  3.12 while preserving the declared `>=3.9` policy.
+
 - The authoritative branch remains `project-current`; this integration is
-  based on public-release merge `0ca2b8648c01ae2af6c342c468aa79694ec4ce9e`.
+  based on liquidity-readiness merge `af433183a0c0b02570c69631f216004157def47a`.
 - DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
   the governed daily refresh are already implemented within their existing
   boundaries. Earlier text naming them as next work is historical-only.

@@ -30,6 +30,13 @@ row availability remains missing. The next external gate requires both an
 explicit bounded schema-smoke authorization and an approved source of at least
 100 eligible symbols; no partial universe or implicit authorization is valid.
 
+The candidate-source acceptance contract is now implemented. Only official
+exchange listings, licensed security masters, or governed owner bundles with
+complete PIT identity/listing fields are admissible; outcome-like fields are
+forbidden. Current Provider02B evidence remains blocked at 50 symbols. Both
+provider synthetic schema fixtures pass offline, but live verification still
+requires separate authority.
+
 ## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial
