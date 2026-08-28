@@ -1,0 +1,20 @@
+goal_id: GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01
+mode: implemented_infrastructure_only
+workstreams:
+  schema_smoke_plan: ready_design_only_not_authorized
+  candidate_normalizers: implemented_offline
+  pit_availability: blocked_row_available_at_missing
+  universe100: blocked_current_50_required_100
+schema_smoke:
+  fixed_symbols: [002475.SZ, 600036.SH]
+  fixed_providers: [tushare_pro, baostock]
+  total_call_budget: 4
+  retries: 0
+  provider_calls_authorized: false
+current_result:
+  acquisition_preflight: blocked
+  provider_calls_performed: false
+  accepted_rows: 0
+  accepted_universe_symbols: 0
+  factor_construction_unlocked: false
+  recommendation_tiering_unlocked: false

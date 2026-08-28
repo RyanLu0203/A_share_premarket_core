@@ -357,6 +357,13 @@ Handoff policy:
   free-float candidate and Baostock history is the documentation-accepted
   liquidity cross-check. Live schemas and row-level provider availability are
   not accepted; preflight remains blocked with zero calls and zero rows.
+- GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01 is
+  `implemented_infrastructure_only` and currently `PASS_WITH_WARNINGS`. It
+  integrates a fixed unauthorized four-call schema-smoke design, strict
+  offline normalizers, explicit PIT availability rules, and an exact-100
+  deterministic universe contract. Current evidence has 50 eligible and 41
+  acquired deep-history symbols; no partial universe is accepted, calls and
+  rows remain zero, and downstream locks are unchanged.
 - GOAL-REC-TIERING-01 remains `locked_future`.
 - GOAL-10B.4 remains `locked_future`.
 - GOAL-POSITION-BAND-VALIDATION-01 remains `locked_future`.

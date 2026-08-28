@@ -23,6 +23,13 @@ and Baostock history for liquidity cross-checking. Live schemas and provider
 availability remain pending. The next possible external gate is a separately
 authorized bounded schema smoke, not a full acquisition or factor run.
 
+The offline readiness batch now completes the smoke design, provider
+normalizers, PIT contract, and exact-100 selection contract together. Current
+coverage remains 50 eligible / 41 acquired against 100 required, and provider
+row availability remains missing. The next external gate requires both an
+explicit bounded schema-smoke authorization and an approved source of at least
+100 eligible symbols; no partial universe or implicit authorization is valid.
+
 ## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial

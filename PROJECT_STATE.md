@@ -65,6 +65,16 @@ override that current decision entrypoint.
   availability contract, so the acquisition preflight remains `BLOCKED`,
   calls and accepted rows remain zero, and the next external step requires
   explicit bounded schema-smoke authority.
+- GOAL-LIQUIDITY-SCHEMA-SMOKE-PLAN-01, GOAL-LIQUIDITY-PIT-AVAILABILITY-
+  CONTRACT-01, GOAL-LIQUIDITY-UNIVERSE100-CONTRACT-01, and
+  GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01 are implemented within
+  design/infrastructure-only boundaries. The batch adds a fixed four-call
+  design, strict offline normalizers, explicit PIT rules, and an exact-100
+  deterministic universe contract. Current evidence supplies 50 eligible
+  candidates and 41 acquired deep-history symbols; no partial universe is
+  emitted. Both provider candidates still lack accepted row availability,
+  calls remain unauthorized, accepted rows remain zero, and preflight remains
+  `BLOCKED`.
 
 Deployment note: the last confirmed stable deployment is merged PR #55 commit
 `e6a82b7`.

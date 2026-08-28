@@ -1,5 +1,12 @@
 # Canonical Workflow Status
 
+## 2026-08-28 Multi-workstream liquidity readiness checkpoint
+
+The workflow now includes design/infrastructure-only schema-smoke, provider
+normalizer, PIT availability, and exact-100 universe contracts. The integrated
+batch remains blocked at 50/100 eligible symbols and missing provider
+availability; no data or downstream workflow block is promoted.
+
 ## 2026-08-28 Liquidity source acceptance checkpoint
 
 The offline provider/source gate accepts Tushare Pro `daily_basic` and

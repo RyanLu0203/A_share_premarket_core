@@ -179,6 +179,8 @@ PUBLIC_COMMANDS = [
     "scripts/audit_goal_liquidity_evidence_acquisition_foundation01.py",
     "scripts/run_goal_liquidity_provider_source_acceptance01.py",
     "scripts/audit_goal_liquidity_provider_source_acceptance01.py",
+    "scripts/run_goal_liquidity_acquisition_readiness_batch01.py",
+    "scripts/audit_goal_liquidity_acquisition_readiness_batch01.py",
     "scripts/build_factor_metric_diagnostic_overview.py",
     "scripts/run_goal_premarket_portfolio_risk_management01.py",
     "scripts/audit_goal_premarket_portfolio_risk_management01.py",

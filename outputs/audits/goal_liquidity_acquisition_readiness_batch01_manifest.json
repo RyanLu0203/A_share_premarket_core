@@ -1,0 +1,32 @@
+{
+  "accepted_rows": 0,
+  "accepted_universe_symbol_count": 0,
+  "acquisition_preflight_status": "BLOCKED",
+  "current_acquired_symbol_count": 41,
+  "current_eligible_symbol_count": 50,
+  "factor_construction_unlocked": false,
+  "goal_id": "GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01",
+  "goal_status": "PASS_WITH_WARNINGS",
+  "inputs": {
+    "outputs/audits/goal_liquidity_provider_source_acceptance01_manifest.json": "889d32f7e45380c89430481bdc8c9fed4b4d7d9c68c410e8cc7f1d6c52fc0f4d",
+    "outputs/datasets/goal_data_provider02b_source_backed_evaluation_panel.csv": "950b1b0f1edc725221cc484fcdb2e35270683eec751f3312c003f07b38242070",
+    "outputs/research/network_ingestion/symbol_coverage.csv": "63d9d5261b45739b31158504fb96220067657df1287362906fb9eb54554fa636"
+  },
+  "normalizer_state": "IMPLEMENTED_OFFLINE",
+  "outputs": {
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_normalizer_contract.csv": "edaca203ebe8a29fc5db2f9d79c0f7e34e9747bd640c77d9b385289f2c50cea7",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_pit_availability_contract.csv": "2fc8537d312b21f578bf2dd6131c43f87e6a625e9d9b877801a4981a7d6b0f4d",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_readiness_decision.csv": "f09a0c6a28c47cccbcf189b5ec8aef7ca90a89f2df2360a02d8f2d0f3cb33a8a",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_schema_smoke_plan.csv": "c9d8bd64b9848dd8389f0c7c41698a3fbea4d3a49c9866e31ea2d5fc33f6273a",
+    "outputs/providers/goal_liquidity_acquisition_readiness_batch01_universe100_decision.csv": "acc998f264a8f282975cdca583dfea7bf8dbafed533c1c87ede8cd99ec3bf445"
+  },
+  "partial_universe_emitted": false,
+  "pit_availability_state": "BLOCKED_ROW_AVAILABLE_AT_MISSING",
+  "provider_calls_authorized": false,
+  "provider_calls_performed": false,
+  "rec_tiering_unlocked": false,
+  "required_symbol_count": 100,
+  "schema_smoke_call_budget": 4,
+  "schema_smoke_plan_state": "READY_DESIGN_ONLY_NOT_AUTHORIZED",
+  "universe100_state": "BLOCKED"
+}

@@ -37,6 +37,14 @@ row-level provider availability is accepted. The next external action may be
 only a separately authorized bounded schema smoke; full acquisition and all
 downstream stages remain locked.
 
+The follow-on liquidity readiness batch implements four offline workstreams:
+the fixed schema-smoke plan, strict Tushare/Baostock normalizers, explicit PIT
+availability rules, and an exact-100 universe contract. Current committed
+evidence contains 50 eligible candidates and 41 acquired deep-history symbols;
+no partial universe may be accepted. Provider calls remain unauthorized. Do
+not run the smoke or acquire rows without new explicit authority, and do not
+unlock factor construction or downstream stages.
+
 ## Issue #36 Tencent Primary Authorization
 
 `GOAL-TENCENT-PRIMARY-OPERATIONAL-HARDENING-01` authorizes real operational

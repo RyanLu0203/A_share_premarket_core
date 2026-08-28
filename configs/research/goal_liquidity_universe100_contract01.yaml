@@ -1,0 +1,19 @@
+goal_id: GOAL-LIQUIDITY-UNIVERSE100-CONTRACT-01
+mode: implemented_design_only
+required_symbol_count: 100
+eligible_markets: [SH, SZ]
+eligible_security_type: A_share
+blocked_symbols: [000625.SZ, 000858.SZ, 601138.SH, 601208.SH]
+deduplication_key: symbol
+selection_order:
+  - existing_acquired_symbols_first
+  - symbol_ascending
+forbidden_selection_inputs:
+  - future_returns
+  - factor_values
+  - factor_scores
+  - performance_metrics
+insufficient_candidate_action: BLOCKED_WITH_ZERO_ACCEPTED_SYMBOLS
+provider_calls_authorized: false
+network_access_authorized: false
+output_artifact_write_authorized: false

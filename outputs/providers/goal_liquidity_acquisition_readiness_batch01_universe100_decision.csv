@@ -1,0 +1,2 @@
+status,eligible_symbol_count,preferred_acquired_count,required_symbol_count,accepted_symbol_count,partial_universe_emitted,selection_rule,blocked_symbols_removed,provider_calls_performed
+BLOCKED,50,41,100,0,false,acquired_first_then_symbol_ascending,,false

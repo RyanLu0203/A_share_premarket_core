@@ -1,5 +1,23 @@
 # 09 Step Iteration Log
 
+## 2026-08-28 - GOAL-LIQUIDITY-ACQUISITION-READINESS-BATCH-01
+
+Status: `PASS_WITH_WARNINGS`; acquisition preflight `BLOCKED`;
+`implemented_infrastructure_only`.
+
+- Implemented four workstreams together: fixed schema-smoke design, strict
+  provider normalizers, explicit PIT availability, and exact-100 universe
+  selection.
+- Fixed the smoke scope at `002475.SZ` and `600036.SH` across Tushare Pro and
+  Baostock, four calls maximum, one call per pair, and zero retries; calls are
+  not authorized.
+- Enforced Tushare and Baostock identity, date, numeric, unit, status, QFQ and
+  explicit timestamp rules without provider SDKs or credentials.
+- Evaluated 50 eligible candidates and 41 acquired deep-history symbols against
+  100 required; returned no partial accepted universe.
+- Performed zero provider calls, accepted zero rows, and preserved every
+  research-promotion and downstream lock.
+
 ## 2026-08-28 - GOAL-LIQUIDITY-PROVIDER-SOURCE-ACCEPTANCE-01
 
 Status: documentation `PASS_WITH_WARNINGS`; acquisition preflight `BLOCKED`;
