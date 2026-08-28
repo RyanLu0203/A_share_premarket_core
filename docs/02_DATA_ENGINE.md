@@ -33,6 +33,13 @@ units are explicitly normalized, but row-level provider availability and live
 schemas remain unaccepted. No provider was called and acquisition remains
 blocked.
 
+The multi-workstream readiness batch adds pure Tushare/Baostock normalizers,
+a fixed but unauthorized four-call schema plan, explicit provider-availability
+validation, and an exact-100 universe contract. The current 50 eligible
+symbols are insufficient, so the selector returns no accepted partial list.
+Missing row-level availability also blocks PIT acceptance. Zero provider rows
+or canonical data are created.
+
 ## 2026-08-13 iFinD S2 offline response-contract hardening
 
 The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic

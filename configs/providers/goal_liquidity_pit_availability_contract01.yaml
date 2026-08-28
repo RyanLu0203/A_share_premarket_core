@@ -1,0 +1,16 @@
+goal_id: GOAL-LIQUIDITY-PIT-AVAILABILITY-CONTRACT-01
+mode: implemented_infrastructure_only
+supported_endpoints:
+  - tushare_pro.daily_basic
+  - baostock.query_history_k_data_plus
+requirements:
+  explicit_provider_available_at: true
+  timezone_aware: true
+  not_before_trade_date_close_asia_shanghai: true
+  not_after_decision_cutoff: true
+  update_window_inference_allowed: false
+current_state:
+  tushare_pro.daily_basic: blocked_row_available_at_missing
+  baostock.query_history_k_data_plus: blocked_row_available_at_missing
+provider_calls_authorized: false
+accepted_rows: 0

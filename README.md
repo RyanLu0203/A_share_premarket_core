@@ -35,11 +35,18 @@ documented liquidity cross-check. This is documentation acceptance only:
 live schemas and provider availability remain unverified, so acquisition is
 still blocked and zero rows are accepted.
 
+The next readiness batch is also implemented offline: it fixes a four-call
+schema-smoke design, adds strict provider row normalizers, rejects inferred
+PIT timestamps, and defines an exact-100 deterministic universe. Current
+evidence has only 50 eligible candidates (41 with acquired deep history), so
+the universe emits no partial accepted list and acquisition remains blocked.
+
 | Area | Current state |
 | --- | --- |
 | Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |
 | Operational acquisition | AKShare `stock_zh_a_hist_tx` / Tencent, one complete QFQ T-1 batch or fail closed |
 | Future liquidity evidence | Tushare Pro `daily_basic` free-float candidate + Baostock history cross-check; documentation accepted, live/PIT verification pending |
+| Liquidity readiness batch | 4-call schema design + offline normalizers + PIT contract + exact-100 universe contract; calls unauthorized and preflight blocked |
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |
 | Local workspace | 23 governed pages over 22 GET-only FastAPI routes; zero write routes |

@@ -1,7 +1,7 @@
 # Current Decision
 
-Last reviewed: 2026-08-28 after provider-schema and free-float-source
-documentation acceptance
+Last reviewed: 2026-08-28 after the multi-workstream liquidity acquisition
+readiness batch
 
 This is the single current decision entrypoint for selecting the next project
 goal. Historical `next`, `next goal`, and `allowed next` statements elsewhere
@@ -64,6 +64,16 @@ cross-check. Neither live schema nor a row-level provider availability
 contract is accepted, so the acquisition preflight remains `BLOCKED` with
 zero calls and zero rows. A bounded schema smoke is the next possible external
 step and still requires explicit authority.
+
+The follow-on schema-smoke plan, provider normalizers, PIT availability
+contract, exact-100 universe contract, and integrated readiness batch are now
+implemented within design/infrastructure-only boundaries. The smoke matrix is
+fixed at two symbols by two providers, four calls maximum and zero retries,
+but remains unauthorized. Current committed evidence contains 50 eligible
+symbols and 41 acquired deep-history symbols against 100 required, so no
+partial accepted universe is emitted. Missing row-level provider availability
+also blocks PIT acceptance. The next possible external step requires explicit
+bounded smoke authority plus an approved 100-symbol candidate source.
 
 The implemented failure-attribution goal was bounded to:
 

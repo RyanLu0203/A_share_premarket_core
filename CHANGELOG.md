@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-28 - Multi-workstream liquidity acquisition readiness batch
+
+- Added a fixed, unauthorized four-call schema-smoke plan for two providers
+  and two symbols with zero retries and sanitized metadata only.
+- Added strict offline Tushare/Baostock normalizers, explicit PIT availability
+  validation, and a deterministic exact-100 A-share universe contract.
+- Evaluated current committed evidence at 50 eligible candidates and 41
+  acquired deep-history symbols; emitted no partial accepted universe.
+- Kept provider calls, row acceptance, factor construction and every
+  downstream capability blocked.
+
 ## 2026-08-28 - Liquidity provider and source documentation acceptance
 
 - Selected Tushare Pro `daily_basic` as the documented historical free-float

@@ -1,0 +1,5 @@
+call_id,provider,endpoint,canonical_symbol,provider_symbol,expected_fields,max_calls,max_retries,provider_calls_authorized,raw_payload_persistence_allowed
+tushare_pro:daily_basic:002475.SZ,tushare_pro,daily_basic,002475.SZ,002475.SZ,ts_code;trade_date;turnover_rate;turnover_rate_f;float_share;free_share,1,0,false,false
+tushare_pro:daily_basic:600036.SH,tushare_pro,daily_basic,600036.SH,600036.SH,ts_code;trade_date;turnover_rate;turnover_rate_f;float_share;free_share,1,0,false,false
+baostock:query_history_k_data_plus:002475.SZ,baostock,query_history_k_data_plus,002475.SZ,sz.002475,date;code;volume;adjustflag;turn;tradestatus,1,0,false,false
+baostock:query_history_k_data_plus:600036.SH,baostock,query_history_k_data_plus,600036.SH,sh.600036,date;code;volume;adjustflag;turn;tradestatus,1,0,false,false

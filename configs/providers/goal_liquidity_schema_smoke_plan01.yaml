@@ -1,0 +1,36 @@
+goal_id: GOAL-LIQUIDITY-SCHEMA-SMOKE-PLAN-01
+mode: designed_infrastructure_only
+network_allowed: false
+provider_calls_authorized: false
+credential_read_allowed: false
+raw_payload_persistence: false
+symbols:
+  - 002475.SZ
+  - 600036.SH
+call_budget:
+  total: 4
+  per_provider_symbol: 1
+  retries_per_call: 0
+providers:
+  tushare_pro:
+    endpoint: daily_basic
+    expected_fields:
+      - ts_code
+      - trade_date
+      - turnover_rate
+      - turnover_rate_f
+      - float_share
+      - free_share
+  baostock:
+    endpoint: query_history_k_data_plus
+    expected_fields:
+      - date
+      - code
+      - volume
+      - adjustflag
+      - turn
+      - tradestatus
+result_boundary:
+  sanitized_metadata_only: true
+  output_rows_allowed: false
+  downstream_unlock: false
