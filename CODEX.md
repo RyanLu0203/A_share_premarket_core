@@ -55,6 +55,14 @@ Python `>=3.9` remains supported. The `httpx2` test compatibility dependency
 is conditional on Python 3.10+, and dependency resolution is verified for 3.9
 and 3.12.
 
+GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01 is implemented infrastructure-
+only. It validates only explicit SHA-256-anchored candidate CSV and sanitized
+four-observation schema JSON artifacts outside the tracked tree; ignored
+`.local/` is allowed. Other repository paths, symlinks,
+raw values, retries, partial matrices, incomplete universes, and checksum
+drift fail closed. Current accepted external artifacts remain zero, and import
+does not establish provider provenance or live schema verification.
+
 Do not run the smoke or acquire rows without new explicit authority, and do not
 unlock factor construction or downstream stages.
 

@@ -1,7 +1,6 @@
 # Current Decision
 
-Last reviewed: 2026-08-28 after the candidate-source and runtime compatibility
-follow-up
+Last reviewed: 2026-08-29 after the external liquidity evidence handoff gate
 
 This is the single current decision entrypoint for selecting the next project
 goal. Historical `next`, `next goal`, and `allowed next` statements elsewhere
@@ -11,8 +10,8 @@ document, `PROJECT_STATE.md`, or `configs/project/workflow_status.csv`.
 ## Authoritative Baseline
 
 - Authoritative branch: `project-current`.
-- Integration baseline: merged PR #60 commit
-  `af433183a0c0b02570c69631f216004157def47a`.
+- Integration baseline: merged PR #61 commit
+  `a01526be51258750dfb9493744236fb26c084a4c`.
 - Stable rollback branch and tag: `checkpoint/arch03-stable-310559`.
 - DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
   the governed daily refresh are implemented within their documented
@@ -81,6 +80,13 @@ bundle evidence with complete PIT identity/listing fields is admissible;
 outcome-like fields are rejected. Current Provider02B evidence remains blocked
 at 50 symbols and zero accepted universe rows. Synthetic provider field-name
 fixtures pass offline parser contracts only and do not verify live schemas.
+
+GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01 now implements the safe handoff
+edge for a future external candidate bundle or sanitized four-call observation
+bundle. Both require explicit paths outside the tracked tree and SHA-256
+anchors; ignored `.local/` is allowed, while source rows and provider values
+remain outside Git. No bundle is currently accepted, and
+import alone cannot prove provider provenance or live schema verification.
 
 The implemented failure-attribution goal was bounded to:
 

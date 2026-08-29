@@ -1,0 +1,18 @@
+{
+  "accepted_candidate_symbols": 0,
+  "accepted_schema_observations": 0,
+  "candidate_ingress_state": "CONTRACT_READY_NO_BUNDLE",
+  "downstream_unlock": false,
+  "external_artifacts_accepted": 0,
+  "factor_construction_unlocked": false,
+  "goal_id": "GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01",
+  "goal_status": "PASS_WITH_WARNINGS",
+  "live_schema_verified": false,
+  "outputs": {
+    "outputs/providers/goal_liquidity_external_handoff_readiness01_artifact_contract.csv": "1b847870196f535ce47663747121db4a351119c2187b79bd55e1f7c0fdc098e4",
+    "outputs/providers/goal_liquidity_external_handoff_readiness01_preflight.csv": "fb5e257308a65ccdd123cf493f5022924a2ac582eef89eb996a150767ca56699"
+  },
+  "provider_calls_authorized": false,
+  "provider_calls_performed": false,
+  "schema_observation_ingress_state": "CONTRACT_READY_NO_BUNDLE"
+}

@@ -1,0 +1,20 @@
+goal_id: GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01
+mode: implemented_infrastructure_only
+candidate_bundle:
+  location: external_or_repository_dot_local_explicit_absolute_path
+  checksum: sha256_required
+  template: configs/research/liquidity_candidate_bundle_template.csv
+  accepted_symbol_count: 100
+  max_input_rows: 5000
+schema_observation_bundle:
+  location: external_or_repository_dot_local_explicit_absolute_path
+  checksum: sha256_required
+  template: configs/providers/liquidity_schema_observation_template.json
+  exact_observation_count: 4
+  retries: 0
+  raw_values_allowed: false
+  provenance_verified_by_import: false
+network_access_authorized: false
+provider_calls_authorized: false
+current_external_artifacts_accepted: 0
+downstream_unlock: false

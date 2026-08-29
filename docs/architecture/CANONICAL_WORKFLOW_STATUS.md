@@ -1,5 +1,13 @@
 # Canonical Workflow Status
 
+## 2026-08-29 External evidence handoff checkpoint
+
+The workflow adds an infrastructure-only external handoff gate after candidate-
+source and schema-smoke design. It validates checksummed external files without
+copying source data into Git. Current accepted artifact, candidate, and schema
+observation counts remain zero; live verification and downstream promotion are
+unchanged.
+
 ## 2026-08-28 Candidate-source and runtime compatibility checkpoint
 
 The workflow adds an infrastructure-only PIT-safe candidate-source acceptance
