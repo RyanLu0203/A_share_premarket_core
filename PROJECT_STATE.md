@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-08-28
+Last updated: 2026-08-29
 
 Public-release infrastructure note: the current repository presentation now
 leads with the implemented provider-to-evidence-to-research-to-read-only-
@@ -16,6 +16,14 @@ override that current decision entrypoint.
 
 ## CURRENT CONTROL-PLANE DECISION
 
+- GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01 is implemented
+  infrastructure-only with `PASS_WITH_WARNINGS`. Explicit external candidate
+  CSV and sanitized schema-observation JSON validators are ready, with SHA-256,
+  path, schema, row-budget, exact-four-call, zero-retry, and no-raw-value
+  enforcement. Current accepted external artifacts, candidate symbols, and
+  schema observations are all zero; provider provenance and live schema remain
+  unverified, and no downstream stage is unlocked.
+
 - GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 is implemented
   infrastructure-only with `PASS_WITH_WARNINGS`. It defines a complete PIT-safe
   security-master contract, rejects outcome-like selection fields, and accepts
@@ -28,7 +36,7 @@ override that current decision entrypoint.
   3.12 while preserving the declared `>=3.9` policy.
 
 - The authoritative branch remains `project-current`; this integration is
-  based on liquidity-readiness merge `af433183a0c0b02570c69631f216004157def47a`.
+  based on external-readiness baseline `a01526be51258750dfb9493744236fb26c084a4c`.
 - DataExpansion01, Regime02, Quant04, GOAL-11, the read-only Workspace, and
   the governed daily refresh are already implemented within their existing
   boundaries. Earlier text naming them as next work is historical-only.

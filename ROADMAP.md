@@ -37,6 +37,12 @@ forbidden. Current Provider02B evidence remains blocked at 50 symbols. Both
 provider synthetic schema fixtures pass offline, but live verification still
 requires separate authority.
 
+The external-handoff readiness gate now provides the approved ingestion edge
+for either an owner-supplied 100-symbol bundle or sanitized results from a
+separately authorized four-call smoke. Both inputs must stay outside Git and
+match explicit SHA-256 anchors. No external artifact is currently accepted;
+provider provenance and live verification remain future review decisions.
+
 ## 2026-08-12 iFinD accepted S0 and dual identity checkpoint
 
 S0 is complete: 7/7 services and 35/35 tools in the active personal/trial

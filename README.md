@@ -4,7 +4,7 @@
 PIT/质量治理、不可变快照、只读 API 和 Workspace 放在同一条可审计链路中；它不是
 自动交易系统，也不输出可执行的推荐、目标仓位或订单。
 
-## Current Project Truth — 2026-08-28
+## Current Project Truth — 2026-08-29
 
 The single current goal-selection entrypoint is
 [`docs/governance/CURRENT_DECISION.md`](docs/governance/CURRENT_DECISION.md).
@@ -48,6 +48,13 @@ blocked because it has 50 symbols and is not a complete PIT-safe security
 master. Python `>=3.9` support is preserved with `httpx2` installed only on
 Python 3.10+; dependency resolution is verified for Python 3.9 and 3.12.
 
+The external-handoff gate is also implemented offline. It can validate a
+SHA-256-anchored candidate CSV and an exact four-observation sanitized schema
+JSON from explicit paths outside the tracked tree, including ignored `.local/`.
+Templates are zero-authority;
+no external bundle is currently accepted, and imported metadata cannot by
+itself prove provider provenance or live schema verification.
+
 | Area | Current state |
 | --- | --- |
 | Durable source of truth | GitHub branch `project-current`; stale `main` is not an authoritative deployment source |
@@ -55,6 +62,7 @@ Python 3.10+; dependency resolution is verified for Python 3.9 and 3.12.
 | Future liquidity evidence | Tushare Pro `daily_basic` free-float candidate + Baostock history cross-check; documentation accepted, live/PIT verification pending |
 | Liquidity readiness batch | 4-call schema design + offline normalizers + PIT contract + exact-100 universe contract; calls unauthorized and preflight blocked |
 | Candidate-source contract | Official/ licensed/ governed sources only; current 50-symbol panel lacks complete security-master and PIT fields, so accepted universe is empty |
+| External handoff | Candidate CSV + four-observation sanitized JSON validators ready; current external artifacts accepted: 0 |
 | Python compatibility | Project policy remains `>=3.9`; `httpx2` is conditional on 3.10+, with 3.9 and 3.12 dependency resolution verified |
 | Research evidence | DataExpansion01 → Regime02 → Quant04 implemented research-only |
 | Quant status | GOAL-11 implemented research-only; `ready_factor_count = 0` |

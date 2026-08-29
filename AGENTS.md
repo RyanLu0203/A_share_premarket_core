@@ -106,6 +106,14 @@ Handoff policy:
 
 ## Current System Truth
 
+- GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01 is
+  `implemented_infrastructure_only` with `PASS_WITH_WARNINGS`. It validates
+  explicit external SHA-256-anchored candidate CSV and exact four-observation
+  sanitized schema JSON artifacts without copying source data into Git.
+  Current accepted external artifacts, candidate symbols, and observations are
+  zero; provider provenance, live schema, factor construction, and downstream
+  stages remain unverified or locked.
+
 - GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01 is
   `implemented_infrastructure_only` with `PASS_WITH_WARNINGS`. It defines a
   PIT-safe exact-100 security-master source contract, rejects outcome-like

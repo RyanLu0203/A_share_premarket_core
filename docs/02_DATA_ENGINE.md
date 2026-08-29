@@ -48,6 +48,15 @@ evaluation panel therefore remains an input observation, not an accepted
 100-symbol source. Synthetic provider field-name fixtures pass only the
 offline parser contracts; no live schema claim or provider row is created.
 
+GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01 adds no provider transport. It
+accepts only explicit regular files outside the tracked tree (including the
+ignored `.local/` boundary) with caller-supplied SHA-256 anchors. Candidate CSV
+inputs must match the complete six-field source schema;
+schema-observation JSON must contain exactly the four governed calls, no retry,
+exact field names, and no raw values. Import eligibility does not establish
+provider provenance or live schema verification. Current accepted artifact and
+row counts remain zero.
+
 ## 2026-08-13 iFinD S2 offline response-contract hardening
 
 The prior `IFIND_MCP_RESPONSE_SCHEMA_MISMATCH` remains a truthful but generic

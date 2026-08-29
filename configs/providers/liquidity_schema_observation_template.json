@@ -1,0 +1,58 @@
+[
+  {
+    "call_id": "tushare_pro:daily_basic:002475.SZ",
+    "provider": "tushare_pro",
+    "endpoint": "daily_basic",
+    "canonical_symbol": "002475.SZ",
+    "provider_symbol": "002475.SZ",
+    "attempted": false,
+    "call_count": 0,
+    "retry_count": 0,
+    "status": "NOT_AUTHORIZED",
+    "failure_code": "NOT_AUTHORIZED",
+    "observed_field_names": [],
+    "observed_row_count": 0
+  },
+  {
+    "call_id": "tushare_pro:daily_basic:600036.SH",
+    "provider": "tushare_pro",
+    "endpoint": "daily_basic",
+    "canonical_symbol": "600036.SH",
+    "provider_symbol": "600036.SH",
+    "attempted": false,
+    "call_count": 0,
+    "retry_count": 0,
+    "status": "NOT_AUTHORIZED",
+    "failure_code": "NOT_AUTHORIZED",
+    "observed_field_names": [],
+    "observed_row_count": 0
+  },
+  {
+    "call_id": "baostock:query_history_k_data_plus:002475.SZ",
+    "provider": "baostock",
+    "endpoint": "query_history_k_data_plus",
+    "canonical_symbol": "002475.SZ",
+    "provider_symbol": "sz.002475",
+    "attempted": false,
+    "call_count": 0,
+    "retry_count": 0,
+    "status": "NOT_AUTHORIZED",
+    "failure_code": "NOT_AUTHORIZED",
+    "observed_field_names": [],
+    "observed_row_count": 0
+  },
+  {
+    "call_id": "baostock:query_history_k_data_plus:600036.SH",
+    "provider": "baostock",
+    "endpoint": "query_history_k_data_plus",
+    "canonical_symbol": "600036.SH",
+    "provider_symbol": "sh.600036",
+    "attempted": false,
+    "call_count": 0,
+    "retry_count": 0,
+    "status": "NOT_AUTHORIZED",
+    "failure_code": "NOT_AUTHORIZED",
+    "observed_field_names": [],
+    "observed_row_count": 0
+  }
+]

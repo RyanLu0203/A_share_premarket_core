@@ -1,5 +1,20 @@
 # 09 Step Iteration Log
 
+## 2026-08-29 - GOAL-LIQUIDITY-EXTERNAL-HANDOFF-READINESS-01
+
+Status: `PASS_WITH_WARNINGS`; external handoff `CONTRACT_READY_NO_BUNDLE`;
+`implemented_infrastructure_only`.
+
+- Added external-only, SHA-256-anchored validators for the 100-symbol candidate
+  CSV and exact four-observation sanitized schema JSON.
+- Rejected repository paths, symlinks, checksum drift, extra/raw fields,
+  retries, incomplete call matrices, invalid/late candidate rows, and partial
+  universes.
+- Added zero-authority templates and sanitized command output that never prints
+  source rows or provider values.
+- Recorded zero accepted external artifacts, candidate symbols, schema
+  observations, provider calls, or downstream unlocks.
+
 ## 2026-08-28 - GOAL-LIQUIDITY-CANDIDATE-SOURCE-ACCEPTANCE-01
 
 Status: `PASS_WITH_WARNINGS`; current source `BLOCKED`;

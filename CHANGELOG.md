@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-29 - External liquidity evidence handoff readiness
+
+- Added fail-closed validators for an external SHA-256-anchored 100-symbol
+  candidate CSV and an exact four-observation sanitized schema-smoke JSON.
+- Added zero-authority CSV/JSON templates and two offline validation commands;
+  external source rows and raw provider values remain outside Git.
+- Current preflight accepts zero external artifacts, symbols, or observations.
+  Provider provenance, live schema, factor construction, and downstream stages
+  remain unverified or locked.
+
 ## 2026-08-28 - Runtime and liquidity offline readiness follow-up
 
 - Preserved Python `>=3.9` while restricting the Python-3.10-only `httpx2`
